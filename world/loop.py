@@ -25,11 +25,19 @@ ap.add_argument("--speed", type=float, default=0.3); ap.add_argument("--tag", de
 fps, CH = 100, 10; g = np.load("seam/eye_geom.npz"); eye = Eye("seam/eye_geom.npz"); rng = np.random.default_rng(args.world_seed)
 # ---- world
 posts = [(x, y, 0.2, 0.05) for x, y in rng.uniform(-2.5, 2.5, size=(8, 2)) if np.hypot(x + 2.0, y) > 0.8]
-objects = np.array(posts + [(1.5, 1.0, 0.25, 1.0)], np.float32) if args.mode in ("walk", "blind") else np.zeros((0, 4), np.float32)
+objects = np.array(posts + [(1.5, 1.0, 0.25, 1.0)], np.float32) if args.mode in ("walk", "blind", "spin") else np.zeros((0, 4), np.float32)
 spheres = [(np.array([x, y, 0.5]), r, a) for x, y, r, a in objects]
 drum = dict(period_deg=30.0, phase_deg=0.0, lo=0.2, hi=0.8, half_height_deg=30.0)
 bar = dict(width_deg=15.0, az_world=args.bar_az, lo=0.2, bg=0.6, half_height_deg=30.0)
 def scene_at(t):
+    if args.mode == "spin":
+        w = 0.0; acc = 0.0
+        for sec, rate in [(2, 0), (4, 30), (1, 0), (4, -30), (1, 0)]:
+            if t < acc + sec: w = rate; break
+            acc += sec
+        ph = np.radians(scene_at.phase); c_, s_ = np.cos(ph), np.sin(ph)
+        rot = [(np.array([c_ * ox - s_ * oy, s_ * ox + c_ * oy, 0.5]), r_, a_) for ox, oy, r_, a_ in objects]
+        return Scene(spheres=rot), w
     if args.mode == "drum":
         w = 0.0; acc = 0.0
         for sec, rate in [(2, 0), (4, 30), (1, 0), (4, -30), (1, 0)]:
@@ -114,8 +122,9 @@ for c in range(T // CH):
     t = c * CH / fps; sc, w = scene_at(t); lum = np.zeros((CH, eye.n), np.float32)
     for f in range(CH):
         if args.mode == "drum": scene_at.phase += w / fps; sc = Scene(drum=dict(drum, phase_deg=scene_at.phase))
+        if args.mode == "spin": scene_at.phase += w / fps; sc, _ = scene_at(t)
         lum[f] = eye.render(sc, pos=(x, y, 0.5), heading_deg=heading) if args.mode != "blind" else np.full(eye.n, 0.5, np.float32)
-        POSE.append((x, y, heading)); PHASE.append(scene_at.phase if args.mode == "drum" else (bar["az_world"] if args.mode == "bar" else 0.0))
+        POSE.append((x, y, heading)); PHASE.append(scene_at.phase if args.mode in ("drum", "spin") else (bar["az_world"] if args.mode == "bar" else 0.0))
         if args.mode in ("walk", "blind"):
             x += args.speed / fps * np.cos(np.radians(heading)); y += args.speed / fps * np.sin(np.radians(heading))
             touched = None

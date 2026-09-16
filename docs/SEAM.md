@@ -732,6 +732,16 @@ more spikes on it that is still the animal's steering output (the descending
 population that lateralizes consistently with DNa02 in yaw, chosen on the yaw runs
 and then tested on the drum, not the reverse).
 
+**nate's question: is the striped drum confusing him? (14:14 PDT, `spin_m*.npz`).** the
+arena of posts revolving around him instead of stripes, same programme, same wheel:
+both ways 2 of 10, leftward 7, rightward 3 - the same as the drum. and HS lateralizes
+far LESS on the sparse scene (left segment, model 000: 15,270 / 11,980 vs 18,600 /
+12,990 on the drum; 001: 22,680 / 22,820 vs 7,480 / 2,400): a periodic wide-field
+pattern is the motion pathway's best stimulus, which is why the drum has been the
+apparatus since 1956. so no: the drum is not the problem, the sparse scene is harder,
+and the limit stays where the drum tables put it - at the one-neuron wheel and its
+drifting offset.
+
 ## choices, labelled
 
 1. **orientation** of our hex grid onto theirs. not in the data. calibrated by biology:
