@@ -82,6 +82,29 @@ for recede. counts are small (LPLC2 < 1 Hz), single runs. calib.py is the stats.
 **LC4 is dead** under T4/T5-only drive: it reads Tm cells in the lobula, not T4/T5.
 v1 drives every flyvis type. then LC4/LC6/LC11/LC16 get input.
 
+
+**seam v1 (all 55 types, `seam_v1.py`).** LC4 comes alive (loom 0 -> ~900 spikes/s
+with change-from-rest drive). but a STATIC dark disc holds LC4 at ~2,400 and the GF at
+~100, and a flash matches. with every type driven, the lobula projection neurons read
+sustained OFF-contrast from flyvis's Tm cells (Tm9 IS sustained in life) and the LIF has
+no adaptation to make LC4 transient. two transforms, both labelled:
+- change-from-rest (`--baseline`): rate ~ (act - act_grey)+. every grey pre-period
+  becomes a clean 0. static still sustained. this is the shiu convention (0 Hz rest =
+  no change) applied at the seam, and it stays on.
+- short-term depression (`--std flyvis|all`, engine's tsodyks-markram, U=0.08):
+  static and recede decay to ~0 during the window, i.e. sustained -> transient. but
+  flash > loom on LPLC2 (75 vs 16) and GF (24 vs 16). a dark flash driving the GF is
+  not crazy (lights-off is a classic GF trigger) but LPLC2 preferring flash to loom is
+  not the biology. and depression at 150 Hz drive is strong enough to gut the rates.
+
+**where that leaves it (00:45 PDT).** the T4/T5-only seam (v0) is the clean test of
+the motion pathway: loom-selective through LPLC2 to the GF, weakly, stats pending in
+calib.py. the all-types seam (v1) adds the lobula contrast pathway through LC4, and
+that pathway needs temporal processing the LIF doesn't have. the depth of the seam is
+a per-pathway question, not one number: T4/T5 for the lobula plate, and for the lobula
+either drive Tm/TmY with a transient transform or accept that LC4 needs its own
+graded/adapting model. open.
+
 ## choices, labelled
 
 1. **orientation** of our hex grid onto theirs. not in the data. calibrated by biology:
@@ -101,7 +124,9 @@ v1 drives every flyvis type. then LC4/LC6/LC11/LC16 get input.
 
 - calib.py result -> fix map + gain. then five stimuli x 5 seeds on the fixed map
   = the loom result, with a shuffle control (flyvis columns permuted) after.
-- seam v1: drive all 55 types from `columns_all.npz`. LC4/LC6 come alive?
+- seam v1 depth: T4/T5 for the lobula plate is right; for the lobula (LC4 path), test a
+  high-pass / transient transform on Tm drive vs STD with a smaller U vs leaving LC4 out.
+- flash control stays in every table from now on.
 - per-eye mirrored render for lateral stimuli; then left vs right loom -> DNa steering.
 - ensemble average over the 50 flyvis models.
 - write it up.

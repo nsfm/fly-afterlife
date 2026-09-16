@@ -51,5 +51,5 @@ for fvt in fvtypes:
         rows.append((cells[i], ours, fvt, side[cells[i]], h1[i], h2[i], how[i], share[i]))
     print(f"{fvt:9s} {len(cells):5d} cells  placed {k.sum():5d}  self {int((how=='self').sum()):5d} in {int((how=='in').sum()):5d} out {int((how=='out').sum()):5d}")
 df = pd.DataFrame(rows, columns=['idx', 'type', 'fvtype', 'side', 'hex1', 'hex2', 'how', 'share'])
-np.savez('seam/columns_all.npz', **{c: df[c].to_numpy() for c in df.columns})
+np.savez('seam/columns_all.npz', **{c: (df[c].to_numpy() if pd.api.types.is_numeric_dtype(df[c]) else df[c].to_numpy().astype(str)) for c in df.columns})
 print(f"\n{len(df)} cells placed across {df.fvtype.nunique()} flyvis types")
