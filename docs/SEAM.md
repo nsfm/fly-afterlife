@@ -742,6 +742,49 @@ apparatus since 1956. so no: the drum is not the problem, the sparse scene is ha
 and the limit stays where the drum tables put it - at the one-neuron wheel and its
 drifting offset.
 
+## smell (14:53 PDT, `loop.py --mode forage`)
+
+the nose is the part of this brain the LIF does best (antennal lobe, mushroom body,
+verified plasticity), and we had not used it. plan: two invisible odour patches on the
+ground, one with sugar; touch fires taste + PAM dopamine into the mushroom body with
+KC->MBON plasticity on; memory carried between episodes; does he learn to find A?
+
+**which steering cells hear smell, and from which side** (1 s, after settle): DNa02 -
+none (0-5 spikes, like touch). the DNa family lateralizes to the stronger side at a
+2.5:1 ratio: A left 1.0 / right 0.4 -> DNa L 153 / R 137; right-strong -> 37 / 84; B
+left-strong 332 / 277, right-strong 219 / 321. KCs respond (500-2,200, right-heavy:
+tracing), MBONs respond. so the family went on the wheel for smell, toward the
+stronger side.
+
+**in the world it did not steer him.** with landmark posts he orbits a post at 0.8 m
+(the visual term wins; the family's odour response is ~16 spikes/s at full strength,
+~5 deg/s on the wheel vs 25 deg/s of orbit). with no landmarks (sky and ground only)
+he walks past both patches at gain 0.3 (heading +-20 deg in 40 s) and turns without
+approaching at gain 1.0; steeper plume (lambda 0.25) no better. min distance ~1 m
+every time.
+
+**dose-response, the reason** (DNa L / R in 2 s, net (L-R) per 100 ms chunk):
+
+| left | right | DNa_L | DNa_R | net |
+|---|---|---|---|---|
+| 1.00 | 0.40 | 370 | 348 | +1.1 |
+| 0.40 | 1.00 | 87 | 207 | -6.0 |
+| 0.50 | 0.40 | 114 | 185 | -3.6 |
+| 0.40 | 0.50 | 101 | 169 | -3.4 |
+| 0.30 | 0.27 | 132 | 136 | -0.2 |
+| 0.27 | 0.30 | 147 | 138 | +0.5 |
+| 0.10 | 0.15 | 343 | 205 | +6.9 |
+
+the family's left-right difference does not track the odour difference except at the
+extreme ratio; at plume-scale ratios it is the wrong sign as often as the right one,
+and the resting right bias dominates. **bilateral odour comparison is not available
+from this readout in this model.** the other route real walking flies use - temporal
+comparison, turn more when it gets worse - needs a time derivative somewhere in the
+brain; the engine's short-term depression on olfactory afferents is the physiological
+place for one. tested next. learning itself (odour + PAM -> KC->MBON change) is not
+in doubt (flybrain's conditioning4), but without a steering channel it cannot show as
+a change in where he walks.
+
 ## choices, labelled
 
 1. **orientation** of our hex grid onto theirs. not in the data. calibrated by biology:
