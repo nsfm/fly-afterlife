@@ -12,7 +12,9 @@ FROM THE DATA
     DRA centroid, per eye.
 
 CHOICES (labelled)
-  - interommatidial angle IOA = 5.0 deg, uniform (male dorso-frontal acute zone not modelled).
+  - interommatidial angle 6.3 deg horizontal, 4.4 deg vertical (anisotropic; chosen 2026-09-16 so the
+    frontal edge reaches the midline at the equator - with 5.0 uniform there was a 35 deg blind wedge
+    dead ahead; male acute zone not modelled).
   - azimuthal-equidistant wrap of the flat sheet onto the sphere about the optical
     axis (right eye: az +90, el +15; left mirrored). one column = IOA deg of arc.
   - FRONT_SIGN: which in-sheet direction (perpendicular to dorsal) is the front of the
@@ -23,7 +25,7 @@ front, +sy = dorsal), az, el (deg), dir (unit vectors, fly frame +x fwd +y left 
 """
 import argparse, numpy as np, pandas as pd, pyarrow.feather as pf
 _ap = argparse.ArgumentParser(); _ap.add_argument("--sign", type=int, default=-1); _ap.add_argument("--out", default="seam/eye_geom.npz"); _a = _ap.parse_args()
-IOA, AXIS_AZ, AXIS_EL, FRONT_SIGN = 5.0, 90.0, 15.0, _a.sign
+IOA_H, IOA_V, AXIS_AZ, AXIS_EL, FRONT_SIGN = 6.3, 4.4, 90.0, 15.0, _a.sign   # deg per column, horizontal / vertical (anisotropic lattice; chosen so the frontal edge reaches ~-5 deg at the equator and the vertical extent stays ~+-70)
 
 c = np.load("seam/t4t5_columns.npz")
 cols = sorted({(str(s), int(a), int(b)) for s, a, b in zip(c["side"], c["hex1"], c["hex2"])})
@@ -56,7 +58,7 @@ for s, sgn in (("R", -1), ("L", +1)):
     axis = sph(sgn * AXIS_AZ, AXIS_EL)
     up = np.array([0, 0, 1.0]) - axis * axis[2]; up /= np.linalg.norm(up)
     front = np.array([1.0, 0, 0]) - axis * axis[0]; front /= np.linalg.norm(front)
-    rr = np.radians(np.hypot(sx, sy) * IOA); th = np.arctan2(sy, sx)
+    rr = np.radians(np.hypot(sx * IOA_H, sy * IOA_V)); th = np.arctan2(sy * IOA_V, sx * IOA_H)
     dirs = np.cos(rr)[:, None] * axis + np.sin(rr)[:, None] * (np.cos(th)[:, None] * front + np.sin(th)[:, None] * up)
     dirs /= np.linalg.norm(dirs, axis=1, keepdims=True); out["dir"][k] = dirs
     out["az"][k] = np.degrees(np.arctan2(dirs[:, 1], dirs[:, 0])); out["el"][k] = np.degrees(np.arcsin(np.clip(dirs[:, 2], -1, 1)))

@@ -158,7 +158,7 @@ soft pixels, and per-ommatidium raytracing is the simplest way to build one.
   all T4a: HS 795 spikes; drive all T4b: HS 0, LPi21 250 - showed the LIF's HS is a
   clean layer-1 reader, so the image convention was the thing that was mirrored.)
 
-**choices:** IOA 5 deg uniform (no acute zone); azimuthal-equidistant wrap about an
+**choices:** IOA 6.3 deg horizontal / 4.4 vertical (was 5 uniform; see the frontal-wedge note); azimuthal-equidistant wrap about an
 optical axis at az 90 / el 15; FRONT_SIGN, which way in the sheet is the front.
 
 **two signs, and which test can see which.** (1) the IMAGE convention: which side
@@ -620,6 +620,19 @@ what he turns toward. no avoidance circuit is on the wheel (LPLC2 -> escape is n
 wired to locomotion, and looms are not detected anyway). approach to dark verticals is
 real fly behaviour; walking into them is what a fly with approach and no collision
 avoidance does. viewer: "the walk" artifact.
+
+**the frontal wedge, found by nate in the viewer (11:51 PDT).** the fly-sight panel had a
+dark gap dead ahead and it was real: with a uniform 5 deg per column the most frontal
+column at the equator sat at 17-18 deg on each side, a 35 deg blind wedge straight ahead
+widening to 50 deg below the horizon, and the eyes met only above +30 deg elevation.
+cause: a 30-column-wide sheet at 5 deg covers 150 deg of azimuth per eye; a real eye
+covers ~190 deg with about the same number of columns, because the ommatidial lattice is
+anisotropic in angle (horizontal spacing larger than vertical). fix, labelled:
+IOA 6.3 deg horizontal, 4.4 deg vertical. now each eye reaches 3 deg past the midline at
+the equator (a 7 deg binocular strip), down to about -10 deg elevation; a narrowing gap
+below that, where the head and antennae are in life; elevation -58..+86; no column more
+than 100 deg from its eye's axis. every run before this had the wedge; the drum and bar
+results are unaffected in kind (they live at 60-90 deg), the walk was re-run.
 
 ## choices, labelled
 
