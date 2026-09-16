@@ -56,7 +56,7 @@ for s in "LR":
         kk = (cols["type"] == t) & (cols["side"] == s); hx = np.array([colmap.get(int(i), -1) for i in gi[kk]]); ok = hx >= 0
         groups[(t, s)] = (cols["idx"][kk][ok], hx[ok])
 R = {}
-for name, sel in [("HS", np.char.startswith(ty, "HS")), ("DNa02", ty == "DNa02"), ("DNa", np.char.startswith(ty, "DNa")), ("DN", b.sc == "descending_neuron"), ("LPLC2", ty == "LPLC2")]:
+for name, sel in [("HS", np.char.startswith(ty, "HS")), ("DNa02", ty == "DNa02"), ("DNa", np.char.startswith(ty, "DNa")), ("DN", b.sc == "descending_neuron"), ("LPLC2", ty == "LPLC2"), ("GF", ty == "DNp01")]:
     for s in "LR": R[f"{name}_{s}"] = np.flatnonzero(sel & (ns == s))
 b.driven[:] = False
 for cl in b.SENSORY_CLASSES: b.driven[b.cls == cl] = True
