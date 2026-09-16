@@ -836,6 +836,31 @@ behaviour.** fix it at the source: per descending type, per side, scale the inpu
 left and right fire alike over a direction-balanced open-loop set (`dn_equalize.py`,
 `dn_gains.json`), which is the calibration that held for the transplant.
 
+**source-level equalization (16:35 PDT).** (a) the seven wheel types + DNa02, per type per
+side, input gain iterated 4x on the direction-balanced set (`dn_equalize.py`): rates
+balanced open loop (DNp18 104/100, DNg49 293/291); on the drum one seed followed both
+ways (+25 / -24) with a +23 deg/s still-drum drift, the other did not, and the striped
+drum still left a 100/57 offset - the bias is stimulus-dependent upstream of these
+cells. (b) **whole-brain hemisphere homeostasis** (`brain_equalize.py`, `brain_gains.npz`):
+every cell type with cells on both sides (10,977 types, 134k cells), input gain per
+side, 6 iterations: median |L-R|/(L+R) over ~3,000 active types 0.31 -> 0.085. in the
+closed loop: the pooled wheel's still-drum offset went UP (743 / 244), DNa02 followed
+left only on both seeds (+25 / +4, +33 / -7). total descending activity rose ~70%
+(raising the weaker side's gain feeds recurrent loops).
+
+**closing the wheel arc.** the LIF's descending output on this connectome carries a
+left-right asymmetry that is multiplicative, stimulus-dependent, behaviour-dependent
+and slow-drifting. six corrections were tried - still offset, plateau offset, still-
+normalized ratio, motion-normalized ratio, per-type source equalization, whole-brain
+source equalization - plus global and central synaptic depression. none produced
+symmetric drum following beyond model 000. the optomotor result therefore stands as:
+symmetric on flyvis model 000 with the DNa02 wheel (3 seeds), one-sided or absent on
+most other models, and this is a property of the LIF + connectome, not of the eye.
+the wheel screen's seven multimodal types are a real anatomical finding independent of
+this. what would change it: a model with adaptation at every synapse (the transplant
+has it; the LIF does not), or the female FlyWire brain as a second specimen to
+separate tracing asymmetry from model asymmetry.
+
 ## choices, labelled
 
 1. **orientation** of our hex grid onto theirs. not in the data. calibrated by biology:
