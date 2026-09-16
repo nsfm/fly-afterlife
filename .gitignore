@@ -5,3 +5,5 @@ __pycache__/
 ref/
 seam/ens/*.npz
 seam/ens/*.log
+world/viewer_*.html
+world/*.npz
