@@ -785,6 +785,27 @@ place for one. tested next. learning itself (odour + PAM -> KC->MBON change) is 
 in doubt (flybrain's conditioning4), but without a steering channel it cannot show as
 a change in where he walks.
 
+**temporal route (14:55 PDT): the antennal lobe has the derivative, the wheel does not.**
+with the engine's short-term depression on the 2,635 olfactory receptors (U 0.08, tau
+480 ms; flybrain's measured values), projection-neuron output (ALPN, spikes per 500 ms)
+tracks concentration CHANGE: steady 0.3 -> 1838 then ~1120 (adapted); step up 0.1->0.5
+-> 611 to 1890 then decaying; step down 0.5->0.1 -> 1433 to 344; rising and falling
+ramps ramp. that is a physiological time derivative, free. but at the descending and
+leg-motor level it does not survive: DNa per 500 ms under a STEADY odour goes 78, 110,
+14, 1, 124, 9, 23, 105 - a bursty ~1 s cycle unrelated to the profile - and the one
+large motor event (leg MN tripling to ~6,100 in the last 1.5 s of the falling ramp) is
+a rebound that the step-down profile does not reproduce. no clean derivative code at
+the wheel.
+
+**smell, where it stands:** detection works (KCs, MBONs, PNs respond and adapt like
+biology); steering does not, by either route, from the readouts this LIF offers -
+bilateral comparison fails at plume-scale ratios, temporal comparison does not reach
+the motor side cleanly. the learning experiment (odour + reward -> preference) is
+blocked on steering, not on memory. options: a wheel closer to the antennal lobe (PN
+or MBON laterality, which would be reading his perception rather than his decision,
+labelled as such), or the full odour-conditioning readout in open loop, which
+flybrain already demonstrated and which is memory without a body.
+
 ## choices, labelled
 
 1. **orientation** of our hex grid onto theirs. not in the data. calibrated by biology:
