@@ -1,6 +1,6 @@
 # the seam: a graded optic lobe driving a spiking whole-fly connectome
 
-status: working draft, 2026-09-16 00:10 PDT. everything below is either measured
+status: working draft, 2026-09-15 21:50 PDT. everything below is either measured
 on this machine or labelled as a choice.
 
 ## the claim we're testing
@@ -97,7 +97,7 @@ no adaptation to make LC4 transient. two transforms, both labelled:
   not crazy (lights-off is a classic GF trigger) but LPLC2 preferring flash to loom is
   not the biology. and depression at 150 Hz drive is strong enough to gut the rates.
 
-**where that leaves it (00:45 PDT).** the T4/T5-only seam (v0) is the clean test of
+**where that leaves it (22:05 PDT).** the T4/T5-only seam (v0) is the clean test of
 the motion pathway: loom-selective through LPLC2 to the GF, weakly, stats pending in
 calib.py. the all-types seam (v1) adds the lobula contrast pathway through LC4, and
 that pathway needs temporal processing the LIF doesn't have. the depth of the seam is
