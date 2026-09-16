@@ -18,13 +18,12 @@
 >   contract 13 / flash 17 / static 0. the LIF side of the seam is sound.
 > - **stands:** the transplant reproduces T4/T5 direction selectivity on the real
 >   wiring with correct sign and laterality, at ~1/3 of flyvis's magnitude.
-> - **the bottleneck, named:** the direction selectivity of the T4/T5 activity handed
+> - **the bottleneck, named (partly):** the direction selectivity of the T4/T5 activity handed
 >   to the LIF - from any single flyvis model, and from the transplant - is not clean
 >   enough per position for LPLC2's layout to read expansion; edge polarity and edge
 >   energy dominate. next: (1) ensemble-averaged flyvis T4/T5 as the input; (2)
->   subtract each subtype's non-directional component (the mean over the four
->   subtypes) before driving, which is what LPi inhibition does in life and what the
->   0 Hz-rest LIF cannot do; (3) train the transplant's pair strengths on the real
+>   subtracting the non-directional component was tried and does NOT rescue it (see
+>   03:20); (3) train the transplant's pair strengths on the real
 >   wiring with flyvis's optic-flow task.
 
 status: working draft, 2026-09-15 21:50 PDT. everything below is either measured
@@ -493,6 +492,17 @@ all subtypes on a fixed ring for 200 ms; static: nothing). LPLC2_L over the seco
 whole second, contract and flash die within 200 ms. LPi_L fires equally for expand and
 contract (2238 / 2240), so the discrimination is the dendritic layout, not inhibition.
 the LIF's expansion circuit works on this wiring. every failure tonight was input-side.
+
+**DS-only drive does not rescue it (03:20 PDT, `seam_v2.py --dsonly`).** subtracting
+each subtype's sibling mean before driving (models 000 and 001, dark and bright, one
+seed): 000 dark loom 7 / recede 1, bright 0 / 0; 001 dark 0 / 35, bright 10 / 18, right
+4 / 30 and 27 / 54. the residual directional pattern from a single flyvis model is
+too weak or too noisy at this eye's resolution for LPLC2's layout to read, and the
+non-directional component was not the whole story. candidates for the morning:
+edge speed (the ideal test fired at 150 Hz regardless; flyvis's T4/T5 have a speed
+optimum and the ball's edge speed runs 0-100 deg/s over the second), ensemble-averaged
+input, and per-position DS measured directly on the flyvis output for the ball
+(does T4a fire behind the ball and T4b ahead, in flyvis's own numbers?).
 
 ## choices, labelled
 
