@@ -1,0 +1,16 @@
+       LPLC2 loom L  recede L  static L  LPLC2 loom R  recede R  static R  GF loom R  GF recede R  yawL HS_L  yawL HS_R
+model                                                                                                                  
+000              17         1         0            32         6         1          1            1        320        495
+001              20        94         3            42       104         3          5            8        404        600
+002              16       116         1            44       190        25          2            8        590        692
+003              15       154        26             8       208         4          0           23         73        718
+004               0        52         0             4       140         2          0            0        620        587
+005              66        48       113           155        86       217         26            1        609        274
+006               1        87         0            14       178         6          0            7        724        740
+007               1       248         0            17       414        13          0            0        755        815
+008               7       307         4            11       417         3          0            0        403        611
+009              92       272       123           110       378        96          5           81          8        252
+
+loom > recede (ipsilateral LPLC2): left 2 of 10 ; right 2 of 10
+yaw_left HS_R > HS_L: 8 of 10
+median loom/recede ratio: left 0.12  right 0.16

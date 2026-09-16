@@ -350,6 +350,41 @@ next for the transplant: fine-tune the 604 pair strengths on the real wiring wit
 flyvis's own optic-flow task (the "learn the 2026 physiology" path; GPU-hours, not
 minutes), and a home-column definition from the T4/T5 dendrite itself.
 
+## ENSEMBLE CHECK (2026-09-16 02:30 PDT) - the loom result does not generalize
+
+everything above ran on flyvis model 000 of 50. overnight: models 000-009 through
+the v2 seam (real geometry, common rest, 1 seed each; `seam/ens/SUMMARY.txt`):
+
+| model | LPLC2 loom L | recede L | loom R | recede R | GF loom R | GF recede R | yaw_left HS L / R |
+|---|---|---|---|---|---|---|---|
+| 000 | 17 | 1 | 32 | 6 | 1 | 1 | 320 / 495 |
+| 001 | 20 | 94 | 42 | 104 | 5 | 8 | 404 / 600 |
+| 002 | 16 | 116 | 44 | 190 | 2 | 8 | 590 / 692 |
+| 003 | 15 | 154 | 8 | 208 | 0 | 23 | 73 / 718 |
+| 004 | 0 | 52 | 4 | 140 | 0 | 0 | 620 / 587 |
+| 005 | 66 | 48 | 155 | 86 | 26 | 1 | 609 / 274 |
+| 006 | 1 | 87 | 14 | 178 | 0 | 7 | 724 / 740 |
+| 007 | 1 | 248 | 17 | 414 | 0 | 0 | 755 / 815 |
+| 008 | 7 | 307 | 11 | 417 | 0 | 0 | 403 / 611 |
+| 009 | 92 | 272 | 110 | 378 | 5 | 81 | 8 / 252 |
+
+**loom > recede on ipsilateral LPLC2 in 2 of 10 models** (000, 005). median
+loom:recede 0.12 left, 0.16 right. HS_R > HS_L under yaw_left in 8 of 10: the
+front-to-back image convention is robust across the ensemble; the loom selectivity
+is not. **the "3-9x" claim in the orientation section is a property of model 000 and
+is withdrawn as a general result.** the orientation decision itself (FRONT_SIGN by GF
+loom-vs-recede) was made on model 000 and has to be re-examined against the
+ensemble: with most models inverting loom/recede, the GF test on 000 alone is not
+enough to have pinned it. the DRA (dorsal) and the wiring-offset table (Mi4/Mi9
+sides) do not depend on flyvis and stand.
+
+next: measure each model's own T4/T5 direction convention on gratings (as
+`flyvis_dirs.py` did for 000) and ask whether the two models where loom wins are the
+ones whose T4/T5 tunings match the biology. lappalainen et al. report the ensemble
+clusters by T4/T5 tuning and only some clusters match experiment. if loom-wins ==
+biology-matches, this is model selection by an external criterion and the seam is
+sound; if not, the seam is wrong somewhere.
+
 ## choices, labelled
 
 1. **orientation** of our hex grid onto theirs. not in the data. calibrated by biology:
