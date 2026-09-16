@@ -300,6 +300,56 @@ way the biases were matched; still calibration to flyvis, nothing fit to our rea
 genuinely absent from the MaleCNS typing. (c) per-eye gain so the two eyes sit at the same radius. (d) then
 re-run v3, with the flash control added.
 
+## the transplant, calibrated (23:50 PDT)
+
+`--homeostat` now per (type, eye); `--gainmatch`: each (type, eye)'s input is scaled
+until its grating modulation matches flyvis's (`seam/flyvis_mod.json`), with a
+divergence guard (revert + halve the step); every scene starts from the steady state of
+its own first frame (3 s). saved in `seam/tx_calib.npz`. after 14 + 3 rounds: rests
+match to 0.012; the OFF channel is on (T5a modulation 0.21 vs flyvis 0.27, was 0.11);
+T4a/T5a front-to-back in both eyes, T4b back-to-front, T4c up. spectral radius after
+calibration: L 1.80, R 1.94 (flyvis 1.76); further gain rounds diverge.
+
+**the seam through it (`v3_calib2.json`, 3 seeds):** empty scene = 0 drive, every
+scene perfectly lateralized (loom_left: LPLC2 L 4-5, R 0; HS L 226-267, R 0). but in
+both eyes, both channels, at the transplant level: recede > static > flash > loom
+(left T5: 7,916 / 4,194 / 3,966 / 2,325). the LIF rejects static (LPLC2 0) and passes
+recede (66-78) over loom (4-5). the transplant's T4/T5 are edge detectors with weak
+direction selectivity in mean rate; a receding ball has far more edge-time than a
+looming one; flyvis's strong DS pattern is what carried the loom in v2.
+
+**the mechanism is in the wiring, and it reads the orientation for a fourth time.**
+synapse-weighted mean offset of each input type from the target's home column, in our
+sheet coordinates (+front, +dorsal), both eyes agree to 0.05:
+
+| target | Mi4 (null side) | Mi9 (preferred side) | prefers |
+|---|---|---|---|
+| T4a | -0.66 front (behind) | +0.73 front (ahead) | front-to-back |
+| T4b | +0.78 (ahead) | -0.75 (behind) | back-to-front |
+| T4c | +0.69 dorsal | -0.49 dorsal (ventral) | upward |
+| T4d | -0.86 (ventral) | +0.68 (dorsal) | downward |
+| T5a: Tm9 | | +0.52 front | front-to-back |
+| T5b: Tm9 | | -0.45 front | back-to-front |
+
+preferred-side input (Mi9 / Tm9) sits on the side motion comes from; null-side input
+(Mi4) on the side it goes to. that is the textbook mechanism (Haag 2016, Shinomiya
+2019), read straight out of the MaleCNS, and it agrees with the DRA dorsal axis and
+FRONT_SIGN=-1 using no physiology at all. synapse counts per target match flyvis
+(T4a <- Mi1 64-72 vs 59, Mi4 12-14 vs 15, Mi9 18-27 vs 23; right eye +15-40%). the
+Mi4-Mi9 separation is 1.4 columns here vs ~1.9 in flyvis's spec (its Mi4 offset is
+about twice ours), and our home column is defined by the Mi1 input, which zeroes the
+Mi1 offset by construction. a smaller spatial baseline for the correlator is one
+candidate for the weaker DS; the other is that flyvis's strengths were fit to its own
+offsets. after calibration T4a's resting inputs match flyvis within ~25% per source.
+
+**where the transplant stands.** it reproduces the direction-selectivity mechanism on
+the real wiring with correct sign and laterality in both channels, at about a third of
+flyvis's magnitude, and that third is not enough to carry a loom through LPLC2 against
+the edge response. the flyvis-driven seam (v2, common rest) remains the working eye.
+next for the transplant: fine-tune the 604 pair strengths on the real wiring with
+flyvis's own optic-flow task (the "learn the 2026 physiology" path; GPU-hours, not
+minutes), and a home-column definition from the T4/T5 dendrite itself.
+
 ## choices, labelled
 
 1. **orientation** of our hex grid onto theirs. not in the data. calibrated by biology:
