@@ -1,0 +1,10 @@
+[2026-09-17 01:01:21] network_view:122 Initialized network view at /home/nate/code/fly-afterlife/flyvis_data/results/flow/0000/000
+[2026-09-17 01:01:22] logging_utils:23 epe not in /home/nate/code/fly-afterlife/flyvis_data/results/flow/0000/000/validation, but 'loss' is. Falling back to 'loss'. You can rerun the ensemble validation to make appropriate recordings of the losses.
+[2026-09-17 01:01:31] network:222 Initialized network with NumberOfParams(free=734, fixed=2959) parameters.
+[2026-09-17 01:01:31] chkpt_utils:36 Recovered network state.
+screened wheel: 7 types, 8 L + 8 R cells: ['DNg49', 'DNpe017', 'DNp18', 'DNg52', 'DNp20', 'DNge006', 'DNa06']
+global STD on: 162517 presynaptic cells
+screened wheel resting offset (L-R per chunk, vision on): +0.90  (31 / 13 over 20 chunks)
+t=  5.0s heading   +62.7  wheel L/R 226/118  DNa02 L/R 4/7  (22s)
+t= 10.0s heading   +63.0  wheel L/R 186/145  DNa02 L/R 4/11  (44s)
+wrote world/drumW_std.npz 

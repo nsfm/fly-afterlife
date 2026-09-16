@@ -806,6 +806,36 @@ or MBON laterality, which would be reading his perception rather than his decisi
 labelled as such), or the full odour-conditioning readout in open loop, which
 flybrain already demonstrated and which is memory without a body.
 
+## the wheel screen (16:27 PDT, `world/dn_screen.py`, `world/dn_wheel.json`)
+
+every descending type with cells on both sides (about 400) screened open loop, two
+seeds, six conditions: world rotating left / right (yaw renders), odour stronger on the
+left / right antenna (1.0 / 0.4), left / right leg bristles. a "turn-left index" per
+modality = (L-R when the fly should turn left) - (L-R when it should turn right):
+toward the world's motion, toward the smell, away from the touch.
+
+**seven types agree in all three modalities, all ipsilateral** (more of it on the
+left = turn left): DNp18 (vision +49, odour +18, touch +47), DNp20 (+36 / +4 / +22),
+DNg49 (+3 / +2 / +122), DNg52 (+2 / +10 / +85), DNpe017 (+2 / +8 / +117), DNge006,
+DNa06. ~270 spikes/s pooled, ten times DNa02, and they hear all three senses through
+the wiring. DNa02 is not on the list because it hears neither smell nor touch. this is
+selection on open-loop data by what a fly should do; nothing closed-loop was used.
+
+**on the wheel it spun him** (+40 to +110 deg/s on a still drum, all seeds). the
+pooled cells' left bias is multiplicative, ~3.5:1 in every condition, and any increase
+in drive - including the motion he makes by turning - increases L-R, which turns him
+left, which makes more motion. four corrections at the wheel, in order: a still-world
+offset (underestimated 5:1 because the LIF takes seconds to reach plateau), a 10 s
+plateau offset (a fixed number cannot cancel a ratio), per-side normalization against
+the still plateau (the ratio is different once he moves: 2:1 driven vs 3.5:1 still),
+per-side normalization against direction-averaged open-loop motion (2.8:1 there, 2:1
+in the loop). global synaptic depression removed the spin and the response together.
+**the lesson: a bias that lives in the hemisphere asymmetry of the model cannot be
+fixed at the readout, because the readout's reference state depends on the fly's own
+behaviour.** fix it at the source: per descending type, per side, scale the input so
+left and right fire alike over a direction-balanced open-loop set (`dn_equalize.py`,
+`dn_gains.json`), which is the calibration that held for the transplant.
+
 ## choices, labelled
 
 1. **orientation** of our hex grid onto theirs. not in the data. calibrated by biology:

@@ -1,0 +1,10 @@
+[2026-09-17 01:21:13] network_view:122 Initialized network view at /home/nate/code/fly-afterlife/flyvis_data/results/flow/0000/000
+[2026-09-17 01:21:13] logging_utils:23 epe not in /home/nate/code/fly-afterlife/flyvis_data/results/flow/0000/000/validation, but 'loss' is. Falling back to 'loss'. You can rerun the ensemble validation to make appropriate recordings of the losses.
+[2026-09-17 01:21:23] network:222 Initialized network with NumberOfParams(free=734, fixed=2959) parameters.
+[2026-09-17 01:21:23] chkpt_utils:36 Recovered network state.
+DNa02 resting offset (R-L per chunk): -0.30  (L 8, R 2 over 20 chunks)
+Traceback (most recent call last):
+  File "/home/nate/code/fly-afterlife/world/loop.py", line 153, in <module>
+    if args.norm_ref == "motion": dL_rest, dR_rest = motion_reference("DNa02_L", "DNa02_R"); print(f"DNa02 MOTION reference per chunk: L {dL_rest:.2f} R {dR_rest:.2f}")
+                                                     ^^^^^^^^^^^^^^^^
+NameError: name 'motion_reference' is not defined
