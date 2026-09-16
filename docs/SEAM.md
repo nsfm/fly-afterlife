@@ -1,6 +1,6 @@
 # the seam: a graded optic lobe driving a spiking whole-fly connectome
 
-> **STATUS (2026-09-16 03:10 PDT) - read this before the sections below, several of
+> **STATUS (2026-09-16 02:43 PDT, read from the clock) - read this before the sections below, several of
 > which are superseded by later ones.**
 >
 > - **withdrawn:** every "loom-selective" number from the flyvis-driven seam (v2) and
@@ -23,7 +23,7 @@
 >   enough per position for LPLC2's layout to read expansion; edge polarity and edge
 >   energy dominate. next: (1) ensemble-averaged flyvis T4/T5 as the input; (2)
 >   subtracting the non-directional component was tried and does NOT rescue it (see
->   03:20); (3) train the transplant's pair strengths on the real
+>   ~02:42); (3) train the transplant's pair strengths on the real
 >   wiring with flyvis's optic-flow task.
 
 status: working draft, 2026-09-15 21:50 PDT. everything below is either measured
@@ -376,7 +376,7 @@ next for the transplant: fine-tune the 604 pair strengths on the real wiring wit
 flyvis's own optic-flow task (the "learn the 2026 physiology" path; GPU-hours, not
 minutes), and a home-column definition from the T4/T5 dendrite itself.
 
-## ENSEMBLE CHECK (2026-09-16 02:30 PDT) - the loom result does not generalize
+## ENSEMBLE CHECK (2026-09-16 ~02:28 PDT) - the loom result does not generalize
 
 everything above ran on flyvis model 000 of 50. overnight: models 000-009 through
 the v2 seam (real geometry, common rest, 1 seed each; `seam/ens/SUMMARY.txt`):
@@ -431,7 +431,7 @@ T4 wins the loom for the wrong reason. control: a bright ball, both directions, 
 models 000 / 001 / 005. if LPLC2 is outward-selective, bright loom > bright recede;
 if it is polarity, it flips.
 
-**polarity control result (02:50 PDT), models 000 / 001 / 005, ipsilateral LPLC2:**
+**polarity control result (~02:33 PDT), models 000 / 001 / 005, ipsilateral LPLC2:**
 
 | model | dark loom | dark recede | bright loom | bright recede |
 |---|---|---|---|---|
@@ -461,7 +461,7 @@ wiring has that, the seam is failing to use it (candidates: LPi inhibition too w
 0 Hz rest; T5 input outweighing T4; Tm5Y, LPLC2's largest input, undriven). if it
 does not, no downstream readout could have worked.
 
-**LPLC2's receptive field is in the wiring (03:00 PDT).** synapse-weighted offset of
+**LPLC2's receptive field is in the wiring (~02:36 PDT).** synapse-weighted offset of
 each T4/T5 subtype's input from each LPLC2 cell's own centre (centre = weighted mean of
 all its T4/T5 input columns; +front, +dorsal; 185 cells, ~319 T4/T5 synapses over
 ~36 columns each):
@@ -484,7 +484,7 @@ LIF-side: hand the LIF an IDEAL direction-selective T4/T5 pattern (expanding rin
 T4a/T5a fire behind the centre, b ahead, c above, d below; contracting ring: the
 opposite; flash: all subtypes on the ring at once) and ask whether LPLC2 discriminates.
 
-**ideal-input test (03:05 PDT), `seam/ideal_t4t5.py`.** left eye's own T4/T5 cells
+**ideal-input test (~02:38 PDT), `seam/ideal_t4t5.py`.** left eye's own T4/T5 cells
 driven with a perfectly direction-selective pattern (expanding ring: T4a/T5a fire behind
 the centre, b ahead, c above, d below, rate 150 * |cos|; contracting: mirrored; flash:
 all subtypes on a fixed ring for 200 ms; static: nothing). LPLC2_L over the second:
@@ -493,7 +493,7 @@ whole second, contract and flash die within 200 ms. LPi_L fires equally for expa
 contract (2238 / 2240), so the discrimination is the dendritic layout, not inhibition.
 the LIF's expansion circuit works on this wiring. every failure tonight was input-side.
 
-**DS-only drive does not rescue it (03:20 PDT, `seam_v2.py --dsonly`).** subtracting
+**DS-only drive does not rescue it (~02:42 PDT, `seam_v2.py --dsonly`).** subtracting
 each subtype's sibling mean before driving (models 000 and 001, dark and bright, one
 seed): 000 dark loom 7 / recede 1, bright 0 / 0; 001 dark 0 / 35, bright 10 / 18, right
 4 / 30 and 27 / 54. the residual directional pattern from a single flyvis model is
