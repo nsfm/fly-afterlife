@@ -405,6 +405,36 @@ T4 wins the loom for the wrong reason. control: a bright ball, both directions, 
 models 000 / 001 / 005. if LPLC2 is outward-selective, bright loom > bright recede;
 if it is polarity, it flips.
 
+**polarity control result (02:50 PDT), models 000 / 001 / 005, ipsilateral LPLC2:**
+
+| model | dark loom | dark recede | bright loom | bright recede |
+|---|---|---|---|---|
+| 000 L | 17 | 1 | 0 | 5 |
+| 000 R | 32 | 9 | 2 | 15 |
+| 001 L | 20 | 94 | 6 | 12 |
+| 005 R | 172 | 77 | 73 | 169 |
+
+**bright ball: recede > loom in every model, including 000.** the seam's LPLC2 was
+reading OFF vs ON, never outward vs inward. every "loom-selective" number in this
+document from v2 onward is a polarity result and is withdrawn as evidence of
+expansion detection. that includes the giant-fiber loom-vs-recede test that decided
+FRONT_SIGN: struck as evidence.
+
+**what the orientation now rests on, and it is enough:** two pieces of pure anatomy.
+(1) dorsal: the R7d/R8d dorsal-rim photoreceptors land on one rim of the grid.
+(2) front: T4a's preferred-side input (Mi9, per Shinomiya 2019 / Haag 2016) sits
++0.73 columns toward the front and its null-side input (Mi4) 0.66 behind, only under
+FRONT_SIGN = -1; under +1 the sides swap and contradict the biology. T4b/c/d agree.
+no physiology, no flyvis, no LIF in either. the HS image convention is separately
+robust across the ensemble (8 of 10). so: FRONT_SIGN = -1 stands, on wiring alone.
+
+**what is not established:** that any LIF readout in this pipeline detects expansion.
+the next measurement is anatomical again: does each LPLC2's dendrite sample layer a
+(front-to-back) behind its centre, b ahead, c above, d below (Klapoetke 2017)? if the
+wiring has that, the seam is failing to use it (candidates: LPi inhibition too weak at
+0 Hz rest; T5 input outweighing T4; Tm5Y, LPLC2's largest input, undriven). if it
+does not, no downstream readout could have worked.
+
 ## choices, labelled
 
 1. **orientation** of our hex grid onto theirs. not in the data. calibrated by biology:
