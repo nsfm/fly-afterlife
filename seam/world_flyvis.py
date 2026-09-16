@@ -40,8 +40,10 @@ def ball_path(az_deg, t):
     """dark ball, radius 0.15, approaching along a bearing; distance 3 m -> 0.3 m over the last second."""
     az = np.radians(az_deg); dist = 3.0 if t < 1.0 else 3.0 - 2.6 * (t - 1.0)
     return (np.array([np.cos(az) * dist, np.sin(az) * dist, 0.5]), 0.3, 0.05)
+from scenes import frame_scene as _fs
 def frame_scene(t):
     s = STIM
+    if s.endswith("_bright"): return _fs(s, t)
     if s == "empty":       return Scene(), 0.0
     if s == "loom_ahead":  return Scene(spheres=[ball_path(0, t)]), 0.0
     if s == "loom_left":   return Scene(spheres=[ball_path(60, t)]), 0.0

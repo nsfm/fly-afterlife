@@ -2,10 +2,18 @@
 fly at origin heading +x, ground z=0, eye z=0.5. every stimulus holds its pre-state for the first second."""
 import numpy as np
 from omma import Scene
-def ball_path(az_deg, t, r=0.3):
+def ball_path(az_deg, t, r=0.3, alb=0.05):
     az = np.radians(az_deg); dist = 3.0 if t < 1.0 else 3.0 - 2.6 * (t - 1.0)
-    return (np.array([np.cos(az) * dist, np.sin(az) * dist, 0.5]), r, 0.05)
+    return (np.array([np.cos(az) * dist, np.sin(az) * dist, 0.5]), r, alb)
 def frame_scene(s, t):
+    if s.endswith("_bright"):
+        base = s[:-7]; kind, where = base.split("_"); az = {"ahead": 0, "left": 60, "right": -60}[where]
+        if kind == "loom":   return Scene(spheres=[ball_path(az, t, alb=1.0)]), 0.0
+        if kind == "recede":
+            a = np.radians(az); dist = 0.4 if t < 1.0 else 0.4 + 2.6 * (t - 1.0)
+            return Scene(spheres=[(np.array([np.cos(a) * dist, np.sin(a) * dist, 0.5]), 0.3, 1.0)]), 0.0
+        if kind == "static":
+            a = np.radians(az); return Scene(spheres=[(np.array([np.cos(a), np.sin(a), 0.5]), 0.3, 1.0)]), 0.0
     if s == "empty":        return Scene(), 0.0
     if s == "loom_ahead":   return Scene(spheres=[ball_path(0, t)]), 0.0
     if s == "loom_left":    return Scene(spheres=[ball_path(60, t)]), 0.0

@@ -385,6 +385,26 @@ clusters by T4/T5 tuning and only some clusters match experiment. if loom-wins =
 biology-matches, this is model selection by an external criterion and the seam is
 sound; if not, the seam is wrong somewhere.
 
+**the model-selection hypothesis is refuted** (`seam/ens_dirs.py`, `seam/ens/dirs.json`):
+each model's own T4/T5 preferred image directions on gratings, flagged against the
+biology, next to its loom outcome:
+
+| model | T4a T4b T4c T4d | T5a T5b T5c T5d | match | loom > recede |
+|---|---|---|---|---|
+| 000 | l* r* u* u | l* l u* d* | 6/8 | yes |
+| 001 | l* r* u* d* | l* r* u* d* | **8/8** | **no** |
+| 005 | r u d u | r r* r l | **1/8** | **yes** |
+| 002/003/007/009 | mostly right | mostly right | 6-7/8 | no |
+
+the biologically correct model loses; a model with T4a pointing the wrong way wins.
+the LIF's LPLC2 is not reading outward-vs-inward from these inputs. **the likely
+confound is polarity: the ball is dark.** a dark ball looming is darkening edges
+moving outward (T5, OFF); receding, brightening edges (T4, ON). "loom vs recede" has
+been "OFF vs ON" since the first night, and a model whose T5 answers harder than its
+T4 wins the loom for the wrong reason. control: a bright ball, both directions, on
+models 000 / 001 / 005. if LPLC2 is outward-selective, bright loom > bright recede;
+if it is polarity, it flips.
+
 ## choices, labelled
 
 1. **orientation** of our hex grid onto theirs. not in the data. calibrated by biology:
