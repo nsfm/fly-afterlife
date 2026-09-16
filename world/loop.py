@@ -21,7 +21,7 @@ from omma import Eye, Scene
 ap = argparse.ArgumentParser(); ap.add_argument("--mode", required=True); ap.add_argument("--out", required=True); ap.add_argument("--seconds", type=float, default=20.0)
 ap.add_argument("--model", default="flow/0000/000"); ap.add_argument("--gain", type=float, default=3.0); ap.add_argument("--smooth", type=float, default=3.0)
 ap.add_argument("--drive-gain", type=float, default=150.0); ap.add_argument("--seed", type=int, default=0); ap.add_argument("--bar-az", type=float, default=60.0)
-ap.add_argument("--speed", type=float, default=0.3); ap.add_argument("--world-seed", type=int, default=1); args = ap.parse_args()
+ap.add_argument("--speed", type=float, default=0.3); ap.add_argument("--tag", default=""); ap.add_argument("--touch", action="store_true", help="posts are solid: on contact he is held at the surface and the leg bristles on the touched side fire (150 Hz) into the LIF"); ap.add_argument("--body", type=float, default=0.05); ap.add_argument("--leg-gain", type=float, default=30.0, help="deg per chunk per unit leg-motor asymmetry (R-L)/(R+L), rest asymmetry subtracted; more left-leg drive = right turn"); ap.add_argument("--world-seed", type=int, default=1); args = ap.parse_args()
 fps, CH = 100, 10; g = np.load("seam/eye_geom.npz"); eye = Eye("seam/eye_geom.npz"); rng = np.random.default_rng(args.world_seed)
 # ---- world
 posts = [(x, y, 0.2, 0.05) for x, y in rng.uniform(-2.5, 2.5, size=(8, 2)) if np.hypot(x + 2.0, y) > 0.8]
@@ -80,8 +80,9 @@ for s in "LR":
     k, col = eyemap[s]; colmap = dict(zip(k.tolist(), col.tolist()))
     for t in types:
         kk = (cols["type"] == t) & (cols["side"] == s); hx = np.array([colmap.get(int(i), -1) for i in gi[kk]]); ok = hx >= 0; groups[(t, s)] = (cols["idx"][kk][ok], hx[ok])
+cls_ = b.cls.astype(str); TACT = {s_: np.flatnonzero((cls_ == "mechanosensory_tactile") & (ns == s_)) for s_ in "LR"}
 R = {}
-for name, sel in [("HS", np.char.startswith(ty, "HS")), ("DNa02", ty == "DNa02"), ("DNa", np.char.startswith(ty, "DNa")), ("DN", b.sc == "descending_neuron"), ("LPLC2", ty == "LPLC2"), ("GF", ty == "DNp01")]:
+for name, sel in [("HS", np.char.startswith(ty, "HS")), ("DNa02", ty == "DNa02"), ("DNa", np.char.startswith(ty, "DNa")), ("DN", b.sc == "descending_neuron"), ("LPLC2", ty == "LPLC2"), ("GF", ty == "DNp01"), ("legMN", b.sc == "vnc_motor")]:
     for s in "LR": R[f"{name}_{s}"] = np.flatnonzero(sel & (ns == s))
 b.driven[:] = False
 for cl in b.SENSORY_CLASSES: b.driven[b.cls == cl] = True
@@ -96,9 +97,12 @@ for c in range(10):
     if c >= 5:
         for k_, v_ in a.items(): acc.setdefault(k_, []).append(v_)
 rest = {k_: np.concatenate(v_).mean(0) for k_, v_ in acc.items()}
-for _ in range(500): b.step()
+legL = legR = 0
+for _ in range(500):
+    spk = b.step(); legL += int(spk[R["legMN_L"]].sum()); legR += int(spk[R["legMN_R"]].sum())
+leg_rest = 0.0
 # ---- loop
-T = int(args.seconds * fps); LUM, POSE, PHASE = [], [], []; log = {k: [] for k in R}; hits = 0; ema = 0.0; t0 = time.time(); bearing = []
+T = int(args.seconds * fps); LUM, POSE, PHASE, TOUCH = [], [], [], []; log = {k: [] for k in R}; hits = 0; ema = 0.0; t0 = time.time(); bearing = []
 for c in range(T // CH):
     t = c * CH / fps; sc, w = scene_at(t); lum = np.zeros((CH, eye.n), np.float32)
     for f in range(CH):
@@ -107,26 +111,45 @@ for c in range(T // CH):
         POSE.append((x, y, heading)); PHASE.append(scene_at.phase if args.mode == "drum" else (bar["az_world"] if args.mode == "bar" else 0.0))
         if args.mode in ("walk", "blind"):
             x += args.speed / fps * np.cos(np.radians(heading)); y += args.speed / fps * np.sin(np.radians(heading))
+            touched = None
             for ox, oy, r_, _ in objects:
-                if np.hypot(x - ox, y - oy) < r_ + 0.05: hits += 1; break
+                dd = np.hypot(x - ox, y - oy)
+                if dd < r_ + args.body:
+                    hits += 1
+                    if args.touch:
+                        x, y = ox + (x - ox) / max(dd, 1e-6) * (r_ + args.body), oy + (y - oy) / max(dd, 1e-6) * (r_ + args.body)   # held at the surface
+                        brg = (np.degrees(np.arctan2(oy - y, ox - x)) - heading + 180) % 360 - 180
+                        touched = "L" if brg > 8 else ("R" if brg < -8 else "B")
+                    break
+            TOUCH.append(touched)
     LUM.append((np.clip(lum, 0, 1) * 255).astype(np.uint8))
     a = flyvis_chunk(lum) if args.mode != "blind" else None; cnt = {k: 0 for k in R}
     for f in range(CH):
         if a is not None:
             for (tt, s), (idx, hx) in groups.items(): b.drive_hz[idx] = args.drive_gain * np.clip((a[(s, tt)][f] - rest[(s, tt)])[hx], 0, 1)
+        if args.touch:
+            tch = TOUCH[c * CH + f] if c * CH + f < len(TOUCH) else None
+            for s_ in "LR": b.drive_hz[TACT[s_]] = 150.0 if (tch == "B" or tch == s_) else 0.0
         for _ in range(SPF):
             spk = b.step()
             for k, r in R.items(): cnt[k] += int(spk[r].sum())
     net_ = cnt["DNa02_R"] - cnt["DNa02_L"]; ema += (net_ - ema) / max(args.smooth, 1.0)
-    heading += float(np.clip(args.gain * ema, -12, 12)) * -1
+    yaw = float(np.clip(args.gain * ema, -12, 12)) * -1
+    if args.touch:
+        asym = (cnt["legMN_R"] - cnt["legMN_L"]) / max(cnt["legMN_R"] + cnt["legMN_L"], 1)
+        touched_chunk = any(TOUCH[c * CH + f] for f in range(CH) if c * CH + f < len(TOUCH))
+        if not touched_chunk: leg_rest += (asym - leg_rest) / 20.0          # running baseline from untouched chunks
+        else: yaw += float(np.clip(args.leg_gain * (asym - leg_rest), -12, 12))   # more right-leg drive -> left turn (+heading); only while touching
+    heading += yaw
     for k in R: log[k].append(cnt[k])
     if args.mode == "bar": bearing.append(((bar["az_world"] - heading + 180) % 360) - 180)
-    if c % 50 == 49: print(f"t={t+0.1:5.1f}s heading {heading:+7.1f}" + (f"  bar bearing {bearing[-1]:+6.1f}" if bearing else "") + (f"  pos ({x:+.2f},{y:+.2f}) hits {hits}" if args.mode in ('walk', 'blind') else "") + f"  DNa02 L/R {sum(log['DNa02_L'][-50:])}/{sum(log['DNa02_R'][-50:])}  ({time.time()-t0:.0f}s)", flush=True)
+    if c % 50 == 49: print(f"t={t+0.1:5.1f}s heading {heading:+7.1f}" + (f"  touches L/R/both {TOUCH.count(chr(76))}/{TOUCH.count(chr(82))}/{TOUCH.count(chr(66))}" if args.touch else "") + (f"  bar bearing {bearing[-1]:+6.1f}" if bearing else "") + (f"  pos ({x:+.2f},{y:+.2f}) hits {hits}" if args.mode in ('walk', 'blind') else "") + f"  DNa02 L/R {sum(log['DNa02_L'][-50:])}/{sum(log['DNa02_R'][-50:])}  ({time.time()-t0:.0f}s)", flush=True)
 Tn = len(POSE); per_frame = {f"n_{k}": np.repeat(np.array(log[k], np.int16), CH)[:Tn] for k in R}
 extra = {}
 if args.mode == "drum": extra = dict(drum_period=drum["period_deg"], drum_lo=drum["lo"], drum_hi=drum["hi"], drum_half_height=drum["half_height_deg"], drum_phase=np.array(PHASE, np.float32))
 if args.mode == "bar": extra = dict(bar_width=bar["width_deg"], bar_lo=bar["lo"], bar_bg=bar["bg"], bar_half_height=bar["half_height_deg"], bar_az=np.array(PHASE, np.float32), bearing=np.array(bearing, np.float32))
-np.savez_compressed(args.out, fps=fps, chunk=CH, mode=args.mode, lum=np.concatenate(LUM), pose=np.array(POSE, np.float32), objects=objects, fov=150.0, hits=hits,
+touch_side = np.array([{"L": 1, "R": 2, "B": 3}.get(t_, 0) for t_ in TOUCH], np.int8) if TOUCH else np.zeros(0, np.int8)
+np.savez_compressed(args.out, fps=fps, chunk=CH, mode=args.mode, touch=touch_side, lum=np.concatenate(LUM), pose=np.array(POSE, np.float32), objects=objects, fov=150.0, hits=hits,
                     az=np.degrees(np.arctan2(eye.dir0[:, 1], eye.dir0[:, 0])).astype(np.float32), el=np.degrees(np.arcsin(np.clip(eye.dir0[:, 2], -1, 1))).astype(np.float32), side=eye.side,
                     heading_chunk=np.array([p[2] for p in POSE[::CH]]), **per_frame, **{f"ncells_{k}": len(v) for k, v in R.items()}, **extra)
 print("wrote", args.out, f"hits={hits}" if args.mode in ("walk", "blind") else "")

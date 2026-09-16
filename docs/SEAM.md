@@ -634,6 +634,32 @@ below that, where the head and antennae are in life; elevation -58..+86; no colu
 than 100 deg from its eye's axis. every run before this had the wedge; the drum and bar
 results are unaffected in kind (they live at 60-90 deg), the walk was re-run.
 
+## touch (12:59 PDT, `loop.py --touch`)
+
+**diagnostic first** (LIF only, 150 Hz on the leg bristles for 1 s): DNa02 does not
+respond to touch at all (0 / 0). the DNa family does, weakly and left-biased. the leg
+motor neurons respond ipsilaterally: left bristles -> leg MN L 12,156 / R 9,978; right
+bristles -> L 7,952 / R 8,722; both -> 12,714 / 12,311. leg touch is handled in the
+ventral nerve cord, not by the brain's steering neuron, which is the anatomy.
+
+**so the wheel gets a second term, labelled:** a fly turns by driving the legs on the
+outside of the turn harder, so more left-leg drive = right turn. yaw_touch = 30 deg x
+((legMN_R - legMN_L)/(legMN_R + legMN_L) - running rest asymmetry), applied only in
+chunks where he is in contact; the rest asymmetry is a running mean over untouched
+chunks (a fixed 0.5 s estimate was noise and sent one seed into a permanent spin).
+posts are solid: he is held at the surface while in contact, and the bristles on the
+contacted side (or both, if head-on) fire at 150 Hz.
+
+| | contacts | mean frames per contact | longest | total stuck |
+|---|---|---|---|---|
+| reflex ON, seeds 0/1/2 | 6 / 5 / 2 | 70 / 117 / 106 | 116 / 153 / 137 | 4.2 / 5.8 / 2.1 s |
+| reflex OFF (bristles fire, leg term 0) | 2 / 3 / 2 | 292 / 158 / 271 | 389 / 246 / 354 | 5.8 / 4.7 / 5.4 s |
+
+with the reflex he frees himself in about a second per contact; without it, two and a
+half, with vision alone eventually turning him. a collision reflex that emerges from
+leg bristles -> VNC -> leg motor neurons in the real wiring, plus one motor mapping of
+mine. viewer: "the walk, solid posts" (touches ringed in red on the map).
+
 ## choices, labelled
 
 1. **orientation** of our hex grid onto theirs. not in the data. calibrated by biology:

@@ -8,6 +8,7 @@ data = {"fps": int(ep["fps"]), "T": int(lum.shape[0]), "n": int(lum.shape[1]), "
         "lum_b64": base64.b64encode(lum.tobytes()).decode(),
         "traces": {k[2:]: nr[k].astype(int).tolist() for k in nr.files if k.startswith("n_")},
         "ncells": {k[7:]: int(nr[k]) for k in nr.files if k.startswith("ncells_")},
+        "touch": (ep["touch"].astype(int).tolist() if "touch" in ep.files and len(ep["touch"]) else None),
         "drum": ({"period": float(ep["drum_period"]), "lo": float(ep["drum_lo"]), "hi": float(ep["drum_hi"]), "half_height": float(ep["drum_half_height"]), "phase": np.round(ep["drum_phase"], 2).tolist()} if "drum_phase" in ep.files else None)}
 name = sys.argv[4] if len(sys.argv) > 4 else "episode 0"
 html = tpl.replace("/*__DATA__*/null", json.dumps(data)).replace("<title>Fly Afterlife Viewer</title>", f"<title>Fly Afterlife {name.title()}</title>").replace("fly afterlife · episode 0", f"fly afterlife · {name}")
