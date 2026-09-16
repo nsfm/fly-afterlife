@@ -14,13 +14,18 @@ import numpy as np
 RHO = 4.5; N_RAYS = 24
 
 class Scene:
-    def __init__(self, sky=0.85, ground=0.35, horizon_soft=0.15, spheres=()):
+    def __init__(self, sky=0.85, ground=0.35, horizon_soft=0.15, spheres=(), drum=None):
         self.sky, self.ground, self.soft = sky, ground, horizon_soft
         self.spheres = list(spheres)             # (centre xyz, radius, albedo)
+        self.drum = drum                         # None or dict(period_deg, phase_deg, lo, hi, half_height_deg): a striped cylinder at infinity
     def shade(self, origin, d):
         """d: (N,3) unit rays from origin. returns (N,) luminance."""
         lum = np.where(d[:, 2] > 0, self.sky, self.ground).astype(np.float32)
         band = np.clip(0.5 + d[:, 2] / self.soft, 0, 1); lum = self.ground + (self.sky - self.ground) * band
+        if self.drum is not None:
+            dr = self.drum; az = np.degrees(np.arctan2(d[:, 1], d[:, 0])); elv = np.degrees(np.arcsin(np.clip(d[:, 2], -1, 1)))
+            band = np.abs(elv) < dr["half_height_deg"]; stripe = ((az - dr["phase_deg"]) // (dr["period_deg"] / 2)) % 2 == 0
+            lum = np.where(band, np.where(stripe, dr["lo"], dr["hi"]), lum).astype(np.float32)
         tmin = np.full(len(d), np.inf)
         for c, r, alb in self.spheres:
             oc = origin - c; b = d @ oc; disc = b * b - (oc @ oc - r * r)
