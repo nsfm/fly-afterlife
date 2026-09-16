@@ -17,9 +17,9 @@ sys.path.insert(0, "ref/flybrain/scripts")
 from flysim import FlyBrain
 ap = argparse.ArgumentParser(); ap.add_argument("--stims", nargs="+", required=True); ap.add_argument("--seeds", type=int, nargs="+", default=[0])
 ap.add_argument("--gain", type=float, default=150.0); ap.add_argument("--a-ref", type=float, default=1.0); ap.add_argument("--out", default=None)
-ap.add_argument("--prefix", default="seam/world"); args = ap.parse_args()
+ap.add_argument("--prefix", default="seam/world"); ap.add_argument("--geom", default="seam/eye_geom.npz"); args = ap.parse_args()
 SPF = 10; types = ["T4a", "T4b", "T4c", "T4d", "T5a", "T5b", "T5c", "T5d"]
-cols = np.load("seam/t4t5_columns.npz"); g = np.load("seam/eye_geom.npz")
+ap2 = args; cols = np.load("seam/t4t5_columns.npz"); g = np.load(args.geom)
 gkey = {(str(s), int(a), int(b)): i for i, (s, a, b) in enumerate(zip(g["side"], g["hex1"], g["hex2"]))}
 gi = np.array([gkey[(str(s), int(a), int(b))] for s, a, b in zip(cols["side"], cols["hex1"], cols["hex2"])])
 

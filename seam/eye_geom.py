@@ -21,8 +21,9 @@ CHOICES (labelled)
 Writes seam/eye_geom.npz: side, hex1, hex2, sx, sy (sheet coords in columns: +sx =
 front, +sy = dorsal), az, el (deg), dir (unit vectors, fly frame +x fwd +y left +z up).
 """
-import numpy as np, pandas as pd, pyarrow.feather as pf
-IOA, AXIS_AZ, AXIS_EL, FRONT_SIGN = 5.0, 90.0, 15.0, +1
+import argparse, numpy as np, pandas as pd, pyarrow.feather as pf
+_ap = argparse.ArgumentParser(); _ap.add_argument("--sign", type=int, default=-1); _ap.add_argument("--out", default="seam/eye_geom.npz"); _a = _ap.parse_args()
+IOA, AXIS_AZ, AXIS_EL, FRONT_SIGN = 5.0, 90.0, 15.0, _a.sign
 
 c = np.load("seam/t4t5_columns.npz")
 cols = sorted({(str(s), int(a), int(b)) for s, a, b in zip(c["side"], c["hex1"], c["hex2"])})
@@ -64,7 +65,7 @@ for s, sgn in (("R", -1), ("L", +1)):
     # where do the DRA columns land after the wrap? (should be the top edge)
     dk = np.isin(list(zip(h1[k], h2[k])), list(zip(gd.h1, gd.h2))) if False else np.array([(p, q_) in set(zip(gd.h1, gd.h2)) for p, q_ in zip(h1[k], h2[k])])
     print(f"        DRA columns after wrap: median el {np.median(out['el'][k][dk]):.0f} deg (eye median {np.median(out['el'][k]):.0f})")
-np.savez("seam/eye_geom.npz", **out)
+np.savez(_a.out, **out)
 fr = np.abs(out["az"]) < 15
 print(f"frontal wedge |az|<15: L {fr[side=='L'].sum()} R {fr[side=='R'].sum()} columns")
 import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt
@@ -72,4 +73,4 @@ fig, ax = plt.subplots(figsize=(11, 4.5))
 for s, col in (("L", "tab:blue"), ("R", "tab:red")):
     k = side == s; ax.scatter(out["az"][k], out["el"][k], s=6, c=col, label=f"{s} eye")
 ax.set_xlim(190, -190); ax.set_ylim(-95, 95); ax.set_xlabel("azimuth (deg; 0 ahead, left of fly = left of plot)"); ax.set_ylabel("elevation"); ax.legend(); ax.set_title("where each retinal column looks")
-fig.tight_layout(); fig.savefig("seam/eye_geom.png", dpi=110)
+fig.tight_layout(); fig.savefig(_a.out.replace(".npz", ".png"), dpi=110)

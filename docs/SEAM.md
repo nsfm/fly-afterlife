@@ -105,6 +105,58 @@ a per-pathway question, not one number: T4/T5 for the lobula plate, and for the 
 either drive Tm/TmY with a transient transform or accept that LC4 needs its own
 graded/adapting model. open.
 
+
+## the eye (added 22:50 PDT, after nate asked about the geometry)
+
+the first seam rendered one flat image and told both eyes it was in the middle of
+their field. that is two objects, one per side. the real eye is an apposition eye:
+each column is one pixel with a ~5 deg gaussian acceptance cone, ~880 of them per
+eye on a hemisphere that points sideways and a bit up, meeting the other eye in a
+10-15 deg frontal strip. so the honest renderer is a low-res spherical camera with
+soft pixels, and per-ommatidium raytracing is the simplest way to build one.
+
+**measured from the wiring:**
+- hex convention: interior columns have six neighbours only if (+1,+1) is a
+  neighbour, i.e. axial (q, r) = (hex1, -hex2). under that convention all three
+  lattice axes span 36-39 columns: a regular hexagonal eye. (the other convention
+  made it 1.7x elongated and wrapped it over the poles.)
+- dorsal: the R7d/R8d photoreceptors (polarization vision; a thin strip along the
+  dorsal margin of every fly eye) land on one rim of the grid in both eyes. dorsal =
+  centroid -> DRA centroid. after the wrap they sit at 65-72 deg elevation.
+- flyvis's direction convention (gratings): T4b prefers image-right, T4a image-left,
+  T4c up, T5d down. biological T4a prefers FRONT-TO-BACK motion, so the front must
+  sit at image-RIGHT (front-to-back then runs toward image-left, where flyvis's T4a
+  lives). the column -> lattice map is DERIVED: our front -> flyvis image-right, our
+  dorsal -> flyvis up. it is no longer a swept parameter. (first draft had front at
+  image-left. HS came out on the wrong side under yaw, and a synthetic test - drive
+  all T4a: HS 795 spikes; drive all T4b: HS 0, LPi21 250 - showed the LIF's HS is a
+  clean layer-1 reader, so the image convention was the thing that was mirrored.)
+
+**choices:** IOA 5 deg uniform (no acute zone); azimuthal-equidistant wrap about an
+optical axis at az 90 / el 15; FRONT_SIGN, which way in the sheet is the front.
+
+**two signs, and which test can see which.** (1) the IMAGE convention: which side
+of flyvis's image the front is on. HS tests this: a fly yawing left brings objects on
+its left toward the front (back-to-front in the left eye, front-to-back in the
+right), and HS prefers front-to-back on its own side, so yaw_left must give HS_R >
+HS_L. measured with front at image-left: HS_L 501/505/506 vs HS_R 345/347/339 (3
+seeds), the wrong side; fixed to image-right. (2) FRONT_SIGN, the ANATOMICAL sign:
+which physical columns look forward. as implemented it moves the geometry and the
+lattice map together, so flyvis's image is unchanged and HS cannot see it (measured:
+HS identical to three digits across the flip). only circuits whose selectivity
+depends on where a cell sits in the eye can - LPLC2's receptive-field layout in our
+wiring. so the test for (2) is lateral loom vs lateral recede on LPLC2, both signs,
+everything else identical (`v2_P.json`, `v2_M.json`).
+
+**files:** `seam/eye_geom.py` (columns -> directions, `eye_geom.png`), `seam/omma.py`
+(raytracer, `fly_sees.png`), `seam/world_flyvis.py` (scene -> both eyes -> flyvis per
+eye), `seam/seam_v2.py` (per-eye seam; LPLC2/GF/DNa02/DNa/HS/DN per side + bins).
+
+**a limit found on the way:** flyvis's lattice (721 hexes) is smaller than our eye
+(~880): ~107 rim columns per eye, including the frontal rim, get no flyvis. flyvis's
+parameters are per cell type, so a larger-extent network should be buildable from the
+same weights. not done yet.
+
 ## choices, labelled
 
 1. **orientation** of our hex grid onto theirs. not in the data. calibrated by biology:
