@@ -560,6 +560,41 @@ the adapted transplant: left loom 10 / recede 33 / static 1; right loom 110 / re
 adaptation on (it is the more physiological model and the stable one), but the
 transplant's route to a loom detector is training its pair strengths, not tuning.
 
+## he moves (11:13 PDT): closed-loop optomotor response
+
+`world/closedloop.py`: a striped drum (30 deg period, 60 deg band, 0.2/0.8) around a fly
+fixed at the origin. every 100 ms: both retinas rendered at his heading (omma), flyvis
+per eye with state carried across chunks, the LIF driven at T4/T5 (v2 seam, rest from
+a 1 s still-drum warm-up), and his heading updated from his own descending neurons:
+yaw = 3 deg per net DNa02 spike (right minus left, smoothed over 300 ms; right DNa02 =
+right turn, Rayshubskiy 2020), clipped at 120 deg/s. drum programme: still 2 s, left
+30 deg/s 4 s, still 1 s, right 30 deg/s 4 s, still 1 s.
+
+| | still | drum LEFT 30/s | still | drum RIGHT 30/s | still |
+|---|---|---|---|---|---|
+| seed 0 | -7.0 | **+22.0** | -15.5 | **-30.0** | -0.5 |
+| seed 1 | -2.0 | **+15.7** | +4.7 | **-31.6** | -1.5 |
+| seed 2 | -8.4 | **+18.2** | -7.5 | **-30.2** | +4.2 |
+
+(his heading rate, deg/s, + = left.) he follows the drum in both directions, rightward
+at the drum's own speed, leftward at half to two thirds. an optomotor response, closed
+loop, through the real optic lobe's motion pathway and the real wiring of the steering
+descending neuron. viewer: the "optomotor drum" artifact (human view + both retinas +
+heading against drum angle).
+
+**what it took.** the first wiring used the DNa *family* (330 cells) as the wheel,
+because the flybrain findings report it as the stronger steering readout (d' 4.2). it
+followed the drum left at 20 deg/s and not right at all, and listed left at rest. i
+tried per-pathway hemisphere symmetrization (`seam/symmetrize.py`, `brain_sym.npz`:
+L and R totals matched per (pre type, post type) pair): no change, so the list is not in
+the synapse totals; shelved. DNa02 alone - one cell per side, the characterised turning
+neuron - was symmetric and correctly lateralized in every run (drum left: L 1060 / R
+760; drum right: L 710 / R 1710; rest 450 / 390). the family is a mixed-laterality
+population and its sign flips between stimuli; DNa02 is the wheel.
+
+**what's robust:** HS lateralization (8/10 flyvis models), DNa02 lateralization (every
+run so far). **not yet checked across the flyvis ensemble:** the closed loop itself.
+
 ## choices, labelled
 
 1. **orientation** of our hex grid onto theirs. not in the data. calibrated by biology:

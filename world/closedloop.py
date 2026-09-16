@@ -21,7 +21,7 @@ os.environ.setdefault("FLYVIS_ROOT_DIR", "/home/nate/code/fly-afterlife/flyvis_d
 from omma import Eye, Scene
 ap = argparse.ArgumentParser(); ap.add_argument("--out", default="world/drum0.npz"); ap.add_argument("--model", default="flow/0000/000")
 ap.add_argument("--gain", type=float, default=0.15, help="deg of yaw per net spike per 100 ms chunk"); ap.add_argument("--readout", default="DNa")
-ap.add_argument("--drive-gain", type=float, default=150.0); ap.add_argument("--seed", type=int, default=0); ap.add_argument("--open-loop", action="store_true"); args = ap.parse_args()
+ap.add_argument("--drive-gain", type=float, default=150.0); ap.add_argument("--seed", type=int, default=0); ap.add_argument("--open-loop", action="store_true"); ap.add_argument("--brain", default="brain_whole.npz"); ap.add_argument("--smooth", type=float, default=3.0, help="EMA over this many chunks on the steering signal"); args = ap.parse_args()
 fps, CH = 100, 10; g = np.load("seam/eye_geom.npz"); eye = Eye("seam/eye_geom.npz")
 drum = dict(period_deg=30.0, phase_deg=0.0, lo=0.2, hi=0.8, half_height_deg=30.0)
 prog = [(2.0, 0.0), (4.0, +30.0), (1.0, 0.0), (4.0, -30.0), (1.0, 0.0)]      # (seconds, drum deg/s)
@@ -46,7 +46,7 @@ def flyvis_chunk(lum_chunk, state):
         for t in types: out[(s, t)] = act[:, tix[t]]
     return out
 from flysim import FlyBrain
-b = FlyBrain("brain_whole.npz", seed=args.seed); ty = b.type.astype(str); ns = b.side.astype(str)
+b = FlyBrain(args.brain, seed=args.seed, balance_hemispheres=(args.brain == "brain_whole.npz")); ty = b.type.astype(str); ns = b.side.astype(str)
 cols = np.load("seam/t4t5_columns.npz"); gkey = {(str(s), int(a), int(h)): i for i, (s, a, h) in enumerate(zip(g["side"], g["hex1"], g["hex2"]))}
 gi = np.array([gkey[(str(s), int(a), int(h))] for s, a, h in zip(cols["side"], cols["hex1"], cols["hex2"])])
 groups = {}
@@ -75,7 +75,7 @@ for c in range(10):
 rest = {k_: np.concatenate(v_).mean(0) for k_, v_ in acc.items()}
 for _ in range(100 * 5):   # LIF warm-up on rest (zero drive)
     b.step()
-log = {"t": [], "heading": [], "drum": [], **{k: [] for k in R}}; t = 0.0; t0 = time.time(); nchunks = 0
+log = {"t": [], "heading": [], "drum": [], **{k: [] for k in R}}; t = 0.0; t0 = time.time(); nchunks = 0; ema = 0.0
 LUM = []; POSE = []; PHASE = []
 for sec, w in prog:
     for c in range(int(sec / (CH / fps))):
@@ -89,8 +89,8 @@ for sec, w in prog:
             for _ in range(SPF):
                 spk = b.step()
                 for k, r in R.items(): cnt[k] += int(spk[r].sum())
-        net_ = cnt[f"{args.readout}_R"] - cnt[f"{args.readout}_L"]
-        if not args.open_loop: heading += float(np.clip(args.gain * net_, -12, 12)) * -1   # right DNa -> right turn = clockwise = negative heading
+        net_ = cnt[f"{args.readout}_R"] - cnt[f"{args.readout}_L"]; ema += (net_ - ema) / max(args.smooth, 1.0)
+        if not args.open_loop: heading += float(np.clip(args.gain * ema, -12, 12)) * -1   # right DNa02 -> right turn (ipsilateral, Rayshubskiy 2020) = clockwise = negative heading   # right DNa -> right turn = clockwise = negative heading
         t += CH / fps; log["t"].append(t); log["heading"].append(heading); log["drum"].append(phase)
         for k in R: log[k].append(cnt[k])
         nchunks += 1
