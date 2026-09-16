@@ -157,6 +157,68 @@ eye), `seam/seam_v2.py` (per-eye seam; LPLC2/GF/DNa02/DNa/HS/DN per side + bins)
 parameters are per cell type, so a larger-extent network should be buildable from the
 same weights. not done yet.
 
+## orientation, decided (23:40 PDT)
+
+both signs, eleven scenes, three seeds, both eyes (`seam/v2_P.json`, `v2_M.json`;
+spikes in the 1 s stimulus window, mean of 3 seeds):
+
+| | loom_left L | recede_left L | loom_right R | recede_right R | GF loom_right | GF recede_right | yaw_left HS L/R |
+|---|---|---|---|---|---|---|---|
+| FRONT_SIGN +1 | 4 | 21 | 27 | 126 | 1.3 | 32.7 | 384 / 486 |
+| FRONT_SIGN -1 | 13 | 18 | 32 | 27 | 11.0 | 1.3 | 370 / 477 |
+
+- **image convention (HS): fixed.** yaw_left gives HS_R > HS_L under both signs, as
+  the biology requires. front is at flyvis's image-right.
+- **anatomical sign (GF): -1.** with +1 a receding ball on the right fires the giant
+  fiber 25x more than a looming one: inverted. with -1 it is loom 11 vs recede 1.3.
+  looms are lateralized cleanly under both (LPLC2 fires only on the seeing side).
+- **caveat found and fixed.** at first LPLC2 was only ~1:1 loom:recede with real
+  geometry. at the flyvis level the receding ball delivered 6x the T4/T5 drive of the
+  looming one and stayed high after the ball was small: the change-from-rest transform
+  used each stimulus's own pre-period as rest, and the recede's pre-period is a held
+  74-deg dark ball; cells the dark interior suppresses sit at a low rest, so uncovering
+  grey reads as drive. rest must be one thing for every stimulus: the network looking
+  at an empty scene (`--rest empty`, `seam/worldM_empty.npz`).
+
+**the result, FRONT_SIGN -1, common rest, 3 seeds (`seam/v2_M_rest.json`):**
+
+| | LPLC2 loom | LPLC2 recede | LPLC2 static | GF loom | GF recede |
+|---|---|---|---|---|---|
+| left eye (ipsilateral) | 15 / 11 / 19 | 4 / 1 / 0 | 2 / 2 / 1 | 0 / 0 / 0 | 4 / 0 / 3 |
+| right eye (ipsilateral) | 30 / 27 / 37 | 8 / 12 / 13 | 0 / 0 / 3 | 11 / 12 / 4 | 0 / 0 / 1 |
+
+a lateral loom drives ipsilateral LPLC2 3-9x over a matched recede and ~10x over a
+static ball of the same size; the contralateral LPLC2 stays at 0; the giant fiber
+fires for a right-side loom (11/12/4) and not for a recede (0/0/1). HS: yaw_left
+HS_R 488 > HS_L 314, yaw_right HS_L 515 > HS_R 286. DNa02 lateralizes against the
+yaw (yaw_left: R 30 > L 14; yaw_right: L 37 > R 3) - the shape of an optomotor
+response through the real wiring; not claimed yet. loom_ahead stays weak (LPLC2
+~0.5, GF 2): the frontal columns fall outside flyvis's 721-hex lattice. that is the
+transplant's job. the GF fires for right-side looms and not left-side ones: the
+hemisphere-tracing bias, compare within side.
+
+(the flat-image results in calib.py used no rest subtraction at all; the v1 all-types
+runs used the loom's grey pre-period, which is a common rest. both stand as labelled.)
+
+- also visible: DN_L > DN_R in every condition (the right hemisphere is more
+  completely traced and the weight rebalance overcorrects or undercorrects; compare
+  within side only). DNa02 lateralizes with the stimulated side.
+
+## the transplant (next build)
+
+flyvis's learned state is 65 time constants, 65 biases and 604 synapse strengths by
+type pair (+604 signs); `weight = sign * syn_count * strength`, graded relu units.
+dumped to `seam/flyvis_params.json`. our optic lobe has 64,373 cells of those types
+(70% of ol_intrinsic; the missing 30% - Tm6, the Dm family - were not in flyvis
+either) and 2.49M raw edges among them (`seam/ol_graph.npz`, no synapse threshold,
+because flyvis's spec counts every synapse). per-pair synapse counts per target cell:
+MaleCNS/flyvis median ratio 1.48, IQR 0.95-2.45, log-corr 0.61; flyvis's gap-filled
+pairs (e.g. *->Lawf2 assumed 95) are the outliers. plan: run flyvis's dynamics with
+its per-type parameters on the real per-cell wiring of each eye, with a labelled
+per-pair count rescale, then ask whether T4/T5 direction selectivity survives the move
+from the averaged column to the real one. if it does, the seam moves to the projection
+neurons and the 721-hex lattice, the rim, and the per-eye rendering hack all go away.
+
 ## choices, labelled
 
 1. **orientation** of our hex grid onto theirs. not in the data. calibrated by biology:

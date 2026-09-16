@@ -42,6 +42,7 @@ def ball_path(az_deg, t):
     return (np.array([np.cos(az) * dist, np.sin(az) * dist, 0.5]), 0.3, 0.05)
 def frame_scene(t):
     s = STIM
+    if s == "empty":       return Scene(), 0.0
     if s == "loom_ahead":  return Scene(spheres=[ball_path(0, t)]), 0.0
     if s == "loom_left":   return Scene(spheres=[ball_path(60, t)]), 0.0
     if s == "loom_right":  return Scene(spheres=[ball_path(-60, t)]), 0.0

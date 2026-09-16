@@ -17,7 +17,7 @@ sys.path.insert(0, "ref/flybrain/scripts")
 from flysim import FlyBrain
 ap = argparse.ArgumentParser(); ap.add_argument("--stims", nargs="+", required=True); ap.add_argument("--seeds", type=int, nargs="+", default=[0])
 ap.add_argument("--gain", type=float, default=150.0); ap.add_argument("--a-ref", type=float, default=1.0); ap.add_argument("--out", default=None)
-ap.add_argument("--prefix", default="seam/world"); ap.add_argument("--geom", default="seam/eye_geom.npz"); args = ap.parse_args()
+ap.add_argument("--prefix", default="seam/world"); ap.add_argument("--geom", default="seam/eye_geom.npz"); ap.add_argument("--rest", default=None, help="stimulus whose frames 20-100 define rest for ALL stimuli (e.g. empty). default: each stimulus's own pre-period"); args = ap.parse_args()
 SPF = 10; types = ["T4a", "T4b", "T4c", "T4d", "T5a", "T5b", "T5c", "T5d"]
 ap2 = args; cols = np.load("seam/t4t5_columns.npz"); g = np.load(args.geom)
 gkey = {(str(s), int(a), int(b)): i for i, (s, a, b) in enumerate(zip(g["side"], g["hex1"], g["hex2"]))}
@@ -30,6 +30,7 @@ for seed in args.seeds:
     for name, sel in [("LPLC2", ty == "LPLC2"), ("LC4", ty == "LC4"), ("GF", ty == "DNp01"), ("DNa02", ty == "DNa02"),
                       ("DNa", np.char.startswith(ty, "DNa")), ("DN", b.sc == "descending_neuron"), ("HS", np.char.startswith(ty, "HS"))]:
         for s in "LR": R[f"{name}_{s}"] = np.flatnonzero(sel & (ns == s))
+    restw = np.load(f"{args.prefix}_{args.rest}.npz") if args.rest else None
     for stim in args.stims:
         w = np.load(f"{args.prefix}_{stim}.npz")
         # per cell: flyvis hex index in its own eye, -1 if outside the lattice
@@ -42,7 +43,7 @@ for seed in args.seeds:
         for t in types:
             for s in "LR":
                 kk = (tt == t) & (sd == s); a = w[f"{s}_{t}"]
-                groups[(t, s)] = (idx[kk], ss[kk], a, a[20:100].mean(0))
+                groups[(t, s)] = (idx[kk], ss[kk], a, (restw if restw is not None else w)[f"{s}_{t}"][20:100].mean(0))
         b.driven[:] = False
         for cl in b.SENSORY_CLASSES: b.driven[b.cls == cl] = True
         b.driven[idx] = True; b._driven_idx = np.flatnonzero(b.driven)
@@ -56,7 +57,7 @@ for seed in args.seeds:
                 if f >= 100:
                     for k, r in R.items(): cnt[k] += int(spk[r].sum())
                 for k in bins: bins[k][f // 10] += int(spk[R[k]].sum())
-        rows.append({"seed": seed, "stim": stim, "gain": args.gain, "during": cnt, "bins100ms": bins})
+        rows.append({"seed": seed, "stim": stim, "gain": args.gain, "rest": args.rest, "during": cnt, "bins100ms": bins})
         print(f"{stim:13s} seed {seed} {time.time()-t0:4.1f}s  LPLC2 L/R {cnt['LPLC2_L']}/{cnt['LPLC2_R']}  GF {cnt['GF_L']+cnt['GF_R']}  "
               f"DNa02 L/R {cnt['DNa02_L']}/{cnt['DNa02_R']}  DNa L/R {cnt['DNa_L']}/{cnt['DNa_R']}  HS L/R {cnt['HS_L']}/{cnt['HS_R']}  DN L/R {cnt['DN_L']}/{cnt['DN_R']}", flush=True)
         print("    LPLC2 L+R /100ms:", " ".join(f"{a+c:3d}" for a, c in zip(bins["LPLC2_L"], bins["LPLC2_R"])), "  GF:", " ".join(f"{a+c}" for a, c in zip(bins["GF_L"], bins["GF_R"])))
