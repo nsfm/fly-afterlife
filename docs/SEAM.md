@@ -1,5 +1,32 @@
 # the seam: a graded optic lobe driving a spiking whole-fly connectome
 
+> **STATUS (2026-09-16 03:10 PDT) - read this before the sections below, several of
+> which are superseded by later ones.**
+>
+> - **withdrawn:** every "loom-selective" number from the flyvis-driven seam (v2) and
+>   the transplant seam (v3). the ensemble check (2 of 10 models) and the bright-ball
+>   control (recede > loom in every model) showed LPLC2 in those runs was reading OFF
+>   vs ON, not outward vs inward. the giant-fiber test used to pin FRONT_SIGN is
+>   struck as evidence.
+> - **stands, on anatomy alone:** the eye's orientation. dorsal from the R7d/R8d
+>   dorsal-rim strip; front from the T4 Mi4/Mi9 input sides and from LPLC2's layer
+>   layout (a behind, b ahead, c above, d below). FRONT_SIGN = -1. the HS image
+>   convention is robust across the ensemble (8 of 10).
+> - **stands:** the expansion-detection mechanism is in the wiring (LPLC2 table), and
+>   the LIF can use it: with an IDEAL direction-selective T4/T5 pattern (`seam/
+>   ideal_t4t5.py`, left eye only, no flyvis, no transplant) LPLC2 gives expand 99 /
+>   contract 13 / flash 17 / static 0. the LIF side of the seam is sound.
+> - **stands:** the transplant reproduces T4/T5 direction selectivity on the real
+>   wiring with correct sign and laterality, at ~1/3 of flyvis's magnitude.
+> - **the bottleneck, named:** the direction selectivity of the T4/T5 activity handed
+>   to the LIF - from any single flyvis model, and from the transplant - is not clean
+>   enough per position for LPLC2's layout to read expansion; edge polarity and edge
+>   energy dominate. next: (1) ensemble-averaged flyvis T4/T5 as the input; (2)
+>   subtract each subtype's non-directional component (the mean over the four
+>   subtypes) before driving, which is what LPi inhibition does in life and what the
+>   0 Hz-rest LIF cannot do; (3) train the transplant's pair strengths on the real
+>   wiring with flyvis's optic-flow task.
+
 status: working draft, 2026-09-15 21:50 PDT. everything below is either measured
 on this machine or labelled as a choice.
 
@@ -457,6 +484,15 @@ is a wide-field integrator. fifth anatomical agreement on the orientation.
 LIF-side: hand the LIF an IDEAL direction-selective T4/T5 pattern (expanding ring:
 T4a/T5a fire behind the centre, b ahead, c above, d below; contracting ring: the
 opposite; flash: all subtypes on the ring at once) and ask whether LPLC2 discriminates.
+
+**ideal-input test (03:05 PDT), `seam/ideal_t4t5.py`.** left eye's own T4/T5 cells
+driven with a perfectly direction-selective pattern (expanding ring: T4a/T5a fire behind
+the centre, b ahead, c above, d below, rate 150 * |cos|; contracting: mirrored; flash:
+all subtypes on a fixed ring for 200 ms; static: nothing). LPLC2_L over the second:
+**expand 99, contract 13, flash 17, static 0**; expand holds 8-13 per 100 ms for the
+whole second, contract and flash die within 200 ms. LPi_L fires equally for expand and
+contract (2238 / 2240), so the discrimination is the dendritic layout, not inhibition.
+the LIF's expansion circuit works on this wiring. every failure tonight was input-side.
 
 ## choices, labelled
 
