@@ -504,6 +504,50 @@ optimum and the ball's edge speed runs 0-100 deg/s over the second), ensemble-av
 input, and per-position DS measured directly on the flyvis output for the ball
 (does T4a fire behind the ball and T4b ahead, in flyvis's own numbers?).
 
+## morning (2026-09-16 09:19 PDT): why no graded front end has carried the loom
+
+**how much directional drive LPLC2 needs** (`ideal_t4t5.py`, ideal pattern mixed with a
+non-directional one on the same ring): expand/contract ratio 5.3 at 0% noise, 4.3 at
+25%, 2.9 at 50%, 1.3 at 75%, 1.0 at 100%. **at least half the drive has to be
+directional.**
+
+**what flyvis's own T4/T5 output for the ball contains** (`flyvis_pattern.py`: per
+subtype, activity-weighted mean of its outward component around the ball centre; + =
+expansion-consistent; models 000 / 001 / 005, left eye):
+
+| model 000 | T4a | T4b | T4c | T4d | T5a | T5b | T5c | T5d |
+|---|---|---|---|---|---|---|---|---|
+| dark loom | -0.38 | -0.74 | -0.30 | -0.66 | +0.78 | +0.41 | +0.61 | +0.35 |
+| dark STATIC | -0.59 | -0.73 | -0.32 | -0.70 | +0.77 | +0.59 | +0.68 | +0.42 |
+| bright loom | +0.52 | +0.36 | +0.10 | +0.58 | -0.62 | -0.62 | -0.52 | -0.33 |
+
+**a stationary dark object produces an expansion-shaped T5 pattern and a
+contraction-shaped T4 pattern; a bright one the reverse; the loom adds ~0.1 on top.**
+each subtype's receptive field is offset toward its preferred side (the Mi4/Mi9 and
+Tm9 offsets measured above), so a static edge of one polarity excites the subtypes
+asymmetrically around the object, and flyvis sustains that response on a held input
+where a real T4/T5 is transient. this is the mechanism of the polarity confound, and
+it is ~4x larger than the motion signal for a ball of 2-15 columns.
+
+**temporal high-pass on the drive** (200 ms; T4/T5 are transient in life) reduces the
+static pattern but does not remove it: mean outward component loom +0.06..+0.14,
+recede -0.09..-0.16, per-subtype magnitudes still 0.3-0.6 and polarity-signed. seam
+with high-pass, bright ball: loom 0 / 0 / 3 / 10 vs recede 4 / 13 / 19 / 25. no.
+
+**conclusion for this line:** with any single flyvis model at this eye's resolution,
+the T4/T5 output for a small looming object is dominated by a polarity-dependent
+static pattern, and LPLC2 needs half the drive to be directional. expansion detection
+through flyvis -> LIF is not reachable by transforms on the drive. it needs a front
+end whose T4/T5 static-edge responses are transient (trained transplant, or a
+different graded model), or the ensemble average if the static pattern is
+model-specific (it is not: 000 and 001 agree in sign).
+
+**what IS robust and usable now:** lateralized object presence (which eye, where) and
+wide-field motion through HS/VS (correct side in 8 of 10 models), which is what
+optomotor steering needs. DNa02 already lateralizes against a yaw. that is a fly that
+can be put in a world and turn toward or away from things; it is not yet a fly that
+can dodge.
+
 ## choices, labelled
 
 1. **orientation** of our hex grid onto theirs. not in the data. calibrated by biology:

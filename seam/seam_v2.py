@@ -17,7 +17,7 @@ sys.path.insert(0, "ref/flybrain/scripts")
 from flysim import FlyBrain
 ap = argparse.ArgumentParser(); ap.add_argument("--stims", nargs="+", required=True); ap.add_argument("--seeds", type=int, nargs="+", default=[0])
 ap.add_argument("--gain", type=float, default=150.0); ap.add_argument("--a-ref", type=float, default=1.0); ap.add_argument("--out", default=None)
-ap.add_argument("--prefix", default="seam/world"); ap.add_argument("--geom", default="seam/eye_geom.npz"); ap.add_argument("--dsonly", action="store_true", help="drive with the direction-selective component only: each subtype minus the mean of its four siblings (T4a-d / T5a-d) at the same column and time, after rest subtraction; what LPi inhibition does in life"); ap.add_argument("--rest", default=None, help="stimulus whose frames 20-100 define rest for ALL stimuli (e.g. empty). default: each stimulus's own pre-period"); args = ap.parse_args()
+ap.add_argument("--prefix", default="seam/world"); ap.add_argument("--geom", default="seam/eye_geom.npz"); ap.add_argument("--highpass", type=float, default=0.0, help="ms: subtract a running exponential average of the (rest-subtracted) activity before driving; T4/T5 are transient in life"); ap.add_argument("--dsonly", action="store_true", help="drive with the direction-selective component only: each subtype minus the mean of its four siblings (T4a-d / T5a-d) at the same column and time, after rest subtraction; what LPi inhibition does in life"); ap.add_argument("--rest", default=None, help="stimulus whose frames 20-100 define rest for ALL stimuli (e.g. empty). default: each stimulus's own pre-period"); args = ap.parse_args()
 SPF = 10; types = ["T4a", "T4b", "T4c", "T4d", "T5a", "T5b", "T5c", "T5d"]
 ap2 = args; cols = np.load("seam/t4t5_columns.npz"); g = np.load(args.geom)
 gkey = {(str(s), int(a), int(b)): i for i, (s, a, b) in enumerate(zip(g["side"], g["hex1"], g["hex2"]))}
@@ -43,6 +43,12 @@ for seed in args.seeds:
         for s in "LR":
             rs = {t: (restw if restw is not None else w)[f"{s}_{t}"][20:100].mean(0) for t in types}
             act = {t: w[f"{s}_{t}"] - rs[t] for t in types}
+            if args.highpass > 0:
+                k = 1000.0 / int(w["fps"]) / args.highpass
+                for t in types:
+                    a = act[t]; ema = np.zeros_like(a[0]); hp = np.zeros_like(a)
+                    for i in range(len(a)): ema += k * (a[i] - ema); hp[i] = a[i] - ema
+                    act[t] = hp
             if args.dsonly:
                 for fam in (["T4a", "T4b", "T4c", "T4d"], ["T5a", "T5b", "T5c", "T5d"]):
                     mean = np.mean([act[t] for t in fam], axis=0)
@@ -63,7 +69,7 @@ for seed in args.seeds:
                 if f >= 100:
                     for k, r in R.items(): cnt[k] += int(spk[r].sum())
                 for k in bins: bins[k][f // 10] += int(spk[R[k]].sum())
-        rows.append({"seed": seed, "stim": stim, "gain": args.gain, "rest": args.rest, "dsonly": args.dsonly, "during": cnt, "bins100ms": bins})
+        rows.append({"seed": seed, "stim": stim, "gain": args.gain, "rest": args.rest, "dsonly": args.dsonly, "highpass": args.highpass, "during": cnt, "bins100ms": bins})
         print(f"{stim:13s} seed {seed} {time.time()-t0:4.1f}s  LPLC2 L/R {cnt['LPLC2_L']}/{cnt['LPLC2_R']}  GF {cnt['GF_L']+cnt['GF_R']}  "
               f"DNa02 L/R {cnt['DNa02_L']}/{cnt['DNa02_R']}  DNa L/R {cnt['DNa_L']}/{cnt['DNa_R']}  HS L/R {cnt['HS_L']}/{cnt['HS_R']}  DN L/R {cnt['DN_L']}/{cnt['DN_R']}", flush=True)
         print("    LPLC2 L+R /100ms:", " ".join(f"{a+c:3d}" for a, c in zip(bins["LPLC2_L"], bins["LPLC2_R"])), "  GF:", " ".join(f"{a+c}" for a, c in zip(bins["GF_L"], bins["GF_R"])))

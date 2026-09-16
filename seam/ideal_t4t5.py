@@ -31,6 +31,7 @@ def ring_drive(radius, sign, width=1.0, nonsel=False):
         k = on & np.char.endswith(sub, s_)
         d[k] = RATE * (1.0 if nonsel else np.clip(sign * comp[k], 0, 1))
     return d
+MIX = 0.0
 def run(name):
     b.driven[:] = False
     for cl in b.SENSORY_CLASSES: b.driven[b.cls == cl] = True
@@ -38,14 +39,19 @@ def run(name):
     bins = {k: [0] * 20 for k in R}
     for f in range(200):
         t = (f - 100) / 100.0
-        if name == "expand" and f >= 100: b.drive_hz[idx] = ring_drive(2 + 10 * t, +1)
-        elif name == "contract" and f >= 100: b.drive_hz[idx] = ring_drive(12 - 10 * t, -1)
+        if name == "expand" and f >= 100: b.drive_hz[idx] = (1 - MIX) * ring_drive(2 + 10 * t, +1) + MIX * ring_drive(2 + 10 * t, +1, nonsel=True)
+        elif name == "contract" and f >= 100: b.drive_hz[idx] = (1 - MIX) * ring_drive(12 - 10 * t, -1) + MIX * ring_drive(12 - 10 * t, -1, nonsel=True)
         elif name == "flash" and 100 <= f < 120: b.drive_hz[idx] = ring_drive(7, +1, nonsel=True)
         else: b.drive_hz[idx] = 0
         for _ in range(SPF):
             spk = b.step()
             for k, ii in R.items(): bins[k][f // 10] += int(spk[ii].sum())
     tot = {k: sum(v[10:]) for k, v in bins.items()}
+    return tot
     print(f"{name:9s} LPLC2 L {tot['LPLC2_L']:4d}  R {tot['LPLC2_R']:3d}  LPi_L {tot['LPi_L']:5d}  GF {tot['GF']:3d}  DN {tot['DN']:5d}   LPLC2_L/100ms: " + " ".join(f"{x:3d}" for x in bins["LPLC2_L"][10:]), flush=True)
 print(f"ideal drive on the LEFT eye's own T4/T5 cells; centre column {c0} at az {az[c0]:.0f} el {az[c0]*0+el[c0]:.0f}; ring columns driven per frame ~{int((np.abs(r-7)<1).sum())}")
-for name in ["static", "expand", "contract", "flash"]: run(name)
+print("mixing an ideal directional pattern with a non-directional one (all subtypes on the ring); MIX = non-directional fraction")
+print(f"{'MIX':5s} {'expand LPLC2_L':>15s} {'contract':>9s} {'ratio':>6s}   {'GF exp/con':>10s}")
+for MIX in [0.0, 0.25, 0.5, 0.75, 0.9, 1.0]:
+    globals()["MIX"] = MIX; e = run("expand"); c = run("contract")
+    print(f"{MIX:5.2f} {e['LPLC2_L']:15d} {c['LPLC2_L']:9d} {e['LPLC2_L']/max(c['LPLC2_L'],1):6.1f}   {e['GF']:4d}/{c['GF']:<4d}", flush=True)
