@@ -660,6 +660,39 @@ half, with vision alone eventually turning him. a collision reflex that emerges 
 leg bristles -> VNC -> leg motor neurons in the real wiring, plus one motor mapping of
 mine. viewer: "the walk, solid posts" (touches ringed in red on the map).
 
+## behaviour across the flyvis ensemble (13:07 PDT, `world/ens_behaviour.sh`)
+
+drum (12 s programme) and walk (20 s, ghost posts) on flyvis models 000-009, seed 0.
+
+| model | still | drum LEFT | still | drum RIGHT | still | both ways? | HS L/R (left seg) | DNa02 L/R left seg / right seg |
+|---|---|---|---|---|---|---|---|---|
+| 000 | +10 | +11 | +3 | -23 | -18 | yes | 18600/12990 | 890/720 / 530/860 |
+| 001 | +8 | +26 | +9 | +9 | +6 | no | 7480/2400 | 460/120 / 120/20 |
+| 002 | +5 | +16 | +20 | +40 | +47 | no | 14280/9890 | 300/50 / 1070/510 |
+| 003 | +5 | +10 | +4 | -11 | +2 | yes | 24950/2070 | 170/20 / 0/150 |
+| 004 | -30 | -62 | -32 | -7 | -12 | no (inverted) | 12090/27330 | 900/1680 / 790/900 |
+| 005 | +7 | -54 | -56 | +50 | +25 | no (inverted) | 6800/27820 | 210/960 / 780/80 |
+| 006 | +3 | +3 | 0 | +1 | +2 | no (silent) | 6960/1760 | 40/30 / 20/10 |
+| 007 | +10 | +28 | +2 | +7 | +33 | no | 16570/11050 | 400/20 / 490/340 |
+| 008 | +15 | +19 | -5 | -6 | +7 | yes | 22690/15490 | 330/70 / 250/320 |
+| 009 | +4 | +7 | +14 | -2 | +20 | no | 26650/20480 | 150/40 / 90/120 |
+
+**follows both ways: 3 of 10. leftward: 7 of 10. rightward: 3.** 004 and 005 are the
+two models with inverted T4/T5 tuning (last night's grating table) and turn the wrong
+way in both directions - consistent. 006 barely responds. the rest have the correct HS
+lateralization (8 of 10, as before) but drift LEFT on a still drum and fire DNa02 more
+on the left at rest (8 of 10): a resting bias at the wheel that gives left turns a
+head start and right turns a handicap. per-pathway symmetrization did not remove it
+(DNa family was the readout then; DNa02's rest offset was not measured). fix tried
+next: measure the DNa02 R-L offset on a still world for 2 s with visual drive and
+subtract it at the wheel (`--rest-sub`), leaving the visual response untouched;
+ensemble re-run in `drum2_m*.npz`. **until that lands, the optomotor claim is: robust
+on the left, model-dependent on the right, with a known resting bias.**
+
+walk across models (ghost posts): hits 90-564, mean turning 14-53 deg/s; every model
+turns toward dark posts and walks into some. approach behaviour is the ensemble's;
+its magnitude is the model's.
+
 ## choices, labelled
 
 1. **orientation** of our hex grid onto theirs. not in the data. calibrated by biology:
