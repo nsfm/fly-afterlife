@@ -595,6 +595,32 @@ population and its sign flips between stimuli; DNa02 is the wheel.
 **what's robust:** HS lateralization (8/10 flyvis models), DNa02 lateralization (every
 run so far). **not yet checked across the flyvis ensemble:** the closed loop itself.
 
+## the bar and the walk (11:44 PDT, `world/loop.py`)
+
+**bar.** one dark vertical bar (15 deg wide, +-30 deg, 0.2 on 0.6) fixed in the world at
++60 or -60 deg from his starting heading, 20 s, DNa02 on the wheel as in the drum.
+bar at +60 (left): he turns left, passes the bar through the front, and holds it at
+-54 / -51 deg (seeds 0, 1) for the rest of the run. bar at -60: mirror, holds at +55 /
++68. a position response - he turns toward a dark bar - but not fixation: a real fly
+centres it. centring needs the small-object position system (LC cells) which is not on
+the wheel; only T4/T5 motion -> DNa02 is. labelled and left.
+
+**walk.** the arena of eight dark posts and one bright ball, 0.3 m/s along his heading,
+DNa02 steering, 20 s, three seeds; three blind controls (retina held at rest, heading
+noise only). "hits" = frames inside a post (he passes through).
+
+| | hits (frames) | path | mean turn | where he ends |
+|---|---|---|---|---|
+| walk s0/s1/s2 | 378 / 400 / 408 | 6.0 m | 25 / 24 / 30 deg/s | inside the arena, weaving |
+| blind s0/s1/s2 | 205 / 160 / 131 | 6.0 m | 2.5 / 3.0 / 2.8 deg/s | straight into the far wall |
+
+he turns constantly and hits MORE than a blind fly walking straight. with the bar result
+this reads consistently: dark objects pull his heading toward them and he walks into
+what he turns toward. no avoidance circuit is on the wheel (LPLC2 -> escape is not
+wired to locomotion, and looms are not detected anyway). approach to dark verticals is
+real fly behaviour; walking into them is what a fly with approach and no collision
+avoidance does. viewer: "the walk" artifact.
+
 ## choices, labelled
 
 1. **orientation** of our hex grid onto theirs. not in the data. calibrated by biology:
