@@ -219,7 +219,7 @@ per-pair count rescale, then ask whether T4/T5 direction selectivity survives th
 from the averaged column to the real one. if it does, the seam moves to the projection
 neurons and the 721-hex lattice, the rim, and the per-eye rendering hack all go away.
 
-## the transplant, first result (2026-09-16, ~00:40 PDT)
+## the transplant, first result (2026-09-15, ~23:00 PDT)
 
 `seam/transplant.py`. flyvis's dynamics and learned physiology on the real per-cell
 optic lobe of each eye: 62,977 real cells (51 types), 14,112 virtual photoreceptors
@@ -289,15 +289,15 @@ in flyvis, so a static ball holds LPLC2 up through change-from-rest. (3) the rig
 runs hotter than the left throughout (spectral radius 2.19 vs 1.89; LPLC2_R 240 vs
 LPLC2_L 35 on matched stimuli).
 
-**where that leaves the transplant (01:00 PDT).** direction selectivity survives the
+**where that leaves the transplant (23:20 PDT).** direction selectivity survives the
 move to real wiring with correct sign and laterality; the ON pathway matches flyvis's
 operating point; the OFF pathway does not carry enough, and the whole-fly loom test
 through the transplant fails for that reason, not for a wiring or orientation reason.
 next, in order: (a) a second homeostatic target - match each type's response *gain*
 (modulation under the reference grating) to flyvis by scaling its input strengths, the
 way the biases were matched; still calibration to flyvis, nothing fit to our readout.
-(b) bridge the missing types (Mi12, Mi3, Am, Tm28, TmY9) to the MaleCNS names if they
-exist under new ones. (c) per-eye gain so the two eyes sit at the same radius. (d) then
+(b) bridge TmY9 -> TmY9a/TmY9b (exists under a split name); Mi12, Mi3, Am, Tm28 are
+genuinely absent from the MaleCNS typing. (c) per-eye gain so the two eyes sit at the same radius. (d) then
 re-run v3, with the flash control added.
 
 ## choices, labelled
