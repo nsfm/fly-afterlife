@@ -135,12 +135,12 @@ def homeostat(n, v_start=None, verbose=True):
         fa = st.nodes.activity.detach().cpu().numpy().ravel(); ft = net.connectome.nodes.type[:].astype(str)
         json.dump({t: float(fa[ft == t].mean()) for t in sorted(set(ft))}, open("seam/flyvis_rest.json", "w"), indent=1); del net
     target = json.load(open("seam/flyvis_rest.json"))
-    type_idx = {t: torch.tensor(np.flatnonzero(node_type == t), device=dev) for t in set(node_type) if not t.startswith("R")}
+    type_idx = {(t, sd): torch.tensor(np.flatnonzero((node_type == t) & (node_side == sd)), device=dev) for t in set(node_type) if not t.startswith("R") for sd in "LR" if ((node_type == t) & (node_side == sd)).any()}
     v = steady(np.full(ncol, 0.5, np.float32)) if v_start is None else v_start
     for it in range(n):
         if it: v = run(np.repeat(np.full(ncol, 0.5, np.float32)[None], 50, 0), v)[0]
-        err = {t: target[t] - v[ix].mean().item() for t, ix in type_idx.items()}
-        for t, ix in type_idx.items(): bias_t[ix] += 0.5 * err[t]
+        err = {k: target[k[0]] - v[ix].mean().item() for k, ix in type_idx.items()}
+        for k, ix in type_idx.items(): bias_t[ix] += 0.5 * err[k]
         if verbose and (it == n - 1): print(f"  homeostat {it}: mean|err| {np.mean([abs(e) for e in err.values()]):.3f}  worst {[(t, round(e, 2)) for t, e in sorted(err.items(), key=lambda x: -abs(x[1]))[:3]]}", flush=True)
     return run(np.repeat(np.full(ncol, 0.5, np.float32)[None], 50, 0), v)[0]
 
@@ -159,7 +159,7 @@ def grating_mods(v_rest, speed=60.0):
     return {k: float(np.mean(v)) for k, v in acc.items()}
 
 if args.load_calib:
-    cal = np.load(args.load_calib); bias_t[:] = torch.tensor(cal["bias"], device=dev); scale_t[:] = torch.tensor(cal["scale"], device=dev); print("loaded calibration", args.load_calib)
+    cal = np.load(args.load_calib); bias_t[:] = torch.tensor(cal["bias"], device=dev); scale_t[:] = torch.tensor(cal["scale"], device=dev); print("loaded calibration", args.load_calib); v_grey = run(np.repeat(np.full(ncol, 0.5, np.float32)[None], 100, 0))[0]
 if args.homeostat:
     v_grey = homeostat(args.homeostat)
 if args.gainmatch:
@@ -251,7 +251,8 @@ for stim in args.stims:
     T = int(args.fps * args.seconds); frames = np.zeros((T, ncol), np.float32)
     for f in range(T):
         sc, h = frame_scene(stim, f / args.fps); frames[f] = eye.render(sc, heading_deg=h)
-    t0 = time.time(); _, rec, rec_idx = run(frames, v_grey)
+    t0 = time.time(); v0 = run(np.repeat(frames[0][None], 3 * args.fps, 0), v_grey)[0]   # settle on the scene's own first frame (3 s)
+    _, rec, rec_idx = run(frames, v0)
     out = {"fps": args.fps, "gain": args.gain, "rescale": args.rescale, "homeostat": args.homeostat}
     for t, a in rec.items():
         ix = rec_idx[t].cpu().numpy(); out[f"act_{t}"] = a.astype(np.float32); out[f"bid_{t}"] = np.array([node_bid[i] for i in ix]); out[f"side_{t}"] = node_side[ix]
