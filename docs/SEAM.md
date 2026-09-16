@@ -693,6 +693,18 @@ walk across models (ghost posts): hits 90-564, mean turning 14-53 deg/s; every m
 turns toward dark posts and walks into some. approach behaviour is the ensemble's;
 its magnitude is the model's.
 
+**resting-offset subtraction (13:18 PDT, `drum2_m*.npz`): moved the problem.** rightward
+following 3 -> 7 of 10, leftward 7 -> 4, both ways still 3 (003, 007, 008; 000 lost).
+still-drum drift got worse in several models (001 -35 deg/s, 005 -93). the offsets were
+-0.35 to -1.5 spikes per chunk estimated from ~20 spikes: noise, and at 3 deg per spike
+a half-spike error is 15 deg/s of drift. **diagnosis: the wheel is one neuron per side
+at 100 ms resolution.** DNa02 fires 5-10 Hz; one spike of difference in a chunk is a
+3 deg turn. the sensory side (HS: thousands of spikes, correct side in 8 of 10 models)
+is robust; the motor readout is count-starved. options: integrate longer (keeps the
+wheel on the named neuron) or read more cells (the DNa family's sign flips between
+stimuli, so no). one more ensemble run with a 1 s smoothing window and a 10 s rest
+estimate, nothing tuned to the drum: `drum3_m*.npz`.
+
 ## choices, labelled
 
 1. **orientation** of our hex grid onto theirs. not in the data. calibrated by biology:
