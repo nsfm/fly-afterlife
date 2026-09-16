@@ -20,6 +20,7 @@ ap.add_argument("--a-ref", type=float, default=1.0); ap.add_argument("--seeds", 
 ap.add_argument("--only", default=None, help="T4T5 to restrict to v0's cells"); ap.add_argument("--out", default=None)
 ap.add_argument("--baseline", action="store_true", help="drive with change from rest: rate ~ (act - act_rest)+, act_rest = per-cell mean over the grey pre-period of the loom stimulus")
 ap.add_argument("--std", default=None, help="flyvis: depression on driven cells' outputs; all: every presynaptic neuron")
+ap.add_argument("--shuffle", type=int, default=None, help="control: permute the column assignment within each type with this seed, destroying spatial structure")
 ap.add_argument("--stims", nargs="+", default=["loom", "recede", "translate", "static", "flash"])
 args = ap.parse_args()
 CENTRE, SPF = (18.5, 20.0), 10
@@ -37,6 +38,10 @@ src = np.array([keys[str(t)].get((int(u), int(v)), -1) if str(t) in keys else -1
                 for t, u, v in zip(cols["fvtype"], U, V)])
 m = src >= 0
 idx, tt, ss = cols["idx"][m], cols["fvtype"][m].astype(str), src[m]
+if args.shuffle is not None:
+    rng = np.random.default_rng(args.shuffle)
+    for t in set(tt):
+        k = np.flatnonzero(tt == t); ss[k] = rng.permutation(ss[k])
 groups = {t: (idx[tt == t], ss[tt == t]) for t in set(tt)}
 rest = {t: (fv[f"loom_{t}"][20:100].mean(0) if args.baseline else 0.0) for t in groups}
 print(f"driving {m.sum()} cells of {len(set(tt))} types ({(~m).sum()} outside the lattice)")
@@ -45,6 +50,8 @@ rows = []
 for seed in args.seeds:
     b = FlyBrain("brain_whole.npz", seed=seed); ty = b.type.astype(str)
     R = {k: np.flatnonzero(ty == k) for k in ["LPLC2", "LPLC1", "LC4", "LC6", "LC11", "LC16", "DNp01", "DNp02", "DNp04", "DNp11"]}
+    R["LPi"] = np.flatnonzero(np.char.startswith(ty, "LPi"))
+    for k in ["LPi34", "LPi21", "LPi12", "LPi43"]: R[k] = np.flatnonzero(ty == k)
     R["VS"] = np.flatnonzero(np.char.startswith(ty, "VS")); R["HS"] = np.flatnonzero(np.char.startswith(ty, "HS"))
     R["DN"] = b.pop["DN"]; R["legMN"] = np.flatnonzero(b.sc == "vnc_motor")
     b.driven[:] = False
@@ -55,6 +62,7 @@ for seed in args.seeds:
     for stim in args.stims:
         b.reset(); b.drive_hz[:] = 0; b.g[:] = 0; b.refrac[:] = 0
         cnt = {k: 0 for k in R}; pre = {k: 0 for k in R}; t0 = time.time()
+        bins = {k: [0] * 20 for k in ["LPLC2", "LPi", "DNp01", "DN"]}
         for f in range(200):
             for t, (ii, s_) in groups.items():
                 b.drive_hz[ii] = args.gain * np.clip((fv[f"{stim}_{t}"][f] - rest[t])[s_] / args.a_ref, 0, 1)
@@ -62,7 +70,9 @@ for seed in args.seeds:
                 spk = b.step()
                 tgt = cnt if f >= 100 else pre
                 for k, r in R.items(): tgt[k] += int(spk[r].sum())
-        row = {"seed": seed, "stim": stim, "gain": args.gain, "map": args.map, "baseline": args.baseline, "std": args.std, "pre": pre, "during": cnt}
+                for k in bins: bins[k][f // 10] += int(spk[R[k]].sum())
+        row = {"seed": seed, "stim": stim, "gain": args.gain, "map": args.map, "baseline": args.baseline, "std": args.std, "shuffle": args.shuffle, "pre": pre, "during": cnt, "bins100ms": bins}
         rows.append(row)
-        print(f"{stim:10s} seed {seed} {time.time()-t0:4.1f}s  " + "  ".join(f"{k} {pre[k]:d}->{cnt[k]:d}" for k in ["LPLC2", "LC4", "LC6", "LC11", "DNp01", "DNp04", "DN"]), flush=True)
+        print(f"   LPLC2/100ms: " + " ".join(f"{x:3d}" for x in bins["LPLC2"]) + f"   GF: " + " ".join(f"{x:d}" for x in bins["DNp01"]))
+        print(f"{stim:10s} seed {seed} {time.time()-t0:4.1f}s  " + "  ".join(f"{k} {pre[k]:d}->{cnt[k]:d}" for k in ["LPLC2", "LPi", "LPi34", "LPi21", "LPi12", "LPi43", "DNp01", "DN"]), flush=True)
 if args.out: json.dump(rows, open(args.out, "w"), indent=0)
