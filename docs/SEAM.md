@@ -548,6 +548,18 @@ optomotor steering needs. DNa02 already lateralizes against a yaw. that is a fly
 can be put in a world and turn toward or away from things; it is not yet a fly that
 can dodge.
 
+**adaptation in the transplant (09:36 PDT, `--adapt-tau 300`).** one slow subtractive
+variable per non-photoreceptor cell (dA/dt = (relu(v) - A)/300 ms, v gets -A). two
+effects: (1) it stabilises the network - gain matching converges all 10 rounds with
+no divergence and every modulation target is hit (T4a 0.48, T5a 0.27, Tm9 0.27);
+(2) it halves the static-like pattern in the T4/T5 output (mean |per-subtype outward
+component|: loom 0.40 -> 0.22, static 0.34 -> 0.23) but the pattern stays
+polarity-signed and loom does not come out expansion-shaped (mean -0.12). seam v3 on
+the adapted transplant: left loom 10 / recede 33 / static 1; right loom 110 / recede
+70 / static 78 / flash 128. no. calibration saved as `seam/tx_calib_adapt.npz`; keep
+adaptation on (it is the more physiological model and the stable one), but the
+transplant's route to a loom detector is training its pair strengths, not tuning.
+
 ## choices, labelled
 
 1. **orientation** of our hex grid onto theirs. not in the data. calibrated by biology:

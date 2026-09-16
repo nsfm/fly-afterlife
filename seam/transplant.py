@@ -24,7 +24,7 @@ import flyvis
 from omma import Eye, Scene
 ap = argparse.ArgumentParser(); ap.add_argument("--test", default=None); ap.add_argument("--stims", nargs="*", default=[])
 ap.add_argument("--rescale", default="none"); ap.add_argument("--dt", type=float, default=0.005); ap.add_argument("--fps", type=int, default=100)
-ap.add_argument("--diag", action="store_true"); ap.add_argument("--gainmatch", type=int, default=0, help="N rounds: scale each (type, eye)'s input so its grating modulation matches flyvis, re-homeostat biases each round"); ap.add_argument("--save-calib", default=None); ap.add_argument("--load-calib", default=None); ap.add_argument("--seconds", type=float, default=2.0); ap.add_argument("--homeostat", type=int, default=0, help="N iterations of per-type bias correction so each type rests (grey) where flyvis rests"); ap.add_argument("--speed", type=float, default=60.0); ap.add_argument("--record", nargs="*", default=[]); ap.add_argument("--gain", type=float, default=1.0, help="global scale on every weight (labelled fudge; see spectral radius)"); ap.add_argument("--out", default="seam/tx"); ap.add_argument("--geom", default="seam/eye_geom.npz"); args = ap.parse_args()
+ap.add_argument("--adapt-tau", type=float, default=0.0, help="ms; slow subtractive adaptation per cell: dA/dt = (k*relu(v) - A)/tau, v gets -A. 0 = off (flyvis has none)"); ap.add_argument("--adapt-k", type=float, default=1.0); ap.add_argument("--diag", action="store_true"); ap.add_argument("--gainmatch", type=int, default=0, help="N rounds: scale each (type, eye)'s input so its grating modulation matches flyvis, re-homeostat biases each round"); ap.add_argument("--save-calib", default=None); ap.add_argument("--load-calib", default=None); ap.add_argument("--seconds", type=float, default=2.0); ap.add_argument("--homeostat", type=int, default=0, help="N iterations of per-type bias correction so each type rests (grey) where flyvis rests"); ap.add_argument("--speed", type=float, default=60.0); ap.add_argument("--record", nargs="*", default=[]); ap.add_argument("--gain", type=float, default=1.0, help="global scale on every weight (labelled fudge; see spectral radius)"); ap.add_argument("--out", default="seam/tx"); ap.add_argument("--geom", default="seam/eye_geom.npz"); args = ap.parse_args()
 dev = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # ---------------------------------------------------------------- data
@@ -106,10 +106,15 @@ tau_t = torch.tensor(np.maximum(tau, args.dt), device=dev); bias_t = torch.tenso
 r_nodes = torch.arange(r_base, r_base + NR * ncol, device=dev); r_col = torch.tensor(np.repeat(np.arange(ncol), NR), device=dev)
 
 # ---------------------------------------------------------------- sim
+ADAPT = {"A": None}
+adapt_mask = torch.tensor(~np.char.startswith(node_type, "R"), device=dev, dtype=torch.float32)   # photoreceptors are not adapted (input units)
 def run(lum_frames, v0=None, record_types=("T4a", "T4b", "T4c", "T4d", "T5a", "T5b", "T5c", "T5d")):
     record_types = tuple(record_types) + tuple(args.record)
     """lum_frames: (T, ncol) luminance. returns v0 (final state), rec {type: (T, n_cells_of_type)} for real cells."""
     v = bias_t.clone() if v0 is None else v0.clone(); sub = max(1, int(round(1 / args.fps / args.dt)))
+    if args.adapt_tau > 0:
+        if ADAPT["A"] is None or v0 is None: ADAPT["A"] = args.adapt_k * torch.relu(v) * adapt_mask
+        A = ADAPT["A"].clone(); ka = args.dt * 1000.0 / args.adapt_tau
     rec_idx = {t: torch.tensor(np.flatnonzero(node_type == t), device=dev) for t in record_types}
     rec = {t: torch.zeros((len(lum_frames), len(ix)), device=dev) for t, ix in rec_idx.items()}
     x = torch.zeros(N, device=dev)
@@ -117,11 +122,16 @@ def run(lum_frames, v0=None, record_types=("T4a", "T4b", "T4c", "T4d", "T5a", "T
         x[r_nodes] = torch.tensor(lum, device=dev, dtype=torch.float32)[r_col]
         for _ in range(sub):
             I = scale_t * (W @ torch.relu(v))
-            v = v + (args.dt / tau_t) * (-v + bias_t + I + x)
+            if args.adapt_tau > 0:
+                v = v + (args.dt / tau_t) * (-v + bias_t + I + x - A)
+                A = A + ka * (args.adapt_k * torch.relu(v) * adapt_mask - A)
+            else:
+                v = v + (args.dt / tau_t) * (-v + bias_t + I + x)
         if args.diag and (f in (0, 50, 99) or not torch.isfinite(v).all()):
             am = int(torch.nan_to_num(v.abs(), nan=1e30).argmax()); print(f"    frame {f}: max|v| {v.abs().max().item():.3g} at node {am} ({node_type[am]}, col {node_col[am]}), mean relu(v) {torch.relu(v).mean().item():.3g}, finite {torch.isfinite(v).all().item()}", flush=True)
             if not torch.isfinite(v).all(): break
         for t, ix in rec_idx.items(): rec[t][f] = v[ix]
+    if args.adapt_tau > 0: ADAPT["A"] = A
     return v, {t: r.cpu().numpy() for t, r in rec.items()}, rec_idx
 def steady(lum, seconds=1.0):
     v, _, _ = run(np.repeat(lum[None], int(seconds * args.fps), 0)); return v
