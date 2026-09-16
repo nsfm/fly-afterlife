@@ -2,3 +2,4 @@ data/
 *.npz
 .venv/
 __pycache__/
+ref/
