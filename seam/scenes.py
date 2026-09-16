@@ -16,6 +16,9 @@ def frame_scene(s, t):
     if s in ("static_ahead", "static_left", "static_right"):
         az = np.radians({"static_ahead": 0, "static_left": 60, "static_right": -60}[s])
         return Scene(spheres=[(np.array([np.cos(az), np.sin(az), 0.5]), 0.3, 0.05)]), 0.0
+    if s in ("flash_left", "flash_right", "flash_ahead"):
+        az = np.radians({"flash_ahead": 0, "flash_left": 60, "flash_right": -60}[s])
+        return (Scene(spheres=[(np.array([np.cos(az), np.sin(az), 0.5]), 0.3, 0.05)]) if t >= 1.0 else Scene()), 0.0
     if s in ("yaw_left", "yaw_right"):
         ring = [(np.array([2 * np.cos(a), 2 * np.sin(a), 0.5]), 0.25, 0.05) for a in np.radians(np.arange(0, 360, 30))]
         h = 0.0 if t < 1.0 else (90.0 * (t - 1.0)) * (1 if s == "yaw_left" else -1)

@@ -24,7 +24,7 @@ import flyvis
 from omma import Eye, Scene
 ap = argparse.ArgumentParser(); ap.add_argument("--test", default=None); ap.add_argument("--stims", nargs="*", default=[])
 ap.add_argument("--rescale", default="none"); ap.add_argument("--dt", type=float, default=0.005); ap.add_argument("--fps", type=int, default=100)
-ap.add_argument("--diag", action="store_true"); ap.add_argument("--seconds", type=float, default=2.0); ap.add_argument("--homeostat", type=int, default=0, help="N iterations of per-type bias correction so each type rests (grey) where flyvis rests"); ap.add_argument("--speed", type=float, default=60.0); ap.add_argument("--record", nargs="*", default=[]); ap.add_argument("--gain", type=float, default=1.0, help="global scale on every weight (labelled fudge; see spectral radius)"); ap.add_argument("--out", default="seam/tx"); ap.add_argument("--geom", default="seam/eye_geom.npz"); args = ap.parse_args()
+ap.add_argument("--diag", action="store_true"); ap.add_argument("--gainmatch", type=int, default=0, help="N rounds: scale each (type, eye)'s input so its grating modulation matches flyvis, re-homeostat biases each round"); ap.add_argument("--save-calib", default=None); ap.add_argument("--load-calib", default=None); ap.add_argument("--seconds", type=float, default=2.0); ap.add_argument("--homeostat", type=int, default=0, help="N iterations of per-type bias correction so each type rests (grey) where flyvis rests"); ap.add_argument("--speed", type=float, default=60.0); ap.add_argument("--record", nargs="*", default=[]); ap.add_argument("--gain", type=float, default=1.0, help="global scale on every weight (labelled fudge; see spectral radius)"); ap.add_argument("--out", default="seam/tx"); ap.add_argument("--geom", default="seam/eye_geom.npz"); args = ap.parse_args()
 dev = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # ---------------------------------------------------------------- data
@@ -102,7 +102,7 @@ print(f"edges: {n_real_edges} real (+CT1 compartments) + {len(E_pre) - n_real_ed
 print("  biggest dropped:", sorted(dropped.items(), key=lambda x: -x[1])[:6])
 Ew = np.array(E_w, np.float32) * args.gain; print(f"weights: finite {np.isfinite(Ew).all()}, |w| max {np.abs(Ew).max():.3f}, mean {np.abs(Ew).mean():.4f}; in-degree max {np.bincount(E_post).max()}; per-node |in| max {pd.Series(np.abs(Ew)).groupby(np.array(E_post)).sum().max():.2f}")
 W = torch.sparse_coo_tensor(torch.tensor([E_post, E_pre]), torch.tensor(Ew, dtype=torch.float32), (N, N)).coalesce().to_sparse_csr().to(dev)
-tau_t = torch.tensor(np.maximum(tau, args.dt), device=dev); bias_t = torch.tensor(bias, device=dev)
+tau_t = torch.tensor(np.maximum(tau, args.dt), device=dev); bias_t = torch.tensor(bias, device=dev); scale_t = torch.ones(N, device=dev)
 r_nodes = torch.arange(r_base, r_base + NR * ncol, device=dev); r_col = torch.tensor(np.repeat(np.arange(ncol), NR), device=dev)
 
 # ---------------------------------------------------------------- sim
@@ -116,7 +116,7 @@ def run(lum_frames, v0=None, record_types=("T4a", "T4b", "T4c", "T4d", "T5a", "T
     for f, lum in enumerate(lum_frames):
         x[r_nodes] = torch.tensor(lum, device=dev, dtype=torch.float32)[r_col]
         for _ in range(sub):
-            I = W @ torch.relu(v)
+            I = scale_t * (W @ torch.relu(v))
             v = v + (args.dt / tau_t) * (-v + bias_t + I + x)
         if args.diag and (f in (0, 50, 99) or not torch.isfinite(v).all()):
             am = int(torch.nan_to_num(v.abs(), nan=1e30).argmax()); print(f"    frame {f}: max|v| {v.abs().max().item():.3g} at node {am} ({node_type[am]}, col {node_col[am]}), mean relu(v) {torch.relu(v).mean().item():.3g}, finite {torch.isfinite(v).all().item()}", flush=True)
@@ -126,7 +126,7 @@ def run(lum_frames, v0=None, record_types=("T4a", "T4b", "T4c", "T4d", "T5a", "T
 def steady(lum, seconds=1.0):
     v, _, _ = run(np.repeat(lum[None], int(seconds * args.fps), 0)); return v
 
-if args.homeostat:
+def homeostat(n, v_start=None, verbose=True):
     import os
     if not os.path.exists("seam/flyvis_rest.json"):
         from flyvis import NetworkView
@@ -136,16 +136,56 @@ if args.homeostat:
         json.dump({t: float(fa[ft == t].mean()) for t in sorted(set(ft))}, open("seam/flyvis_rest.json", "w"), indent=1); del net
     target = json.load(open("seam/flyvis_rest.json"))
     type_idx = {t: torch.tensor(np.flatnonzero(node_type == t), device=dev) for t in set(node_type) if not t.startswith("R")}
-    for it in range(args.homeostat):
-        v_grey = steady(np.full(ncol, 0.5, np.float32)) if it == 0 else run(np.repeat(np.full(ncol, 0.5, np.float32)[None], 50, 0), v_grey)[0]
-        err = {t: target[t] - v_grey[ix].mean().item() for t, ix in type_idx.items()}
+    v = steady(np.full(ncol, 0.5, np.float32)) if v_start is None else v_start
+    for it in range(n):
+        if it: v = run(np.repeat(np.full(ncol, 0.5, np.float32)[None], 50, 0), v)[0]
+        err = {t: target[t] - v[ix].mean().item() for t, ix in type_idx.items()}
         for t, ix in type_idx.items(): bias_t[ix] += 0.5 * err[t]
-        worst = sorted(err.items(), key=lambda x: -abs(x[1]))[:4]
-        print(f"  homeostat {it}: mean|err| {np.mean([abs(e) for e in err.values()]):.3f}  worst {[(t, round(e, 2)) for t, e in worst]}", flush=True)
-    bias_np = bias_t.cpu().numpy(); shift = {t: float(bias_np[ix.cpu().numpy()].mean() - P["nodes"][t]["bias"]) for t, ix in type_idx.items()}
-    print("  bias shifts (transplant - flyvis), largest:", sorted(shift.items(), key=lambda x: -abs(x[1]))[:8])
-t0 = time.time(); az = np.degrees(np.arctan2(eye.dir0[:, 1], eye.dir0[:, 0])); el = np.degrees(np.arcsin(np.clip(eye.dir0[:, 2], -1, 1)))
-v_grey = steady(np.full(ncol, 0.5, np.float32)); print(f"steady state on grey in {time.time()-t0:.1f}s; N={N}")
+        if verbose and (it == n - 1): print(f"  homeostat {it}: mean|err| {np.mean([abs(e) for e in err.values()]):.3f}  worst {[(t, round(e, 2)) for t, e in sorted(err.items(), key=lambda x: -abs(x[1]))[:3]]}", flush=True)
+    return run(np.repeat(np.full(ncol, 0.5, np.float32)[None], 50, 0), v)[0]
+
+az = np.degrees(np.arctan2(eye.dir0[:, 1], eye.dir0[:, 0])); el = np.degrees(np.arcsin(np.clip(eye.dir0[:, 2], -1, 1)))
+def grating_mods(v_rest, speed=60.0):
+    """per (type, side) mean temporal modulation over 4 directions."""
+    allt = [t for t in sorted(set(node_type)) if not t.startswith("R")]; acc = {}
+    for coord, sgn in ((az, +1), (az, -1), (el, +1), (el, -1)):
+        frames = np.concatenate([np.full((args.fps, ncol), 0.5, np.float32), np.stack([np.where(((coord - sgn * speed * f / args.fps) // 15.0) % 2 == 0, 0.2, 0.8).astype(np.float32) for f in range(args.fps)])])
+        _, rec, rec_idx = run(frames, v_rest, record_types=tuple(allt))
+        for t in allt:
+            ix = rec_idx[t].cpu().numpy()
+            for sd in "LR":
+                ms = node_side[ix] == sd
+                if ms.any(): acc.setdefault((t, sd), []).append(float(rec[t][args.fps + 20:, ms].std(0).mean()))
+    return {k: float(np.mean(v)) for k, v in acc.items()}
+
+if args.load_calib:
+    cal = np.load(args.load_calib); bias_t[:] = torch.tensor(cal["bias"], device=dev); scale_t[:] = torch.tensor(cal["scale"], device=dev); print("loaded calibration", args.load_calib)
+if args.homeostat:
+    v_grey = homeostat(args.homeostat)
+if args.gainmatch:
+    tmod = json.load(open("seam/flyvis_mod.json")); step = 0.25   # exponent on target/measured per round
+    for rd in range(args.gainmatch):
+        mods = grating_mods(v_grey); ratios = []
+        prev_scale, prev_bias, prev_v = scale_t.clone(), bias_t.clone(), v_grey.clone()
+        for attempt in range(3):
+            scale_t[:] = prev_scale; bias_t[:] = prev_bias; ratios = []
+            for (ty_, sd), m in mods.items():
+                tgt = tmod.get(ty_)
+                if tgt is None or m <= 1e-4 or tgt <= 1e-4: continue
+                r = float(np.clip((tgt / m) ** step, 0.8, 1.25)); ratios.append(tgt / m)
+                ix = torch.tensor(np.flatnonzero((node_type == ty_) & (node_side == sd)), device=dev); scale_t[ix] = torch.clamp(scale_t[ix] * r, 0.1, 10.0)
+            v_try = homeostat(8, prev_v, verbose=False)
+            if torch.isfinite(v_try).all() and v_try.abs().max().item() < 50: v_grey = v_try; break
+            step *= 0.5; print(f"    round {rd}: diverged (max|v| {v_try.abs().max().item():.3g}); step -> {step}", flush=True)
+        else:
+            scale_t[:] = prev_scale; bias_t[:] = prev_bias; v_grey = prev_v; print("    round", rd, "reverted"); break
+        lr = np.log(ratios); print(f"  gainmatch {rd}: median target/measured {np.exp(np.median(lr)):.2f}, mean|log ratio| {np.abs(lr).mean():.3f}; T4a L/R mod {mods.get(('T4a','L'),0):.3f}/{mods.get(('T4a','R'),0):.3f} (target {tmod['T4a']:.3f})  T5a {mods.get(('T5a','L'),0):.3f}/{mods.get(('T5a','R'),0):.3f} (target {tmod['T5a']:.3f})  Tm9 {mods.get(('Tm9','L'),0):.3f} ({tmod['Tm9']:.3f})", flush=True)
+    sc = scale_t.cpu().numpy(); print("  input scales, largest:", sorted({(t_, sd): round(float(sc[(node_type == t_) & (node_side == sd)].mean()), 2) for t_ in set(node_type) for sd in "LR" if ((node_type == t_) & (node_side == sd)).any()}.items(), key=lambda x: -abs(np.log(x[1])))[:8])
+if args.save_calib:
+    np.savez(args.save_calib, bias=bias_t.cpu().numpy(), scale=scale_t.cpu().numpy(), node_type=node_type, node_side=node_side); print("saved calibration", args.save_calib)
+t0 = time.time()
+if not (args.homeostat or args.gainmatch or args.load_calib): v_grey = steady(np.full(ncol, 0.5, np.float32))
+print(f"ready; N={N}")
 
 if args.test == "decompose":
     # resting input to each target type, decomposed by source type: transplant (L eye) vs flyvis (central column)

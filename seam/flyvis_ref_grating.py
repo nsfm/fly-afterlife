@@ -26,4 +26,12 @@ with torch.no_grad(): act = net.simulate(movie(xr, +1), dt=1 / fps, as_layer_act
 print("\nflyvis chain under image-right grating: rest / during-mean / temporal modulation / frac of cells with rest>0")
 for t in chain:
     a = np.asarray(getattr(act, t).squeeze(0)); print(f"  {t:9s} rest {a[20:100].mean():+.3f}  during {a[120:].mean():+.3f}  mod {a[120:].std(0).mean():.3f}  active {np.mean(a[20:100].mean(0) > 0):.2f}")
+# per-type modulation target: mean over the 4 directions of (mean over cells of sd over time), all 65 types
+allt = sorted(set(ntype)); mods = {t: [] for t in allt}
+for name, coord, sgn in (("image-right", xr, +1), ("image-left", xr, -1), ("image-up", yr, +1), ("image-down", yr, -1)):
+    with torch.no_grad(): act = net.simulate(movie(coord, sgn), dt=1 / fps, as_layer_activity=True)
+    for t in allt:
+        a = np.asarray(getattr(act, t).squeeze(0)); mods[t].append(float(a[120:].std(0).mean()))
+import json; json.dump({t: float(np.mean(m)) for t, m in mods.items()}, open("seam/flyvis_mod.json", "w"), indent=1)
+print("wrote seam/flyvis_mod.json")
 print("DS: T4a right-left", f"{res[('image-right','T4a')][0]-res[('image-left','T4a')][0]:+.3f}", " T4b", f"{res[('image-right','T4b')][0]-res[('image-left','T4b')][0]:+.3f}", " T4c up-down", f"{res[('image-up','T4c')][0]-res[('image-down','T4c')][0]:+.3f}", " T4d", f"{res[('image-up','T4d')][0]-res[('image-down','T4d')][0]:+.3f}")
