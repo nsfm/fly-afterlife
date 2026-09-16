@@ -32,7 +32,7 @@ sys.path.insert(0, "seam")
 os.environ.setdefault("FLYVIS_ROOT_DIR", "/home/nate/code/fly-afterlife/flyvis_data")
 from omma import Eye, Scene
 ap = argparse.ArgumentParser(); ap.add_argument("--stim", nargs="+", required=True); ap.add_argument("--out", default="seam/world")
-ap.add_argument("--geom", default="seam/eye_geom.npz"); ap.add_argument("--fps", type=int, default=100); ap.add_argument("--seconds", type=float, default=2.0)
+ap.add_argument("--geom", default="seam/eye_geom.npz"); ap.add_argument("--model", default="flow/0000/000"); ap.add_argument("--fps", type=int, default=100); ap.add_argument("--seconds", type=float, default=2.0)
 args = ap.parse_args()
 T = int(args.fps * args.seconds); eye = Eye(args.geom); g = np.load(args.geom)
 
@@ -75,7 +75,7 @@ for s in "LR":
 
 import flyvis
 from flyvis import NetworkView
-nv = NetworkView("flow/0000/000"); net = nv.init_network(); net.eval()
+nv = NetworkView(args.model); net = nv.init_network(); net.eval()
 nodes = net.connectome.nodes; ntype = nodes.type[:].astype(str); nu = nodes.u[:]; nv_ = nodes.v[:]
 types = sorted(set(ntype)); out["types"] = np.array(types)
 t4 = ntype == "T4a"; assert [tuple(x) for x in zip(nu[t4], nv_[t4])] == sorted(lattice), "flyvis node order is not sorted (u,v)"
