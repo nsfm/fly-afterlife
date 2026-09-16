@@ -106,7 +106,7 @@ either drive Tm/TmY with a transient transform or accept that LC4 needs its own
 graded/adapting model. open.
 
 
-## the eye (added 22:50 PDT, after nate asked about the geometry)
+## the eye (added ~22:00 PDT, after nate asked about the geometry)
 
 the first seam rendered one flat image and told both eyes it was in the middle of
 their field. that is two objects, one per side. the real eye is an apposition eye:
@@ -157,7 +157,7 @@ eye), `seam/seam_v2.py` (per-eye seam; LPLC2/GF/DNa02/DNa/HS/DN per side + bins)
 parameters are per cell type, so a larger-extent network should be buildable from the
 same weights. not done yet.
 
-## orientation, decided (23:40 PDT)
+## orientation, decided (~22:35 PDT)
 
 both signs, eleven scenes, three seeds, both eyes (`seam/v2_P.json`, `v2_M.json`;
 spikes in the 1 s stimulus window, mean of 3 seeds):
