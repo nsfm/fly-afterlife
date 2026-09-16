@@ -266,6 +266,40 @@ the wiring and where each column looks.
 `ol_graph.npz`, `pair_counts.csv`; `seam/flyvis_ref_grating.py` (reference on the
 identical grating); `seam/flyvis_rest.json` (homeostat targets).
 
+**seam v3: the transplant drives the LIF by bodyId** (`seam/scenes.py`, `transplant.py
+--stims`, `seam/seam_v3.py`, results `seam/v3_results.json`; gain 150, A_REF 0.5, rest =
+transplant on an empty scene). no column map: the transplant's T4a cell IS the LIF's
+T4a cell. 3 seeds:
+
+| | LPLC2 loom | LPLC2 recede | LPLC2 static | GF loom | GF recede |
+|---|---|---|---|---|---|
+| left eye | 2 / 0 / 2 | 35 / 37 / 37 | 0 / 0 / 1 | 0 / 0 / 0 | 4 / 5 / 8 |
+| right eye | 104 / 108 / 108 | 240 / 243 / 263 | 243 / 248 / 241 | 5 / 49 / 26 | 100 / 99 / 43 |
+
+**not loom-selective, and the reason is legible.** HS lateralizes cleanly (loom_left
+HS 292/70; yaw_left HS_R 532 > HS_L 409) but LPLC2 prefers a receding dark ball, and on
+the right a static ball drives it as hard as a receding one. two causes, both visible
+in the chain tables above: (1) **the OFF pathway is weak.** T5 modulation is 0.11 in
+the transplant vs 0.37-0.46 in flyvis; Tm2/Tm4/Tm9 run at about half of flyvis's
+modulation, and T5 hovers at threshold. a dark ball looming is darkening edges moving
+outward - T5's job. what is left is T4 (ON) answering the brightening edges, which a
+dark ball makes when it recedes. so recede > loom is exactly what an ON-only eye should
+say. (2) **sustained responses to static contrast** are larger relative to motion than
+in flyvis, so a static ball holds LPLC2 up through change-from-rest. (3) the right eye
+runs hotter than the left throughout (spectral radius 2.19 vs 1.89; LPLC2_R 240 vs
+LPLC2_L 35 on matched stimuli).
+
+**where that leaves the transplant (01:00 PDT).** direction selectivity survives the
+move to real wiring with correct sign and laterality; the ON pathway matches flyvis's
+operating point; the OFF pathway does not carry enough, and the whole-fly loom test
+through the transplant fails for that reason, not for a wiring or orientation reason.
+next, in order: (a) a second homeostatic target - match each type's response *gain*
+(modulation under the reference grating) to flyvis by scaling its input strengths, the
+way the biases were matched; still calibration to flyvis, nothing fit to our readout.
+(b) bridge the missing types (Mi12, Mi3, Am, Tm28, TmY9) to the MaleCNS names if they
+exist under new ones. (c) per-eye gain so the two eyes sit at the same radius. (d) then
+re-run v3, with the flash control added.
+
 ## choices, labelled
 
 1. **orientation** of our hex grid onto theirs. not in the data. calibrated by biology:

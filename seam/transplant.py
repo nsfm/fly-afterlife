@@ -24,7 +24,7 @@ import flyvis
 from omma import Eye, Scene
 ap = argparse.ArgumentParser(); ap.add_argument("--test", default=None); ap.add_argument("--stims", nargs="*", default=[])
 ap.add_argument("--rescale", default="none"); ap.add_argument("--dt", type=float, default=0.005); ap.add_argument("--fps", type=int, default=100)
-ap.add_argument("--diag", action="store_true"); ap.add_argument("--homeostat", type=int, default=0, help="N iterations of per-type bias correction so each type rests (grey) where flyvis rests"); ap.add_argument("--speed", type=float, default=60.0); ap.add_argument("--record", nargs="*", default=[]); ap.add_argument("--gain", type=float, default=1.0, help="global scale on every weight (labelled fudge; see spectral radius)"); ap.add_argument("--out", default="seam/tx"); ap.add_argument("--geom", default="seam/eye_geom.npz"); args = ap.parse_args()
+ap.add_argument("--diag", action="store_true"); ap.add_argument("--seconds", type=float, default=2.0); ap.add_argument("--homeostat", type=int, default=0, help="N iterations of per-type bias correction so each type rests (grey) where flyvis rests"); ap.add_argument("--speed", type=float, default=60.0); ap.add_argument("--record", nargs="*", default=[]); ap.add_argument("--gain", type=float, default=1.0, help="global scale on every weight (labelled fudge; see spectral radius)"); ap.add_argument("--out", default="seam/tx"); ap.add_argument("--geom", default="seam/eye_geom.npz"); args = ap.parse_args()
 dev = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # ---------------------------------------------------------------- data
@@ -207,5 +207,14 @@ if args.test == "gratings":
             print(f"{t:5s} {s:3s} " + "".join(f"{m:+7.3f}/{md:5.3f} " for m, md in r) + f"   {r[0][0]-r[1][0]:+.3f}   {r[2][0]-r[3][0]:+.3f}")
     print("biology: +az motion is front-to-back on the LEFT eye (T4a/T5a should win there) and back-to-front on the RIGHT (T4b/T5b); +el up = T4c/T5c, -el = T4d/T5d")
 for stim in args.stims:
-    sys.path.insert(0, "seam"); import world_flyvis as wf  # reuse its frame_scene? it parses args; inline instead
-    raise SystemExit("stims: not wired yet")
+    from scenes import frame_scene
+    T = int(args.fps * args.seconds); frames = np.zeros((T, ncol), np.float32)
+    for f in range(T):
+        sc, h = frame_scene(stim, f / args.fps); frames[f] = eye.render(sc, heading_deg=h)
+    t0 = time.time(); _, rec, rec_idx = run(frames, v_grey)
+    out = {"fps": args.fps, "gain": args.gain, "rescale": args.rescale, "homeostat": args.homeostat}
+    for t, a in rec.items():
+        ix = rec_idx[t].cpu().numpy(); out[f"act_{t}"] = a.astype(np.float32); out[f"bid_{t}"] = np.array([node_bid[i] for i in ix]); out[f"side_{t}"] = node_side[ix]
+    np.savez(f"{args.out}_{stim}.npz", **out)
+    t45 = [rec[t] for t in ("T4a", "T4b", "T4c", "T4d", "T5a", "T5b", "T5c", "T5d")]
+    print(f"{stim:13s} {time.time()-t0:4.1f}s  T4/T5 mean pre {np.mean([a[20:100].mean() for a in t45]):+.3f} during {np.mean([a[100:].mean() for a in t45]):+.3f} peak {max(a.max() for a in t45):.2f} -> {args.out}_{stim}.npz", flush=True)
