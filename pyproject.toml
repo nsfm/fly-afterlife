@@ -1,0 +1,21 @@
+[project]
+name = "fly-afterlife"
+version = "0.1.0"
+description = "Add your description here"
+authors = [
+    { name = "Nate Dube", email = "nate@ndube.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "numpy>=2.5.3",
+    "pandas>=3.0.5",
+    "pyarrow>=25.0.1",
+    "scipy>=1.18.1",
+]
+
+[project.scripts]
+fly-afterlife = "fly_afterlife:main"
+
+[build-system]
+requires = ["uv_build>=0.12.5,<0.13.0"]
+build-backend = "uv_build"
