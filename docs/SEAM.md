@@ -219,6 +219,53 @@ per-pair count rescale, then ask whether T4/T5 direction selectivity survives th
 from the averaged column to the real one. if it does, the seam moves to the projection
 neurons and the 721-hex lattice, the rim, and the per-eye rendering hack all go away.
 
+## the transplant, first result (2026-09-16, ~00:40 PDT)
+
+`seam/transplant.py`. flyvis's dynamics and learned physiology on the real per-cell
+optic lobe of each eye: 62,977 real cells (51 types), 14,112 virtual photoreceptors
+(R1-R8 per column - the retina is outside the imaged volume; only 13% of R axons are
+traced), 3,528 CT1 compartments (M10/Lo1 per column, by partner type). 1.97M edges,
+`weight = sign * count * strength * pair_rescale * gain`. 552k real edges over 1,713
+type pairs dropped because flyvis has no parameters for them (T2a->T2a, Tm5Y->Tm5Y ...).
+
+**what it took to make it run, in order found:**
+1. **stability.** spectral radius of the signed weight matrix: flyvis tiled 1.76;
+   transplant no rescale 4.39 (TmY4 runs away in 3 frames); per-pair rescale 2.19
+   (L eye 1.89, R eye 2.19 - the tracing bias). gain 0.8 with pair rescale matches
+   flyvis's radius: the one global fudge, and it is derived, not tuned.
+2. **the medulla was dark.** side-by-side resting-input decomposition found the
+   largest single difference: R8 -> Mi1 is +2.57 in flyvis and 0 here. flyvis's R7/R8
+   feed the medulla directly with the tonic drive that holds the ON pathway at its
+   operating point; the virtual retina had only R1-R6. added R7/R8: Mi1 modulation
+   0.02 -> 0.42 (flyvis 0.46), Mi4 0.14 -> 0.82 (1.10).
+3. **operating point.** with the retina complete, T4a rested at 2.08 (flyvis 0.09):
+   two real differences (CT1 -> Mi1 is 1,145 synapses in the whole MaleCNS vs a
+   large count in flyvis; Mi12 is absent from our typing) push the medulla up, and
+   a relu unit far above threshold has no direction-selective mean shift. fix, the
+   biological one: keep taus and strengths, re-derive the 65 biases so each type
+   rests where it rests in flyvis (`--homeostat 12`, mean |error| 0.02 after 12
+   iterations, largest shifts L1/L2/Mi1/Lawf2 ~ -1.1). nothing fit to our readout.
+
+**result** (square-wave grating, 30 deg period, 60 deg/s; mean shift during-rest /
+temporal modulation; +az is front-to-back on the LEFT eye, back-to-front on the RIGHT):
+
+| | L +az | L -az | R +az | R -az | verdict |
+|---|---|---|---|---|---|
+| T4a | +0.055 / 0.55 | +0.036 / 0.37 | +0.038 / 0.43 | +0.081 / 0.67 | front-to-back, both eyes |
+| T4b | +0.030 / 0.27 | +0.067 / 0.43 | +0.107 / 0.52 | +0.037 / 0.32 | back-to-front, both eyes |
+| T4c (up vs down) | +0.044 / 0.47 vs +0.012 / 0.28 | | +0.075 / 0.61 vs +0.006 / 0.36 | | upward, both eyes |
+
+direction selectivity survives the move from the averaged column to the real wiring:
+correct sign, correct laterality, about a third of flyvis's magnitude on its own
+lattice (flyvis on the same grating: T4b +0.27, T4c +0.22). T4d and the T5 (OFF)
+pathway are weak here as they are in flyvis on this stimulus. and it is a third
+independent circuit agreeing on the eye's orientation, using no map at all: only
+the wiring and where each column looks.
+
+**files:** `seam/transplant_params.py` -> `flyvis_params.json`; `seam/ol_graph.py` ->
+`ol_graph.npz`, `pair_counts.csv`; `seam/flyvis_ref_grating.py` (reference on the
+identical grating); `seam/flyvis_rest.json` (homeostat targets).
+
 ## choices, labelled
 
 1. **orientation** of our hex grid onto theirs. not in the data. calibrated by biology:
