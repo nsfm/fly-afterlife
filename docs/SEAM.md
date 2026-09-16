@@ -18,6 +18,10 @@
 >   contract 13 / flash 17 / static 0. the LIF side of the seam is sound.
 > - **stands:** the transplant reproduces T4/T5 direction selectivity on the real
 >   wiring with correct sign and laterality, at ~1/3 of flyvis's magnitude.
+> - **behaviour (2026-09-16 daytime):** closed-loop optomotor following, bar approach, a walk with
+>   approach to dark posts, and a bristle-driven collision reflex all work on flyvis model 000. across
+>   the ensemble the sensory side is robust (HS 8/10) and the one-neuron steering readout is not
+>   (both-way drum following 2-3/10, drifting resting bias). see the behaviour sections.
 > - **the bottleneck, named (partly):** the direction selectivity of the T4/T5 activity handed
 >   to the LIF - from any single flyvis model, and from the transplant - is not clean
 >   enough per position for LPLC2's layout to read expansion; edge polarity and edge
@@ -704,6 +708,29 @@ is robust; the motor readout is count-starved. options: integrate longer (keeps 
 wheel on the named neuron) or read more cells (the DNa family's sign flips between
 stimuli, so no). one more ensemble run with a 1 s smoothing window and a 10 s rest
 estimate, nothing tuned to the drum: `drum3_m*.npz`.
+
+**long integration (13:35 PDT, `drum3_m*.npz`, 1 s smoothing, 10 s rest estimate): no
+better.** both ways 2 of 10 (000, 008); leftward 5, rightward 6. the still-drum drifts
+are not noise now - they are steady: 002 drifts +30 deg/s in every segment, 004 +33 to
++49, 005 -74 to -89, 001 -28 to -40, regardless of what the drum does. a 10 s resting
+estimate does not cancel them, so the DNa02 left-right offset is not stationary over a
+run: it wanders on a slower timescale than the rest estimate (flyvis's slow state, the
+LIF's, or both). a fixed offset cannot correct a drifting one.
+
+**where the closed loop stands, honestly.** the sensory encoding of self-rotation is
+robust across the flyvis ensemble (HS on the correct side, 8 of 10). the descending
+readout - DNa02, one cell per side - carries the right sign in most models but with a
+drifting resting bias of order one spike per 100 ms, which at any usable gain is tens
+of degrees per second. the optomotor response is therefore: clean and symmetric on
+model 000 (3 seeds), present in 2-3 of 10 ensemble models both ways, one-sided in most
+of the rest, inverted in the two inverted-tuning models. the walk, the bar and the
+touch reflex all ran on model 000 and inherit this caveat. the two inverted models are
+excluded on external grounds (their T4/T5 tuning contradicts the fly); the drifting
+offset is not explained. next steps that would not be tuning: find what drifts (LIF
+state with flyvis held constant, vs flyvis state with the LIF reset), and a wheel with
+more spikes on it that is still the animal's steering output (the descending
+population that lateralizes consistently with DNa02 in yaw, chosen on the yaw runs
+and then tested on the drum, not the reverse).
 
 ## choices, labelled
 
