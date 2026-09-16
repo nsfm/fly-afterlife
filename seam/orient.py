@@ -1,11 +1,11 @@
 """
-orient.py - use LPLC2's known loom selectivity to calibrate the column map.
+orient.py - calibrate the column map against LPLC2's known loom selectivity.
 
-Eight orientations of our (hex1, hex2) onto flyvis (u, v): swap axes or not, flip u
-or not, flip v or not. For each, per eye, drive T4/T5 with the loom and with the
-recede stimulus and read LPLC2 + giant fiber. The correct orientation is the one
-where loom >> recede. This is calibration against biology (Klapoetke et al. 2017),
-not a fit to our own result.
+The 12 symmetries of the hex lattice in axial coords: permutations of (u, v, w=-u-v)
+with a global sign. For each, per eye: drive T4/T5 with loom and with recede, read
+LPLC2 (that eye) and the giant fiber over the stimulus window. The right map is the
+one where loom >> recede (Klapoetke et al. 2017). Biology calibrates the map; the
+map is not fit to our own downstream result.
 """
 import sys, itertools, time, numpy as np
 sys.path.insert(0, "ref/flybrain/scripts")
@@ -16,19 +16,16 @@ cols = np.load("seam/t4t5_columns.npz"); fv = np.load("seam/flyvis_out.npz")
 types = ["T4a", "T4b", "T4c", "T4d", "T5a", "T5b", "T5c", "T5d"]
 keys = {t: {(int(a), int(c)): i for i, (a, c) in enumerate(zip(fv[f"u_{t}"], fv[f"v_{t}"]))} for t in types}
 LPLC2 = np.flatnonzero(ty == "LPLC2"); GF = np.flatnonzero(ty == "DNp01")
-side = cols["side"]; LP_side = b.side.astype(str)
-steps_per_frame = 10
+side = cols["side"]; nside = b.side.astype(str); SPF = 10
 
-def colmap(swap, fu, fv_):
-    a = cols["hex1"] - CENTRE[0]; c = cols["hex2"] - CENTRE[1]
-    u, v = (c, a) if swap else (a, c)
-    if fu: u = -u
-    if fv_: v = -v
-    u = np.rint(u).astype(int); v = np.rint(v).astype(int)
+def colmap(perm, sign):
+    a = np.rint(cols["hex1"] - CENTRE[0]).astype(int); c = np.rint(cols["hex2"] - CENTRE[1]).astype(int)
+    w = -a - c; trip = {"u": a, "v": c, "w": w}
+    u, v = sign * trip[perm[0]], sign * trip[perm[1]]
     src = np.full(len(u), -1)
     for t in types:
         for i in np.flatnonzero(cols["type"] == t):
-            src[i] = keys[t].get((u[i], v[i]), -1)
+            src[i] = keys[t].get((int(u[i]), int(v[i])), -1)
     return src
 
 def run(stim, src, eye):
@@ -38,22 +35,20 @@ def run(stim, src, eye):
     for c in b.SENSORY_CLASSES: b.driven[b.cls == c] = True
     b.driven[idx] = True; b._driven_idx = np.flatnonzero(b.driven)
     b.reset(); b.drive_hz[:] = 0; b.g[:] = 0; b.refrac[:] = 0
-    T = fv[f"{stim}_T4a"].shape[0]; lp = gf = 0
-    for f in range(T):
+    lp_eye = LPLC2[nside[LPLC2] == eye]; lp = gf = 0
+    for f in range(200):
         for t in types:
             k = tt == t
             b.drive_hz[idx[k]] = MAX_HZ * np.clip(fv[f"{stim}_{t}"][f][ss[k]] / A_REF, 0, 1)
-        for s in range(steps_per_frame):
+        for s in range(SPF):
             spk = b.step()
-            if f >= 50:
-                lp += spk[LPLC2[LP_side[LPLC2] == eye]].sum(); gf += spk[GF].sum()
+            if f >= 100: lp += spk[lp_eye].sum(); gf += spk[GF].sum()
     return int(lp), int(gf)
 
-print(f"{'orientation':22s} {'eye':3s} {'loom LPLC2':>10s} {'recede LPLC2':>12s} {'loom GF':>8s} {'recede GF':>10s}  ratio")
-for swap, fu, fv_ in itertools.product([False, True], repeat=3):
-    src = colmap(swap, fu, fv_)
+perms = [p for p in itertools.permutations("uvw", 2)]
+print(f"{'map':10s} {'eye':3s} {'loom LPLC2':>10s} {'recede LPLC2':>12s} {'loom GF':>8s} {'recede GF':>10s}  ratio")
+for perm, sign in itertools.product(perms, [1, -1]):
+    src = colmap(perm, sign)
     for eye in "LR":
-        t0 = time.time()
         ll, lg = run("loom", src, eye); rl, rg = run("recede", src, eye)
-        name = f"swap={int(swap)} flipu={int(fu)} flipv={int(fv_)}"
-        print(f"{name:22s} {eye:3s} {ll:10d} {rl:12d} {lg:8d} {rg:10d}  {ll/max(rl,1):5.2f}", flush=True)
+        print(f"{('+' if sign>0 else '-')+''.join(perm):10s} {eye:3s} {ll:10d} {rl:12d} {lg:8d} {rg:10d}  {ll/max(rl,1):5.2f}", flush=True)
