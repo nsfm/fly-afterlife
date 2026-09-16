@@ -435,6 +435,29 @@ wiring has that, the seam is failing to use it (candidates: LPi inhibition too w
 0 Hz rest; T5 input outweighing T4; Tm5Y, LPLC2's largest input, undriven). if it
 does not, no downstream readout could have worked.
 
+**LPLC2's receptive field is in the wiring (03:00 PDT).** synapse-weighted offset of
+each T4/T5 subtype's input from each LPLC2 cell's own centre (centre = weighted mean of
+all its T4/T5 input columns; +front, +dorsal; 185 cells, ~319 T4/T5 synapses over
+~36 columns each):
+
+| layer | subtype | L eye (front, dorsal) | R eye | Klapoetke 2017 |
+|---|---|---|---|---|
+| 1 front-to-back | T4a / T5a | -3.04, +0.91 / -3.40, +0.93 | -2.92 / -3.27 | behind |
+| 2 back-to-front | T4b / T5b | +2.39, -1.06 / +2.19, -1.18 | +2.40 / +2.33 | ahead |
+| 3 up | T4c / T5c | +0.67, +2.10 / +0.79, +2.50 | +2.11 / +2.57 | above |
+| 4 down | T4d / T5d | -1.12, -2.38 / -0.76, -2.43 | -2.36 / -2.58 | below |
+
+each layer samples the side of the field where its preferred motion is outward. that
+is the loom detector's mechanism, read out of the MaleCNS, both eyes agreeing, under
+FRONT_SIGN = -1. LPLC1 (134 cells) shows no such layout (all offsets < 0.7): correct,
+it is not a loom detector. HS spans 540 columns with no offset structure: correct, it
+is a wide-field integrator. fifth anatomical agreement on the orientation.
+
+**so the mechanism exists and the seam does not use it.** next test is input-side vs
+LIF-side: hand the LIF an IDEAL direction-selective T4/T5 pattern (expanding ring:
+T4a/T5a fire behind the centre, b ahead, c above, d below; contracting ring: the
+opposite; flash: all subtypes on the ring at once) and ask whether LPLC2 discriminates.
+
 ## choices, labelled
 
 1. **orientation** of our hex grid onto theirs. not in the data. calibrated by biology:
