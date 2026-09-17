@@ -1922,6 +1922,27 @@ indistinguishable from the wheel on the same set (0.10 / 0.09 / 0.08; 6.5-7.3 m)
 a readout cannot matter until the cord produces something to read. the walking command
 runs next.
 
+## he walks (12:56 PDT): the walking command in the room
+
+`--walk 100` (DNp09, both sides, tonic) with the leg model as effector, the true leg set, running
+steering and pace, adapting bristles; male-only, 120 s, seeds 10-12:
+
+| config | seed | pace (sd) | leg MN / chunk | wall | longest | visits | touch frames | walked | mean yaw |
+|---|---|---|---|---|---|---|---|---|---|
+| no command, wheel | 10 / 11 / 12 | 0.10 / 0.09 / 0.08 | 14 / 10 / 6 | 18 / 12 / 7% | 20 / 14 / 9 s | 2 / 1 / 1 | 2,043 / 1,481 / 931 | 6.5 / 6.8 / 7.3 m | -0.1 |
+| no command, legs | 10 / 11 / 12 | 0.09 / 0.07 / 0.06 | 8 / 4 / 1 | 15 / 9 / 2% | 14 / 10 / 3 s | 2 / 2 / 1 | 1,322 / 665 / 221 | 7.4 / 6.7 / 7.0 m | +0.1 |
+| **command, legs** | 10 / 11 / 12 | **0.28 / 0.28 / 0.27** | **58 / 56 / 53** | 41 / 41 / 18% | 8 / 8 / 7 s | 17 / 21 / 10 | 2,489 / 2,459 / 1,328 | **30.7 / 31.1 / 31.3 m** | +0.9 / +1.2 / +2.9 |
+
+**the first run in which a descending command walks his legs and a muscle-weighted model
+reads them.** five times the leg output, four times the distance, many short wall visits
+instead of long pinned ones (the reflex frees a walking cord faster than a standing one),
+and a leftward drift of 1-3 deg per chunk: the lopsided right-hind drive of this male's
+DNp09 read by the measured rule (more stance on the right, turn toward the left), which
+the running baseline damps but does not remove. labelled: the command is a constant here
+where in life it is a state. what it unlocks, run next: the drum on a walking cord (does
+DNa02's nudge now show in the legs?), the warm corner on a walking cord, and the room with
+her.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,

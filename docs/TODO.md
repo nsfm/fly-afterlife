@@ -64,10 +64,8 @@ loop is probably a bug (mechanosensation brief).
 - [x] **cooling cells** and **hot cells** as transducers (`CoolingCells`, `HotCells`, 09:49) with
       Budelli 2019's numbers; on in the room with `--thermo rest|field`.
 - [ ] **VP1m / VP1l label audit** before driving either (Marin 2020: VP1m humid, VP1l cool).
-- [~] **the warm corner** (12:30): thermal DNs (DNge125 above all) drive the CONTRALATERAL legs with a
-      motor pattern orthogonal to the withdrawal program; its turning sign needs a leg model. BLOCKED on
-      legs with muscles (see body: gait generator -> a muscle-level leg model). DNa02 does not reach the
-      legs at 0.185 (8-12 spikes/s at 100 Hz): the visual turn is brain-side only in this model.
+- [~] **the warm corner** (12:56): DNge125 claim withdrawn (contaminated set); thermal DNs reach wing
+      MNs mostly, DNge037 the legs weakly; warmth bilateral at the legs. retest on a walking cord.
 - [ ] **hygro**: dry/moist cells non-adapting, tens of Hz; a humidity field. Or42b ORNs are
       also humidity sensors (Li 2022).
 - [ ] **plumes**: intermittent (power-law whiffs/blanks, exponent -3/2), ORN rate from
@@ -88,10 +86,10 @@ loop is probably a bug (mechanosensation brief).
 
 - [x] the leg MN SET: 373 leg MNs by subclass fl/ml/hl (12:45; the 699 included abdominal, wing,
       haltere, neck, jump). all leg readouts re-based on it.
-- [ ] the leg model (brief s.6): per-MN force by class, signed muscle weights, segment weights
-      (front legs brake), P_R - P_L -> yaw with the measured rule (turn toward the side with less
-      stance excursion; Yang 2024). implement as an effector; calibrate on touch and the drum;
-      then DNge125's chord and the warm corner again.
+- [x] the leg model (12:36): `legs.py`, DNa02's sign reproduced; effector `--effector legs`.
+- [x] a walking command (12:56): `--walk 100` (DNp09 tonic); he walks 31 m / 2 min on the true leg set.
+      still to do: the command as a state (walk / stop / brake DNs, Sapkal 2024); stance/swing phase
+      so MDN reads as backward; the DNp09 right-bias (tracing) as a labelled correction or not.
 
 ## 3. the eye track (independent of the above)
 
