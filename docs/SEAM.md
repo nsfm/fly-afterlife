@@ -1368,6 +1368,16 @@ sources on them (Hold, Scaled, TapBurst, GaitLeg, Gate); a registry applied in o
 room's drive block ported: five lines where there were fourteen, every float and one
 quirk (the gait evaluated at chunk-end time) kept. **verified: 69 arrays x 4 configs,
 bit-identical to the oracle.** next: body + world (step 3).
+
+**step 3, body + world (00:58 PDT):** `src/fly_afterlife/body.py` (pose, speed, radius,
+albedo, this frame's contact) and `world.py` (`Room`: walls, pillars, the pair, the scene
+for the eye; `step_frame` in the script's exact order). the room script's physics block is
+three lines. two pillar-hold formulas (his by offset ratio, hers by polar angle) are kept
+distinct because they are not bit-equal; unifying them is its own change. **verified: 4
+configs x 69 arrays, bit-identical.** a hole in the check found on the way: a failed port
+run inherited the previous pass's output file and "passed"; the check now deletes port
+outputs first. (the regex that renamed variables also renamed a log key inside single
+quotes; caught by the same failure.)
 - **Shiu's constants, from the code not the paper:** rest/reset -52, threshold -45,
   tau_m 20 ms, tau_syn 5, refractory 2.2, delay 1.8, w_syn 0.275 (a free parameter),
   Poisson 150 Hz. our 150 Hz optic-lobe cap is Shiu's default, not a measurement.

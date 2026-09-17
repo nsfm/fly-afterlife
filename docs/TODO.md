@@ -23,8 +23,8 @@ loop is probably a bug (mechanosensation brief).
 - [x] `receptors.py`: registry + selectors + transducers; existing drives ported unchanged;
       verified bit-identical (00:32). physiology transducers (Adapting, Differentiator,
       WeberFechner) still to write, one per behaviour change.
-- [ ] `body.py` + `world.py`: pose, gait generator, six legs, contacts by body part; scene +
-      scalar fields (odour, temperature, humidity, airflow, light). verify.
+- [x] `body.py` + `world.py`: pose, contacts, walls, pillars, the pair, the scene; verified
+      bit-identical (00:58). gait generator, body-part contacts and scalar fields still to come.
 - [ ] `effectors.py`: steering, pace, reflex, song; calibration phases cached by (brain, w_syn,
       seed). verify.
 - [ ] `episode.py`: one loop; `per_frame` / `per_chunk` namespaces in the npz; deterministic

@@ -5,6 +5,7 @@
 # world/pair.py at commit df26aa7) and kept locally (npz is gitignored); rerun them with --make-oracle.
 #   sh scripts/oracle_check.sh [--make-oracle]
 cd "$(dirname "$0")/.." || exit 1
+rm -f world/oracle/port_*.npz   # a failed run must not inherit a stale output from the last pass
 for w in old new; do
   if [ "$w" = old ]; then WM=0.275; WF=0.45; else WM=0.185; WF=0.275; fi
   for s in 3 4; do
