@@ -87,3 +87,38 @@ class Room:
 
     def distance(self, m: Body, f: Body) -> float:
         return np.hypot(m.x - f.x, m.y - f.y) if f.present else np.inf
+
+
+@dataclass
+class Drum:
+    """the optomotor drum: a striped cylinder at infinity around a fly that turns in place (loop.py --mode drum).
+    programme = [(seconds, deg/s), ...]; the drum's phase advances every frame; the body does not translate."""
+    period_deg: float = 30.0
+    lo: float = 0.2
+    hi: float = 0.8
+    half_height_deg: float = 30.0
+    programme: list = field(default_factory=lambda: [(2, 0.0), (4, 30.0), (1, 0.0), (4, -30.0), (1, 0.0)])
+    sky: float = 0.85
+    ground: float = 0.35
+    phase: float = 0.0
+    frame: int = 0
+    contacts: int = 0
+    source: str = "closedloop.py / loop.py --mode drum, 2026-09-16: still 2 s, left 30 deg/s 4 s, still 1 s, right 30 deg/s 4 s, still 1 s"
+
+    def rate(self, t: float) -> float:
+        acc = 0.0
+        for sec, r in self.programme:
+            if t < acc + sec: return r
+            acc += sec
+        return 0.0
+
+    def scene(self, others: list) -> Scene:
+        return Scene(sky=self.sky, ground=self.ground, drum=dict(period_deg=self.period_deg, phase_deg=self.phase, lo=self.lo, hi=self.hi, half_height_deg=self.half_height_deg))
+
+    def step_frame(self, m: Body, f, fps: int) -> None:
+        m.clear_contact()
+        if f is not None: f.clear_contact()
+        self.phase += self.rate(self.frame / fps) / fps; self.frame += 1
+        m.advance(fps)
+
+    def distance(self, m: Body, f) -> float: return np.inf

@@ -1394,6 +1394,24 @@ verified core is done in one night: five layers, five oracle passes, the record 
 `world/loop.py` is not ported: it is a research script of one-off calibration variants, most
 of them withdrawn; its modes (drum first) are re-implemented on the stack and validated
 against the recorded numbers instead.
+
+**the drum on the new stack (01:28 PDT, `experiments/drum.py`).** a `Drum` world (striped
+cylinder at infinity, the same programme), a single-fly `Episode` (her = None), the flyvis
+front end as its own module (`frontend.py`, the room script's block verbatim), `Steering`
+with the touch term off, no pace. heading rate per phase, deg/s (+ = left), model 000,
+0.275 mV:
+
+| seed | still | drum +30 | still | drum -30 | still | follows both ways |
+|---|---|---|---|---|---|---|
+| 0 | +2.1 | **+21.9** | +0.4 | **-8.8** | +25.0 | yes |
+| 1 | -8.6 | **+5.0** | -21.9 | **-21.7** | +1.9 | yes |
+| 2 | +2.5 | -1.9 | -6.6 | **-6.2** | +4.5 | no |
+
+2 of 3 follow both ways (the record's `loop.py --rest-sub` result on model 000 was 3 of 3,
+and 2-3 of 10 across the ensemble); the still-phase drift (-21.9 in seed 1) is the same
+resting bias the wheel has always had. the new stack reproduces the recorded behaviour
+within the fragility already on record; it is not a bit-identical port and does not
+claim to be. this is the drum the running-baseline steering fix (TODO 2) gets tested on.
 - **Shiu's constants, from the code not the paper:** rest/reset -52, threshold -45,
   tau_m 20 ms, tau_syn 5, refractory 2.2, delay 1.8, w_syn 0.275 (a free parameter),
   Poisson 150 Hz. our 150 Hz optic-lobe cap is Shiu's default, not a measurement.
