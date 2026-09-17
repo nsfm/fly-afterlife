@@ -48,8 +48,9 @@ loop is probably a bug (mechanosensation brief).
       ensemble 3/10 (fixed 2/10), biases from +-100 to +-20, and two models revealed as anti-followers.
       adopted as the estimator; the wheel's per-model sign is a seam question, not a steering one.
 - [ ] **DNa02 gain**: 5 deg/s per Hz (bracketed 3-10; ours is 3).
-- [ ] **bristles** (mechano brief): 200 Hz onset burst, tau ~30 ms, 10-25 Hz plateau,
-      direction-gated (about half a contact patch fires), seconds-scale fatigue. by body part.
+- [x] **bristles** (mechano brief): `Adapting` 200 Hz onset, tau 30 ms, 20 Hz plateau, half the patch,
+      step-locked re-deflection at 10 Hz; reflex calibrated on the kernel (09:23). adopted. still
+      to do: seconds-scale fatigue, by body part; measure the bristle->leg-MN gain at 0.185 mV.
 - [ ] **leg MNs**: slow MNs fire ~30 Hz standing (Azevedo 2020); force per spike 0.1/1/10 uN
       by class. type MN classes if the annotations allow; weight the pace readout.
 - [ ] **campaniform sensilla**: dF/dt, burst at stance onset, adapt out mid-stance, a

@@ -93,13 +93,15 @@ class Adapting(Transducer):
     tau_ms: float = 30.0
     plateau_hz: float = 20.0
     fraction: float = 0.5
-    source: str = "mechanosensation brief 2026-09-16: Corfas & Dudai 1990 (J Neurosci 10:491); direction gating as a rate fraction"
+    retrigger_hz: float = 10.0            # while the stimulus holds, a new onset burst every 1/retrigger_hz s: each step re-deflects the bristles (0 = single burst)
+    source: str = "mechanosensation brief 2026-09-16: Corfas & Dudai 1990 (J Neurosci 10:491); direction gating as a rate fraction; step-locked re-deflection is a labelled choice (2026-09-17)"
     _prev: bool = field(default=False, init=False)
     _t_on: float = field(default=-1e9, init=False)
     def reset(self): self._prev = False; self._t_on = -1e9
     def step(self, stim, t, dt):
         stim = bool(stim)
         if stim and not self._prev: self._t_on = t
+        elif stim and self.retrigger_hz > 0 and (t - self._t_on) >= 1.0 / self.retrigger_hz - 1e-9: self._t_on = t
         self._prev = stim
         if not stim: return 0.0
         age_ms = (t - self._t_on) * 1000.0

@@ -151,15 +151,19 @@ def standing_baselines(M, F, RM, RF, drive_frame, render_chunk, CH, SPF, chunks=
     return leg_stand / chunks, dn_stand_f / chunks
 
 
-def reflex_gain(M, RM, TACT_M, CH, SPF, reflex_deg=6.0, chunks=10, drive_hz=150.0) -> tuple[float, dict]:
+def reflex_gain(M, RM, TACT_M, CH, SPF, reflex_deg=6.0, chunks=10, drive_hz=150.0, kernel=None, fps=100) -> tuple[float, dict]:
     """drive his left bristles, then his right, standing; the leg-MN asymmetry (R-L)/(R+L) each evokes is worth
-    reflex_deg per chunk. returns (gain, asymmetry per side). leaves the bristles at 0."""
+    reflex_deg per chunk. returns (gain, asymmetry per side). leaves the bristles at 0. with `kernel` (a transducer
+    such as Adapting) the bristles get the kernel's own time course for sustained contact instead of a constant,
+    so the gain matches what the loop will deliver."""
     asym_side = {}
     for s_ in "LR":
+        if kernel is not None: kernel.reset()
         for s2 in "LR": M.drive_hz[TACT_M[s2]] = drive_hz if s2 == s_ else 0.0
         rl = rr = 0
         for c in range(chunks):
             for f in range(CH):
+                if kernel is not None: M.drive_hz[TACT_M[s_]] = kernel.step(True, (c * CH + f) / fps, 1.0 / fps)
                 for _ in range(SPF): spk = M.step(); rl += int(spk[RM["legMN_L"]].sum()); rr += int(spk[RM["legMN_R"]].sum())
         asym_side[s_] = (rr - rl) / max(rr + rl, 1)
     for s2 in "LR": M.drive_hz[TACT_M[s2]] = 0.0

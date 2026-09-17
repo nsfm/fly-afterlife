@@ -1527,6 +1527,27 @@ re-deflects its bristles (~10 Hz). **next, one change:** the burst re-triggers a
 rate while in contact, and the reflex is calibrated against the kernel's own time course
 rather than a constant. the brief's warning applies in reverse here: a large effect from
 one afferent change was a calibration artefact, not biology.
+
+**v2: step-locked re-deflection + kernel calibration (09:23 PDT).** `Adapting(retrigger_hz=10)`:
+while contact holds, a new onset burst every 100 ms (each step re-deflects the bristles;
+a labelled choice, the step rate from the gait literature); and `reflex_gain(kernel=...)`
+drives the bristles with the kernel's own time course during calibration, so the gain is
+measured on what the loop delivers.
+
+| bristle | seed | pace (sd) | wall time | longest pinned | visits | touch frames | distance | his P1 |
+|---|---|---|---|---|---|---|---|---|
+| hold 150 Hz | 10 / 11 / 12 | 0.20 / 0.19 / 0.19 | 45 / 15 / 44% | 22 / 7 / 11 s | 7 / 8 / 8 | 3,567 / 1,031 / 2,441 | 14.7 / 20.0 / 16.4 m | 2,640 / 1,450 / 1,870 |
+| adapting, single burst | 10 / 11 / 12 | 0.27 / 0.27 / 0.28 | 86 / 86 / 87% | 103 / 104 / 105 s | 1 / 1 / 1 | ~10,400 | 7.4 / 7.9 / 7.3 m | ~2,150 |
+| adapting + step re-deflection | 10 / 11 / 12 | 0.23 / 0.25 / 0.23 | **18 / 49 / 17%** | 5.8 / 38.8 / 7.3 s | 7 / 4 / 5 | 2,159 / 5,733 / 1,659 | **22.8 / 15.3 / 23.5 m** | 2,800 / 7,350 / 2,040 |
+
+mean wall time 28% (hold 35%), distance up in two of three seeds, one seed (11) worse. the
+physiological kernel with step-locked bursts does at least what the 150 Hz hold did, without
+the hold. **adopted** (`--bristle adapting` is the room's default from here). the caveat,
+recorded: the calibration asymmetries are small and do not flip sign with the side driven
+(-0.049 left, -0.023 right; gain 462), so the lateralised leg reflex in this LIF is weak at
+bristle rates the physiology allows, and part of what frees him is the onset burst kicking
+both legs. the bristle-to-leg-MN gain of the corrected brain is a property to measure on
+its own (TODO: audits).
 - **Shiu's constants, from the code not the paper:** rest/reset -52, threshold -45,
   tau_m 20 ms, tau_syn 5, refractory 2.2, delay 1.8, w_syn 0.275 (a free parameter),
   Poisson 150 Hz. our 150 Hz optic-lobe cap is Shiu's default, not a measurement.
