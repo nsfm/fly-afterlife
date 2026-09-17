@@ -1013,6 +1013,38 @@ output, specifically and reproducibly; between MBON and DN the signal is not
 recoverable from single 800 ms probes. (the flybrain findings report the same gap on
 the male and closed it only with parameter changes at the KC threshold; not done here.)
 
+## the room (18:09 PDT, `world/pair.py`)
+
+two real brains in one arena: the male (MaleCNS, flyvis eye on model 000, touch, DNa02
+wheel) and the female (FlyWire, W_syn calibrated, no eye, DNa02 + heading noise). he sees
+her as a dark sphere and smells fly odour from her (Or47b/Or88a, bilateral, exp(-d/0.8));
+she smells cVA from him (Or67d); contact drives bristles on both; a song bout (his pIP10
+above its running mean + 2 sd within 0.4 m) drives her Johnston's organ at 100 Hz.
+readouts: his pC1 (156 P1-type cells), pIP10, mAL, LC10a; her pC1a-e, vpoEN, DA1 PNs.
+viewer: "the room" artifact (her in rose, distance in the map caption).
+
+**first episode:** they met at 5 s (85 contact frames), then he wandered to ~2 m. his pC1
+climbed 0 -> 210 spikes per 5 s over the run; pIP10 never fired; her pC1 7 -> 49.
+**him alone, same room:** pC1 0, 0, 128, 111, 165, 184 - the same climb with no female.
+open loop: his pC1 fires to touch (174 / s) and not to fly odour (0); so the climb is
+his post-bumping. **his P1 activity in the room is not about her (yet).** pIP10 does not
+follow P1 in this LIF (1 spike in 30 s). her cVA pathway was silent - and that was a
+build bug, next.
+
+**co-transmitter strings.** her `known_nt` values read "acetylcholine, sNPF" etc.; the
+sign table looked up the whole string and gave 27,547 of her neurons sign 0 (his build:
+3,070), which silently dropped their synapses - including every ORN_DA1 (cVA) and much
+else. the builder now takes the first fast transmitter of a co-transmitter list. after
+the rebuild (7.63M edges, 8,499 sign-0): cVA 1.0 -> her DA1 PNs 1,934 spikes, KCs
+respond; song -> her pC1 cluster 10 spikes and DN 3,971. vpoEN still silent. **her
+conditioning and sparsity numbers above were measured on the broken build and are
+being redone.**
+
+**when he flies (nate, 18:09):** Johnston's organ also senses wing-induced airflow during
+visually driven turns and feeds the turn back positively (the antenna on the outside of
+the turn moves into the wing wash). he walks, so not now; the flight motor neurons (DLMn,
+DVMn) are in his nerve cord, and that loop is the first thing to wire when he flies.
+
 ## choices, labelled
 
 1. **orientation** of our hex grid onto theirs. not in the data. calibrated by biology:

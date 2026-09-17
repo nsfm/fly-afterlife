@@ -27,7 +27,14 @@ cls[cls.str.lower().str.startswith("kenyon")] = "Kenyon_Cell"; cls[cls == "MBON"
 cls[(sc == "sensory") & cls.str.contains("visual")] = "visual"
 sc[sc == "descending"] = "descending_neuron"; sc[sc == "motor"] = "cb_motor"; sc[sc == "ascending"] = "ascending_neuron"; sc[sc == "endocrine"] = "cb_endocrine"; sc[sc == "central"] = "cb_intrinsic"; sc[sc == "optic"] = "ol_intrinsic"; sc[sc == "visual_projection"] = "visual_projection"; sc[sc == "visual_centrifugal"] = "visual_centrifugal"
 side = ann.side.fillna("").astype(str).str.lower().map({"left": "L", "right": "R", "center": "M", "na": "M"}).fillna("M")
-nt = ann.known_nt.fillna(ann.top_nt).fillna("unknown").astype(str).str.lower()   # known transmitter where the literature has one, else the prediction
+import re
+def first_fast(x):
+    """'acetylcholine; sNPF; acetylcholine, sNPF' -> 'acetylcholine': the first fast transmitter in a co-transmitter string."""
+    for tok in re.split(r"[;,/]", str(x).lower()):
+        tok = tok.strip()
+        if tok in SIGN: return tok
+    return "unknown"
+nt = ann.known_nt.fillna(ann.top_nt).fillna("unknown").map(first_fast)   # known transmitter where the literature has one (first fast one of a co-transmitter list), else the prediction
 nt[cls == "Kenyon_Cell"] = "acetylcholine"                                           # KCs are cholinergic (Barnstedt et al. 2016); labelled override
 sign = np.array([SIGN.get(x, 0) for x in nt], np.int8)
 ids = ann.root_id.to_numpy(np.int64); order = np.argsort(ids); ids_s = ids[order]
