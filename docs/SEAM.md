@@ -1271,6 +1271,31 @@ falls 20x because he stops bumping. the open-loop tonic table went the other way
 feedback at his walking pace. **first answer to "normalise or chaos": at the one gain
 that does anything, normalise.** one seed, one minute; a sweep across seeds is next.
 
+## physiology briefs (22:40 PDT, `docs/physiology/`)
+
+nate: send agents to collect how the receptors are really driven. three opus agents,
+one per system, each writing rates, time constants and a one-line-per-class drive
+rule with citations. first back: `chemo_thermo_hygro.md` (3,900 words). what it
+corrects in this record:
+
+- **the contact-pheromone tap.** our 150 Hz tonic hold on the F-responsive ppk23 cells
+  has no measurement behind it (all the ppk23 work is calcium imaging); the grounded
+  ceiling for a contact GRN is ~60 spikes/s (Weiss 2011) and a single tap is a complete
+  trigger (Kohatsu 2011), so it is a burst, not a hold; and both F- and M-responsive
+  cells fire on contact in life with P1 weighing them (Kallman 2015), so silencing the
+  M channel was wrong. **changed:** tap = 60 Hz decaying with tau 300 ms on both
+  channels at contact onset with her.
+- **VP1m / VP1l labels.** Marin 2020 infer VP1m = humid and VP1l = cool, the opposite
+  of the annotation prefixes (TRN_VP1m, HRN_VP1l). we have not driven either; audit
+  before we do.
+- **cooling cells rest at ~95 Hz** regardless of temperature and fire to -dT/dt only
+  (Budelli 2019); hot cells are tonic and exponential in T (37 Hz at 25 C, Q10 4.4).
+  so the posterior antennal lobe is missing a ~95 Hz tonic input in every run so far.
+  the warm corner, when built, reads these rules.
+- **plumes are intermittent** (power-law whiffs, Gorur-Shandilya 2017) and ORNs divide
+  by a running mean (Weber-Fechner); our smooth exp(-d/0.8) odour is the wrong shape.
+- Or67d rests at 0.12 Hz, not our generic ~8.
+
 ## performance (20:40 PDT, `world/fastlif.py`)
 
 nate asked what bounds the sim (CPU: the LIF step) and whether a spike on it was worth

@@ -65,7 +65,8 @@ for name, sel in [("DNa02", mty == "DNa02"), ("pC1", np.char.startswith(mty, "pC
 TACT_M = {s_: np.flatnonzero((mcls == "mechanosensory_tactile") & (mns == s_)) for s_ in "LR"}
 _legs = np.load("world/legs.npz"); LEGS = {k: _legs[k] for k in _legs.files}; STEP_HZ = 10.0   # his six legs' proprioceptors by entry nerve (ProLN/MesoLN/MetaLN) x root side; haltere, wing, abdominal sensors stay silent
 TRIPOD = {"L1": 0.0, "R2": 0.0, "L3": 0.0, "R1": 0.5, "L2": 0.5, "R3": 0.5}   # alternating tripods, half a cycle apart
-_sp = np.load("world/ppk23_split.npz"); PPK_F = np.flatnonzero(np.isin(M.bodyId, _sp["F"]))   # F-like contact-pheromone leg neurons (wiring-inferred, Thistle 2012 flavour)
+_sp = np.load("world/ppk23_split.npz"); PPK_F = np.flatnonzero(np.isin(M.bodyId, _sp["F"])); PPK_M = np.flatnonzero(np.isin(M.bodyId, _sp["M"]))   # contact-pheromone leg neurons, F- and M-responsive by wiring; both fire on contact in life (Kallman 2015), P1 weighs them
+TAP_HZ = 60.0; TAP_MS = 300.0; tap_t = -1e9   # a tap is a burst: ~60 Hz cap (Weiss 2011 GRN ceiling), ~300 ms, not a 150 Hz hold (docs/physiology/chemo_thermo_hygro.md)
 RM["ppkF"] = PPK_F; RM["DNp09"] = np.flatnonzero(np.char.startswith(mty, "DNp09")); RM["MDN"] = np.flatnonzero(np.char.startswith(mty, "MDN")); RM["legMN"] = np.flatnonzero(M.sc == "vnc_motor")
 M.define_odor("flyodour", n_channels=1, seed=0); M._odor_map["flyodour"] = {"ORN_VA1v": 1.0, "ORN_VA1d": 0.6}
 M.driven[:] = False
@@ -139,7 +140,7 @@ print(f"touch reflex: leg-MN asymmetry (R-L)/(R+L) with left bristles {asym_side
 v_m = 0.3; v_f = 0.15
 # ---- loop
 T = int(args.seconds * fps); LUM, POSE, POSE2, TOUCH, SONG, TKIND = [], [], [], [], [], []; log = {f"m_{k}": [] for k in RM} | ({f"f_{k}": [] for k in RF} if not args.no_female else {}) | {"dist": [], "song": [], "v_m": [], "v_f": []}
-ema = 0.0; leg_rest = 0.0; pip_hist = []; contacts = 0; t0 = time.time()
+ema = 0.0; leg_rest = 0.0; pip_hist = []; contacts = 0; t0 = time.time(); prev_kind = 0
 for c in range(T // CH):
     lum = np.zeros((CH, eye.n), np.float32); touched_m = [None] * CH; touched_f = [None] * CH; kind_m = [0] * CH
     for f in range(CH):
@@ -196,7 +197,10 @@ for c in range(T // CH):
             ph_ = STEP_HZ * (len(POSE) / fps); pace_ = float(np.clip(v_m / 0.45, 0, 1))
             for leg_, idx_ in LEGS.items(): M.drive_hz[idx_] = args.proprio * (0.15 + 0.85 * pace_ * max(0.0, np.sin(2 * np.pi * (ph_ - TRIPOD[leg_]))))
         for s_ in "LR": M.drive_hz[TACT_M[s_]] = 150.0 if (tm == "B" or tm == s_) else 0.0
-        M.drive_hz[PPK_F] = 150.0 if (touched_f[f] is not None) else 0.0   # her cuticle: F-like contact-pheromone neurons, only when the contact is with HER
+        t_f = (len(POSE) - CH + f) / fps   # this frame's time (POSE already holds the whole chunk)
+        if kind_m[f] == 2 and (kind_m[f - 1] if f > 0 else prev_kind) != 2: tap_t = t_f   # contact onset with her = a tap
+        tap_ = TAP_HZ * np.exp(-(t_f - tap_t) * 1000.0 / TAP_MS) if (t_f - tap_t) * 1000.0 < 3 * TAP_MS else 0.0
+        M.drive_hz[PPK_F] = tap_; M.drive_hz[PPK_M] = tap_   # her cuticle: both channels burst on the tap, decaying; only contact with HER counts
         if not args.no_female:
             tf = touched_f[f]
             for s_ in "LR": F.drive_hz[TACT_F[s_]] = 150.0 if (tf == "B" or tf == s_) else 0.0
@@ -204,6 +208,7 @@ for c in range(T // CH):
         for _ in range(SPF):
             M.step(); accM[M.last_idx] += 1          # per-cell spike counts for the chunk; groups are summed once per chunk (same numbers, far fewer calls)
             if not args.no_female: F.step(); accF[F.last_idx] += 1
+    prev_kind = kind_m[-1]
     for k, r in RM.items(): cntM[k] = int(accM[r].sum())
     if not args.no_female:
         for k, r in RF.items(): cntF[k] = int(accF[r].sum())
