@@ -117,39 +117,19 @@ rest = {k_: np.concatenate(v_).mean(0) for k_, v_ in acc.items()}
 for _ in range(500):
     M.step()
     if not args.no_female: F.step()
-# DNa02 resting offset for him (vision on)
-rl = rr = 0
-for c in range(20):
-    a = flyvis_chunk(np.stack([eye.render(room.scene([her]), pos=(m.x, m.y, 0.5), heading_deg=m.h) for _ in range(CH)]))
-    for f in range(CH):
-        for (t, s), (idx, hx) in groups.items(): M.drive_hz[idx] = args.drive_gain * np.clip((a[(s, t)][f] - rest[(s, t)])[hx], 0, 1)
-        for _ in range(SPF): spk = M.step(); rl += int(spk[RM["DNa02_L"]].sum()); rr += int(spk[RM["DNa02_R"]].sum())
-rest_net = (rr - rl) / 20; print(f"his DNa02 rest offset {rest_net:+.2f}/chunk")
-leg_stand = 0; dn_stand_f = 0
-for c in range(10):
-    a = flyvis_chunk(np.stack([eye.render(room.scene([her]), pos=(m.x, m.y, 0.5), heading_deg=m.h) for _ in range(CH)]))
-    for f in range(CH):
-        for (t, s), (idx, hx) in groups.items(): M.drive_hz[idx] = args.drive_gain * np.clip((a[(s, t)][f] - rest[(s, t)])[hx], 0, 1)
-        for _ in range(SPF):
-            leg_stand += int(M.step()[RM["legMN"]].sum())
-            if not args.no_female: dn_stand_f += int(F.step()[RF["DN"]].sum())
-leg_stand /= 10; dn_stand_f /= 10; print(f"pace baselines per chunk: his leg MN {leg_stand:.0f}, her DN {dn_stand_f:.0f}")
-# touch-reflex calibration: drive his left bristles, then his right, standing; the leg-MN asymmetry each evokes is worth REFLEX_DEG per chunk
-asym_side = {}
-for s_ in "LR":
-    for s2 in "LR": M.drive_hz[TACT_M[s2]] = 150.0 if s2 == s_ else 0.0
-    rl = rr = 0
-    for c in range(10):
-        for f in range(CH):
-            for _ in range(SPF): spk = M.step(); rl += int(spk[RM["legMN_L"]].sum()); rr += int(spk[RM["legMN_R"]].sum())
-    asym_side[s_] = (rr - rl) / max(rr + rl, 1)
-for s2 in "LR": M.drive_hz[TACT_M[s2]] = 0.0
-REFLEX_DEG = 6.0; leg_gain = REFLEX_DEG / max(abs(asym_side["L"] - asym_side["R"]) / 2, 1e-3)
-print(f"touch reflex: leg-MN asymmetry (R-L)/(R+L) with left bristles {asym_side['L']:+.3f}, right {asym_side['R']:+.3f} -> gain {leg_gain:.0f} deg per unit asymmetry")
+# calibrations (src/fly_afterlife/effectors.py): the same standing loops, once per run
+from fly_afterlife.effectors import Steering, Pace, HerSteering, SongDetector, dna02_rest_offset, standing_baselines, reflex_gain
+def render_chunk(): return flyvis_chunk(np.stack([eye.render(room.scene([her]), pos=(m.x, m.y, 0.5), heading_deg=m.h) for _ in range(CH)]))
+def drive_frame(a, f):
+    for (t, s), (idx, hx) in groups.items(): M.drive_hz[idx] = args.drive_gain * np.clip((a[(s, t)][f] - rest[(s, t)])[hx], 0, 1)
+rest_net = dna02_rest_offset(M, RM, drive_frame, render_chunk, CH, SPF); print(f"his DNa02 rest offset {rest_net:+.2f}/chunk")
+leg_stand, dn_stand_f = standing_baselines(M, F if not args.no_female else None, RM, RF, drive_frame, render_chunk, CH, SPF); print(f"pace baselines per chunk: his leg MN {leg_stand:.0f}, her DN {dn_stand_f:.0f}")
+leg_gain, asym_side = reflex_gain(M, RM, TACT_M, CH, SPF); print(f"touch reflex: leg-MN asymmetry (R-L)/(R+L) with left bristles {asym_side['L']:+.3f}, right {asym_side['R']:+.3f} -> gain {leg_gain:.0f} deg per unit asymmetry")
+steer = Steering(gain=args.gain, rest_net=rest_net, leg_gain=leg_gain); pace = Pace(leg_stand=leg_stand); hers = HerSteering(rng); songdet = SongDetector()
 m.v = 0.3; her.v = 0.15
 # ---- loop
 T = int(args.seconds * fps); LUM, POSE, POSE2, TOUCH, SONG, TKIND = [], [], [], [], [], []; log = {f"m_{k}": [] for k in RM} | ({f"f_{k}": [] for k in RF} if not args.no_female else {}) | {"dist": [], "song": [], "v_m": [], "v_f": []}
-ema = 0.0; leg_rest = 0.0; pip_hist = []; contacts = 0; t0 = time.time()
+t0 = time.time()
 for c in range(T // CH):
     lum = np.zeros((CH, eye.n), np.float32); touched_m = [None] * CH; touched_f = [None] * CH; kind_m = [0] * CH
     for f in range(CH):
@@ -164,7 +144,7 @@ for c in range(T // CH):
     if not args.no_female:
         cL, cR = float(np.exp(-np.hypot(*(aL - [her.x, her.y])) / LAM)), float(np.exp(-np.hypot(*(aR - [her.x, her.y])) / LAM)); M.smell_bilateral(left={"flyodour": cL}, right={"flyodour": cR})
         bL, bR = her.antennae(); dL, dR = float(np.exp(-np.hypot(*(bL - [m.x, m.y])) / LAM)), float(np.exp(-np.hypot(*(bR - [m.x, m.y])) / LAM)); F.smell_bilateral(left={"cVA": dL}, right={"cVA": dR})
-    singing = bool(pip_hist) and len(pip_hist) >= 5 and (log["song"] and log["song"][-1]) and dist < 0.4
+    singing = bool(songdet.hist) and len(songdet.hist) >= 5 and (log["song"] and log["song"][-1]) and dist < 0.4
     for f in range(CH):
         t_f = (len(POSE) - CH + f) / fps   # this frame's time (POSE already holds the whole chunk)
         st_ = {"a": a, "rest": rest, "f": f, "tm": touched_m[f], "kind": kind_m[f], "pace": float(np.clip(m.v / 0.45, 0, 1)), "t_chunk_end": len(POSE) / fps, "tf": touched_f[f], "singing": singing}
@@ -176,25 +156,11 @@ for c in range(T // CH):
     for k, r in RM.items(): cntM[k] = int(accM[r].sum())
     if not args.no_female:
         for k, r in RF.items(): cntF[k] = int(accF[r].sum())
-    # his steering: DNa02 (vision) + leg asymmetry on touch
-    net_ = cntM["DNa02_R"] - cntM["DNa02_L"] - rest_net; ema += (net_ - ema) / 3.0; yaw = float(np.clip(args.gain * ema, -12, 12)) * -1
-    asym = (cntM["legMN_R"] - cntM["legMN_L"]) / max(cntM["legMN_R"] + cntM["legMN_L"], 1)
-    if any(touched_m): yaw = float(np.clip(leg_gain * (asym - leg_rest), -12, 12))   # bristles pressed: the legs steer, vision is dropped for the chunk
-    else: leg_rest += (asym - leg_rest) / 20.0
-    m.h += yaw
-    # pace: speed = v_max * clip((leg MN - standing) / (4 x standing), 0, 1); backward if MDN outfires DNp09 (labelled)
-    drive_m = (cntM["legMN"] - leg_stand) / max(4 * leg_stand, 1); m.v = 0.45 * float(np.clip(drive_m, 0, 1)) + 0.05
-    # (MDN, the backward-walking driver, fires tonically ~25 Hz per cell under visual drive in this LIF while DNp09 is silent; a reverse rule on it walked him backward all run. no reverse rule. logged for the record.)
-    if not args.no_female:
-        v_f = 0.15   # she has no nerve cord: constant pace, labelled
-    # her steering: DNa02 (whatever it hears) + noise
-    if not args.no_female:
-        fnet = cntF["DNa02_L"] - cntF["DNa02_R"]; her.h += float(np.clip(3.0 * fnet, -12, 12)) + rng.normal(0, 1.5)
-        if any(touched_f):   # she has no leg circuits: on contact, turn away from the touched side (labelled stand-in for the reflex he has through his cord)
-            side_ = [t_ for t_ in touched_f if t_][-1]; her.h += -8.0 if side_ == "L" else (8.0 if side_ == "R" else rng.choice([-8.0, 8.0]))
-    # song detection: pIP10 above running mean + 2 sd
-    p = cntM["pIP10"]; pip_hist.append(p); mu, sd = (np.mean(pip_hist[:-1]), np.std(pip_hist[:-1]) + 0.5) if len(pip_hist) > 5 else (p, 1e9)
-    song = bool(p > mu + 2 * sd); log["song"].append(song and not args.no_female and dist < 0.4); log["dist"].append(dist); log["v_m"].append(m.v); log["v_f"].append(her.v)
+    # effectors (src/fly_afterlife/effectors.py): his wheel + touch reflex, his pace, her wheel + turn-away, song detection
+    m.h += steer.step(cntM, any(touched_m))
+    m.v = pace.step(cntM)   # (MDN fires tonically under visual drive in this LIF at 0.275 mV; no reverse rule. logged for the record.)
+    if not args.no_female: her.h += hers.step(cntF, touched_f)
+    song = songdet.step(cntM["pIP10"]); log["song"].append(song and not args.no_female and dist < 0.4); log["dist"].append(dist); log["v_m"].append(m.v); log["v_f"].append(her.v)
     for k in RM: log[f"m_{k}"].append(cntM[k])
     for k in RF: log[f"f_{k}"].append(cntF[k])
     if c % 50 == 49:

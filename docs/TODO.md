@@ -25,8 +25,8 @@ loop is probably a bug (mechanosensation brief).
       WeberFechner) still to write, one per behaviour change.
 - [x] `body.py` + `world.py`: pose, contacts, walls, pillars, the pair, the scene; verified
       bit-identical (00:58). gait generator, body-part contacts and scalar fields still to come.
-- [ ] `effectors.py`: steering, pace, reflex, song; calibration phases cached by (brain, w_syn,
-      seed). verify.
+- [x] `effectors.py`: steering, pace, her steering, song, the calibration procedures; verified
+      bit-identical (01:10). calibration cache by (brain, w_syn, seed) still to do.
 - [ ] `episode.py`: one loop; `per_frame` / `per_chunk` namespaces in the npz; deterministic
       switch; two brains in threads (numba `nogil`). `pair.py` and `loop.py` become thin.
 - [ ] `--no-female` default for calibration and male-only questions; her in the room only for

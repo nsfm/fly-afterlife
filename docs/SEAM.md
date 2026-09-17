@@ -1378,6 +1378,13 @@ configs x 69 arrays, bit-identical.** a hole in the check found on the way: a fa
 run inherited the previous pass's output file and "passed"; the check now deletes port
 outputs first. (the regex that renamed variables also renamed a log key inside single
 quotes; caught by the same failure.)
+
+**step 4, effectors (01:10 PDT):** `src/fly_afterlife/effectors.py`: `Steering` (his DNa02
+wheel + touch reflex), `Pace`, `HerSteering` (consumes the episode rng in the same order),
+`SongDetector`, and the three calibration procedures (DNa02 rest offset, standing
+baselines, reflex gain) as functions over the brain. each carries its assumptions and the
+physiology it contradicts. the room script's per-chunk block is four lines. **verified: 4
+configs x 69 arrays, bit-identical.**
 - **Shiu's constants, from the code not the paper:** rest/reset -52, threshold -45,
   tau_m 20 ms, tau_syn 5, refractory 2.2, delay 1.8, w_syn 0.275 (a free parameter),
   Poisson 150 Hz. our 150 Hz optic-lobe cap is Shiu's default, not a measurement.
