@@ -1500,6 +1500,33 @@ the corrected brain walks 15-20 m in two minutes at a pace that varies; wall tim
 faster and the touch reflex, calibrated at the 150 Hz hold, is what it is. this is the
 baseline the bristle kernel is scored against: same seeds, same everything, `--bristle
 adapting`.
+
+## the bristle kernel (09:14 PDT, `Adapting`, `pair.py --bristle adapting`)
+
+the mechanosensation brief: bristle afferents are slowly adapting (Corfas & Dudai 1990):
+~200 Hz at onset, tau ~30 ms, 10-25 Hz plateau, and only about half a contact patch fires
+(direction gating). `Adapting(onset 200, tau 30 ms, plateau 20, fraction 0.5)` replaces the
+150 Hz hold; the reflex gain is calibrated by driving the bristles at the plateau (10 Hz
+effective) instead of 150. same seeds, same everything else:
+
+| bristle | seed | pace (sd) | wall time | longest pinned | visits | touch frames | distance | his P1 |
+|---|---|---|---|---|---|---|---|---|
+| hold 150 Hz | 10 | 0.20 (0.13) | 45% | 21.8 s | 7 | 3,567 | 14.7 m | 2,640 |
+| | 11 | 0.19 (0.13) | 15% | 6.8 s | 8 | 1,031 | 20.0 m | 1,450 |
+| | 12 | 0.19 (0.14) | 44% | 11.4 s | 8 | 2,441 | 16.4 m | 1,870 |
+| adapting | 10 | 0.27 (0.11) | **86%** | **103 s** | 1 | 10,303 | 7.4 m | 2,190 |
+| | 11 | 0.27 (0.11) | 86% | 104 s | 1 | 10,365 | 7.9 m | 2,200 |
+| | 12 | 0.28 (0.11) | 87% | 105 s | 1 | 10,479 | 7.3 m | 2,100 |
+
+**pinned, all three.** the calibration says why: at the plateau the bristle-evoked leg-MN
+asymmetry is -0.058 with left bristles driven and -0.166 with right, no sign change with
+side, so the reflex (gain 111) steers on noise and he pushes into the first wall for the
+rest of the run. the 150 Hz hold had been carrying a reflex that, in life, is carried by
+the onset burst: a fly sliding along a wall does not hold one deflection, every step
+re-deflects its bristles (~10 Hz). **next, one change:** the burst re-triggers at the step
+rate while in contact, and the reflex is calibrated against the kernel's own time course
+rather than a constant. the brief's warning applies in reverse here: a large effect from
+one afferent change was a calibration artefact, not biology.
 - **Shiu's constants, from the code not the paper:** rest/reset -52, threshold -45,
   tau_m 20 ms, tau_syn 5, refractory 2.2, delay 1.8, w_syn 0.275 (a free parameter),
   Poisson 150 Hz. our 150 Hz optic-lobe cap is Shiu's default, not a measurement.

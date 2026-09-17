@@ -151,12 +151,12 @@ def standing_baselines(M, F, RM, RF, drive_frame, render_chunk, CH, SPF, chunks=
     return leg_stand / chunks, dn_stand_f / chunks
 
 
-def reflex_gain(M, RM, TACT_M, CH, SPF, reflex_deg=6.0, chunks=10) -> tuple[float, dict]:
+def reflex_gain(M, RM, TACT_M, CH, SPF, reflex_deg=6.0, chunks=10, drive_hz=150.0) -> tuple[float, dict]:
     """drive his left bristles, then his right, standing; the leg-MN asymmetry (R-L)/(R+L) each evokes is worth
     reflex_deg per chunk. returns (gain, asymmetry per side). leaves the bristles at 0."""
     asym_side = {}
     for s_ in "LR":
-        for s2 in "LR": M.drive_hz[TACT_M[s2]] = 150.0 if s2 == s_ else 0.0
+        for s2 in "LR": M.drive_hz[TACT_M[s2]] = drive_hz if s2 == s_ else 0.0
         rl = rr = 0
         for c in range(chunks):
             for f in range(CH):

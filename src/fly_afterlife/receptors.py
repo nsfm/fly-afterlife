@@ -84,6 +84,29 @@ class Scaled(Transducer):
 
 
 @dataclass
+class Adapting(Transducer):
+    """slowly-adapting afferent: at stimulus onset the rate jumps to `onset_hz` and decays with `tau_ms` to
+    `plateau_hz` while the stimulus holds; 0 when it does not. stim is a bool. the bristle brief (Corfas & Dudai
+    1990): ~200 Hz onset, tau ~30 ms, 10-25 Hz plateau, plus seconds-scale fatigue (not modelled yet) and
+    direction gating (about half a contact patch fires; approximated by `fraction` on the rate)."""
+    onset_hz: float = 200.0
+    tau_ms: float = 30.0
+    plateau_hz: float = 20.0
+    fraction: float = 0.5
+    source: str = "mechanosensation brief 2026-09-16: Corfas & Dudai 1990 (J Neurosci 10:491); direction gating as a rate fraction"
+    _prev: bool = field(default=False, init=False)
+    _t_on: float = field(default=-1e9, init=False)
+    def reset(self): self._prev = False; self._t_on = -1e9
+    def step(self, stim, t, dt):
+        stim = bool(stim)
+        if stim and not self._prev: self._t_on = t
+        self._prev = stim
+        if not stim: return 0.0
+        age_ms = (t - self._t_on) * 1000.0
+        return self.fraction * (self.plateau_hz + (self.onset_hz - self.plateau_hz) * float(np.exp(-age_ms / self.tau_ms)))
+
+
+@dataclass
 class TapBurst(Transducer):
     """a burst at each stimulus onset, decaying exponentially: hz x exp(-(t - t_on) / tau),
     zero after 3 tau. stim is a bool (in contact); onset = rising edge."""
