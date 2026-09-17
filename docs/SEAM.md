@@ -1189,6 +1189,51 @@ this arena), wall time 5%; range rate when she is ahead of him -0.11 m/s. no app
 claim from one minute: his yaw when she is ahead-left is -0.19 and ahead-right -0.48
 (his rightward lean, not her). three 2-minute seeds running to ask it properly.
 
+## proprioception (21:25 PDT, `pair.py --proprio`)
+
+nate: will hooking senses up one by one normalise him or make chaos? "only one way to
+find out." starting with the one sense that is a loop: his leg proprioceptors
+(mechanosensory_proprioceptive, 1,383 cells: SApp/SNpp leg chordotonal and campaniform
+types, 699 L / 683 R, all vnc_sensory or ascending) have been silent in every run, so
+his brain has been walking without feeling its legs. **open loop, standing, 2 s:**
+
+| proprio drive | leg MN /s | DN /s | whole brain /s | cells > 1 Hz |
+|---|---|---|---|---|
+| 0 Hz | 3,470 | 901 | 14,444 | 1,512 |
+| 20 Hz | 7,170 | 6,308 | 95,462 | 6,237 |
+| 50 Hz | 9,839 | 606 | 136,112 | 4,493 |
+| 100 Hz | 16,027 | 1,626 | 245,641 | 5,205 |
+
+the loop is strongly positive (proprio -> leg MN doubles at 20 Hz) and the brain as a
+whole is very sensitive to these cells (6.6x at 20 Hz); DN output is not monotonic.
+that is the chaos warning in numbers: this brain rests at 0 Hz and every input pushes
+up. closed-loop rule (labelled): rate = peak x clip(pace / 0.45) x (0.5 + 0.5 sin 2pi
+10 Hz t), phasic with a 10 Hz step cycle, since real leg proprioceptors fire with the
+step, not tonically.
+
+**closed loop, tonic rule, 60 s seed 3 (21:35 PDT):** pace 0.13 vs 0.11 without, leg MN
+704 vs 624 per chunk, DN output 581 vs 238. not runaway: at his actual pace the drive
+is ~3 Hz per cell and the loop gain sits below one. but DN output doubled, so the
+brain felt it.
+
+**legs, from the wiring (22:00 PDT; nate: "does driving his proprioception mean you
+need physics-accurate legs?").** no legs, but a gait: the MaleCNS table carries
+`entryNerve` and `rootSide` per sensory cell, which splits his proprioceptors into six
+legs (ProLN / MesoLN / MetaLN x L / R): L1 35, R1 17, L2 127, R2 133, L3 130, R3 138
+(the front-leg counts are a tracing asymmetry of the table, noted), and says the tonic
+rule had been driving 396 haltere (DMetaN) and 237 wing-nerve (ADMN) cells with a
+walking rhythm, which a walking fly's halteres would not do. `world/legs.npz`. new
+rule: leg-nerve cells only; tripod gait at 10 Hz (L1 R2 L3 vs R1 L2 R3, half a cycle
+apart), each leg's sensors fire in its stance half-cycle at peak x pace, plus a 15%
+tonic load term. no joint angles, no forces: what the wiring can address is which
+leg and when, so that is what he gets. physics legs become worth building when a
+readout distinguishes joints, and nothing here does yet.
+
+**gait rule, 20 Hz peak, 60 s seed 3 (22:13 PDT):** pace 0.11, leg MN 632 (L 331 / R
+301), DN 248, wall 6%: indistinguishable from no proprioception. at his pace the
+per-cell mean is ~4 Hz on 580 cells and the brain does not notice. neither
+normalised nor chaos: below threshold. 50 and 100 Hz peak running.
+
 ## performance (20:40 PDT, `world/fastlif.py`)
 
 nate asked what bounds the sim (CPU: the LIF step) and whether a spike on it was worth

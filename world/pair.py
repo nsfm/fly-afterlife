@@ -22,7 +22,7 @@ os.environ.setdefault("FLYVIS_ROOT_DIR", "/home/nate/code/fly-afterlife/flyvis_d
 from omma import Eye, Scene
 from flysim import FlyBrain, Params
 from fastlif import FastFlyBrain   # numba step, verified spike-for-spike against flysim (world/fastlif.py)
-ap = argparse.ArgumentParser(); ap.add_argument("--out", required=True); ap.add_argument("--seconds", type=float, default=30.0); ap.add_argument("--seed", type=int, default=0); ap.add_argument("--numpy-engine", action="store_true", help="use the original numpy LIF step instead of the numba one (same spikes, slower)"); ap.add_argument("--deterministic", action="store_true", help="torch deterministic algorithms for flyvis: same seed -> same run, bit for bit (default GPU kernels differ at 1e-6 per call, which flips Poisson draws); costs ~+130 ms per chunk")
+ap = argparse.ArgumentParser(); ap.add_argument("--out", required=True); ap.add_argument("--seconds", type=float, default=30.0); ap.add_argument("--seed", type=int, default=0); ap.add_argument("--numpy-engine", action="store_true", help="use the original numpy LIF step instead of the numba one (same spikes, slower)"); ap.add_argument("--proprio", type=float, default=0.0, help="peak Hz for his six legs of proprioceptors (leg-nerve cells only, world/legs.npz): tripod gait at 10 Hz, each leg in its stance half-cycle, scaled by pace, plus a 15 pct tonic load term; 0 = silent (was always silent)"); ap.add_argument("--deterministic", action="store_true", help="torch deterministic algorithms for flyvis: same seed -> same run, bit for bit (default GPU kernels differ at 1e-6 per call, which flips Poisson draws); costs ~+130 ms per chunk")
 ap.add_argument("--model", default="flow/0000/000"); ap.add_argument("--no-female", action="store_true"); ap.add_argument("--gain", type=float, default=3.0); ap.add_argument("--drive-gain", type=float, default=150.0)
 args = ap.parse_args(); fps, CH = 100, 10; rng = np.random.default_rng(args.seed)
 g = np.load("seam/eye_geom.npz"); eye = Eye("seam/eye_geom.npz")
@@ -63,6 +63,8 @@ for name, sel in [("DNa02", mty == "DNa02"), ("pC1", np.char.startswith(mty, "pC
     for s in "LR": RM[f"{name}_{s}"] = np.flatnonzero(sel & (mns == s))
     if name in ("pC1", "pIP10", "mAL", "LC10a"): RM[name] = np.flatnonzero(sel)
 TACT_M = {s_: np.flatnonzero((mcls == "mechanosensory_tactile") & (mns == s_)) for s_ in "LR"}
+_legs = np.load("world/legs.npz"); LEGS = {k: _legs[k] for k in _legs.files}; STEP_HZ = 10.0   # his six legs' proprioceptors by entry nerve (ProLN/MesoLN/MetaLN) x root side; haltere, wing, abdominal sensors stay silent
+TRIPOD = {"L1": 0.0, "R2": 0.0, "L3": 0.0, "R1": 0.5, "L2": 0.5, "R3": 0.5}   # alternating tripods, half a cycle apart
 _sp = np.load("world/ppk23_split.npz"); PPK_F = np.flatnonzero(np.isin(M.bodyId, _sp["F"]))   # F-like contact-pheromone leg neurons (wiring-inferred, Thistle 2012 flavour)
 RM["ppkF"] = PPK_F; RM["DNp09"] = np.flatnonzero(np.char.startswith(mty, "DNp09")); RM["MDN"] = np.flatnonzero(np.char.startswith(mty, "MDN")); RM["legMN"] = np.flatnonzero(M.sc == "vnc_motor")
 M.define_odor("flyodour", n_channels=1, seed=0); M._odor_map["flyodour"] = {"ORN_VA1v": 1.0, "ORN_VA1d": 0.6}
@@ -190,6 +192,9 @@ for c in range(T // CH):
     for f in range(CH):
         for (t, s), (idx, hx) in groups.items(): M.drive_hz[idx] = args.drive_gain * np.clip((a[(s, t)][f] - rest[(s, t)])[hx], 0, 1)
         tm = touched_m[f]
+        if args.proprio > 0:   # tripod gait: each leg's proprioceptors fire in its stance phase, rate scaled by his pace; standing = a low tonic load signal
+            ph_ = STEP_HZ * (len(POSE) / fps); pace_ = float(np.clip(v_m / 0.45, 0, 1))
+            for leg_, idx_ in LEGS.items(): M.drive_hz[idx_] = args.proprio * (0.15 + 0.85 * pace_ * max(0.0, np.sin(2 * np.pi * (ph_ - TRIPOD[leg_]))))
         for s_ in "LR": M.drive_hz[TACT_M[s_]] = 150.0 if (tm == "B" or tm == s_) else 0.0
         M.drive_hz[PPK_F] = 150.0 if (touched_f[f] is not None) else 0.0   # her cuticle: F-like contact-pheromone neurons, only when the contact is with HER
         if not args.no_female:
