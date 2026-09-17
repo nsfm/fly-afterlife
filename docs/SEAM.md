@@ -1189,6 +1189,27 @@ this arena), wall time 5%; range rate when she is ahead of him -0.11 m/s. no app
 claim from one minute: his yaw when she is ahead-left is -0.19 and ahead-right -0.48
 (his rightward lean, not her). three 2-minute seeds running to ask it properly.
 
+**does he turn toward her? (22:20 PDT; seeds 4-6, 120 s, and the invisible-her 5-minute
+run as control).** statistic: his yaw per chunk (+ = left) when she is ahead-left
+(bearing 10-90) vs ahead-right (-10 to -90), free of walls, against each run's own
+free-walking mean (his rightward lean, -0.3 to -0.8).
+
+| run | yaw, she ahead-left | n | yaw, ahead-right | n | free mean |
+|---|---|---|---|---|---|
+| her invisible (0.5), 5 min | -0.58 | 793 | -1.71 | 192 | -0.57 |
+| her dark, seed 3, 60 s | -0.19 | 192 | -0.48 | 185 | -0.44 |
+| her dark, seed 4 | +0.05 | 142 | -0.39 | 526 | -0.47 |
+| her dark, seed 5 | +1.47 | 247 | -0.71 | 261 | -0.30 |
+| her dark, seed 6 | +0.77 | 283 | -0.99 | 155 | -0.84 |
+
+with her dark, she-ahead-left shifts his yaw leftward of his own baseline in 4 of 4
+runs (by 0.25 to 1.8 deg/chunk), against his lean; with her invisible it does not
+(-0.58 vs -0.57). she-ahead-right is more rightward than baseline in 2 of 4. contact
+in 3 of 4 dark runs (85, 57, 90, 0 frames) vs 0 in the 5-minute invisible run.
+**reading: a weak, left-side-consistent turn toward a dark her, on the same one-neuron
+wheel whose rightward lean has been the story all day.** suggestive; not a claim. the
+clean test is her at 0.1 vs 0.5 across 10 seeds each, which is a `run_many.py` job.
+
 ## proprioception (21:25 PDT, `pair.py --proprio`)
 
 nate: will hooking senses up one by one normalise him or make chaos? "only one way to
