@@ -1255,6 +1255,22 @@ readout distinguishes joints, and nothing here does yet.
 per-cell mean is ~4 Hz on 580 cells and the brain does not notice. neither
 normalised nor chaos: below threshold. 50 and 100 Hz peak running.
 
+**gait gain sweep, 60 s seed 3 (22:23 PDT):**
+
+| proprio peak | pace (sd) | at max | leg MN /chunk | DN | wall | her-contact | his pC1 total |
+|---|---|---|---|---|---|---|---|
+| 0 | 0.11 (0.12) | 8% | 624 | 238 | 5% | 85 | 4,870 |
+| 20 | 0.11 (0.12) | 7% | 632 | 248 | 6% | 39 | 6,090 |
+| 50 | 0.12 (0.12) | 7% | 651 | 263 | 6% | 68 | 4,900 |
+| 100 | 0.09 (0.04) | 0% | 524 | 199 | 0% | 41 | 220 |
+
+20 and 50 are nothing. at 100 Hz peak the loop turns over: pace variance drops to a
+third, he never touches a wall, leg MN and DN output fall, and his P1 (touch-driven)
+falls 20x because he stops bumping. the open-loop tonic table went the other way
+(leg MN up 4.6x at 100 Hz), so this is the phasic, leg-only drive acting as negative
+feedback at his walking pace. **first answer to "normalise or chaos": at the one gain
+that does anything, normalise.** one seed, one minute; a sweep across seeds is next.
+
 ## performance (20:40 PDT, `world/fastlif.py`)
 
 nate asked what bounds the sim (CPU: the LIF step) and whether a spike on it was worth
