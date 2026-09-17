@@ -954,6 +954,44 @@ register. measured next: her KC activity per odour vs his and vs the biological 
 also noticed: her descending neurons answer odour B (588 spikes) and not A (4) before
 any training - the two synthetic odours are not equal to her.
 
+**her mushroom body is starved at the LIF's constant (17:47 PDT).** same odour, 800 ms:
+
+| | ORNs driven | PN mean rate | KCs active | KC spikes |
+|---|---|---|---|---|
+| male, W_syn 0.275 | 531 / 2635 | 21.3 Hz | 250 / 4064 = **6.2%** | 3,261 |
+| female, W_syn 0.275 | 397 / 2282 | 7.0 Hz | 41 / 5177 = **0.8%** | 206 |
+
+the biological Kenyon-cell sparsity is ~5% (Turner et al. 2008; Honegger et al. 2011).
+his is there; hers is not, because her release counts fewer synapses per connection and
+the single strength constant does not know that. sweep on her:
+
+| W_syn | PN Hz | KC active | DN /s | motor /s |
+|---|---|---|---|---|
+| 0.275 | 7.0 | 0.8% | 5 | 0 |
+| 0.35 | 7.8 | 1.5% | 41 | 0 |
+| 0.45 | 8.7 | 3.8% | 819 | 1 |
+| 0.55 | 9.5 | 6.3% | 4,799 | 199 |
+| 0.70 | 10.4 | 10.3% | 7,406 | 1,539 |
+
+**her strength is set to 0.50, calibrated to 5% KC sparsity** - to the animal, not to
+him or to any readout of ours. (the corollary for him: at 0.275 his mushroom body is
+already biological, so his "hotness" relative to her is her coldness, not his excess;
+the W_syn-rescale idea for his drift is withdrawn.)
+
+**she learns (17:52 PDT, W_syn 0.50, open loop; `world/condition_female.py`).** odour A +
+sugar + PAM dopamine, eight pairings, B unpaired:
+
+| | KC->MBON weights | synapses < 90% | MBON to A | MBON to B | DN to A | DN to B | DN A/B |
+|---|---|---|---|---|---|---|---|
+| before | 1.000 | 0 | 942 | 1173 | 1267 | 2296 | 0.55 |
+| after 8 | 0.987 | 1,315 | 788 | 1039 | 2045 | 2230 | 0.92 |
+
+the avoidance-side output neurons MBON05 and MBON03 fire about a third as much to the
+rewarded odour as to the other afterward (33 vs 95, 24 vs 82). the rewarded odour's drive
+to her descending neurons rose 61% while the unrewarded odour's did not move. memory
+reaching the action bus, in the female, at the strength calibrated to her KC sparsity.
+controls (reward B instead; seed 1; reward unpaired with any odour) follow.
+
 ## choices, labelled
 
 1. **orientation** of our hex grid onto theirs. not in the data. calibrated by biology:
