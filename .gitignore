@@ -10,3 +10,7 @@ world/*.npz
 world/ens/
 data/flywire/
 !world/viewer_template.html
+flyvis_data/
+world/approach/
+*.prof
+results/**/*.npz

@@ -33,6 +33,11 @@
 status: working draft, 2026-09-15 21:50 PDT. everything below is either measured
 on this machine or labelled as a choice.
 
+> paths: on 2026-09-16 23:30 PDT run outputs moved from `seam/` and `world/` to `results/`,
+> figures to `docs/figures/`, superseded scripts to `attic/`, ensemble drivers to `scripts/ens/`.
+> file names cited in sections older than that are the pre-move names; the files are where
+> the README says.
+
 ## the claim we're testing
 
 every public whole-fly simulation runs the shiu et al. 2024 leaky integrate-and-fire

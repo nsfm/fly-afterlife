@@ -1,44 +1,72 @@
 # fly-afterlife
 
-a whole male fruit fly CNS (MaleCNS v1.0, janelia + google, released 2026-09-03,
-CC-BY 4.0), running as a leaky integrate-and-fire network on this laptop.
-162,517 neurons, 6.1M connections at weight>=5. the fly fits in 29MB.
+a whole-fly connectome (MaleCNS v1.0, male, brain + nerve cord, 162,517 neurons) run as a
+spiking model, with a real optic lobe in front of it: a graded, connectome-constrained
+visual system (flyvis) driving the spiking brain's own T4/T5 cells, on the compound eye's
+actual geometry. a second fly (FlyWire, female) shares the room. the point is to give the
+spiking fly senses it can act on, one at a time, and record what the wiring does with them.
 
-## what's here
+the record is `docs/SEAM.md`. read its STATUS block first; several sections are superseded
+by later ones and it says which. everything in it is measured on this machine or labelled
+as a choice.
 
-- `data/` - the three feather files the sim needs (1.1GB; the other 22GB of the
-  release is per-synapse coordinates, anatomy not dynamics). not committed.
-- `brain_whole.npz` - our build of the whole CNS from those files
-  (`ref/flybrain/scripts/build_creature.py --whole`). not committed.
-- `ref/flybrain` - TheMrRaGe's LIF engine + 1600-line FINDINGS.md. read the
-  findings before touching parameters; every trap in there cost someone a day.
-- `ref/Drosophila_brain_model` - shiu et al. 2024 (nature), the source of the
-  membrane/synapse constants.
-- `ref/doomfly` - the one that went viral. for reference on how others wired i/o.
-- `smoke.py` - sugar vs bitter on the tongue, read the proboscis motor neurons.
+## layout
 
-## smoke result (2026-09-15)
+- `docs/SEAM.md` - the record: every experiment, result, withdrawal and decision, timestamped.
+- `docs/ARCHITECTURE.md` - the refactor plan (body / world / receptors / effectors / brain / episode).
+- `docs/physiology/` - literature briefs per sensory system: rates, time constants, drive rules, citations.
+- `docs/figures/` - eye geometry and what the fly sees.
+- `seam/` - the eye and the seam: `eye_geom.py` (geometry from the wiring), `omma.py` (ommatidium
+  raytracer, compiled), `world_flyvis.py` (scene -> both eyes -> flyvis), `seam_v2.py` (flyvis ->
+  LIF), `transplant.py` (flyvis physiology on the real per-cell optic lobe), `distill.py`
+  (training the transplant against flyvis), `build_flywire.py` (the female brain). input tables
+  (`flyvis_*.json`, `calib.json`, `pair_counts.csv`) live here; outputs do not.
+- `world/` - the arena and the closed loops: `pair.py` (two brains in a walled room), `loop.py`
+  (one brain: drum, bar, walk, blind, spin, forage), `fastlif.py` (the LIF step compiled with
+  numba, spike-for-spike identical to `flysim.py`), `export_viewer.py` + `viewer_template.html`
+  (the single-file viewer: human view, top-down map, both retinas, traces), `run_many.py`
+  (fan configs across cores), the DN gain tables.
+- `results/` - run outputs that are worth keeping (json, logs). npz episodes are not tracked.
+- `scripts/ens/` - ensemble drivers.
+- `attic/` - superseded scripts, kept because the record cites them.
+- `ref/flybrain/` - the LIF engine (TheMrRaGe/flybrain, Shiu et al. 2024 constants), not tracked.
+- `data/`, `flyvis_data/`, `brain_*.npz` - the connectome tables, the flyvis models, the built
+  brains. not tracked; see "getting the data".
 
-loads in 1.2s. 500ms of brain time runs in 0.7s on CPU (0.7x real time).
+## running the room
 
-| motor neuron | base | sweet | bitter |
-|---|---|---|---|
-| MN9 (rostrum protractor, "proboscis out") | 1 | 92 | 0 |
-| MN11D/V (pharyngeal pump) | 0 | 154 / 96 | 0 |
-| MN10, MN4b | 0 | 102 / 108 | 0 |
+```
+uv sync
+uv run python world/pair.py --seconds 60 --seed 3 --out world/room.npz
+uv run python world/export_viewer.py world/room.npz - world/viewer_room.html "the room" 1
+```
 
-sugar -> proboscis extension + pumping; bitter -> nothing. matches shiu et al.
+useful flags: `--proprio 100` (leg proprioceptors, tripod gait), `--her-albedo 0.5` (her
+invisible: the control), `--wsyn-m 0.185 --wsyn-f 0.275` (synapse strengths corrected for
+the EM volume, see the record), `--deterministic` (bit-identical reruns; flyvis on the GPU is
+otherwise nondeterministic at 1e-6, which is enough to diverge a run), `--numpy-engine`
+(the original step). the GPU needs `prime-run` on this laptop.
 
-## io surface (what we can wire a situation to)
+## getting the data
 
-in: 53 olfactory receptor types (odours are defined over TYPES, not cells),
-sweet/bitter gustatory sets, mechano, thermo, hygro, 1,348 photoreceptor
-cartridges (crude luminance only - T4/T5 motion is dark in this model),
-dopamine reward (PAM, 316 cells) / punishment (PPL1, 24 cells) by compartment.
+- MaleCNS v1.0 tables (Janelia, 2026): `data/body-annotations-*.feather`,
+  `data/body-neurotransmitters-*.feather`, `data/connectome-weights-*.feather`.
+- FlyWire v783: `data/flywire/neuron_annotations.tsv`, `proofread_connections_783.feather`.
+- flyvis (Lappalainen et al. 2024): `flyvis_data/` via the flyvis package's download; the
+  code sets `FLYVIS_ROOT_DIR` to it.
+- the brains: `ref/flybrain/scripts/build_creature.py --whole` -> `brain_whole.npz`;
+  `seam/build_flywire.py` -> `brain_female2.npz`.
+- eye geometry: `seam/eye_geom.py` -> `seam/eye_geom.npz`; columns: `seam/columns_all.py`.
 
-out: 1,310 descending neurons (480 types; DNa family = steering, DNp01 =
-giant fiber escape), 107 head motor neurons (proboscis, pharynx), 708 VNC
-motor neurons (legs, wings).
+## status, in one paragraph
 
-learning: 33,496 KC->MBON synapses, dopamine-gated depression. verified in
-FINDINGS.md to reach the descending neurons and the motor neurons.
+the eye's orientation is decided by anatomy alone. the spiking side of the seam is sound (an
+ideal direction-selective input makes LPLC2 detect expansion); the bottleneck is the
+direction selectivity any graded front end hands over. on flyvis model 000 he follows a
+drum both ways, approaches dark posts, feels walls and pillars through his bristles, walks
+at a pace read from his leg motor neurons, and, when she is the one dark object in a light
+room, turns toward her weakly and meets her in most runs. his P1 cells fire to touch; song
+is out of reach in this model. the male brain's synapse strengths are ~1.5x too strong for
+the constants they were fit on (FIB-SEM vs ssTEM synapse detection) and are being
+corrected; the architecture is being rebuilt around a receptor registry so the physiology
+briefs can be applied one row at a time.
