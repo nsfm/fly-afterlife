@@ -1973,6 +1973,32 @@ true leg set paces, DNp09 walks, adapting bristles feel).
 frames of contact with her, mean yaw -0.98 deg per chunk (the DNa02 wheel's known lean),
 his P1 2,340, hers 0. the room artifact, v6.
 
+## the brake (13:55 PDT): halting is in the wiring
+
+Sapkal 2024 (Nature): halting is active, a brain-side inhibition of the walking neurons
+(Foxglove, Bluebell) and a cord-side brake (BRK) that co-contracts the legs. the
+annotation synonyms find them: **BRK = AN19A018 (12 cells, 6 per side; ascending)**,
+**Bluebell = DNg60 (2)**; Foxglove is not annotated. open loop, a walking cord (DNp09 100
+Hz), 2 s, leg MN per chunk on the true set:
+
+| drive | leg MN L / R | stance-muscle MN | swing MN | forward | yaw_left |
+|---|---|---|---|---|---|
+| DNp09 100 | 23.6 / 38.2 | 33.6 | 15.9 | +150 | +105 |
+| DNp09 100 + BRK 30 | **0.0 / 0.7** | 0.6 | 0.0 | +6 | +6 |
+| DNp09 100 + BRK 100 | 0.0 / 0.0 | 0 | 0 | 0 | 0 |
+| DNp09 100 + Bluebell 100 | 0.2 / 1.4 | 1.1 | 0.2 | +12 | +14 |
+| DNp09 100 + DNa02 L 100 | 26.6 / 47.8 | 43.7 | 13.9 | +212 | +124 |
+| DNp09 100 + DNa02 L 100 + Bluebell 100 | 2.5 / 12.7 | 10.6 | 1.4 | +86 | +86 |
+
+**the brake halts a walking cord completely at 30 Hz.** in the LIF it reads as silence
+rather than co-contraction (no stiff-joint activity to see; the model has no joints), which
+is what a spike count can show of it. Bluebell nearly halts walking too (the brief has it
+inhibiting the turning DNs specifically; here DNp09-driven walking drops 95%). so he has an
+on (DNp09) and an off (AN19A018), both from the wiring. **the first use:** a male that stops
+when he reaches her (`--stop-at-her`: BRK driven at 50 Hz while in contact with her,
+labelled; in life the stop is part of the courtship sequence, not a reflex), scored by
+contact time against the 264 frames of v6.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
