@@ -75,6 +75,7 @@ class Episode:
                 for _ in range(self.SPF):
                     self.M.step(); accM[self.M.last_idx] += 1
                     if self.female: self.F.step(); accF[self.F.last_idx] += 1
+        self.last_accM = accM   # per-cell counts for effectors that read motor patterns (legs.LegSteering)
         cntM = {k: int(accM[r].sum()) for k, r in self.RM.items()}
         cntF = {k: int(accF[r].sum()) for k, r in self.RF.items()} if self.female else {}
         return cntM, cntF
@@ -89,7 +90,7 @@ class Episode:
             self.smells()
             singing = (bool(self.songdet.hist) and len(self.songdet.hist) >= 5 and (log["song"] and log["song"][-1]) and dist < 0.4) if self.songdet is not None else False
             cntM, cntF = self.drive_and_step(a, touched_m, kind_m, touched_f, singing)
-            m.h += self.steer.step(cntM, any(touched_m))
+            m.h += (self.steer.step(cntM, any(touched_m), self.last_accM) if getattr(self.steer, "needs_cells", False) else self.steer.step(cntM, any(touched_m)))
             m.v = self.pace.step(cntM)
             if self.female and self.hers is not None: her.h += self.hers.step(cntF, touched_f)
             song = self.songdet.step(cntM["pIP10"]) if (self.songdet is not None and "pIP10" in cntM) else False

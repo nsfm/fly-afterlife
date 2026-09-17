@@ -1823,6 +1823,25 @@ an opus agent, briefed on the audit. what it changes:
   count flipped. the sign-fixing experiment in life is unilateral MN-pool optogenetics on a
   ball with leg tracking; nothing else measures the weights directly.
 
+**withdrawn (13:10 PDT): "DNge125 is a clean contralateral leg driver."** re-run with the
+motor neurons split by subclass (each thermal DN type driven on one side at 100 Hz, 2 s):
+
+| driven | abdominal L / R | front leg L / R | middle L / R | hind L / R | wing L / R |
+|---|---|---|---|---|---|
+| DNge125 L, R | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 |
+| DNge037 L | 0 / 0 | 0 / 14 | 0 / 9 | 0 / 0 | 0 / 0 |
+| DNge037 R | 0 / 0 | 7 / 0 | 2 / 0 | 6 / 0 | 0 / 0 |
+| DNp06 L, R | 5-8 / 0 | 0 | 0 | 2 / 0 | 56-80 / 32-34 |
+| DNp35 L, R | 55-60 / 48-54 | 0 | 0 | 0 | 220 / 219 |
+
+DNge125 moves nothing (the 12:30 numbers were the contaminated set, and are withdrawn);
+DNge037 is a weak contralateral leg driver (7-14 spikes/s), the only one among the thermal
+types; **DNp35 and DNp06 drive wing motor neurons**, bilaterally, and abdominal ones. so the
+thermal descending signal in this model reaches the wings before the legs. thermotaxis by
+walking has, at these constants, almost no motor substrate; what a warm antenna recruits
+looks more like a take-off than a turn. recorded; the leg model is tested on what does
+reach the legs.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
