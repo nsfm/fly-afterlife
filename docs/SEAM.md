@@ -1791,6 +1791,15 @@ arbitrary leg-MN pattern needs a leg with muscles (which muscle, which joint, st
 swing), not a spike count. nate's question of 09-16 ("does this need physics-accurate
 legs?") now has its answer: for the sign of a motor pattern, yes. the warm corner stays in
 the world with its cells firing; the readout waits for legs.
+
+**the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
+running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
+48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
+60, 98, 156 and 221 s, the fourth lasting 11 s), 71 frames of contact with her; his P1
+11,130 spikes (touch: 8,863 wall and pillar contact frames); her P1 0 and her DN output 46
+per chunk at 0.275 (she is quiet at Shiu's constant on her own tissue, as the 22:55 odour
+test predicted). the viewer: `world/viewer_room185.html` (local, stride 4) and the room
+artifact (v5, stride 6).
 - **Shiu's constants, from the code not the paper:** rest/reset -52, threshold -45,
   tau_m 20 ms, tau_syn 5, refractory 2.2, delay 1.8, w_syn 0.275 (a free parameter),
   Poisson 150 Hz. our 150 Hz optic-lobe cap is Shiu's default, not a measurement.
