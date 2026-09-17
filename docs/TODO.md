@@ -86,10 +86,12 @@ loop is probably a bug (mechanosensation brief).
 
 ## 2b. legs with muscles (promoted 09-17 12:30)
 
-- [ ] a leg model that turns MN patterns into a turn: MN type -> muscle -> joint (the audit's
-      named types: sternotrochanter, trochanter flexor/extensor, tibia flexor/extensor, sternal
-      rotators, pleural remotor); stance/swing from the gait; yaw from left-right stance drive.
-      calibrate the sign on the withdrawal program (touch) and the drum; then DNge125's chord.
+- [x] the leg MN SET: 373 leg MNs by subclass fl/ml/hl (12:45; the 699 included abdominal, wing,
+      haltere, neck, jump). all leg readouts re-based on it.
+- [ ] the leg model (brief s.6): per-MN force by class, signed muscle weights, segment weights
+      (front legs brake), P_R - P_L -> yaw with the measured rule (turn toward the side with less
+      stance excursion; Yang 2024). implement as an effector; calibrate on touch and the drum;
+      then DNge125's chord and the warm corner again.
 
 ## 3. the eye track (independent of the above)
 

@@ -1792,6 +1792,37 @@ swing), not a spike count. nate's question of 09-16 ("does this need physics-acc
 legs?") now has its answer: for the sign of a motor pattern, yes. the warm corner stays in
 the world with its cells firing; the readout waits for legs.
 
+## the leg motor brief (12:45 PDT, `docs/physiology/leg_motor.md`)
+
+an opus agent, briefed on the audit. what it changes:
+
+- **the leg-MN set was contaminated.** MANC names motor neurons `MN` + a two-letter muscle
+  code (Marin 2024, eLife): fl / ml / hl = front / middle / hind leg, **ad = abdominal**,
+  wm / hm / nm = wing / haltere / neck. of the 699 `vnc_motor` cells, the annotation
+  `subclass` says: fl 133, ml 116, hl 124 (**373 leg MNs**), ad 214, wm 66, nm 24, hm 16,
+  xm 6. the `tpn`, `ps1`, `b1/b2/i1/i2/iii1`, `hi2` names are wing or haltere MNs and
+  `TTMn/STTMm` the escape-jump pair. every leg-count readout in this record (pace, the touch
+  reflex asymmetry, the leg wheel, the 12:05 audit) summed abdominal, wing and haltere motor
+  neurons with the legs. `world/legmn.npz` is the leg set by segment and side; `pair.py`
+  and the drum read it (`--legmn leg`, default; the oracle pins `all`).
+- **the turning rule, measured:** the fly turns toward the side with *less* stance
+  excursion (Yang 2024, Cell): DNa02 shortens ipsilateral strides, ipsiversive; DNg13
+  crosses the midline, lengthens contralateral strides, also ipsiversive. so a crossed DN
+  exciting contralateral power-stroke MNs turns the fly toward its own side, away from the
+  legs it drives. DNg13 is the template for DNge125 (nothing is published on DNge125 itself).
+- **front legs brake, middle and hind propel** (Full 1991; Dallmann 2016; Isakov 2016: a
+  fly turns *away* from an amputated foreleg), so the segments need different signs
+  (recommended mu_T1 -0.5, mu_T2 = mu_T3 +1.0); never measured in the fly directly.
+- the model (brief s.6): filter to leg MNs, baseline-subtract, per-MN force from size
+  (Lesser 2024, 0.45 synapses per um^2, r 0.94) calibrated to Azevedo 2020's 10 / 1 / 0.1
+  uN fast / intermediate / slow, a saturating transfer, signed muscle weights (remotor,
+  sternotrochanter, trochanter extensor positive; promotor, trochanter flexor negative),
+  segment-weighted P_R - P_L. under it the bristle pattern (levator/flexor-dominated,
+  ipsilateral withdrawal; Medeiros 2024) and the DNge125 pattern (remotor/extensor-
+  dominated, contralateral) predict opposite turn signs, which is exactly why the unsigned
+  count flipped. the sign-fixing experiment in life is unilateral MN-pool optogenetics on a
+  ball with leg tracking; nothing else measures the weights directly.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
