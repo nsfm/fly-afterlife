@@ -1,0 +1,58 @@
+[2026-09-17 20:42:35] network_view:122 Initialized network view at /home/nate/code/fly-afterlife/flyvis_data/results/flow/0000/000
+[2026-09-17 20:42:35] logging_utils:23 epe not in /home/nate/code/fly-afterlife/flyvis_data/results/flow/0000/000/validation, but 'loss' is. Falling back to 'loss'. You can rerun the ensemble validation to make appropriate recordings of the losses.
+[2026-09-17 20:42:46] network:222 Initialized network with NumberOfParams(free=734, fixed=2959) parameters.
+[2026-09-17 20:42:46] chkpt_utils:36 Recovered network state.
+thermo cells: hot L 4 R 3, cooling L 3 R 4; mode field
+T4T5_T4a_L                  742 cells  Scaled     seam v2: rate = GAIN x clip((act - rest) / A_REF, 0, 1); 150 Hz is Shiu's Poisson default, not a measurement
+T4T5_T4b_L                  757 cells  Scaled     seam v2: rate = GAIN x clip((act - rest) / A_REF, 0, 1); 150 Hz is Shiu's Poisson default, not a measurement
+T4T5_T4c_L                  796 cells  Scaled     seam v2: rate = GAIN x clip((act - rest) / A_REF, 0, 1); 150 Hz is Shiu's Poisson default, not a measurement
+T4T5_T4d_L                  766 cells  Scaled     seam v2: rate = GAIN x clip((act - rest) / A_REF, 0, 1); 150 Hz is Shiu's Poisson default, not a measurement
+T4T5_T5a_L                  726 cells  Scaled     seam v2: rate = GAIN x clip((act - rest) / A_REF, 0, 1); 150 Hz is Shiu's Poisson default, not a measurement
+T4T5_T5b_L                  774 cells  Scaled     seam v2: rate = GAIN x clip((act - rest) / A_REF, 0, 1); 150 Hz is Shiu's Poisson default, not a measurement
+T4T5_T5c_L                  781 cells  Scaled     seam v2: rate = GAIN x clip((act - rest) / A_REF, 0, 1); 150 Hz is Shiu's Poisson default, not a measurement
+T4T5_T5d_L                  744 cells  Scaled     seam v2: rate = GAIN x clip((act - rest) / A_REF, 0, 1); 150 Hz is Shiu's Poisson default, not a measurement
+T4T5_T4a_R                  750 cells  Scaled     seam v2: rate = GAIN x clip((act - rest) / A_REF, 0, 1); 150 Hz is Shiu's Poisson default, not a measurement
+T4T5_T4b_R                  758 cells  Scaled     seam v2: rate = GAIN x clip((act - rest) / A_REF, 0, 1); 150 Hz is Shiu's Poisson default, not a measurement
+T4T5_T4c_R                  780 cells  Scaled     seam v2: rate = GAIN x clip((act - rest) / A_REF, 0, 1); 150 Hz is Shiu's Poisson default, not a measurement
+T4T5_T4d_R                  765 cells  Scaled     seam v2: rate = GAIN x clip((act - rest) / A_REF, 0, 1); 150 Hz is Shiu's Poisson default, not a measurement
+T4T5_T5a_R                  734 cells  Scaled     seam v2: rate = GAIN x clip((act - rest) / A_REF, 0, 1); 150 Hz is Shiu's Poisson default, not a measurement
+T4T5_T5b_R                  754 cells  Scaled     seam v2: rate = GAIN x clip((act - rest) / A_REF, 0, 1); 150 Hz is Shiu's Poisson default, not a measurement
+T4T5_T5c_R                  773 cells  Scaled     seam v2: rate = GAIN x clip((act - rest) / A_REF, 0, 1); 150 Hz is Shiu's Poisson default, not a measurement
+T4T5_T5d_R                  729 cells  Scaled     seam v2: rate = GAIN x clip((act - rest) / A_REF, 0, 1); 150 Hz is Shiu's Poisson default, not a measurement
+bristle_L                  1224 cells  Adapting   mechanosensation brief 2026-09-16: Corfas & Dudai 1990 (J Neurosci 10:491); direction gating as a rate fraction; step-locked re-deflection is a labelled choice (2026-09-17)
+bristle_R                  1279 cells  Adapting   mechanosensation brief 2026-09-16: Corfas & Dudai 1990 (J Neurosci 10:491); direction gating as a rate fraction; step-locked re-deflection is a labelled choice (2026-09-17)
+ppk_F                       108 cells  TapBurst   chemo brief: contact GRN ceiling ~60 Hz (Weiss 2011), a single tap is a complete trigger (Kohatsu 2011)
+ppk_M                       108 cells  TapBurst   chemo brief: contact GRN ceiling ~60 Hz (Weiss 2011), a single tap is a complete trigger (Kohatsu 2011)
+hot_L                         4 cells  HotCells   chemo brief 2026-09-16 s.4: Budelli et al. 2019 (Neuron); Gallio 2011; Ni 2013
+cool_L                        3 cells  CoolingCells chemo brief 2026-09-16 s.4: Budelli et al. 2019 (Neuron), rates and time course; gain inferred from the 0.2 C / 3x figure
+hot_R                         3 cells  HotCells   chemo brief 2026-09-16 s.4: Budelli et al. 2019 (Neuron); Gallio 2011; Ni 2013
+cool_R                        4 cells  CoolingCells chemo brief 2026-09-16 s.4: Budelli et al. 2019 (Neuron), rates and time course; gain inferred from the 0.2 C / 3x figure
+his readouts: pC1 156, pIP10 2, mAL 159, LC10a 275, ORN_VA1v 15/73
+his DNa02 rest offset +0.00/chunk
+pace baselines per chunk: his leg MN 0, her DN 0
+touch reflex: leg-MN asymmetry (R-L)/(R+L) with left bristles -0.040, right +0.009 -> gain 242 deg per unit asymmetry
+t=  5.0s  him (+0.33,+0.09)     +7  her (+1.20,+0.30)  dist  inf  pC1 0 pIP10 0 LC10a 0 | her pC1 - vpoEN - | contacts 0 songs 0 | pace him 0.10 her 0.15 m/s  (12s)
+t= 10.0s  him (+1.92,+0.18)    +24  her (+1.20,+0.30)  dist  inf  pC1 0 pIP10 0 LC10a 0 | her pC1 - vpoEN - | contacts 0 songs 0 | pace him 0.48 her 0.15 m/s  (27s)
+t= 15.0s  him (+1.81,+1.45)   +101  her (+1.20,+0.30)  dist  inf  pC1 22 pIP10 0 LC10a 0 | her pC1 - vpoEN - | contacts 0 songs 0 | pace him 0.45 her 0.15 m/s  (40s)
+t= 20.0s  him (+0.61,+1.74)   +200  her (+1.20,+0.30)  dist  inf  pC1 3 pIP10 0 LC10a 0 | her pC1 - vpoEN - | contacts 0 songs 0 | pace him 0.27 her 0.15 m/s  (51s)
+t= 25.0s  him (+0.19,+0.70)   +254  her (+1.20,+0.30)  dist  inf  pC1 7 pIP10 1 LC10a 0 | her pC1 - vpoEN - | contacts 0 songs 0 | pace him 0.26 her 0.15 m/s  (65s)
+t= 30.0s  him (-0.20,-0.20)   +236  her (+1.20,+0.30)  dist  inf  pC1 0 pIP10 2 LC10a 0 | her pC1 - vpoEN - | contacts 0 songs 0 | pace him 0.21 her 0.15 m/s  (82s)
+t= 35.0s  him (-0.92,-1.66)   +252  her (+1.20,+0.30)  dist  inf  pC1 0 pIP10 0 LC10a 0 | her pC1 - vpoEN - | contacts 0 songs 0 | pace him 0.39 her 0.15 m/s  (95s)
+t= 40.0s  him (-1.91,-1.34)    +80  her (+1.20,+0.30)  dist  inf  pC1 18 pIP10 0 LC10a 0 | her pC1 - vpoEN - | contacts 0 songs 0 | pace him 0.29 her 0.15 m/s  (109s)
+t= 45.0s  him (-1.31,-0.41)    +51  her (+1.20,+0.30)  dist  inf  pC1 0 pIP10 0 LC10a 0 | her pC1 - vpoEN - | contacts 0 songs 0 | pace him 0.23 her 0.15 m/s  (121s)
+t= 50.0s  him (-0.50,+0.56)    +59  her (+1.20,+0.30)  dist  inf  pC1 0 pIP10 0 LC10a 0 | her pC1 - vpoEN - | contacts 0 songs 0 | pace him 0.20 her 0.15 m/s  (136s)
+t= 55.0s  him (+0.40,+1.39)    +50  her (+1.20,+0.30)  dist  inf  pC1 9 pIP10 1 LC10a 0 | her pC1 - vpoEN - | contacts 0 songs 0 | pace him 0.16 her 0.15 m/s  (151s)
+t= 60.0s  him (+1.61,+1.91)     -6  her (+1.20,+0.30)  dist  inf  pC1 18 pIP10 0 LC10a 0 | her pC1 - vpoEN - | contacts 0 songs 0 | pace him 0.34 her 0.15 m/s  (164s)
+t= 65.0s  him (+1.75,+0.95)   -112  her (+1.20,+0.30)  dist  inf  pC1 8 pIP10 0 LC10a 0 | her pC1 - vpoEN - | contacts 0 songs 0 | pace him 0.25 her 0.15 m/s  (175s)
+t= 70.0s  him (+1.10,+0.12)   -149  her (+1.20,+0.30)  dist  inf  pC1 0 pIP10 1 LC10a 0 | her pC1 - vpoEN - | contacts 0 songs 0 | pace him 0.16 her 0.15 m/s  (191s)
+t= 75.0s  him (-0.09,-0.17)   -169  her (+1.20,+0.30)  dist  inf  pC1 0 pIP10 0 LC10a 0 | her pC1 - vpoEN - | contacts 0 songs 0 | pace him 0.16 her 0.15 m/s  (205s)
+t= 80.0s  him (-1.43,-0.74)   -151  her (+1.20,+0.30)  dist  inf  pC1 0 pIP10 0 LC10a 0 | her pC1 - vpoEN - | contacts 0 songs 0 | pace him 0.35 her 0.15 m/s  (221s)
+t= 85.0s  him (-1.72,-1.92)    -44  her (+1.20,+0.30)  dist  inf  pC1 8 pIP10 0 LC10a 0 | her pC1 - vpoEN - | contacts 0 songs 0 | pace him 0.32 her 0.15 m/s  (235s)
+t= 90.0s  him (-0.37,-1.83)    +10  her (+1.20,+0.30)  dist  inf  pC1 6 pIP10 0 LC10a 0 | her pC1 - vpoEN - | contacts 0 songs 0 | pace him 0.27 her 0.15 m/s  (246s)
+t= 95.0s  him (-0.98,-1.61)   -238  her (+1.20,+0.30)  dist  inf  pC1 23 pIP10 0 LC10a 0 | her pC1 - vpoEN - | contacts 0 songs 0 | pace him 0.23 her 0.15 m/s  (259s)
+t=100.0s  him (-1.40,-0.46)   -260  her (+1.20,+0.30)  dist  inf  pC1 0 pIP10 0 LC10a 0 | her pC1 - vpoEN - | contacts 0 songs 0 | pace him 0.24 her 0.15 m/s  (275s)
+t=105.0s  him (-1.65,+0.87)   -264  her (+1.20,+0.30)  dist  inf  pC1 0 pIP10 0 LC10a 0 | her pC1 - vpoEN - | contacts 0 songs 0 | pace him 0.31 her 0.15 m/s  (287s)
+t=110.0s  him (-1.81,+1.92)   -237  her (+1.20,+0.30)  dist  inf  pC1 4 pIP10 0 LC10a 0 | her pC1 - vpoEN - | contacts 0 songs 0 | pace him 0.45 her 0.15 m/s  (301s)
+t=115.0s  him (-1.21,+1.63)   -410  her (+1.20,+0.30)  dist  inf  pC1 18 pIP10 0 LC10a 0 | her pC1 - vpoEN - | contacts 0 songs 0 | pace him 0.25 her 0.15 m/s  (315s)
+t=120.0s  him (-0.47,+0.55)   -424  her (+1.20,+0.30)  dist  inf  pC1 0 pIP10 0 LC10a 0 | her pC1 - vpoEN - | contacts 0 songs 0 | pace him 0.29 her 0.15 m/s  (326s)
+wrote world/thermo4/field_s29.npz contacts 0, song chunks 0, mean dist inf

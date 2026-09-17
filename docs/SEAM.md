@@ -1697,6 +1697,28 @@ him to a moving drum turns him away from a warm antenna, because the descending 
 for both lands on the leg motor neurons with one sign. n = 3, so a pre-registered ten-seed
 replication follows in the same chain as the touch reflex's sign test. this is the first
 behaviour in the record that arrived from a sense the physiology briefs added.
+
+**the touch reflex's sign (11:48 PDT; leg wheel +0.3, rest arm, 120 s):** with the 09-16
+convention (more right-leg spikes = left turn) wall time 15 / 16 / 15%, 10-11 visits, 31 m
+walked; with the drum's sign, 91 / 91 / 91%, one visit of 109 s, 6.6 m. **the reflex's
+direction is real** (not the burst), and it is the opposite of the visual turn's. so a
+right-heavy leg-MN count means "turn toward the right" when vision or warmth caused it and
+"turn away from the right" when a bristle caused it: **the scalar leg-MN asymmetry is not
+one motor code.** different inputs recruit different motor neurons (withdrawal flexors vs
+stance drive, presumably), and counting every leg MN alike, which the vision brief already
+flagged (Azevedo 2020: three MN classes, force per spike 0.1 / 1 / 10 uN), hides that. the
+MN audit (which types each input drives) is now the priority, not an item.
+
+**the pre-registered replication (11:48 PDT; seeds 20-29, rest vs field, leg wheel +0.3,
+reflex sign +1):** time above 28 C, rest 23.4% vs field 16.4%; mean temperature felt 26.56
+vs 26.23 C; **7 of 10 seeds cooler with the field; paired one-sided Wilcoxon p = 0.14.**
+two seeds went the other way hard (20: the rest run never entered the warm zone, the
+field run did; 28: 42% of its time warm with the field). with the pilot, 10 of 13 seeds
+cooler. **a trend of about seven percentage points of time in the warm zone, not a
+claim of thermotaxis.** the thermal leg asymmetry is small (open loop: 661 L vs 630 R with
+the right antenna warm, 5%), and at walls the wheel and the reflex now pull with opposite
+conventions, which the MN audit may resolve. the seed-10 avoidance run stands as what it
+is: one run.
 - **Shiu's constants, from the code not the paper:** rest/reset -52, threshold -45,
   tau_m 20 ms, tau_syn 5, refractory 2.2, delay 1.8, w_syn 0.275 (a free parameter),
   Poisson 150 Hz. our 150 Hz optic-lobe cap is Shiu's default, not a measurement.

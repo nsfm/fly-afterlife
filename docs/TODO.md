@@ -51,8 +51,9 @@ loop is probably a bug (mechanosensation brief).
 - [x] **bristles** (mechano brief): `Adapting` 200 Hz onset, tau 30 ms, 20 Hz plateau, half the patch,
       step-locked re-deflection at 10 Hz; reflex calibrated on the kernel (09:23). adopted. still
       to do: seconds-scale fatigue, by body part; measure the bristle->leg-MN gain at 0.185 mV.
-- [ ] **leg MNs**: slow MNs fire ~30 Hz standing (Azevedo 2020); force per spike 0.1/1/10 uN
-      by class. type MN classes if the annotations allow; weight the pace readout.
+- [ ] **leg MNs** (PRIORITY, 11:50): the scalar count has input-dependent sign (touch vs vision).
+      audit which MN types each input drives (open loop: bristle L/R, yaw L/R, warm L/R); build a
+      class-aware turning readout; Azevedo 2020 classes (slow ~30 Hz standing; 0.1/1/10 uN).
 - [ ] **campaniform sensilla**: dF/dt, burst at stance onset, adapt out mid-stance, a
       subpopulation on unloading. replaces the 15% tonic load term.
 - [ ] **gait**: step frequency from speed (Wosnitza 2013), stance ~ v^-1, swing 20-45 ms,
@@ -63,8 +64,9 @@ loop is probably a bug (mechanosensation brief).
 - [x] **cooling cells** and **hot cells** as transducers (`CoolingCells`, `HotCells`, 09:49) with
       Budelli 2019's numbers; on in the room with `--thermo rest|field`.
 - [ ] **VP1m / VP1l label audit** before driving either (Marin 2020: VP1m humid, VP1l cool).
-- [x] **the warm corner** (10:45): avoidance 3/3 with the leg-MN wheel whose sign the drum set; no
-      thermal channel. ten-seed replication in flight; reflex-sign test in flight.
+- [~] **the warm corner** (11:48): pilot 3/3, replication 7/10, p 0.14: a trend, not a claim. the
+      leg-MN scalar has opposite signs for bristle-evoked vs vision/thermal-evoked asymmetry ->
+      MN audit first (which leg MN types each input drives), then retest with a class-aware readout.
 - [ ] **hygro**: dry/moist cells non-adapting, tens of Hz; a humidity field. Or42b ORNs are
       also humidity sensors (Li 2022).
 - [ ] **plumes**: intermittent (power-law whiffs/blanks, exponent -3/2), ORN rate from
