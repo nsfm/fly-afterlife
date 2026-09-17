@@ -990,7 +990,28 @@ the avoidance-side output neurons MBON05 and MBON03 fire about a third as much t
 rewarded odour as to the other afterward (33 vs 95, 24 vs 82). the rewarded odour's drive
 to her descending neurons rose 61% while the unrewarded odour's did not move. memory
 reaching the action bus, in the female, at the strength calibrated to her KC sparsity.
-controls (reward B instead; seed 1; reward unpaired with any odour) follow.
+controls (reward B instead; seed 1; reward unpaired with any odour) follow - and
+withdraw the descending-neuron part; see the next block.
+
+**controls (17:52 PDT):**
+
+| protocol | weights | synapses < 90% | MBON to A | MBON to B | DN to A | DN to B |
+|---|---|---|---|---|---|---|
+| reward A, seed 0 | 0.987 | 1,315 | 942 -> 788 (-16%) | 1173 -> 1039 (-11%) | 1267 -> 2045 | 2296 -> 2230 |
+| reward A, seed 1 | 0.987 | 1,330 | 940 -> 810 (-14%) | 1115 -> 1056 (-5%) | 2674 -> 1408 | 2199 -> 2255 |
+| reward B, seed 0 | 0.984 | 1,527 | 942 -> 861 (-9%) | 1173 -> 865 (**-26%**) | 1267 -> 2447 | 2296 -> 2215 |
+| reward unpaired | 0.998 | 324 | 942 -> 941 (0%) | 1173 -> 1099 (-6%) | 1267 -> 1479 | 2296 -> 2295 |
+
+**the MBON effect is real, specific and replicated:** the output neurons' response to the
+REWARDED odour drops most (A rewarded: A -16 / -14%, B -11 / -5%; B rewarded: B -26%, A
+-9%), and an unpaired reward changes almost nothing (324 synapses vs ~1,300). **the
+descending-neuron effect is not:** DN drive to A rose 61% with A rewarded (seed 0), rose
+93% with B rewarded, FELL 47% with A rewarded on seed 1, and rose 17% with no pairing at
+all. the "memory reaches the action bus" line above is withdrawn; what reaches the bus in
+these runs is run-to-run state, not the memory. memory forms at the mushroom-body
+output, specifically and reproducibly; between MBON and DN the signal is not
+recoverable from single 800 ms probes. (the flybrain findings report the same gap on
+the male and closed it only with parameter changes at the KC threshold; not done here.)
 
 ## choices, labelled
 
