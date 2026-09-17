@@ -180,16 +180,15 @@ for c in range(T // CH):
     mh += yaw
     # pace: speed = v_max * clip((leg MN - standing) / (4 x standing), 0, 1); backward if MDN outfires DNp09 (labelled)
     drive_m = (cntM["legMN"] - leg_stand) / max(4 * leg_stand, 1); v_m = 0.45 * float(np.clip(drive_m, 0, 1)) + 0.05
-    if cntM["MDN"] > cntM["DNp09"] + 2: v_m = -0.5 * v_m
+    # (MDN, the backward-walking driver, fires tonically ~25 Hz per cell under visual drive in this LIF while DNp09 is silent; a reverse rule on it walked him backward all run. no reverse rule. logged for the record.)
     if not args.no_female:
-        drive_f = (cntF["DN"] - dn_stand_f) / max(4 * dn_stand_f, 1); v_f = 0.3 * float(np.clip(drive_f, 0, 1)) + 0.03
-        if cntF["MDN"] > cntF["DNp09"] + 2: v_f = -0.5 * v_f
+        v_f = 0.15   # she has no nerve cord: constant pace, labelled
     # her steering: DNa02 (whatever it hears) + noise
     if not args.no_female:
         fnet = cntF["DNa02_L"] - cntF["DNa02_R"]; fh += float(np.clip(3.0 * fnet, -12, 12)) + rng.normal(0, 1.5)
     # song detection: pIP10 above running mean + 2 sd
     p = cntM["pIP10"]; pip_hist.append(p); mu, sd = (np.mean(pip_hist[:-1]), np.std(pip_hist[:-1]) + 0.5) if len(pip_hist) > 5 else (p, 1e9)
-    song = bool(p > mu + 2 * sd); log["song"].append(song and not args.no_female and dist < 0.4); log["dist"].append(dist)
+    song = bool(p > mu + 2 * sd); log["song"].append(song and not args.no_female and dist < 0.4); log["dist"].append(dist); log["v_m"].append(v_m); log["v_f"].append(v_f)
     for k in RM: log[f"m_{k}"].append(cntM[k])
     for k in RF: log[f"f_{k}"].append(cntF[k])
     if c % 50 == 49:

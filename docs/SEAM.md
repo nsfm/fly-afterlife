@@ -1099,6 +1099,15 @@ in `pair.py`: his speed = 0.45 m/s x clip((legMN - standing) / (4 x standing), 0
 total stands in, labelled. his contact with HER (not with a pillar) now also drives
 the F-like ppk23 neurons.
 
+**pace, measured in the room (18:54 PDT).** his leg motor output ran 402-1,126 spikes
+per 100 ms (median 687) against a standing 398, so speed = 0.05 + 0.45 x clip((legMN -
+398) / 1592) puts him at 0.05-0.25 m/s, varying with what he senses. MDN, the
+backward-walking driver, fires tonically (~10 spikes per chunk, 4 cells) under visual
+drive in this LIF while DNp09 (forward) is silent (0.09); a reverse rule keyed on MDN
+walked him backward for a whole run. no reverse rule; MDN's tonic activity is noted as
+a model property (in life it is silent unless triggered). she has no cord: constant
+0.15 m/s, labelled.
+
 ## choices, labelled
 
 1. **orientation** of our hex grid onto theirs. not in the data. calibrated by biology:
