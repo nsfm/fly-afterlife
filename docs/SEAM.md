@@ -1296,6 +1296,54 @@ corrects in this record:
   by a running mean (Weber-Fechner); our smooth exp(-d/0.8) odour is the wrong shape.
 - Or67d rests at 0.12 Hz, not our generic ~8.
 
+**briefs 2 and 3 (22:50 PDT): `mechanosensation.md`, `vision_motor_courtship.md`.**
+what they correct, in order of consequence:
+
+- **the male's heat has a number.** Plaza 2025 (bioRxiv 2025.10.16.682869) compares
+  synapse detection across fly EM volumes: FIB-SEM finds ~1.49x more synapses than
+  ssTEM for the same tissue (male CNS vs FAFB pair: 1.49, missed synapses ~random).
+  MaleCNS is FIB-SEM, FlyWire is ssTEM, and Shiu's 0.275 mV per synapse was fit on
+  FlyWire. so every male edge is ~1.5x too strong. **tested (22:55, odour A at 1.0,
+  2 s):** KCs active 28% at 0.275 -> 7.9% at 0.185 (KC 6.4 -> 0.9 Hz, MBON 39 -> 12.5);
+  the female at 0.275: 4.7%, KC 0.6 Hz. target ~5%. so the corrected constant puts both
+  brains in the same sparse regime, and her 0.45 (calibrated on a different odour
+  protocol) is over. **decision: male 0.185, female 0.275, from the next room run
+  (`--wsyn-m`, `--wsyn-f`); every baseline re-measured.** the rest-state test says
+  nothing (both silent), the tonic MDN activity noted on 09-16 goes away at 0.185.
+- **Shiu's constants, from the code not the paper:** rest/reset -52, threshold -45,
+  tau_m 20 ms, tau_syn 5, refractory 2.2, delay 1.8, w_syn 0.275 (a free parameter),
+  Poisson 150 Hz. our 150 Hz optic-lobe cap is Shiu's default, not a measurement.
+- **the rightward lean is not physiology** (yaw is linear in R-L through the whole
+  range, zero at zero; Rayshubskiy 2020). recommended: running per-side baseline
+  (~2 s) before differencing. our still/plateau offsets were fixed, not running.
+- **DNa02 dynamic range ~150 spikes/s** (Yang 2024: stride modulation 15 Hz = 10%);
+  yaw 3-10 deg/s per Hz; ours is the conservative end.
+- **leg MNs: slow MNs fire ~30 Hz standing** (Azevedo 2020), force per spike spans
+  0.1 / 1 / 10 uN by class; counting spikes equally misreads speed.
+- **P1 is not the persistent one** (Jung 2020): persistence is pCd, minutes long; P1
+  output is threshold-graded (aggression low, song high; Hoopfer 2015). and LC10a's
+  gain is P1-dependent (Hindmarsh Sten 2021): with fixed gain he will not track her.
+- **population-rate target:** PNs 4.6 Hz, KCs 0.1 Hz spontaneous (Turner 2008);
+  central mean 0.5-5 Hz; above 10 Hz mean is a calibration failure.
+- **bristles are slowly adapting** (Corfas & Dudai 1990): ~200 Hz onset, tau ~30 ms
+  to a 10-25 Hz plateau, direction-gated (half a contact patch fires), plus seconds-
+  scale fatigue. our 150 Hz hold is wrong in shape and size.
+- **campaniform sensilla encode dF/dt** (Zill 2024; Harris 2022): burst on loading,
+  adapt out mid-stance, a subpopulation on unloading. the 15% tonic load term is the
+  wrong shape.
+- **hook FeCO axons are presynaptically inhibited during walking** by a 9A
+  interneuron under descending walk command (Dallmann 2025); claw, club, hair plates
+  are not. our proprioceptors are Poisson sources that ignore their membrane, so this
+  gate cannot act on them in this engine: it has to be applied at the drive.
+- **halteres do not oscillate while walking** (Hall 2015): silent is right.
+- **gait:** speed is step frequency (Wosnitza 2013), stance ~ v^-1, swing 20-45 ms,
+  step period floors at ~60 ms (16 Hz max, not 10); tetrapod below 5 BL/s, tripod
+  above 10. sensory delay 5-15 ms, motor 20-40 ms: the loop is ~one swing.
+- **an efference copy lands directly on JO-A/B** (Cheong 2024), and a warning: single
+  afferent-loop silencings in life give small-or-null effects, so a big effect from
+  closing one loop in the sim is probably a bug.
+- **song constants check out:** IPI 35 ms (29 Hz), sine 140-170 Hz, her JO 100-300 Hz.
+
 ## performance (20:40 PDT, `world/fastlif.py`)
 
 nate asked what bounds the sim (CPU: the LIF step) and whether a spike on it was worth

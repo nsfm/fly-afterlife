@@ -22,7 +22,7 @@ os.environ.setdefault("FLYVIS_ROOT_DIR", "/home/nate/code/fly-afterlife/flyvis_d
 from omma import Eye, Scene
 from flysim import FlyBrain, Params
 from fastlif import FastFlyBrain   # numba step, verified spike-for-spike against flysim (world/fastlif.py)
-ap = argparse.ArgumentParser(); ap.add_argument("--out", required=True); ap.add_argument("--seconds", type=float, default=30.0); ap.add_argument("--seed", type=int, default=0); ap.add_argument("--numpy-engine", action="store_true", help="use the original numpy LIF step instead of the numba one (same spikes, slower)"); ap.add_argument("--her-albedo", type=float, default=0.1, help="her body tone (0.1 dark; 0.5 = invisible against this room, the control)"); ap.add_argument("--proprio", type=float, default=0.0, help="peak Hz for his six legs of proprioceptors (leg-nerve cells only, world/legs.npz): tripod gait at 10 Hz, each leg in its stance half-cycle, scaled by pace, plus a 15 pct tonic load term; 0 = silent (was always silent)"); ap.add_argument("--deterministic", action="store_true", help="torch deterministic algorithms for flyvis: same seed -> same run, bit for bit (default GPU kernels differ at 1e-6 per call, which flips Poisson draws); costs ~+130 ms per chunk")
+ap = argparse.ArgumentParser(); ap.add_argument("--out", required=True); ap.add_argument("--seconds", type=float, default=30.0); ap.add_argument("--seed", type=int, default=0); ap.add_argument("--numpy-engine", action="store_true", help="use the original numpy LIF step instead of the numba one (same spikes, slower)"); ap.add_argument("--wsyn-m", type=float, default=0.275, help="his mV per synapse. 0.275 = Shiu 2024 fit on FlyWire (ssTEM); FIB-SEM detects ~1.49x more synapses (Plaza 2025) -> 0.185 is the corrected value (docs/physiology/vision_motor_courtship.md)"); ap.add_argument("--wsyn-f", type=float, default=0.45, help="her mV per synapse (0.45 was the KC-sparsity calibration on the fixed build; the odour test of 22:55 says 0.275)"); ap.add_argument("--her-albedo", type=float, default=0.1, help="her body tone (0.1 dark; 0.5 = invisible against this room, the control)"); ap.add_argument("--proprio", type=float, default=0.0, help="peak Hz for his six legs of proprioceptors (leg-nerve cells only, world/legs.npz): tripod gait at 10 Hz, each leg in its stance half-cycle, scaled by pace, plus a 15 pct tonic load term; 0 = silent (was always silent)"); ap.add_argument("--deterministic", action="store_true", help="torch deterministic algorithms for flyvis: same seed -> same run, bit for bit (default GPU kernels differ at 1e-6 per call, which flips Poisson draws); costs ~+130 ms per chunk")
 ap.add_argument("--model", default="flow/0000/000"); ap.add_argument("--no-female", action="store_true"); ap.add_argument("--gain", type=float, default=3.0); ap.add_argument("--drive-gain", type=float, default=150.0)
 args = ap.parse_args(); fps, CH = 100, 10; rng = np.random.default_rng(args.seed)
 g = np.load("seam/eye_geom.npz"); eye = Eye("seam/eye_geom.npz")
@@ -50,7 +50,7 @@ def flyvis_chunk(lum_chunk):
     return out
 # ---- his brain
 Brain = FlyBrain if args.numpy_engine else FastFlyBrain
-M = Brain("brain_whole.npz", seed=args.seed); mty = M.type.astype(str); mns = M.side.astype(str); mcls = M.cls.astype(str)
+M = Brain("brain_whole.npz", seed=args.seed, params=Params(mv_per_synapse=args.wsyn_m)); mty = M.type.astype(str); mns = M.side.astype(str); mcls = M.cls.astype(str)
 cols = np.load("seam/t4t5_columns.npz"); gkey = {(str(s), int(a), int(h)): i for i, (s, a, h) in enumerate(zip(g["side"], g["hex1"], g["hex2"]))}
 gi = np.array([gkey[(str(s), int(a), int(h))] for s, a, h in zip(cols["side"], cols["hex1"], cols["hex2"])])
 groups = {}
@@ -76,7 +76,7 @@ M._driven_idx = np.flatnonzero(M.driven); M.reset(); SPF = int(round(1000 / fps 
 # ---- her brain
 RF = {}
 if not args.no_female:
-    F = Brain("brain_female2.npz", seed=args.seed + 100, balance_hemispheres=False, params=Params(mv_per_synapse=0.45)); fty = F.type.astype(str); fns = F.side.astype(str); fcls = F.cls.astype(str)
+    F = Brain("brain_female2.npz", seed=args.seed + 100, balance_hemispheres=False, params=Params(mv_per_synapse=args.wsyn_f)); fty = F.type.astype(str); fns = F.side.astype(str); fcls = F.cls.astype(str)
     RF = {}
     for name, sel in [("DNa02", fty == "DNa02"), ("pC1", np.char.startswith(fty, "pC1")), ("vpoEN", fty == "vpoEN"), ("ORN_DA1", fty == "ORN_DA1"), ("JO", np.char.startswith(fty, "JO")), ("DN", F.sc == "descending_neuron")]:
         for s in "LR": RF[f"{name}_{s}"] = np.flatnonzero(sel & (fns == s))
