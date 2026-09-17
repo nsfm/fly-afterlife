@@ -91,6 +91,7 @@ loop is probably a bug (mechanosensation brief).
 - [x] a walking command (12:56): `--walk 100` (DNp09 tonic); he walks 31 m / 2 min on the true leg set.
       still to do: the command as a state (walk / stop / brake DNs, Sapkal 2024); stance/swing phase
       so MDN reads as backward; the DNp09 right-bias (tracing) as a labelled correction or not.
+      the leg model is NOT a wheel (drum 0/3 rectified, 1/3 signed): pace + diagnostic only.
 
 ## 3. the eye track (independent of the above)
 

@@ -1962,6 +1962,17 @@ a walking cord drives the legs harder on both sides, and harder is not away.
 frames of contact with her**, his P1 4,560, hers 0. viewer next in the honest configuration
 (command on, DNa02 steering, legs for pace).
 
+**signed baseline for the leg model (13:44 PDT; drum, walking cord, 3 seeds):** +9.3 / +2.0,
++25.3 / +15.5, +26.3 / -1.7: the drift halves and 1 of 3 follows. not a wheel; it stays the
+source of his pace and a diagnostic of what the cord is doing. **the configuration from
+here:** `--walk 100 --steer running --pace running --bristle adapting` (DNa02 steers, the
+true leg set paces, DNp09 walks, adapting bristles feel).
+
+**the room with her in that configuration (13:44 PDT; seed 3, 300 s):** 78.8 m, wall time
+8% (was 31-34% with the standing cord and the drifting leg wheel), five encounters, 264
+frames of contact with her, mean yaw -0.98 deg per chunk (the DNa02 wheel's known lean),
+his P1 2,340, hers 0. the room artifact, v6.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
