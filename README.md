@@ -61,15 +61,19 @@ otherwise nondeterministic at 1e-6, which is enough to diverge a run), `--numpy-
 ## status, in one paragraph
 
 the eye's orientation is decided by anatomy alone. the spiking side of the seam is sound (an
-ideal direction-selective input makes LPLC2 detect expansion); the bottleneck is the
-direction selectivity any graded front end hands over. on flyvis model 000 he follows a
-drum both ways, approaches dark posts, feels walls and pillars through his bristles, walks
-at a pace read from his leg motor neurons, and, when she is the one dark object in a light
-room, turns toward her weakly and meets her in most runs. his P1 cells fire to touch; song
-is out of reach in this model. the male brain's synapse strengths are ~1.5x too strong for
-the constants they were fit on (FIB-SEM vs ssTEM synapse detection) and are being
-corrected; the architecture is being rebuilt around a receptor registry so the physiology
-briefs can be applied one row at a time.
+ideal direction-selective input makes LPLC2 detect expansion); the bottleneck is the direction
+selectivity any graded front end hands over. the male's synapse strengths are corrected for the
+EM volume (FIB-SEM detects ~1.5x more synapses than the ssTEM the LIF was fit on), which put
+his Kenyon cells at the sparsity they should have and made the drum follow 3 of 3 on model 000.
+he walks because a descending command (DNp09) walks his cord and his pace is read from his 373
+real leg motor neurons (the 699 "leg" set the record used before 2026-09-17 included abdominal,
+wing and haltere motor neurons); he steers by DNa02 through a running baseline; he feels walls
+and pillars through bristle afferents that burst and adapt; in a lit room with a warm corner
+and a second fly, he finds her five times in five minutes and spends 8% of the time on walls.
+thermotaxis by walking is not in this model: warmth reaches his wing motor neurons before his
+legs. his P1 cells fire to touch; song is out of reach. the architecture is a receptor registry,
+a body, a world, effectors and one episode loop, each ported bit-for-bit against a frozen
+oracle; every physiology change since has been one run against the previous one, in the record.
 
 ## credits and licence
 
