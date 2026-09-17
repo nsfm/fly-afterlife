@@ -1548,6 +1548,35 @@ recorded: the calibration asymmetries are small and do not flip sign with the si
 bristle rates the physiology allows, and part of what frees him is the onset burst kicking
 both legs. the bristle-to-leg-MN gain of the corrected brain is a property to measure on
 its own (TODO: audits).
+
+## the warm corner (09:49 PDT, `Room.temperature`, `HotCells`, `CoolingCells`, `--thermo`)
+
+the room is 25 C (his preferred temperature, Sayeed & Benzer 1996) with a warm spot at
+(+1.5, +1.5): T = 25 + 8 exp(-d^2 / 2 x 0.8^2), so 33 C at the centre and a gradient of the
+order life's avoidance assays use (5 C/cm at fly scale = ~5 C per 0.64 m here, Ni 2013).
+his arista thermosensors are driven from the temperature at each antenna tip: hot cells
+(TRN_VP2, 4 L / 3 R) tonic and exponential, 37 Hz at 25 C with Q10 4.4 (17 / 37 / 74 at
+20 / 25 / 30; Budelli 2019); cooling cells (TRN_VP3a/b, 3 L / 4 R) resting at 95 Hz and
+firing to -dT/dt with a 0.3 s rise and 2 s adaptation, suppressed by warming. VP1m / VP1l
+left out (labels under audit). the control is not "no cells": it is the same cells at their
+25 C rates with no field, so the 95 Hz tonic input the posterior antennal lobe had been
+missing is present in both arms and the field is the only difference. male-only, 120 s:
+
+| seed | arm | mean T felt | time T > 28 | time T > 30 | closest to the spot | mean distance | wall | walked |
+|---|---|---|---|---|---|---|---|---|
+| 10 | rest | 25.71 | 9.6% | 4.3% | 0.55 m | 2.56 | 33% | 25.3 m |
+| 10 | field | 26.34 | 17.6% | 11.9% | 0.18 m | 2.34 | 18% | 29.7 m |
+| 11 | rest | 27.25 | 35.2% | 19.9% | 0.25 m | 1.83 | 17% | 29.7 m |
+| 11 | field | 26.45 | 19.0% | 12.9% | 0.01 m | 2.34 | 23% | 28.3 m |
+| 12 | rest | 26.50 | 23.5% | 13.2% | 0.24 m | 2.36 | 15% | 30.5 m |
+| 12 | field | 26.44 | 19.9% | 12.8% | 0.25 m | 2.40 | 24% | 28.4 m |
+
+**no thermotaxis.** time above 28 C with the field: 17.6 / 19.0 / 19.9% against 9.6 / 35.2 /
+23.5% at rest; the field arm is more consistent seed to seed (his own walk is the variance)
+and shows no avoidance, one seed walked through the centre. the expected reason, tested
+next in open loop: the only steering readout is DNa02, and a thermal asymmetry that lands
+in other descending neurons cannot turn him. (the tonic 95 Hz cooling input did not change
+his walking: rest-arm numbers are the bristle-v2 baseline's.)
 - **Shiu's constants, from the code not the paper:** rest/reset -52, threshold -45,
   tau_m 20 ms, tau_syn 5, refractory 2.2, delay 1.8, w_syn 0.275 (a free parameter),
   Poisson 150 Hz. our 150 Hz optic-lobe cap is Shiu's default, not a measurement.

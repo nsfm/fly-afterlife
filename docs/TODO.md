@@ -60,11 +60,11 @@ loop is probably a bug (mechanosensation brief).
 - [ ] **hook FeCO gate**: presynaptic inhibition during walking under descending command
       (Dallmann 2025); apply at the drive (Poisson receptors ignore their membrane). claw,
       club, hair plates ungated.
-- [ ] **cooling cells**: ~95 Hz rest regardless of T, fire to -dT/dt only, peak 0.65 s, adapt
-      (Budelli 2019). **hot cells**: tonic, exponential in T (37 Hz at 25 C, Q10 4.4). the
-      posterior antennal lobe has been missing a 95 Hz tonic input in every run.
+- [x] **cooling cells** and **hot cells** as transducers (`CoolingCells`, `HotCells`, 09:49) with
+      Budelli 2019's numbers; on in the room with `--thermo rest|field`.
 - [ ] **VP1m / VP1l label audit** before driving either (Marin 2020: VP1m humid, VP1l cool).
-- [ ] **the warm corner**: a temperature field in the room; thermotaxis readout.
+- [~] **the warm corner**: built (09:49); no thermotaxis in 3 seeds; open-loop lateralisation test of
+      the thermal drive at the DNs next; the steering readout may need thermo-responsive DNs.
 - [ ] **hygro**: dry/moist cells non-adapting, tens of Hz; a humidity field. Or42b ORNs are
       also humidity sensors (Li 2022).
 - [ ] **plumes**: intermittent (power-law whiffs/blanks, exponent -3/2), ORN rate from
