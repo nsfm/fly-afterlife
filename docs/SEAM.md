@@ -1215,6 +1215,25 @@ in 3 of 4 dark runs (85, 57, 90, 0 frames) vs 0 in the 5-minute invisible run.
 wheel whose rightward lean has been the story all day.** suggestive; not a claim. the
 clean test is her at 0.1 vs 0.5 across 10 seeds each, which is a `run_many.py` job.
 
+**the clean test (23:50 PDT; seeds 10-19, 120 s, her 0.1 vs 0.5, `world/approach/`).**
+yaw shift = his mean yaw when she is ahead-left (or ahead-right), free of walls, minus his
+free-walking mean in that run.
+
+| her | ahead-left shift | seeds > 0 | ahead-right shift | seeds < 0 | runs with contact | contact frames | time < 0.5 m |
+|---|---|---|---|---|---|---|---|
+| dark 0.1 | +0.49 | 10/10 | **-0.34** | **8/10** | 7/10 | 113 | 10.9% |
+| invisible 0.5 | +0.52 | 10/10 | -0.05 | 4/10 | 7/10 | 49 | 6.1% |
+
+**the ahead-left shift is an artefact:** it is the same with her invisible (Mann-Whitney
+p = 0.49). the "left-side-consistent turn toward her" read from four runs above is
+withdrawn; it was the geometry of where he is when she happens to be ahead-left. **what
+survives:** with her dark he shifts right when she is ahead-right (8/10 seeds, one-sided
+Mann-Whitney p = 0.019 against invisible) and spends ~1.8x the time within 0.5 m of her
+(contact frames 2.3x). a weak right-side turn toward a dark her on a right-leaning wheel,
+plus more time near her. suggestive; not yet a claim (n = 10, one-sided test, one
+statistic chosen after looking at four runs). the running-baseline steering fix and the
+corrected constants come first, then this test again as a pre-registered one.
+
 ## proprioception (21:25 PDT, `pair.py --proprio`)
 
 nate: will hooking senses up one by one normalise him or make chaos? "only one way to
