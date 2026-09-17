@@ -1615,6 +1615,27 @@ the thermal asymmetry: ~14 spikes per chunk net for an 8 C difference across the
 so gain 0.5 = 7 deg per chunk). labelled as what it is: a two-channel readout built from
 what the population test showed, not a circuit we found. tested on the drum (vision must
 still follow) and in the warm room.
+
+**two-channel wheel, drum and warm room (10:11 PDT; DNa02 gain 3 + DN population gain 0.5):**
+drum 3 of 3 both ways (vision intact). warm room, male-only, 120 s:
+
+| seed | arm | mean T felt | time T > 28 | time T > 30 | closest | mean distance | walked |
+|---|---|---|---|---|---|---|---|
+| 10 | rest | 26.22 | 18.8% | 8.5% | 0.00 | 2.53 | 31.1 m |
+| 10 | field | **27.39** | **34.1%** | 23.7% | 0.23 | **1.72** | 30.1 m |
+| 11 | rest | 26.70 | 26.9% | 10.9% | 0.34 | 2.21 | 31.0 m |
+| 11 | field | 26.45 | 18.8% | 13.1% | 0.25 | 2.13 | 30.0 m |
+| 12 | rest | 26.89 | 28.4% | 14.9% | 0.26 | 2.13 | 30.7 m |
+| 12 | field | 27.10 | 27.1% | 12.4% | 0.11 | 1.66 | 24.0 m |
+
+**no avoidance; if anything, approach** (seed 10 warmer and closer with the field; the
+others flat). the sign was never checked: the population's warmth response is ipsilateral
+(open loop above), and the wheel reads "right side up = turn right", DNa02's convention
+(Rayshubskiy 2020), so a warm right antenna turns him right, toward the heat. that
+convention is known for DNa02 and unknown for the population. flipping the thermal gain's
+sign would make him avoid heat by construction, so it is not done. **next:** a screen of
+descending types for a lateralised thermal response, and whether any of them is a turning
+neuron with a known sign; the thermal channel gets built from those or not at all.
 - **Shiu's constants, from the code not the paper:** rest/reset -52, threshold -45,
   tau_m 20 ms, tau_syn 5, refractory 2.2, delay 1.8, w_syn 0.275 (a free parameter),
   Poisson 150 Hz. our 150 Hz optic-lobe cap is Shiu's default, not a measurement.
