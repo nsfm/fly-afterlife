@@ -40,7 +40,7 @@ canvas{display:block;width:100%;height:auto;max-width:100%;border-radius:3px;bac
   <div class="col">
     <div class="panel"><h2>human view <span class="sub">pinhole, 150° fov, eye height, raytraced here in the browser</span></h2><canvas id="human" width="480" height="270"></canvas></div>
     <div class="panel"><h2>arena <span class="sub">top-down, from the object list</span></h2><canvas id="map" width="480" height="480"></canvas>
-      <div class="legend"><span><i style="background:var(--L)"></i>left eye field</span><span><i style="background:var(--R)"></i>right eye field</span><span><i style="background:#fff"></i>bright ball</span><span><i style="background:#f2efe6;border:1px solid #666"></i>pillar</span><span><i style="border:2px solid rgba(154,163,178,.9)"></i>touching wall/pillar</span><span><i style="border:2px solid var(--her)"></i>touching her</span></div></div>
+      <div class="legend"><span><i style="background:var(--L)"></i>left eye field</span><span><i style="background:var(--R)"></i>right eye field</span><span><i style="background:#fff"></i>bright ball</span><span><i style="background:#f2efe6;border:1px solid #666"></i>pillar</span><span><i style="border:2px solid rgba(154,163,178,.9)"></i>touching wall/pillar</span><span><i style="border:2px solid var(--her)"></i>touching her</span><span id="thermlegend" hidden><i style="background:rgba(232,120,60,.5)"></i>warm spot (+8 C)</span></div></div>
   </div>
   <div class="col">
     <div class="panel"><h2>through his eyes <span class="sub">the world resampled by 1,764 columns · 190° per eye · left of the fly is left · no colour, no resolution beyond his</span></h2><canvas id="pano" width="960" height="360"></canvas></div>
@@ -96,6 +96,7 @@ function drawMap(f) {
   for (let g = -3; g <= 3; g++) { const [a, b] = W2(g, -3), [c, d] = W2(g, 3); mx.beginPath(); mx.moveTo(a, b); mx.lineTo(c, d); mx.stroke(); const [e, q] = W2(-3, g), [r, s] = W2(3, g); mx.beginPath(); mx.moveTo(e, q); mx.lineTo(r, s); mx.stroke(); }
   mx.strokeStyle = 'rgba(230,225,214,.45)'; mx.lineWidth = 1.5; mx.beginPath();
   if (D.walls) { const h = D.walls[0]; const [a, b] = W2(-h, h), [c, d] = W2(h, -h); mx.strokeStyle = 'rgba(200,190,170,.7)'; mx.lineWidth = 2; mx.strokeRect(a, b, c - a, d - b); mx.lineWidth = 1; }
+  if (D.thermal) { const [tx, ty, dT, sg] = D.thermal; const [cx, cy] = W2(tx, ty); const g = mx.createRadialGradient(cx, cy, 0, cx, cy, 2.5 * sg * S); g.addColorStop(0, 'rgba(232,120,60,.55)'); g.addColorStop(0.4, 'rgba(232,120,60,.25)'); g.addColorStop(1, 'rgba(232,120,60,0)'); mx.fillStyle = g; mx.beginPath(); mx.arc(cx, cy, 2.5 * sg * S, 0, 7); mx.fill(); }
   for (let i = 0; i <= f; i++) { const [a, b] = W2(D.pose[i][0], D.pose[i][1]); i ? mx.lineTo(a, b) : mx.moveTo(a, b); } mx.stroke();
   const [x, y, h] = D.pose[f]; const hr = h * Math.PI / 180;
   for (const [side, col, sgn] of [['L', css('--L'), 1], ['R', css('--R'), -1]]) {   // eye fields: az -10..170 on each side (approx.)
@@ -185,6 +186,7 @@ function drawBeh(f) {
   c.strokeStyle = 'rgba(230,225,214,.7)'; c.beginPath(); const px = f / (T - 1) * W; c.moveTo(px, 0); c.lineTo(px, H); c.stroke();
   c.fillStyle = css('--ink-2'); c.font = '11px IBM Plex Mono, monospace'; c.fillText(lo.toFixed(0) + '°', 4, H - 4); c.fillText(hi.toFixed(0) + '°', 4, 12);
 }
+if (D.thermal) $('thermlegend').hidden = false;
 if (D.drum) { $('motion').hidden = false; const _r = render; render = f => { _r(f); drawBeh(f); }; }
 render(0); requestAnimationFrame(tick);
 </script>
