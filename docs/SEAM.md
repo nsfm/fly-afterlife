@@ -1412,6 +1412,29 @@ and 2-3 of 10 across the ensemble); the still-phase drift (-21.9 in seed 1) is t
 resting bias the wheel has always had. the new stack reproduces the recorded behaviour
 within the fragility already on record; it is not a bit-identical port and does not
 claim to be. this is the drum the running-baseline steering fix (TODO 2) gets tested on.
+
+## the first physiology change: running-baseline steering (01:49 PDT, `RunningBaselineSteering`)
+
+the vision brief: rotational velocity is linear in DNa02 right-minus-left through its whole
+range with zero at zero (Rayshubskiy 2020), so the resting lean is not physiology; reference
+each side to its own running mean (~2 s) before differencing. every fixed correction tried on
+09-16 (still offset, plateau offset, still- and motion-normalised ratios, equalisation) failed;
+this is the first running one. rule: base_side += (count - base_side) / 20 per chunk, updated
+after use; net = (R - base_R) - (L - base_L); the rest as before. drum, model 000, three seeds,
+heading rate deg/s (+ = left) in the two moving phases:
+
+| seed | fixed offset: drum +30 / -30 | both | running baseline: +30 / -30 | both |
+|---|---|---|---|---|
+| 0 | +21.9 / -8.8 | yes | +11.6 / -10.4 | yes |
+| 1 | +5.0 / -21.7 | yes | +4.5 / -9.8 | yes |
+| 2 | -1.9 / -6.2 | no | +5.1 / -8.8 | yes |
+
+3 of 3 with the running baseline (2 of 3 fixed), with smaller, more symmetric magnitudes.
+the price shows in the still phases after a moving one (-24.9, -8.2, -13.8 deg/s): the
+baseline adapts to the moving-phase rate, so when the drum stops the difference flips, an
+after-effect of the estimator (waterfall illusions are real biology; this one is 2 s of
+arithmetic and should be called what it is). the test that matters is the ensemble, where
+fixed was 2-3 of 10; running now.
 - **Shiu's constants, from the code not the paper:** rest/reset -52, threshold -45,
   tau_m 20 ms, tau_syn 5, refractory 2.2, delay 1.8, w_syn 0.275 (a free parameter),
   Poisson 150 Hz. our 150 Hz optic-lobe cap is Shiu's default, not a measurement.

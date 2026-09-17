@@ -13,7 +13,7 @@ import sys, argparse, json, numpy as np
 sys.path.insert(0, "seam"); sys.path.insert(0, "ref/flybrain/scripts"); sys.path.insert(0, "world"); sys.path.insert(0, "src")
 ap = argparse.ArgumentParser(); ap.add_argument("--out", required=True); ap.add_argument("--seed", type=int, default=0); ap.add_argument("--seconds", type=float, default=12.0)
 ap.add_argument("--model", default="flow/0000/000"); ap.add_argument("--gain", type=float, default=3.0); ap.add_argument("--drive-gain", type=float, default=150.0)
-ap.add_argument("--wsyn", type=float, default=0.275); ap.add_argument("--deterministic", action="store_true"); ap.add_argument("--rest-chunks", type=int, default=20); args = ap.parse_args()
+ap.add_argument("--wsyn", type=float, default=0.275); ap.add_argument("--deterministic", action="store_true"); ap.add_argument("--rest-chunks", type=int, default=20); ap.add_argument("--steer", default="fixed", help="fixed: one standing DNa02 offset subtracted (the record); running: per-side running baseline, tau 2 s (vision brief)"); ap.add_argument("--tau", type=float, default=20.0); args = ap.parse_args()
 from omma import Eye
 from flysim import Params
 from fastlif import FastFlyBrain
@@ -21,7 +21,7 @@ from fly_afterlife.frontend import FlyvisFrontEnd
 from fly_afterlife.receptors import Registry, ReceptorClass, Scaled
 from fly_afterlife.body import Body
 from fly_afterlife.world import Drum
-from fly_afterlife.effectors import Steering, dna02_rest_offset
+from fly_afterlife.effectors import Steering, RunningBaselineSteering, dna02_rest_offset
 from fly_afterlife.episode import Episode
 fps, CH = 100, 10
 eye = Eye("seam/eye_geom.npz"); fe = FlyvisFrontEnd(args.model, fps=fps, chunk=CH, deterministic=args.deterministic)
@@ -50,7 +50,7 @@ def drive_frame(a, f):
 rest_net = dna02_rest_offset(b, RM, drive_frame, lambda: fe.chunk(render_chunk()), CH, SPF, chunks=args.rest_chunks); print(f"DNa02 rest offset (R-L per chunk) {rest_net:+.2f}")
 class Still:
     def step(self, cnt): return 0.0
-steer = Steering(gain=args.gain, rest_net=rest_net, leg_gain=0.0)
+steer = Steering(gain=args.gain, rest_net=rest_net, leg_gain=0.0) if args.steer == "fixed" else RunningBaselineSteering(gain=args.gain, leg_gain=0.0, tau=args.tau)
 # ---- run
 ep = Episode(fps=fps, chunk=CH, eye=eye, room=drum, him=m, her=None, brains=(b, None), readouts=(RM, {}), registries=(REG, Registry()), front_end=fe.chunk, rest=rest, effectors=(steer, Still(), None, None), log_every=20)
 ep.run(args.seconds)
@@ -64,4 +64,4 @@ for (sec, rate), t0_, t1_ in zip(drum.programme, t_edges[:-1], t_edges[1:]):
     i0, i1 = int(t0_ * fps), min(int(t1_ * fps), len(hd) - 1); hr = (hd[i1] - hd[i0]) / max((i1 - i0) / fps, 1e-9); rows.append(dict(t0=float(t0_), t1=float(t1_), drum=rate, heading_rate=float(hr)))
     print(f"  {t0_:4.0f}-{t1_:4.0f} s  drum {rate:+5.0f} deg/s   heading {hr:+7.1f} deg/s")
 moving = [r for r in rows if r["drum"] != 0]; follows = all(np.sign(r["heading_rate"]) == np.sign(r["drum"]) for r in moving)
-print("follows both ways:", follows); json.dump(dict(rows=rows, follows=follows, rest_net=rest_net, seed=args.seed, model=args.model, wsyn=args.wsyn), open(args.out.replace(".npz", ".json"), "w"), indent=1)
+print("follows both ways:", follows); json.dump(dict(rows=rows, follows=follows, rest_net=rest_net, seed=args.seed, model=args.model, wsyn=args.wsyn, steer=args.steer, tau=args.tau), open(args.out.replace(".npz", ".json"), "w"), indent=1)

@@ -39,6 +39,33 @@ class Steering:
 
 
 @dataclass
+class RunningBaselineSteering:
+    """the vision brief's rule: rotational velocity is linear in DNa02 right-minus-left through its whole range,
+    zero at zero (Rayshubskiy 2020), so the resting lean is not physiology. each side is referenced to its own
+    running mean (tau chunks) before differencing, instead of one fixed offset measured standing. the touch
+    reflex is as in Steering. this is the FIRST running-baseline correction tried; the fixed ones (still offset,
+    plateau offset, still- and motion-normalised ratios) all failed on 2026-09-16."""
+    gain: float
+    leg_gain: float
+    tau: float = 20.0                  # chunks (2 s at 100 ms): the brief's ~2 s
+    ema: float = 0.0
+    leg_rest: float = 0.0
+    base_L: float | None = None
+    base_R: float | None = None
+    source: str = "vision_motor_courtship brief 2026-09-16: running per-side baseline (~2 s) before differencing"
+
+    def step(self, cnt: dict, touched_any: bool) -> float:
+        L, R = float(cnt["DNa02_L"]), float(cnt["DNa02_R"])
+        if self.base_L is None: self.base_L, self.base_R = L, R
+        net_ = (R - self.base_R) - (L - self.base_L); self.ema += (net_ - self.ema) / 3.0; yaw = float(np.clip(self.gain * self.ema, -12, 12)) * -1
+        self.base_L += (L - self.base_L) / self.tau; self.base_R += (R - self.base_R) / self.tau   # update after use: the current chunk is compared to the past
+        asym = (cnt["legMN_R"] - cnt["legMN_L"]) / max(cnt["legMN_R"] + cnt["legMN_L"], 1)
+        if touched_any: yaw = float(np.clip(self.leg_gain * (asym - self.leg_rest), -12, 12))
+        else: self.leg_rest += (asym - self.leg_rest) / 20.0
+        return yaw
+
+
+@dataclass
 class Pace:
     """his speed: v = v_min + v_range x clip((leg MN - standing) / (4 x standing), 0, 1).
     degenerate when standing = 0 (corrected constants): saturates on any output. absolute reference + MN class weights next."""
