@@ -24,7 +24,7 @@ import flyvis
 from omma import Eye, Scene
 ap = argparse.ArgumentParser(); ap.add_argument("--test", default=None); ap.add_argument("--stims", nargs="*", default=[])
 ap.add_argument("--rescale", default="none"); ap.add_argument("--dt", type=float, default=0.005); ap.add_argument("--fps", type=int, default=100)
-ap.add_argument("--adapt-tau", type=float, default=0.0, help="ms; slow subtractive adaptation per cell: dA/dt = (k*relu(v) - A)/tau, v gets -A. 0 = off (flyvis has none)"); ap.add_argument("--adapt-k", type=float, default=1.0); ap.add_argument("--diag", action="store_true"); ap.add_argument("--gainmatch", type=int, default=0, help="N rounds: scale each (type, eye)'s input so its grating modulation matches flyvis, re-homeostat biases each round"); ap.add_argument("--save-calib", default=None); ap.add_argument("--load-calib", default=None); ap.add_argument("--seconds", type=float, default=2.0); ap.add_argument("--homeostat", type=int, default=0, help="N iterations of per-type bias correction so each type rests (grey) where flyvis rests"); ap.add_argument("--speed", type=float, default=60.0); ap.add_argument("--record", nargs="*", default=[]); ap.add_argument("--gain", type=float, default=1.0, help="global scale on every weight (labelled fudge; see spectral radius)"); ap.add_argument("--out", default="seam/tx"); ap.add_argument("--geom", default="seam/eye_geom.npz"); args = ap.parse_args()
+ap.add_argument("--adapt-tau", type=float, default=0.0, help="ms; slow subtractive adaptation per cell: dA/dt = (k*relu(v) - A)/tau, v gets -A. 0 = off (flyvis has none)"); ap.add_argument("--adapt-k", type=float, default=1.0); ap.add_argument("--distilled", default=None, help="seam/tx_distilled.npz: per-pair strengths, per-type tau/bias/input scale learned by distillation from flyvis (seam/distill.py)"); ap.add_argument("--diag", action="store_true"); ap.add_argument("--gainmatch", type=int, default=0, help="N rounds: scale each (type, eye)'s input so its grating modulation matches flyvis, re-homeostat biases each round"); ap.add_argument("--save-calib", default=None); ap.add_argument("--load-calib", default=None); ap.add_argument("--seconds", type=float, default=2.0); ap.add_argument("--homeostat", type=int, default=0, help="N iterations of per-type bias correction so each type rests (grey) where flyvis rests"); ap.add_argument("--speed", type=float, default=60.0); ap.add_argument("--record", nargs="*", default=[]); ap.add_argument("--gain", type=float, default=1.0, help="global scale on every weight (labelled fudge; see spectral radius)"); ap.add_argument("--out", default="seam/tx"); ap.add_argument("--geom", default="seam/eye_geom.npz"); args = ap.parse_args()
 dev = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # ---------------------------------------------------------------- data
@@ -60,12 +60,12 @@ tau = np.array([P["nodes"][t]["tau_s"] for t in node_type], np.float32); bias = 
 print(f"nodes: {n_real} real + {NR*ncol} virtual R + {2*ncol} CT1 compartments = {N}")
 
 # ---------------------------------------------------------------- edges
-E_pre, E_post, E_w = [], [], []; dropped = {}
+E_pre, E_post, E_w, E_key = [], [], [], []; dropped = {}
 def add(p, q, count, spre, spost):
     key = f"{spre}->{spost}"
     if key not in strength: dropped[key] = dropped.get(key, 0) + 1; return
     wt = sign[key] * count * strength[key] * (resc.get(key, 1.0) if args.rescale == "pair" else 1.0)
-    E_pre.append(p); E_post.append(q); E_w.append(wt)
+    E_pre.append(p); E_post.append(q); E_w.append(wt); E_key.append(key)
 ct_ids = set(np.flatnonzero(ty == "CT1").tolist()); r_ids = set(np.flatnonzero(ty == "R1-R6").tolist())
 M10 = lambda t: t.startswith(("T4", "Mi", "C2", "C3", "Tm3", "L", "TmY")) ; layer_of = lambda t: 0 if M10(t) else 1
 for p, q, c in zip(pre, post, w):
@@ -100,9 +100,15 @@ for c in range(ncol):
 print("R spec (0,0) counts:", {k: v for k, v in r_spec.items() if k[0] in ("R1", "R7", "R8")})
 print(f"edges: {n_real_edges} real (+CT1 compartments) + {len(E_pre) - n_real_edges} virtual R = {len(E_pre)}; dropped pairs without flyvis params: {sum(dropped.values())} edges over {len(dropped)} pairs")
 print("  biggest dropped:", sorted(dropped.items(), key=lambda x: -x[1])[:6])
+if args.distilled:
+    D_ = np.load(args.distilled); dstr = dict(zip(D_["pairs"].astype(str), D_["strength"])); dtau = dict(zip(D_["types"].astype(str), D_["tau"])); dbias = dict(zip(D_["types"].astype(str), D_["bias"])); dins = dict(zip(D_["types"].astype(str), D_["inscale"]))
+    E_w = [wt / strength[k] * dstr.get(k, strength[k]) for wt, k in zip(E_w, E_key)]
+    tau = np.array([dtau.get(t_, P["nodes"][t_]["tau_s"]) for t_ in node_type], np.float32); bias = np.array([dbias.get(t_, P["nodes"][t_]["bias"]) for t_ in node_type], np.float32)
+    print(f"distilled parameters loaded: {len(dstr)} pair strengths, {len(dtau)} types; strength change median {np.median([dstr[k]/strength[k] for k in dstr if k in strength]):.2f}x")
 Ew = np.array(E_w, np.float32) * args.gain; print(f"weights: finite {np.isfinite(Ew).all()}, |w| max {np.abs(Ew).max():.3f}, mean {np.abs(Ew).mean():.4f}; in-degree max {np.bincount(E_post).max()}; per-node |in| max {pd.Series(np.abs(Ew)).groupby(np.array(E_post)).sum().max():.2f}")
 W = torch.sparse_coo_tensor(torch.tensor([E_post, E_pre]), torch.tensor(Ew, dtype=torch.float32), (N, N)).coalesce().to_sparse_csr().to(dev)
 tau_t = torch.tensor(np.maximum(tau, args.dt), device=dev); bias_t = torch.tensor(bias, device=dev); scale_t = torch.ones(N, device=dev)
+if args.distilled: scale_t = torch.tensor(np.array([dins.get(t_, 1.0) for t_ in node_type], np.float32), device=dev)
 r_nodes = torch.arange(r_base, r_base + NR * ncol, device=dev); r_col = torch.tensor(np.repeat(np.arange(ncol), NR), device=dev)
 
 # ---------------------------------------------------------------- sim
