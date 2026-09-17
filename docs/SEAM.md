@@ -1871,6 +1871,25 @@ not in this model at these constants, full stop. **adopted as the effector** (`-
 legs`: DNa02 wheel + the leg model's yaw, the touch reflex overriding on contact), to be
 scored in the room against the leg-set baseline.
 
+**the room on the true leg set (12:40 PDT; male-only, 120 s, seeds 10-12, DNa02 wheel, running
+pace read from the 373 leg MNs):**
+
+| MN set | seed | pace (sd) | leg MN / chunk | wall | longest | visits | touch frames | walked | P1 |
+|---|---|---|---|---|---|---|---|---|---|
+| all 699 | 10 / 11 / 12 | 0.23 / 0.25 / 0.23 | 61 / 151 / 50 | 18 / 49 / 17% | 6 / 39 / 7 s | 7 / 4 / 5 | 2,159 / 5,733 / 1,659 | 22.8 / 15.3 / 23.5 m | 2,800 / 7,350 / 2,040 |
+| leg 373 | 10 / 11 / 12 | **0.10 / 0.09 / 0.08** | **14 / 10 / 6** | 18 / 12 / 7% | 20 / 14 / 9 s | 2 / 1 / 1 | 2,043 / 1,481 / 931 | **6.5 / 6.8 / 7.3 m** | 2,540 / 1,890 / 1,090 |
+
+**his brain does not drive his legs from sight.** under visual drive at 0.185 mV the 373 leg
+motor neurons fire 6-14 spikes per 100 ms in total, a quarter of a hertz per cell; the
+walking the record has been reading since 09-16 came mostly from abdominal, wing and
+haltere motor neurons standing in for legs. what does drive the legs: touch (7,500/s),
+warmth (400-660/s, both sides), and the proprioceptive gait when we drive it ourselves,
+which is a loop. **there has never been a walking command in the room.** in life walking
+is commanded (DNp09 and its relatives, Bidaye 2020; the "walk" and "brake" DNs of Sapkal
+2024); the fly's spontaneous locomotion is a state we have not given him. tested next, open
+loop: DNp09 driven tonically, what the legs do; and whether DNa02 steers once the cord is
+walking (its own effect on the legs was 8-12 spikes/s in a standing cord).
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
