@@ -53,6 +53,7 @@ class LegModel:
     c_y: float = 1.0            # deg per chunk per unit asymmetry, calibrated by `calibrate_yaw`
     c_f: float = 1.0
     clip_deg: float = 12.0
+    signed: bool = False        # False: delta = max(c - base, 0) (the brief's rectified drive); True: signed delta, so a constant asymmetry cancels
     source: str = "docs/physiology/leg_motor.md s.6 (Azevedo 2020; Lesser 2024; Yang 2024; Isakov 2016)"
     base: np.ndarray | None = field(default=None, init=False)
 
@@ -75,8 +76,8 @@ class LegModel:
         """counts_all: per-cell spike counts for the chunk (length brain.N). returns (forward, yaw_left, P by side/segment)."""
         c = counts_all[self.cells].astype(np.float64)
         if self.base is None: self.base = c.copy()
-        delta = np.maximum(c - self.base, 0.0); self.base += (c - self.base) / self.tau
-        a = self.f * (1.0 - np.exp(-delta / self.k)) * self.w
+        delta = (c - self.base) if self.signed else np.maximum(c - self.base, 0.0); self.base += (c - self.base) / self.tau
+        a = self.f * (np.sign(delta) * (1.0 - np.exp(-np.abs(delta) / self.k))) * self.w
         P = {}
         for s in "LR":
             for g in ("fl", "ml", "hl"): P[(s, g)] = float(a[(self.side == s) & (self.seg == g)].sum())
