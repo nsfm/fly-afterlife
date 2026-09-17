@@ -16,10 +16,11 @@ import numpy as np
 
 
 class Episode:
-    def __init__(self, fps, chunk, eye, room, him, her, brains, readouts, registries, front_end, rest, effectors, lam=0.8, log_every=50, on_chunk=None):
+    def __init__(self, fps, chunk, eye, room, him, her, brains, readouts, registries, front_end, rest, effectors, lam=0.8, log_every=50, on_chunk=None, threads=True):
         """room: any world with scene(bodies) / step_frame(m, f, fps) / contacts (Room, Drum). her: a Body or None.
         effectors: (steer, pace, her_steer or None, song or None). on_chunk(ep, c, cntM): optional per-chunk hook."""
-        self.on_chunk = on_chunk
+        self.on_chunk = on_chunk; self.threads = threads
+        from concurrent.futures import ThreadPoolExecutor; self.pool = ThreadPoolExecutor(max_workers=1)
         self.fps, self.CH, self.SPF = fps, chunk, 1000 // fps
         self.eye, self.room, self.m, self.her = eye, room, him, her
         self.M, self.F = brains; self.RM, self.RF = readouts; self.REG, self.REGF = registries
@@ -66,9 +67,14 @@ class Episode:
                 st_["T_L"] = self.room.temperature(float(aL_[0]), float(aL_[1])); st_["T_R"] = self.room.temperature(float(aR_[0]), float(aR_[1]))
             self.REG.apply(self.M, st_, t_f, 1.0 / fps)
             if self.female: self.REGF.apply(self.F, st_, t_f, 1.0 / fps)
-            for _ in range(self.SPF):
-                self.M.step(); accM[self.M.last_idx] += 1
-                if self.female: self.F.step(); accF[self.F.last_idx] += 1
+            if self.female and self.threads:   # the two brains are independent within a chunk: step them in parallel (numba kernels release the GIL)
+                def _run(B, acc):
+                    for _ in range(self.SPF): B.step(); acc[B.last_idx] += 1
+                fut = self.pool.submit(_run, self.F, accF); _run(self.M, accM); fut.result()
+            else:
+                for _ in range(self.SPF):
+                    self.M.step(); accM[self.M.last_idx] += 1
+                    if self.female: self.F.step(); accF[self.F.last_idx] += 1
         cntM = {k: int(accM[r].sum()) for k, r in self.RM.items()}
         cntF = {k: int(accF[r].sum()) for k, r in self.RF.items()} if self.female else {}
         return cntM, cntF

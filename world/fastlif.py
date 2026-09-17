@@ -20,7 +20,7 @@ sys.path.insert(0, "ref/flybrain/scripts")
 from flysim import FlyBrain, Params  # noqa: E402
 
 
-@njit(cache=True, fastmath=False)
+@njit(cache=True, fastmath=False, nogil=True)
 def _propagate(src, scale, has_scale, out_ptr, out_tgt, out_w, acc):
     acc[:] = 0.0
     for k in range(src.shape[0]):
@@ -30,7 +30,7 @@ def _propagate(src, scale, has_scale, out_ptr, out_tgt, out_w, acc):
     return acc
 
 
-@njit(cache=True, fastmath=False)
+@njit(cache=True, fastmath=False, nogil=True)
 def _propagate_into(src, scale, has_scale, out_ptr, out_tgt, out_w, acc, g):
     """same sum as _propagate, then g += acc (kept as a separate pass so the float32 summation order matches flysim: acc first, then one add into g)."""
     acc[:] = 0.0
@@ -42,13 +42,13 @@ def _propagate_into(src, scale, has_scale, out_ptr, out_tgt, out_w, acc, g):
         g[i] += acc[i]
 
 
-@njit(cache=True, fastmath=False)
+@njit(cache=True, fastmath=False, nogil=True)
 def _reset(idx, v, refrac, v_reset, refractory):
     for k in range(idx.shape[0]):
         v[idx[k]] = v_reset; refrac[idx[k]] = refractory
 
 
-@njit(cache=True, fastmath=False, parallel=True)
+@njit(cache=True, fastmath=False, parallel=True, nogil=True)
 def _membrane(v, g, refrac, ext, noise, v_th, free, dt, tau_syn, tau_m, v_floor, spk):
     """g decay -> syn; dv; refractory gate; floor; threshold. `free` (refrac <= 0 before the update) is written out for the receptor gate."""
     n = v.shape[0]
