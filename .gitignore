@@ -8,3 +8,4 @@ seam/ens/*.log
 world/viewer_*.html
 world/*.npz
 world/ens/
+data/flywire/

@@ -874,6 +874,40 @@ the still segments near zero. on the pooled screened wheel it does not help (its
 response to 90 deg/s rotation is suppression on both sides, more on the left; the linear
 prediction is wrong for it). ensemble run with per-model calibration: `world/ens/eff_m*`.
 
+## the second fly (17:16 PDT, `seam/build_flywire.py`, `brain_female.npz`)
+
+the female FlyWire brain (FAFB, release 783; annotations from flyconnectome/flywire_
+annotations, connectivity from zenodo 10676866), built into the same node-table format:
+139,248 neurons, 2.65M edges at weight >= 5, no ventral cord. sides 69,956 L / 69,088 R
+(the male: 6% uneven in neurons, 10% in synaptic weight). the LIF's constants (shiu et al.
+2024) were fit on this dataset. descending cells 646 / 649, DNa02 1 / 1, KC 2,580 / 2,597.
+
+**hemisphere symmetry of the descending output under symmetric drives** (1 s, no
+hemisphere rebalance, seed 0; |L-R|/(L+R) of all descending spikes):
+
+| drive | male DN L / R | male asym | female DN L / R | female asym |
+|---|---|---|---|---|
+| rest | 1835 / 1629 | 0.059 | 256 / 363 | 0.173 |
+| odour, both antennae 1.0 | 1920 / 2991 | **0.218** | 338 / 326 | **0.018** |
+| touch, both sides | 17214 / 16446 | 0.023 | 4789 / 4953 | 0.017 |
+| sugar | 3713 / 4374 | 0.082 | 336 / 294 | 0.067 |
+
+under a symmetric odour the male's descending output is 22% right-heavy and his Kenyon
+cells fire 2.6x more on the right (1115 / 2958); hers are 1.8% and 1.6x. **the
+asymmetry that sank every closed-loop correction is the male map's, not the model's.**
+her resting asymmetry (0.17) is on tiny counts (256 / 363 vs his 1835 / 1629).
+
+**she runs cold.** her descending output is ~5x his at rest and under odour, motor
+output 0 at rest: the same W_syn on ~half the synapses per connection (54M synapses in
+the release vs 125M in the male's). the corollary matters more: **the male is ~2x hotter
+than the network the LIF constants were tuned on**, which is the likely origin of the
+recurrent build-up and drift seen at his wheel. a W_syn rescale for the male (to match
+her per-connection totals) is a labelled, principled experiment for the drift.
+
+**not yet:** her eye. FlyWire annotations carry no column coordinates; columns would have
+to come from lamina cell positions or the FlyWire optic-lobe column tables. smell and
+touch loops need no eye and can run on her now.
+
 ## choices, labelled
 
 1. **orientation** of our hex grid onto theirs. not in the data. calibrated by biology:
