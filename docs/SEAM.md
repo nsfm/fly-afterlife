@@ -872,7 +872,7 @@ L -0.4, R +2.8). drum, model 000: seed 0 still +1.0 / LEFT +17.7 / still -0.3 / 
 -27.2 / still -11.7; seed 1 -2.2 / +9.4 / +9.6 / -8.5 / +7.8. both ways, both seeds,
 the still segments near zero. on the pooled screened wheel it does not help (its
 response to 90 deg/s rotation is suppression on both sides, more on the left; the linear
-prediction is wrong for it). ensemble run with per-model calibration (`world/ens/eff_m*`, 17:26 PDT): **both ways 0 of 10**, leftward 1, rightward 5; model 000 itself did not reproduce (LEFT +1.5, RIGHT -30). the two-seed result was fragile. the efference copy joins the list of corrections that do not hold; the wheel arc is closed.
+prediction is wrong for it). ensemble run with per-model calibration (`world/ens/eff_m*`, 17:26 PDT): **both ways 2 of 10** (008, 009), leftward 3, rightward 8; model 000 itself did not reproduce (LEFT +1.5, RIGHT -30). the two-seed result was fragile. the efference copy joins the list of corrections that do not hold; the wheel arc is closed.
 
 ## the second fly (17:16 PDT, `seam/build_flywire.py`, `brain_female.npz`)
 
