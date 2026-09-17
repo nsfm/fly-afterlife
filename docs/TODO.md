@@ -27,8 +27,10 @@ loop is probably a bug (mechanosensation brief).
       bit-identical (00:58). gait generator, body-part contacts and scalar fields still to come.
 - [x] `effectors.py`: steering, pace, her steering, song, the calibration procedures; verified
       bit-identical (01:10). calibration cache by (brain, w_syn, seed) still to do.
-- [ ] `episode.py`: one loop; `per_frame` / `per_chunk` namespaces in the npz; deterministic
-      switch; two brains in threads (numba `nogil`). `pair.py` and `loop.py` become thin.
+- [x] `episode.py`: one loop, verified bit-identical (01:21); `pair.py` is 134 lines of setup.
+      still to do: `per_frame` / `per_chunk` namespaces, two brains in threads (numba `nogil`).
+      `loop.py` stays a legacy experiment; its modes get re-implemented on the stack (drum first)
+      and validated against the recorded numbers rather than ported.
 - [ ] `--no-female` default for calibration and male-only questions; her in the room only for
       contact and courtship runs.
 - [ ] drive resolved per 1 ms step, not per 10 ms frame (30 ms adaptation kernels need it).

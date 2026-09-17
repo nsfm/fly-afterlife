@@ -1385,6 +1385,15 @@ wheel + touch reflex), `Pace`, `HerSteering` (consumes the episode rng in the sa
 baselines, reflex gain) as functions over the brain. each carries its assumptions and the
 physiology it contradicts. the room script's per-chunk block is four lines. **verified: 4
 configs x 69 arrays, bit-identical.**
+
+**step 5, the episode (01:21 PDT):** `src/fly_afterlife/episode.py`: one chunk loop (render
+and move, front end, smells, drive and step, effectors, log) and the save. `world/pair.py`
+is 134 lines, all of it setup: brains, registries, room, bodies, calibrations, effectors,
+then three lines to run. **verified: 4 configs x 69 arrays, bit-identical.** the refactor's
+verified core is done in one night: five layers, five oracle passes, the record unchanged.
+`world/loop.py` is not ported: it is a research script of one-off calibration variants, most
+of them withdrawn; its modes (drum first) are re-implemented on the stack and validated
+against the recorded numbers instead.
 - **Shiu's constants, from the code not the paper:** rest/reset -52, threshold -45,
   tau_m 20 ms, tau_syn 5, refractory 2.2, delay 1.8, w_syn 0.275 (a free parameter),
   Poisson 150 Hz. our 150 Hz optic-lobe cap is Shiu's default, not a measurement.
