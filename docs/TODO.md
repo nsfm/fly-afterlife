@@ -31,6 +31,7 @@ loop is probably a bug (mechanosensation brief).
       still to do: `per_frame` / `per_chunk` namespaces, two brains in threads (numba `nogil`).
       `loop.py` stays a legacy experiment; its modes get re-implemented on the stack (drum first)
       and validated against the recorded numbers rather than ported.
+- [x] flyvis front end as `frontend.py`; the room uses it; verified bit-identical (01:47). pair.py 111 lines.
 - [x] drum on the stack (`experiments/drum.py`, 01:28): 2/3 seeds follow both ways (record: 3/3;
       ensemble 2-3/10). bar, walk, forage modes still to re-implement when needed.
 - [ ] `--no-female` default for calibration and male-only questions; her in the room only for

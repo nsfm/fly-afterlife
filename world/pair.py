@@ -28,36 +28,13 @@ args = ap.parse_args(); fps, CH = 100, 10; rng = np.random.default_rng(args.seed
 g = np.load("seam/eye_geom.npz"); eye = Eye("seam/eye_geom.npz")
 posts = np.array([(0.0, 1.6, 0.35, 0.85), (0.0, -1.6, 0.35, 0.85)], np.float32)   # pillars pale (0.85): she is the only dark thing in the room
 WALLS = dict(half=2.0, height=1.0, albedo=0.6)   # the room: 4 x 4 m, walls 1 m tall, lighter than the floor, darker than the sky   # pillars: floor-to-sky cylinders, bark-dark
-# ---- flyvis (his eye)
-import flyvis
-if args.deterministic: os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8"); torch.use_deterministic_algorithms(True)
-from flyvis import NetworkView
-net = NetworkView(args.model).init_network(); net.eval()
-lattice = sorted({(u, v) for u in range(-15, 16) for v in range(max(-15, -15 - u), min(15, 15 - u) + 1)}); idx_of = {uv: i for i, uv in enumerate(lattice)}
-types = ["T4a", "T4b", "T4c", "T4d", "T5a", "T5b", "T5c", "T5d"]; ntype = net.connectome.nodes.type[:].astype(str); tix = {t: np.flatnonzero(ntype == t) for t in types}
-eyemap = {}
-for s in "LR":
-    k = np.flatnonzero(g["side"] == s); v = np.rint(+g["sx"][k]).astype(int); u = np.rint(-g["sy"][k] - v / 2.0).astype(int)
-    col = np.array([idx_of.get((int(a), int(b)), -1) for a, b in zip(u, v)]); ok = col >= 0; eyemap[s] = (k[ok], col[ok])
-state = {"L": None, "R": None}
-def flyvis_chunk(lum_chunk):
-    out = {}
-    for s in "LR":
-        k, col = eyemap[s]; movie = np.full((1, CH, 1, 721), 0.5, np.float32); movie[0, :, 0, col] = lum_chunk[:, k].T
-        with torch.no_grad(): st = net.simulate(torch.tensor(movie, device=flyvis.device), dt=1 / fps, initial_state=state[s], as_states=True)
-        state[s] = st[-1]; act = torch.stack([x.nodes.activity[0] for x in st]).cpu().numpy()
-        for t in types: out[(s, t)] = act[:, tix[t]]
-    return out
+# ---- flyvis (his eye): src/fly_afterlife/frontend.py, the block that used to be here
+from fly_afterlife.frontend import FlyvisFrontEnd, TYPES as types
+fe = FlyvisFrontEnd(args.model, geom="seam/eye_geom.npz", fps=fps, chunk=CH, deterministic=args.deterministic); flyvis_chunk = fe.chunk; eyemap = fe.eyemap
 # ---- his brain
 Brain = FlyBrain if args.numpy_engine else FastFlyBrain
 M = Brain("brain_whole.npz", seed=args.seed, params=Params(mv_per_synapse=args.wsyn_m)); mty = M.type.astype(str); mns = M.side.astype(str); mcls = M.cls.astype(str)
-cols = np.load("seam/t4t5_columns.npz"); gkey = {(str(s), int(a), int(h)): i for i, (s, a, h) in enumerate(zip(g["side"], g["hex1"], g["hex2"]))}
-gi = np.array([gkey[(str(s), int(a), int(h))] for s, a, h in zip(cols["side"], cols["hex1"], cols["hex2"])])
-groups = {}
-for s in "LR":
-    k, col = eyemap[s]; colmap = dict(zip(k.tolist(), col.tolist()))
-    for t in types:
-        kk = (cols["type"] == t) & (cols["side"] == s); hx = np.array([colmap.get(int(i), -1) for i in gi[kk]]); ok = hx >= 0; groups[(t, s)] = (cols["idx"][kk][ok], hx[ok])
+groups = fe.groups(M)
 RM = {}
 for name, sel in [("DNa02", mty == "DNa02"), ("pC1", np.char.startswith(mty, "pC1")), ("pIP10", mty == "pIP10"), ("mAL", np.char.startswith(mty, "mAL")), ("LC10a", mty == "LC10a"), ("ORN_VA1v", mty == "ORN_VA1v"), ("legMN", M.sc == "vnc_motor"), ("DN", M.sc == "descending_neuron")]:
     for s in "LR": RM[f"{name}_{s}"] = np.flatnonzero(sel & (mns == s))
