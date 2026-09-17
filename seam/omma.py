@@ -137,5 +137,5 @@ if __name__ == "__main__":
     eye = Eye(); t0 = time.time()
     scene = Scene(spheres=[(np.array([3.0, 0.0, 0.6]), 0.6, 0.05), (np.array([1.5, 2.5, 0.5]), 0.4, 0.1)])
     lum = eye.render(scene); print(f"{eye.n} columns x {N_RAYS} rays in {1000*(time.time()-t0):.1f} ms")
-    eye.picture(lum, "seam/fly_sees.png", "what he sees: a dark ball 3 m ahead, a smaller one at 60 deg left")
+    eye.picture(lum, "docs/figures/fly_sees.png", "what he sees: a dark ball 3 m ahead, a smaller one at 60 deg left")
     print("wrote seam/fly_sees.png; lum range", lum.min().round(2), lum.max().round(2))

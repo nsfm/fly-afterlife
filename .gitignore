@@ -14,3 +14,4 @@ flyvis_data/
 world/approach/
 *.prof
 results/**/*.npz
+world/*.log
