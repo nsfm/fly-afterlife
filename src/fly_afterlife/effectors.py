@@ -48,6 +48,7 @@ class RunningBaselineSteering:
     gain: float
     leg_gain: float
     tau: float = 20.0                  # chunks (2 s at 100 ms): the brief's ~2 s
+    wheel: str = "DNa02"              # readout population: "DNa02" (one type, the record) or "DN" (every descending neuron)
     ema: float = 0.0
     leg_rest: float = 0.0
     base_L: float | None = None
@@ -55,7 +56,7 @@ class RunningBaselineSteering:
     source: str = "vision_motor_courtship brief 2026-09-16: running per-side baseline (~2 s) before differencing"
 
     def step(self, cnt: dict, touched_any: bool) -> float:
-        L, R = float(cnt["DNa02_L"]), float(cnt["DNa02_R"])
+        L, R = float(cnt[self.wheel + "_L"]), float(cnt[self.wheel + "_R"])
         if self.base_L is None: self.base_L, self.base_R = L, R
         net_ = (R - self.base_R) - (L - self.base_L); self.ema += (net_ - self.ema) / 3.0; yaw = float(np.clip(self.gain * self.ema, -12, 12)) * -1
         self.base_L += (L - self.base_L) / self.tau; self.base_R += (R - self.base_R) / self.tau   # update after use: the current chunk is compared to the past
@@ -76,6 +77,34 @@ class Pace:
 
     def step(self, cnt: dict) -> float:
         drive_m = (cnt["legMN"] - self.leg_stand) / max(4 * self.leg_stand, 1); return self.v_range * float(np.clip(drive_m, 0, 1)) + self.v_min
+
+
+@dataclass
+class MultiWheelSteering:
+    """several readout populations, each left-minus-right through its own running baseline, summed:
+    yaw = -sum_i gain_i x EMA_3((R_i - base_R_i) - (L_i - base_L_i)), clipped at 12 deg per chunk; the touch reflex as in
+    Steering. built 2026-09-17 from the population test: DNa02 carries vision and not warmth, the DN population carries
+    warmth and barely vision, so each gets its own channel. wheels = [(population, gain), ...]."""
+    wheels: list
+    leg_gain: float
+    tau: float = 20.0
+    ema: dict = field(default_factory=dict)
+    base: dict = field(default_factory=dict)
+    leg_rest: float = 0.0
+    source: str = "2026-09-17 10:10, the record 'the DN-population wheel on the drum'"
+
+    def step(self, cnt: dict, touched_any: bool) -> float:
+        yaw = 0.0
+        for w, g in self.wheels:
+            L, R = float(cnt[w + "_L"]), float(cnt[w + "_R"])
+            if w not in self.base: self.base[w] = [L, R]; self.ema[w] = 0.0
+            net_ = (R - self.base[w][1]) - (L - self.base[w][0]); self.ema[w] += (net_ - self.ema[w]) / 3.0; yaw += g * self.ema[w] * -1
+            self.base[w][0] += (L - self.base[w][0]) / self.tau; self.base[w][1] += (R - self.base[w][1]) / self.tau
+        yaw = float(np.clip(yaw, -12, 12))
+        asym = (cnt["legMN_R"] - cnt["legMN_L"]) / max(cnt["legMN_R"] + cnt["legMN_L"], 1)
+        if touched_any: yaw = float(np.clip(self.leg_gain * (asym - self.leg_rest), -12, 12))
+        else: self.leg_rest += (asym - self.leg_rest) / 20.0
+        return yaw
 
 
 @dataclass

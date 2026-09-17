@@ -1577,6 +1577,44 @@ and shows no avoidance, one seed walked through the centre. the expected reason,
 next in open loop: the only steering readout is DNa02, and a thermal asymmetry that lands
 in other descending neurons cannot turn him. (the tonic 95 Hz cooling input did not change
 his walking: rest-arm numbers are the bristle-v2 baseline's.)
+
+**open loop (09:55 PDT; standing, 0.185 mV, cooling cells at 95 Hz both sides, hot cells at
+the rate for each antenna's temperature, 3 s each):**
+
+| antennae | hot drive L / R | DNa02 L / R | DNa L / R | all DN L / R | leg MN L / R |
+|---|---|---|---|---|---|
+| 25 / 25 (rest) | 37 / 37 Hz | 0 / 0 | 29 / 14 | 704 / 549 | 377 / 341 |
+| 33 L / 25 R | 121 / 37 | 0 / 0 | 30 / 15 | 781 / 575 | 392 / 375 |
+| 25 L / 33 R | 37 / 121 | 0 / 0 | 32 / 18 | 869 / 856 | 661 / 630 |
+| 33 / 33 | 121 / 121 | 0 / 0 | 33 / 18 | 906 / 841 | 621 / 603 |
+
+**DNa02 is silent to temperature**, so the wheel cannot turn him from it; that is the null.
+but the descending population responds, lateralised ipsilaterally: warm on the right lifts
+right DN output by +307 spikes/s against +165 on the left; warm on the left, +76 L against
++27 R. and warmth on either side raises leg-MN output (341-377 -> 600-660 with the right
+antenna warm), so the running pace would carry him faster through warm air, which is
+half of thermotaxis with no direction. **next:** a wheel reading all descending neurons
+left minus right through the running baseline, checked on the drum first (it must still
+follow), then the warm room.
+
+**the DN-population wheel on the drum (10:10 PDT; 0.185 mV, running baseline, 3 seeds):**
+
+| wheel | seed 0: +30 / -30 | seed 1 | seed 2 | follows |
+|---|---|---|---|---|
+| DNa02 (gain 3) | +9.4 / -23.3 | +6.6 / -22.9 | +8.6 / -20.5 | **3/3** |
+| all DN (gain 6) | -27.6 / -1.0 | -8.0 / +3.7 | +2.5 / +7.4 | 0/3 |
+
+the corrected brain follows the drum 3 of 3 on the DNa02 wheel (a first: at 0.275 it was
+2-3 of 3). the DN-population wheel does not, and the calibration line says why: under
+vision alone at 0.185 the descending population fires 0.1-0.5 spikes per side per chunk,
+near silence, where the thermo cells had driven it to ~700/s. so the population carries
+warmth and barely carries sight; DNa02 carries sight and not warmth. **the readout that
+matches the wiring is two channels summed**, each through its own running baseline:
+DNa02 for vision (gain 3), the DN population for warmth (gain to be set by the size of
+the thermal asymmetry: ~14 spikes per chunk net for an 8 C difference across the antennae,
+so gain 0.5 = 7 deg per chunk). labelled as what it is: a two-channel readout built from
+what the population test showed, not a circuit we found. tested on the drum (vision must
+still follow) and in the warm room.
 - **Shiu's constants, from the code not the paper:** rest/reset -52, threshold -45,
   tau_m 20 ms, tau_syn 5, refractory 2.2, delay 1.8, w_syn 0.275 (a free parameter),
   Poisson 150 Hz. our 150 Hz optic-lobe cap is Shiu's default, not a measurement.
