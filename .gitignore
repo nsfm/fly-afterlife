@@ -17,3 +17,4 @@ results/**/*.npz
 world/*.log
 world/oracle/*.log
 world/oracle/*.npz
+world/drum/
