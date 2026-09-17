@@ -110,9 +110,14 @@ class GaitLeg(Transducer):
     phase: float
     step_hz: float = 10.0
     tonic: float = 0.15
+    phasic: float = 0.85                    # literal, not 1 - tonic: keeps the port bit-identical to pair.py
     source: str = "pair.py 2026-09-16 --proprio: tripod at 10 Hz (Wosnitza 2013 says up to 16), 15% tonic load (wrong shape per Zill 2024)"
     def step(self, stim, t, dt):
-        return self.peak * (self.tonic + (1.0 - self.tonic) * float(stim) * max(0.0, np.sin(2 * np.pi * (self.step_hz * t - self.phase))))
+        """stim = pace in [0, 1], or (pace, t_eval) to evaluate the cycle at another time
+        (pair.py evaluates the gait at the chunk's end time for every frame in it; kept as is
+        for the oracle, to be fixed as its own change)."""
+        pace, tt = (stim if isinstance(stim, tuple) else (stim, t))
+        return self.peak * (self.tonic + self.phasic * float(pace) * max(0.0, np.sin(2 * np.pi * (self.step_hz * tt - self.phase))))
 
 
 @dataclass

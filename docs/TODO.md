@@ -14,15 +14,15 @@ loop is probably a bug (mechanosensation brief).
 - [x] corrected synapse constants, first minute (`world/pair_w185.npz`): in the record 00:00.
       standing baselines all zero; leg MN halves; he still finds her. PACE READOUT DEGENERATE
       (standing = 0 saturates it): fix in effectors with an absolute reference + MN class weights.
-- [ ] oracle runs in flight (`world/oracle/`, 00:05).
+- [x] oracle runs (`world/oracle/`, `scripts/oracle_check.sh`).
 
 ## 1. the refactor (`docs/ARCHITECTURE.md`), before any new receptor
 
-- [ ] oracle runs: current room, `--deterministic`, 30 s, seeds 3 and 4, at old and corrected
-      constants (four npz). the ported room must reproduce them bit for bit.
-- [ ] `receptors.py`: registry + annotation-table selectors (class / type / entryNerve /
-      rootSide / receptorType) + transducer models (Tonic, Adapting, Differentiator,
-      WeberFechner, Gait) with citations. port existing drives unchanged. verify.
+- [x] oracle runs: current room, `--deterministic`, 30 s, seeds 3 and 4, at old and corrected
+      constants (four npz). the ported room must reproduce them bit for bit. (00:32: pass)
+- [x] `receptors.py`: registry + selectors + transducers; existing drives ported unchanged;
+      verified bit-identical (00:32). physiology transducers (Adapting, Differentiator,
+      WeberFechner) still to write, one per behaviour change.
 - [ ] `body.py` + `world.py`: pose, gait generator, six legs, contacts by body part; scene +
       scalar fields (odour, temperature, humidity, airflow, light). verify.
 - [ ] `effectors.py`: steering, pace, reflex, song; calibration phases cached by (brain, w_syn,

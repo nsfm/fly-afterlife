@@ -66,17 +66,7 @@ TACT_M = {s_: np.flatnonzero((mcls == "mechanosensory_tactile") & (mns == s_)) f
 _legs = np.load("world/legs.npz"); LEGS = {k: _legs[k] for k in _legs.files}; STEP_HZ = 10.0   # his six legs' proprioceptors by entry nerve (ProLN/MesoLN/MetaLN) x root side; haltere, wing, abdominal sensors stay silent
 TRIPOD = {"L1": 0.0, "R2": 0.0, "L3": 0.0, "R1": 0.5, "L2": 0.5, "R3": 0.5}   # alternating tripods, half a cycle apart
 _sp = np.load("world/ppk23_split.npz"); PPK_F = np.flatnonzero(np.isin(M.bodyId, _sp["F"])); PPK_M = np.flatnonzero(np.isin(M.bodyId, _sp["M"]))   # contact-pheromone leg neurons, F- and M-responsive by wiring; both fire on contact in life (Kallman 2015), P1 weighs them
-TAP_HZ = 60.0; TAP_MS = 300.0
-# ---- the receptor registry (src/fly_afterlife/receptors.py): every drive in the loop is a row here, applied in this order
-from fly_afterlife.receptors import Registry, ReceptorClass, Hold, Scaled, TapBurst, GaitLeg
-REG = Registry()
-for (t, s), (idx, hx) in groups.items():
-    REG.add(ReceptorClass(f"T4T5_{t}_{s}", idx, Scaled(args.drive_gain), (lambda st, t=t, s=s, hx=hx: (st["a"][(s, t)][st["f"]] - st["rest"][(s, t)])[hx]), source="seam v2"))
-if args.proprio > 0:
-    for leg_, idx_ in LEGS.items(): REG.add(ReceptorClass(f"proprio_{leg_}", idx_, GaitLeg(args.proprio, TRIPOD[leg_], STEP_HZ), lambda st: (st["pace"], st["t_chunk_end"])))
-for s_ in "LR": REG.add(ReceptorClass(f"bristle_{s_}", TACT_M[s_], Hold(150.0), (lambda st, s_=s_: st["tm"] == "B" or st["tm"] == s_)))
-REG.add(ReceptorClass("ppk_F", PPK_F, TapBurst(TAP_HZ, TAP_MS), lambda st: st["kind"] == 2)); REG.add(ReceptorClass("ppk_M", PPK_M, TapBurst(TAP_HZ, TAP_MS), lambda st: st["kind"] == 2))
-print(REG.table()); REGF = Registry()   # a tap is a burst: ~60 Hz cap (Weiss 2011 GRN ceiling), ~300 ms, not a 150 Hz hold (docs/physiology/chemo_thermo_hygro.md)
+TAP_HZ = 60.0; TAP_MS = 300.0; tap_t = -1e9   # a tap is a burst: ~60 Hz cap (Weiss 2011 GRN ceiling), ~300 ms, not a 150 Hz hold (docs/physiology/chemo_thermo_hygro.md)
 RM["ppkF"] = PPK_F; RM["DNp09"] = np.flatnonzero(np.char.startswith(mty, "DNp09")); RM["MDN"] = np.flatnonzero(np.char.startswith(mty, "MDN")); RM["legMN"] = np.flatnonzero(M.sc == "vnc_motor")
 M.define_odor("flyodour", n_channels=1, seed=0); M._odor_map["flyodour"] = {"ORN_VA1v": 1.0, "ORN_VA1d": 0.6}
 M.driven[:] = False
@@ -92,8 +82,6 @@ if not args.no_female:
         for s in "LR": RF[f"{name}_{s}"] = np.flatnonzero(sel & (fns == s))
         RF[name] = np.flatnonzero(sel)
     JO = RF["JO"]; TACT_F = {s_: np.flatnonzero((fcls == "mechanosensory") & ~np.char.startswith(fty, "JO") & (fns == s_)) for s_ in "LR"}
-    for s_ in "LR": REGF.add(ReceptorClass(f"her_bristle_{s_}", TACT_F[s_], Hold(150.0), (lambda st, s_=s_: st["tf"] == "B" or st["tf"] == s_)))
-    REGF.add(ReceptorClass("her_JO", JO, Hold(100.0), lambda st: st["singing"])); print(REGF.table())
     F.define_odor("cVA", n_channels=1, seed=0); F._odor_map["cVA"] = {"ORN_DA1": 1.0}
     F.driven[:] = False
     for cl in F.SENSORY_CLASSES: F.driven[F.cls == cl] = True
@@ -152,7 +140,7 @@ print(f"touch reflex: leg-MN asymmetry (R-L)/(R+L) with left bristles {asym_side
 v_m = 0.3; v_f = 0.15
 # ---- loop
 T = int(args.seconds * fps); LUM, POSE, POSE2, TOUCH, SONG, TKIND = [], [], [], [], [], []; log = {f"m_{k}": [] for k in RM} | ({f"f_{k}": [] for k in RF} if not args.no_female else {}) | {"dist": [], "song": [], "v_m": [], "v_f": []}
-ema = 0.0; leg_rest = 0.0; pip_hist = []; contacts = 0; t0 = time.time()
+ema = 0.0; leg_rest = 0.0; pip_hist = []; contacts = 0; t0 = time.time(); prev_kind = 0
 for c in range(T // CH):
     lum = np.zeros((CH, eye.n), np.float32); touched_m = [None] * CH; touched_f = [None] * CH; kind_m = [0] * CH
     for f in range(CH):
@@ -203,13 +191,24 @@ for c in range(T // CH):
         bL, bR = antennae(fx, fy, fh); dL, dR = float(np.exp(-np.hypot(*(bL - [mx, my])) / LAM)), float(np.exp(-np.hypot(*(bR - [mx, my])) / LAM)); F.smell_bilateral(left={"cVA": dL}, right={"cVA": dR})
     singing = bool(pip_hist) and len(pip_hist) >= 5 and (log["song"] and log["song"][-1]) and dist < 0.4
     for f in range(CH):
+        for (t, s), (idx, hx) in groups.items(): M.drive_hz[idx] = args.drive_gain * np.clip((a[(s, t)][f] - rest[(s, t)])[hx], 0, 1)
+        tm = touched_m[f]
+        if args.proprio > 0:   # tripod gait: each leg's proprioceptors fire in its stance phase, rate scaled by his pace; standing = a low tonic load signal
+            ph_ = STEP_HZ * (len(POSE) / fps); pace_ = float(np.clip(v_m / 0.45, 0, 1))
+            for leg_, idx_ in LEGS.items(): M.drive_hz[idx_] = args.proprio * (0.15 + 0.85 * pace_ * max(0.0, np.sin(2 * np.pi * (ph_ - TRIPOD[leg_]))))
+        for s_ in "LR": M.drive_hz[TACT_M[s_]] = 150.0 if (tm == "B" or tm == s_) else 0.0
         t_f = (len(POSE) - CH + f) / fps   # this frame's time (POSE already holds the whole chunk)
-        st_ = {"a": a, "rest": rest, "f": f, "tm": touched_m[f], "kind": kind_m[f], "pace": float(np.clip(v_m / 0.45, 0, 1)), "t_chunk_end": len(POSE) / fps, "tf": touched_f[f], "singing": singing}
-        REG.apply(M, st_, t_f, 1.0 / fps)
-        if not args.no_female: REGF.apply(F, st_, t_f, 1.0 / fps)
+        if kind_m[f] == 2 and (kind_m[f - 1] if f > 0 else prev_kind) != 2: tap_t = t_f   # contact onset with her = a tap
+        tap_ = TAP_HZ * np.exp(-(t_f - tap_t) * 1000.0 / TAP_MS) if (t_f - tap_t) * 1000.0 < 3 * TAP_MS else 0.0
+        M.drive_hz[PPK_F] = tap_; M.drive_hz[PPK_M] = tap_   # her cuticle: both channels burst on the tap, decaying; only contact with HER counts
+        if not args.no_female:
+            tf = touched_f[f]
+            for s_ in "LR": F.drive_hz[TACT_F[s_]] = 150.0 if (tf == "B" or tf == s_) else 0.0
+            F.drive_hz[JO] = 100.0 if singing else 0.0
         for _ in range(SPF):
             M.step(); accM[M.last_idx] += 1          # per-cell spike counts for the chunk; groups are summed once per chunk (same numbers, far fewer calls)
             if not args.no_female: F.step(); accF[F.last_idx] += 1
+    prev_kind = kind_m[-1]
     for k, r in RM.items(): cntM[k] = int(accM[r].sum())
     if not args.no_female:
         for k, r in RF.items(): cntF[k] = int(accF[r].sum())

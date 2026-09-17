@@ -1350,6 +1350,24 @@ tune. the touch reflex recalibrated itself (gain 53). the corrected brain is qui
 everywhere and still walks, feels, and finds her; the readouts on top of it are what have
 to be rebuilt, which is the plan. oracle runs (refactor step 1) launched 00:05:
 `world/oracle/room_{old,new}_s{3,4}.npz`, deterministic, 30 s.
+
+## the refactor begins (2026-09-17 00:35 PDT, `docs/ARCHITECTURE.md`)
+
+**step 1, the oracle:** four deterministic 30 s rooms (seeds 3 and 4, old and corrected
+constants) from the pre-refactor script, frozen as `world/oracle/pair_oracle.py` (a copy
+of `world/pair.py` at df26aa7). a lesson on the way: the first attempt edited `pair.py`
+while its oracle runs were queued, and two "oracles" ran on half-ported code. an oracle
+you can edit is not one; hence the frozen copy. `scripts/oracle_check.sh` reruns the
+comparison.
+
+**step 2, the receptor registry** (`src/fly_afterlife/receptors.py`): annotation-table
+selectors (class / type / side / entryNerve / rootSide / receptorType / bodyId) that
+reproduce every hand-built cell set in the room (bristles L 1,224, ppk F 108, leg R3 138,
+the 580 leg-nerve proprioceptors, 394 haltere cells they exclude); transducers with their
+sources on them (Hold, Scaled, TapBurst, GaitLeg, Gate); a registry applied in order. the
+room's drive block ported: five lines where there were fourteen, every float and one
+quirk (the gait evaluated at chunk-end time) kept. **verified: 69 arrays x 4 configs,
+bit-identical to the oracle.** next: body + world (step 3).
 - **Shiu's constants, from the code not the paper:** rest/reset -52, threshold -45,
   tau_m 20 ms, tau_syn 5, refractory 2.2, delay 1.8, w_syn 0.275 (a free parameter),
   Poisson 150 Hz. our 150 Hz optic-lobe cap is Shiu's default, not a measurement.
