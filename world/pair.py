@@ -54,7 +54,7 @@ if args.proprio > 0:
     for leg_, idx_ in LEGS.items(): REG.add(ReceptorClass(f"proprio_{leg_}", idx_, GaitLeg(args.proprio, TRIPOD[leg_], STEP_HZ), lambda st: (st["pace"], st["t_chunk_end"])))
 for s_ in "LR": REG.add(ReceptorClass(f"bristle_{s_}", TACT_M[s_], Hold(150.0) if args.bristle == "hold" else Adapting(), (lambda st, s_=s_: st["tm"] == "B" or st["tm"] == s_)))
 REG.add(ReceptorClass("ppk_F", PPK_F, TapBurst(TAP_HZ, TAP_MS), lambda st: st["kind"] == 2)); REG.add(ReceptorClass("ppk_M", PPK_M, TapBurst(TAP_HZ, TAP_MS), lambda st: st["kind"] == 2))
-if args.walk > 0: WALK = np.flatnonzero(np.char.startswith(mty, "DNp09") & (M.sc == "descending_neuron")); M.driven[WALK] = True; M._driven_idx = np.flatnonzero(M.driven); REG.add(ReceptorClass("walk_DNp09", WALK, Hold(args.walk), lambda st: True, source="Bidaye 2020; the command as a tonic drive, labelled"))
+if args.walk > 0: WALK = np.flatnonzero(np.char.startswith(mty, "DNp09") & (M.sc == "descending_neuron")); REG.add(ReceptorClass("walk_DNp09", WALK, Hold(args.walk), lambda st: True, source="Bidaye 2020; the command as a tonic drive, labelled"))
 if args.thermo != "off":   # his arista thermosensors, sampled at each antenna tip (VP1m / VP1l left out: labels under audit, Marin 2020)
     HOT = {s_: np.flatnonzero((mty == "TRN_VP2") & (mns == s_)) for s_ in "LR"}; COOL = {s_: np.flatnonzero(np.isin(mty, ["TRN_VP3a", "TRN_VP3b"]) & (mns == s_)) for s_ in "LR"}
     for s_ in "LR":
@@ -67,6 +67,7 @@ M.define_odor("flyodour", n_channels=1, seed=0); M._odor_map["flyodour"] = {"ORN
 M.driven[:] = False
 for cl in M.SENSORY_CLASSES: M.driven[M.cls == cl] = True
 for t, (idx, _) in groups.items(): M.driven[idx] = True
+if args.walk > 0: M.driven[WALK] = True   # the command cells must be in the driven set (after the sensory reset above)
 M._driven_idx = np.flatnonzero(M.driven); M.reset(); SPF = int(round(1000 / fps / M.p.dt))
 # ---- her brain
 RF = {}

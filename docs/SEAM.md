@@ -1890,7 +1890,7 @@ is commanded (DNp09 and its relatives, Bidaye 2020; the "walk" and "brake" DNs o
 loop: DNp09 driven tonically, what the legs do; and whether DNa02 steers once the cord is
 walking (its own effect on the legs was 8-12 spikes/s in a standing cord).
 
-**walking-command descending neurons, driven (12:50 PDT; both sides tonic, 2 s, leg MN per
+**walking-command descending neurons, driven (12:43 PDT; both sides tonic, 2 s, leg MN per
 chunk on the true set, and the leg model's forward / yaw_left at c = 1):**
 
 | DN (pair) | 30 Hz: leg L / R, forward, yaw_left | 100 Hz: leg L / R, forward, yaw_left | hind-leg drive L / R at 100 |
