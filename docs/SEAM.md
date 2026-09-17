@@ -1649,6 +1649,25 @@ this neuron turn him":** the leg-MN asymmetry it evokes through the cord, the si
 touch reflex already steers by. if the leg-MN asymmetry carries the visual turn on the
 drum, it is the effector for everything, and the descending code's sign is decided by the
 wiring rather than by me. tested next: `--wheel legMN` on the drum.
+
+**the leg-MN wheel on the drum (10:17 PDT; 0.185 mV, running baseline on leg-MN L/R counts,
+3 seeds):**
+
+| gain (sign) | seed 0: +30 / -30 | seed 1 | seed 2 | follows |
+|---|---|---|---|---|
+| -0.3 (more right-leg spikes = left turn; the touch reflex's convention) | -2.0 / +2.6 | -2.1 / +2.6 | -1.8 / +2.8 | 0/3, anti in all |
+| +0.3 (more right-leg spikes = right turn) | +1.8 / -3.4 | +2.2 / -3.0 | +1.9 / -3.4 | **3/3** |
+
+the visual turn is carried by the leg-MN asymmetry, weakly (2-3 deg/s at this gain
+against DNa02's 9-23) and with a definite sign: **more right-leg spikes = right turn**,
+consistent in six of six phases. that is the opposite of the convention the touch reflex
+has used since 09-16 (chosen from the inside-leg / outside-leg intuition, which a spike
+count over a mixed flexor-extensor population does not owe anything). so the sign of the
+model's leg code is now an empirical fact from one behaviour, and the reflex's success at
+freeing him from walls is suspect (the onset burst kicking, as suspected at 09:23). **the
+leg wheel is the effector that lets the wiring decide the sign of every input**, at the
+price of a weak visual gain; tested next in the warm room at both signs and both arms,
+and the touch reflex's sign re-tested on its own.
 - **Shiu's constants, from the code not the paper:** rest/reset -52, threshold -45,
   tau_m 20 ms, tau_syn 5, refractory 2.2, delay 1.8, w_syn 0.275 (a free parameter),
   Poisson 150 Hz. our 150 Hz optic-lobe cap is Shiu's default, not a measurement.
