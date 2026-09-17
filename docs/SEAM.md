@@ -1108,6 +1108,46 @@ walked him backward for a whole run. no reverse rule; MDN's tonic activity is no
 a model property (in life it is silent unless triggered). she has no cord: constant
 0.15 m/s, labelled.
 
+## the room, take three: walls that are walls (20:08 PDT)
+
+**a correction first.** the 5-minute room (`world/pair_long.npz`) was reported as four
+encounters with his P1 at ~9 spikes/s "near her". nate, from the map: the touch rings
+were pillar touches and the flies never visibly met. both true. the sim's contact rule
+fired at 20 cm centre-to-centre while his drawn body was 16 cm and hers 24 cm, so
+"contact" was a 3 cm gap between the drawn bodies - a near miss on the map. of 139
+touch frames, 56 were that rule and 26 were pillars; the rings did not say which. his
+P1 by chunk: 6.2 spikes in those "contact" chunks, 0.6 within 40 cm without contact,
+0.02 far. so the P1 response was touch-driven as claimed (F-like ppk23 + bristles on
+the contact rule), and the contact was one the viewer could not show. **fixed:** contact
+is when the drawn bodies meet (his r 0.08, hers 0.12), the viewer draws both collision
+bodies and rings touches in two colours (grey: wall or pillar; rose: her), and the
+touch readout says which. `touch_kind` is saved (1 wall/pillar, 2 her).
+
+**walls.** they were mirrors: crossing x = 2 flipped his heading and clipped his
+position, with no touch and nothing to see - the raytracer had sky, ground, pillars,
+spheres, and no room. nate: "can we have this activate touch instead of just a bouncy
+trampoline surface?" now: (1) the walls hold him at the surface and fire his bristles
+on the wall's side, exactly as pillars do; (2) they are rendered, in both raytracers,
+as a 1 m band of albedo 0.6 (lighter than the 0.4 floor, darker than the 0.8 sky);
+(3) while any bristles are pressed, his leg-MN asymmetry steers alone and vision is
+dropped for the chunk. (3) was forced by measurement: with the wall on his left, his
+DNa02 wheel said "turn left" (R-L = -1.15 per frame vs +0.95 free) and cancelled the
+reflex to -0.7 deg/chunk; he sat on the south wall for 52 of 60 s.
+
+**the reflex, calibrated.** the touch term was 30 x (leg asymmetry - rest), which is
+under a degree per chunk for the asymmetry a bristle actually evokes. it is now
+calibrated in the standing phase: left bristles driven give (R-L)/(R+L) = -0.090,
+right +0.050, and the gain (86 deg per unit) makes that worth 6 deg/chunk. pillars
+"worked" before only because sliding around a small cylinder is what a pinned fly does.
+
+**result, 60 s, seed 2:** frames at a wall 87% -> 22%; longest pinned stretch 52 s ->
+5.7 s; yaw with wall on the right +8.9 deg/chunk, on the left -3.1 (his leg output
+leans left at rest, -0.038; the male map, again), head-on +3.9. **his pace dropped**
+from a saturated 0.50 m/s to 0.12-0.22: the leg-MN drive is scene-dependent and a
+room of mid-grey wall is a calmer scene than open sky. that is a property of the
+readout, recorded, not tuned away. the 5-minute room is being re-run under these rules
+(`world/pair_long2.npz`). viewer: `world/viewer_walls.html` (local).
+
 ## the transplant learns from flyvis (19:24 PDT, `seam/distill.py`)
 
 student-teacher: the transplant (flyvis dynamics on the MaleCNS per-cell optic lobe,
@@ -1133,6 +1173,19 @@ small responses barely register, and without a rest anchor a type can go dead fo
 free. retrains: (2) 60 grey frames before each clip + a rest anchor to flyvis's rest +
 a small activity penalty; (3) as (2) with each type's loss divided by the teacher's
 response variance for that type, so T4/T5 count as much as Mi4.
+
+**distilled models 2 and 3, examined (20:10 PDT).** both bring the OFF pathway back:
+T5a/T5b cells with rest > 0 are 74-99% (model 1: 10-30%), T5 modulation 0.06-0.13
+(model 1: 0.01). neither sharpens direction selectivity. DS in the mean shift is nil
+(|DS| <= 0.03 for every T4/T5 subtype, both eyes) and DS in the temporal modulation is
+the ratio the untrained transplant already had (T4a L: +az 0.467 vs -az 0.349; R the
+mirror, 0.449 vs 0.594; ~1.3:1 where flyvis is ~3:1). model 2's loss settled at 0.019
+(rest-anchored MSE), model 3's at 0.48 (per-type-normalised; not comparable). **verdict:**
+imitation by MSE on this wiring keeps every type alive and reproduces the magnitudes
+but does not make T4/T5 more direction-selective than the per-cell wiring is with
+flyvis's per-type strengths. the remaining levers are (a) ensemble-averaged flyvis
+T4/T5 as the seam input and (b) training the transplant on the optic-flow task itself
+(flyvis's objective) rather than on flyvis's outputs. neither started.
 
 ## choices, labelled
 

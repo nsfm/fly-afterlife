@@ -12,20 +12,22 @@ senses between them (labelled, all through named receptors):
   touch: both, leg bristles (his VNC bristles; her 'mechanosensory' class) on the contacted side.
   song: if his pIP10 fires above its running mean + 2 sd in a chunk and she is within 0.4 m, that chunk is
      a song bout: her Johnston's organ (JO-*, mechanosensory) is driven at 100 Hz.
-steering: his DNa02 (vision; efference off; rest-sub), his leg-asymmetry on touch; hers DNa02 + heading noise
+steering: his DNa02 (vision; efference off; rest-sub) when free; while his bristles are pressed (wall, pillar, her) the leg-MN asymmetry steers alone, gain calibrated so the bristle-evoked asymmetry is worth 6 deg/chunk; hers DNa02 + heading noise, turn-away on contact
   (sd 15 deg/s). both walk at 0.3 / 0.15 m/s. readouts per chunk: his pC1 (all P1 types), pIP10, mAL, LC10a,
   DNa02 L/R; her pC1a-e, vpoEN, ORN_DA1, DNa02 L/R; distance, contacts, song bouts.
 """
 import os, sys, argparse, time, numpy as np, torch
-sys.path.insert(0, "seam"); sys.path.insert(0, "ref/flybrain/scripts")
+sys.path.insert(0, "seam"); sys.path.insert(0, "ref/flybrain/scripts"); sys.path.insert(0, "world")
 os.environ.setdefault("FLYVIS_ROOT_DIR", "/home/nate/code/fly-afterlife/flyvis_data")
 from omma import Eye, Scene
 from flysim import FlyBrain, Params
-ap = argparse.ArgumentParser(); ap.add_argument("--out", required=True); ap.add_argument("--seconds", type=float, default=30.0); ap.add_argument("--seed", type=int, default=0)
+from fastlif import FastFlyBrain   # numba step, verified spike-for-spike against flysim (world/fastlif.py)
+ap = argparse.ArgumentParser(); ap.add_argument("--out", required=True); ap.add_argument("--seconds", type=float, default=30.0); ap.add_argument("--seed", type=int, default=0); ap.add_argument("--numpy-engine", action="store_true", help="use the original numpy LIF step instead of the numba one (same spikes, slower)")
 ap.add_argument("--model", default="flow/0000/000"); ap.add_argument("--no-female", action="store_true"); ap.add_argument("--gain", type=float, default=3.0); ap.add_argument("--drive-gain", type=float, default=150.0)
 args = ap.parse_args(); fps, CH = 100, 10; rng = np.random.default_rng(args.seed)
 g = np.load("seam/eye_geom.npz"); eye = Eye("seam/eye_geom.npz")
-posts = np.array([(0.0, 1.6, 0.35, 0.08), (0.0, -1.6, 0.35, 0.08)], np.float32)   # pillars: floor-to-sky cylinders, bark-dark
+posts = np.array([(0.0, 1.6, 0.35, 0.08), (0.0, -1.6, 0.35, 0.08)], np.float32)
+WALLS = dict(half=2.0, height=1.0, albedo=0.6)   # the room: 4 x 4 m, walls 1 m tall, lighter than the floor, darker than the sky   # pillars: floor-to-sky cylinders, bark-dark
 # ---- flyvis (his eye)
 import flyvis
 from flyvis import NetworkView
@@ -46,7 +48,8 @@ def flyvis_chunk(lum_chunk):
         for t in types: out[(s, t)] = act[:, tix[t]]
     return out
 # ---- his brain
-M = FlyBrain("brain_whole.npz", seed=args.seed); mty = M.type.astype(str); mns = M.side.astype(str); mcls = M.cls.astype(str)
+Brain = FlyBrain if args.numpy_engine else FastFlyBrain
+M = Brain("brain_whole.npz", seed=args.seed); mty = M.type.astype(str); mns = M.side.astype(str); mcls = M.cls.astype(str)
 cols = np.load("seam/t4t5_columns.npz"); gkey = {(str(s), int(a), int(h)): i for i, (s, a, h) in enumerate(zip(g["side"], g["hex1"], g["hex2"]))}
 gi = np.array([gkey[(str(s), int(a), int(h))] for s, a, h in zip(cols["side"], cols["hex1"], cols["hex2"])])
 groups = {}
@@ -69,7 +72,7 @@ M._driven_idx = np.flatnonzero(M.driven); M.reset(); SPF = int(round(1000 / fps 
 # ---- her brain
 RF = {}
 if not args.no_female:
-    F = FlyBrain("brain_female2.npz", seed=args.seed + 100, balance_hemispheres=False, params=Params(mv_per_synapse=0.45)); fty = F.type.astype(str); fns = F.side.astype(str); fcls = F.cls.astype(str)
+    F = Brain("brain_female2.npz", seed=args.seed + 100, balance_hemispheres=False, params=Params(mv_per_synapse=0.45)); fty = F.type.astype(str); fns = F.side.astype(str); fcls = F.cls.astype(str)
     RF = {}
     for name, sel in [("DNa02", fty == "DNa02"), ("pC1", np.char.startswith(fty, "pC1")), ("vpoEN", fty == "vpoEN"), ("ORN_DA1", fty == "ORN_DA1"), ("JO", np.char.startswith(fty, "JO")), ("DN", F.sc == "descending_neuron")]:
         for s in "LR": RF[f"{name}_{s}"] = np.flatnonzero(sel & (fns == s))
@@ -83,11 +86,11 @@ if not args.no_female:
     print(f"her readouts: pC1 {len(RF['pC1'])}, vpoEN {len(RF['vpoEN'])}, ORN_DA1 {len(RF['ORN_DA1'])}, JO {len(JO)}, DNa02 {len(RF['DNa02_L'])}/{len(RF['DNa02_R'])}")
 print(f"his readouts: pC1 {len(RM['pC1'])}, pIP10 {len(RM['pIP10'])}, mAL {len(RM['mAL'])}, LC10a {len(RM['LC10a'])}, ORN_VA1v {len(RM['ORN_VA1v_L'])}/{len(RM['ORN_VA1v_R'])}")
 # ---- world state
-mx, my, mh = -1.2, 0.0, 0.0; fx, fy, fh = 1.2, 0.3, 180.0; LAM = 0.8; BODY = 0.05
+mx, my, mh = -1.2, 0.0, 0.0; fx, fy, fh = 1.2, 0.3, 180.0; LAM = 0.8; BODY = 0.08; HER_R = 0.12   # his body (drawn as a 16 cm fly), hers 24 cm; contact when the bodies meet
 def scene_now():
     sph = []
-    if not args.no_female: sph.append((np.array([fx, fy, 0.5]), 0.12, 0.5))   # her: the larger sex, fly-coloured (a mid-tone against bark and sky)
-    return Scene(sky=0.8, ground=0.4, spheres=sph, pillars=[(x, y, r, a) for x, y, r, a in posts])
+    if not args.no_female: sph.append((np.array([fx, fy, 0.5]), HER_R, 0.5))   # her: the larger sex, fly-coloured (a mid-tone against bark and sky)
+    return Scene(sky=0.8, ground=0.4, spheres=sph, pillars=[(x, y, r, a) for x, y, r, a in posts], walls=WALLS)
 def antennae(x, y, h):
     hr = np.radians(h); fwd = np.array([np.cos(hr), np.sin(hr)]); left = np.array([-np.sin(hr), np.cos(hr)]); p = np.array([x, y])
     return p + 0.1 * fwd + 0.15 * left, p + 0.1 * fwd - 0.15 * left
@@ -118,12 +121,24 @@ for c in range(10):
             leg_stand += int(M.step()[RM["legMN"]].sum())
             if not args.no_female: dn_stand_f += int(F.step()[RF["DN"]].sum())
 leg_stand /= 10; dn_stand_f /= 10; print(f"pace baselines per chunk: his leg MN {leg_stand:.0f}, her DN {dn_stand_f:.0f}")
+# touch-reflex calibration: drive his left bristles, then his right, standing; the leg-MN asymmetry each evokes is worth REFLEX_DEG per chunk
+asym_side = {}
+for s_ in "LR":
+    for s2 in "LR": M.drive_hz[TACT_M[s2]] = 150.0 if s2 == s_ else 0.0
+    rl = rr = 0
+    for c in range(10):
+        for f in range(CH):
+            for _ in range(SPF): spk = M.step(); rl += int(spk[RM["legMN_L"]].sum()); rr += int(spk[RM["legMN_R"]].sum())
+    asym_side[s_] = (rr - rl) / max(rr + rl, 1)
+for s2 in "LR": M.drive_hz[TACT_M[s2]] = 0.0
+REFLEX_DEG = 6.0; leg_gain = REFLEX_DEG / max(abs(asym_side["L"] - asym_side["R"]) / 2, 1e-3)
+print(f"touch reflex: leg-MN asymmetry (R-L)/(R+L) with left bristles {asym_side['L']:+.3f}, right {asym_side['R']:+.3f} -> gain {leg_gain:.0f} deg per unit asymmetry")
 v_m = 0.3; v_f = 0.15
 # ---- loop
-T = int(args.seconds * fps); LUM, POSE, POSE2, TOUCH, SONG = [], [], [], [], []; log = {f"m_{k}": [] for k in RM} | ({f"f_{k}": [] for k in RF} if not args.no_female else {}) | {"dist": [], "song": [], "v_m": [], "v_f": []}
+T = int(args.seconds * fps); LUM, POSE, POSE2, TOUCH, SONG, TKIND = [], [], [], [], [], []; log = {f"m_{k}": [] for k in RM} | ({f"f_{k}": [] for k in RF} if not args.no_female else {}) | {"dist": [], "song": [], "v_m": [], "v_f": []}
 ema = 0.0; leg_rest = 0.0; pip_hist = []; contacts = 0; t0 = time.time()
 for c in range(T // CH):
-    lum = np.zeros((CH, eye.n), np.float32); touched_m = [None] * CH; touched_f = [None] * CH
+    lum = np.zeros((CH, eye.n), np.float32); touched_m = [None] * CH; touched_f = [None] * CH; kind_m = [0] * CH
     for f in range(CH):
         sc = scene_now(); lum[f] = eye.render(sc, pos=(mx, my, 0.5), heading_deg=mh); POSE.append((mx, my, mh)); POSE2.append((fx, fy, fh))
         # move
@@ -132,23 +147,32 @@ for c in range(T // CH):
         # walls (4 x 4 m): reflect heading
         for (px_, py_, hh_, who) in ((mx, my, mh, "m"), (fx, fy, fh, "f")):
             pass
-        if abs(mx) > 2: mh = 180 - mh; mx = np.clip(mx, -2, 2)
-        if abs(my) > 2: mh = -mh; my = np.clip(my, -2, 2)
-        if abs(fx) > 2: fh = 180 - fh; fx = np.clip(fx, -2, 2)
-        if abs(fy) > 2: fh = -fh; fy = np.clip(fy, -2, 2)
+        def wall(px_, py_, hh_, r_):
+            """hold at the wall; return the side the wall is on relative to heading (L/R/B) or None."""
+            W_ = 2.0 - r_; nx_ = ny_ = 0.0
+            if px_ > W_: px_ = W_; nx_ = -1.0
+            if px_ < -W_: px_ = -W_; nx_ = 1.0
+            if py_ > W_: py_ = W_; ny_ = -1.0
+            if py_ < -W_: py_ = -W_; ny_ = 1.0
+            if nx_ == 0.0 and ny_ == 0.0: return px_, py_, None
+            brg_ = (np.degrees(np.arctan2(-ny_, -nx_)) - hh_ + 180) % 360 - 180      # bearing of the wall (opposite the inward normal)
+            return px_, py_, ("L" if brg_ > 8 else ("R" if brg_ < -8 else "B"))
+        mx, my, wm = wall(mx, my, mh, BODY); fx, fy, wf = wall(fx, fy, fh, HER_R)
+        if wm: touched_m[f] = wm; kind_m[f] = 1
+        if wf: touched_f[f] = wf
         # contacts: posts for him; each other
         for ox, oy, r_, _ in posts:
             dd = np.hypot(mx - ox, my - oy)
             if dd < r_ + BODY:
                 mx, my = ox + (mx - ox) / max(dd, 1e-6) * (r_ + BODY), oy + (my - oy) / max(dd, 1e-6) * (r_ + BODY)
-                brg = (np.degrees(np.arctan2(oy - my, ox - mx)) - mh + 180) % 360 - 180; touched_m[f] = "L" if brg > 8 else ("R" if brg < -8 else "B")
+                brg = (np.degrees(np.arctan2(oy - my, ox - mx)) - mh + 180) % 360 - 180; touched_m[f] = "L" if brg > 8 else ("R" if brg < -8 else "B"); kind_m[f] = 1
         if not args.no_female:
             dd = np.hypot(mx - fx, my - fy)
-            if dd < 2 * BODY + 0.1:
-                contacts += 1; push = (2 * BODY + 0.1 - dd) / 2; ux_, uy_ = (mx - fx) / max(dd, 1e-6), (my - fy) / max(dd, 1e-6); mx += ux_ * push; my += uy_ * push; fx -= ux_ * push; fy -= uy_ * push   # solid bodies
+            if dd < BODY + HER_R:
+                contacts += 1; kind_m[f] = 2; push = (BODY + HER_R - dd) / 2; ux_, uy_ = (mx - fx) / max(dd, 1e-6), (my - fy) / max(dd, 1e-6); mx += ux_ * push; my += uy_ * push; fx -= ux_ * push; fy -= uy_ * push   # solid bodies
                 brg = (np.degrees(np.arctan2(fy - my, fx - mx)) - mh + 180) % 360 - 180; touched_m[f] = "L" if brg > 8 else ("R" if brg < -8 else "B")
                 brg2 = (np.degrees(np.arctan2(my - fy, mx - fx)) - fh + 180) % 360 - 180; touched_f[f] = "L" if brg2 > 8 else ("R" if brg2 < -8 else "B")
-        TOUCH.append(touched_m[f])
+        TOUCH.append(touched_m[f]); TKIND.append(kind_m[f])
     a = flyvis_chunk(lum); cntM = {k: 0 for k in RM}; cntF = {k: 0 for k in RF} if not args.no_female else {}
     dist = np.hypot(mx - fx, my - fy) if not args.no_female else np.inf
     # smells at antennae (chunk-constant)
@@ -175,7 +199,7 @@ for c in range(T // CH):
     # his steering: DNa02 (vision) + leg asymmetry on touch
     net_ = cntM["DNa02_R"] - cntM["DNa02_L"] - rest_net; ema += (net_ - ema) / 3.0; yaw = float(np.clip(args.gain * ema, -12, 12)) * -1
     asym = (cntM["legMN_R"] - cntM["legMN_L"]) / max(cntM["legMN_R"] + cntM["legMN_L"], 1)
-    if any(touched_m): yaw += float(np.clip(30.0 * (asym - leg_rest), -12, 12))
+    if any(touched_m): yaw = float(np.clip(leg_gain * (asym - leg_rest), -12, 12))   # bristles pressed: the legs steer, vision is dropped for the chunk
     else: leg_rest += (asym - leg_rest) / 20.0
     mh += yaw
     # pace: speed = v_max * clip((leg MN - standing) / (4 x standing), 0, 1); backward if MDN outfires DNp09 (labelled)
@@ -186,6 +210,8 @@ for c in range(T // CH):
     # her steering: DNa02 (whatever it hears) + noise
     if not args.no_female:
         fnet = cntF["DNa02_L"] - cntF["DNa02_R"]; fh += float(np.clip(3.0 * fnet, -12, 12)) + rng.normal(0, 1.5)
+        if any(touched_f):   # she has no leg circuits: on contact, turn away from the touched side (labelled stand-in for the reflex he has through his cord)
+            side_ = [t_ for t_ in touched_f if t_][-1]; fh += -8.0 if side_ == "L" else (8.0 if side_ == "R" else rng.choice([-8.0, 8.0]))
     # song detection: pIP10 above running mean + 2 sd
     p = cntM["pIP10"]; pip_hist.append(p); mu, sd = (np.mean(pip_hist[:-1]), np.std(pip_hist[:-1]) + 0.5) if len(pip_hist) > 5 else (p, 1e9)
     song = bool(p > mu + 2 * sd); log["song"].append(song and not args.no_female and dist < 0.4); log["dist"].append(dist); log["v_m"].append(v_m); log["v_f"].append(v_f)
@@ -195,8 +221,8 @@ for c in range(T // CH):
         print(f"t={(c+1)/10:5.1f}s  him ({mx:+.2f},{my:+.2f}) {mh:+6.0f}  her ({fx:+.2f},{fy:+.2f})  dist {dist:4.2f}  pC1 {sum(log['m_pC1'][-50:])} pIP10 {sum(log['m_pIP10'][-50:])} LC10a {sum(log['m_LC10a'][-50:])} | her pC1 {sum(log['f_pC1'][-50:]) if not args.no_female else '-'} vpoEN {sum(log['f_vpoEN'][-50:]) if not args.no_female else '-'} | contacts {contacts} songs {sum(log['song'][-50:])} | pace him {np.mean(log['v_m'][-50:]):.2f} her {np.mean(log['v_f'][-50:]):.2f} m/s  ({time.time()-t0:.0f}s)", flush=True)
     LUM.append((np.clip(lum, 0, 1) * 255).astype(np.uint8))
 Tn = len(POSE)
-np.savez_compressed(args.out, fps=fps, chunk=CH, lum=np.concatenate(LUM), pose=np.array(POSE, np.float32), pose2=np.array(POSE2, np.float32), objects=posts, pillars=True, sky=0.8, ground=0.4, her_r=0.12, her_albedo=0.5, fov=150.0, contacts=contacts,
+np.savez_compressed(args.out, fps=fps, chunk=CH, lum=np.concatenate(LUM), pose=np.array(POSE, np.float32), pose2=np.array(POSE2, np.float32), objects=posts, pillars=True, sky=0.8, ground=0.4, her_albedo=0.5, walls=np.array([WALLS['half'], WALLS['height'], WALLS['albedo']], np.float32), fov=150.0, contacts=contacts,
                     az=np.degrees(np.arctan2(eye.dir0[:, 1], eye.dir0[:, 0])).astype(np.float32), el=np.degrees(np.arcsin(np.clip(eye.dir0[:, 2], -1, 1))).astype(np.float32), side=eye.side,
-                    touch=np.array([{"L": 1, "R": 2, "B": 3}.get(t_, 0) for t_ in TOUCH], np.int8), heading_chunk=np.array([p[2] for p in POSE[::CH]]),
+                    touch=np.array([{"L": 1, "R": 2, "B": 3}.get(t_, 0) for t_ in TOUCH], np.int8), touch_kind=np.array(TKIND, np.int8), body_r=BODY, her_r=HER_R, heading_chunk=np.array([p[2] for p in POSE[::CH]]),
                     **{f"n_{k}": np.repeat(np.array(v, np.int16), CH)[:Tn] for k, v in log.items() if k not in ("dist", "song", "v_m", "v_f")}, v_m=np.repeat(np.array(log["v_m"], np.float32), CH)[:Tn], v_f=np.repeat(np.array(log["v_f"], np.float32), CH)[:Tn], dist=np.repeat(np.array(log["dist"], np.float32), CH)[:Tn], song=np.repeat(np.array(log["song"], np.int8), CH)[:Tn])
 print("wrote", args.out, f"contacts {contacts}, song chunks {sum(log['song'])}, mean dist {np.mean(log['dist']):.2f}")
