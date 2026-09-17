@@ -13,7 +13,7 @@ import sys, argparse, json, numpy as np
 sys.path.insert(0, "seam"); sys.path.insert(0, "ref/flybrain/scripts"); sys.path.insert(0, "world"); sys.path.insert(0, "src")
 ap = argparse.ArgumentParser(); ap.add_argument("--out", required=True); ap.add_argument("--seed", type=int, default=0); ap.add_argument("--seconds", type=float, default=12.0)
 ap.add_argument("--model", default="flow/0000/000"); ap.add_argument("--gain", type=float, default=3.0); ap.add_argument("--drive-gain", type=float, default=150.0)
-ap.add_argument("--wsyn", type=float, default=0.275); ap.add_argument("--deterministic", action="store_true"); ap.add_argument("--rest-chunks", type=int, default=20); ap.add_argument("--steer", default="fixed", help="fixed: one standing DNa02 offset subtracted (the record); running: per-side running baseline, tau 2 s (vision brief)"); ap.add_argument("--tau", type=float, default=20.0); ap.add_argument("--wheel", default="DNa02", help="DNa02 (the record), DN (all descending neurons L-R), or DNa02+DN (two channels; --dn-gain)"); ap.add_argument("--dn-gain", type=float, default=0.5); ap.add_argument("--wheel-gain", type=float, default=None, help="gain for the DN wheel (default: gain x 2 / mean DN per chunk at rest, so a 50 pct asymmetry is a full turn)"); args = ap.parse_args()
+ap.add_argument("--wsyn", type=float, default=0.275); ap.add_argument("--deterministic", action="store_true"); ap.add_argument("--rest-chunks", type=int, default=20); ap.add_argument("--steer", default="fixed", help="fixed: one standing DNa02 offset subtracted (the record); running: per-side running baseline, tau 2 s (vision brief)"); ap.add_argument("--tau", type=float, default=20.0); ap.add_argument("--wheel", default="DNa02", help="DNa02 (the record), DN (all descending neurons L-R), or DNa02+DN (two channels; --dn-gain)"); ap.add_argument("--dn-gain", type=float, default=0.5); ap.add_argument("--walk", type=float, default=0.0, help="Hz on DNp09 both sides: the walking command"); ap.add_argument("--effector", default="wheel", help="wheel | legs (DNa02 wheel + the leg model)"); ap.add_argument("--wheel-gain", type=float, default=None, help="gain for the DN wheel (default: gain x 2 / mean DN per chunk at rest, so a 50 pct asymmetry is a full turn)"); args = ap.parse_args()
 from omma import Eye
 from flysim import Params
 from fastlif import FastFlyBrain
@@ -23,6 +23,8 @@ from fly_afterlife.body import Body
 from fly_afterlife.world import Drum
 from fly_afterlife.effectors import Steering, RunningBaselineSteering, MultiWheelSteering, dna02_rest_offset
 from fly_afterlife.episode import Episode
+from fly_afterlife.legs import LegModel, LegSteering
+from fly_afterlife.receptors import Hold
 fps, CH = 100, 10
 eye = Eye("seam/eye_geom.npz"); fe = FlyvisFrontEnd(args.model, fps=fps, chunk=CH, deterministic=args.deterministic)
 # ---- the brain, driven at T4/T5 through the seam
@@ -31,12 +33,15 @@ groups = fe.groups(b)
 b.driven[:] = False
 for cl in b.SENSORY_CLASSES: b.driven[b.cls == cl] = True
 for t, (idx, _) in groups.items(): b.driven[idx] = True
+WALK = np.flatnonzero(np.char.startswith(ty, "DNp09") & (b.sc == "descending_neuron"))
+if args.walk > 0: b.driven[WALK] = True
 b._driven_idx = np.flatnonzero(b.driven); b.reset(); b.drive_hz[:] = 0; b.g[:] = 0; b.refrac[:] = 0; SPF = int(round(1000 / fps / b.p.dt))
 RM = {}
 for name, sel in [("DNa02", ty == "DNa02"), ("HS", np.char.startswith(ty, "HS")), ("legMN", np.isin(np.arange(b.N), np.load("world/legmn.npz")["leg"])), ("DN", b.sc == "descending_neuron"), ("pIP10", ty == "pIP10")]:
     for s in "LR": RM[f"{name}_{s}"] = np.flatnonzero(sel & (ns == s))
     RM[name] = np.flatnonzero(sel)
 REG = Registry()
+if args.walk > 0: REG.add(ReceptorClass("walk_DNp09", WALK, Hold(args.walk), lambda st: True, source="Bidaye 2020; tonic command, labelled"))
 for (t, s), (idx, hx) in groups.items():
     REG.add(ReceptorClass(f"T4T5_{t}_{s}", idx, Scaled(args.drive_gain), (lambda st, t=t, s=s, hx=hx: (st["a"][(s, t)][st["f"]] - st["rest"][(s, t)])[hx]), source="seam v2"))
 # ---- world and body
@@ -59,7 +64,7 @@ dn_rest = (acc_[RM["DN_L"]].sum() + acc_[RM["DN_R"]].sum()) / 10 / 2; print(f"DN
 class Still:
     def step(self, cnt): return 0.0
 wgain = args.gain if args.wheel in ("DNa02", "DNa02+DN") else (args.wheel_gain if args.wheel_gain else args.gain * 2.0 / max(dn_rest, 1.0))
-steer = Steering(gain=args.gain, rest_net=rest_net, leg_gain=0.0) if args.steer == "fixed" else (MultiWheelSteering(wheels=[("DNa02", args.gain), ("DN", args.dn_gain)], leg_gain=0.0, tau=args.tau) if args.wheel == "DNa02+DN" else RunningBaselineSteering(gain=wgain, leg_gain=0.0, tau=args.tau, wheel=args.wheel))
+steer = LegSteering(LegModel(b), wheel_gain=args.gain, leg_gain=0.0) if args.effector == "legs" else Steering(gain=args.gain, rest_net=rest_net, leg_gain=0.0) if args.steer == "fixed" else (MultiWheelSteering(wheels=[("DNa02", args.gain), ("DN", args.dn_gain)], leg_gain=0.0, tau=args.tau) if args.wheel == "DNa02+DN" else RunningBaselineSteering(gain=wgain, leg_gain=0.0, tau=args.tau, wheel=args.wheel))
 # ---- run
 ep = Episode(fps=fps, chunk=CH, eye=eye, room=drum, him=m, her=None, brains=(b, None), readouts=(RM, {}), registries=(REG, Registry()), front_end=fe.chunk, rest=rest, effectors=(steer, Still(), None, None), log_every=20)
 ep.run(args.seconds)
