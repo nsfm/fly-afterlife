@@ -26,7 +26,7 @@ ap = argparse.ArgumentParser(); ap.add_argument("--out", required=True); ap.add_
 ap.add_argument("--model", default="flow/0000/000"); ap.add_argument("--no-female", action="store_true"); ap.add_argument("--gain", type=float, default=3.0); ap.add_argument("--drive-gain", type=float, default=150.0)
 args = ap.parse_args(); fps, CH = 100, 10; rng = np.random.default_rng(args.seed)
 g = np.load("seam/eye_geom.npz"); eye = Eye("seam/eye_geom.npz")
-posts = np.array([(0.0, 1.6, 0.35, 0.08), (0.0, -1.6, 0.35, 0.08)], np.float32)
+posts = np.array([(0.0, 1.6, 0.35, 0.85), (0.0, -1.6, 0.35, 0.85)], np.float32)   # pillars pale (0.85): she is the only dark thing in the room
 WALLS = dict(half=2.0, height=1.0, albedo=0.6)   # the room: 4 x 4 m, walls 1 m tall, lighter than the floor, darker than the sky   # pillars: floor-to-sky cylinders, bark-dark
 # ---- flyvis (his eye)
 import flyvis
@@ -87,10 +87,10 @@ if not args.no_female:
     print(f"her readouts: pC1 {len(RF['pC1'])}, vpoEN {len(RF['vpoEN'])}, ORN_DA1 {len(RF['ORN_DA1'])}, JO {len(JO)}, DNa02 {len(RF['DNa02_L'])}/{len(RF['DNa02_R'])}")
 print(f"his readouts: pC1 {len(RM['pC1'])}, pIP10 {len(RM['pIP10'])}, mAL {len(RM['mAL'])}, LC10a {len(RM['LC10a'])}, ORN_VA1v {len(RM['ORN_VA1v_L'])}/{len(RM['ORN_VA1v_R'])}")
 # ---- world state
-mx, my, mh = -1.2, 0.0, 0.0; fx, fy, fh = 1.2, 0.3, 180.0; LAM = 0.8; BODY = 0.08; HER_R = 0.12   # his body (drawn as a 16 cm fly), hers 24 cm; contact when the bodies meet
+mx, my, mh = -1.2, 0.0, 0.0; fx, fy, fh = 1.2, 0.3, 180.0; LAM = 0.8; BODY = 0.08; HER_R = 0.12; HER_ALB = 0.1   # a fly is dark; against a 0.4 floor, 0.6 walls and pale pillars she is the one dark object he can approach   # his body (drawn as a 16 cm fly), hers 24 cm; contact when the bodies meet
 def scene_now():
     sph = []
-    if not args.no_female: sph.append((np.array([fx, fy, 0.5]), HER_R, 0.5))   # her: the larger sex, fly-coloured (a mid-tone against bark and sky)
+    if not args.no_female: sph.append((np.array([fx, fy, 0.5]), HER_R, HER_ALB))   # her: the larger sex, fly-coloured (a mid-tone against bark and sky)
     return Scene(sky=0.8, ground=0.4, spheres=sph, pillars=[(x, y, r, a) for x, y, r, a in posts], walls=WALLS)
 def antennae(x, y, h):
     hr = np.radians(h); fwd = np.array([np.cos(hr), np.sin(hr)]); left = np.array([-np.sin(hr), np.cos(hr)]); p = np.array([x, y])
@@ -168,6 +168,11 @@ for c in range(T // CH):
                 mx, my = ox + (mx - ox) / max(dd, 1e-6) * (r_ + BODY), oy + (my - oy) / max(dd, 1e-6) * (r_ + BODY)
                 brg = (np.degrees(np.arctan2(oy - my, ox - mx)) - mh + 180) % 360 - 180; touched_m[f] = "L" if brg >= 0 else "R"; kind_m[f] = 1
         if not args.no_female:
+            for ox, oy, r_, _ in posts:
+                ddf = np.hypot(fx - ox, fy - oy)
+                if ddf < r_ + HER_R:
+                    ang_ = np.arctan2(fy - oy, fx - ox); fx, fy = ox + (r_ + HER_R) * np.cos(ang_), oy + (r_ + HER_R) * np.sin(ang_)
+                    brg_ = (np.degrees(np.arctan2(oy - fy, ox - fx)) - fh + 180) % 360 - 180; touched_f[f] = "L" if brg_ >= 0 else "R"
             dd = np.hypot(mx - fx, my - fy)
             if dd < BODY + HER_R:
                 contacts += 1; kind_m[f] = 2; push = (BODY + HER_R - dd) / 2; ux_, uy_ = (mx - fx) / max(dd, 1e-6), (my - fy) / max(dd, 1e-6); mx += ux_ * push; my += uy_ * push; fx -= ux_ * push; fy -= uy_ * push   # solid bodies
@@ -222,7 +227,7 @@ for c in range(T // CH):
         print(f"t={(c+1)/10:5.1f}s  him ({mx:+.2f},{my:+.2f}) {mh:+6.0f}  her ({fx:+.2f},{fy:+.2f})  dist {dist:4.2f}  pC1 {sum(log['m_pC1'][-50:])} pIP10 {sum(log['m_pIP10'][-50:])} LC10a {sum(log['m_LC10a'][-50:])} | her pC1 {sum(log['f_pC1'][-50:]) if not args.no_female else '-'} vpoEN {sum(log['f_vpoEN'][-50:]) if not args.no_female else '-'} | contacts {contacts} songs {sum(log['song'][-50:])} | pace him {np.mean(log['v_m'][-50:]):.2f} her {np.mean(log['v_f'][-50:]):.2f} m/s  ({time.time()-t0:.0f}s)", flush=True)
     LUM.append((np.clip(lum, 0, 1) * 255).astype(np.uint8))
 Tn = len(POSE)
-np.savez_compressed(args.out, fps=fps, chunk=CH, lum=np.concatenate(LUM), pose=np.array(POSE, np.float32), pose2=np.array(POSE2, np.float32), objects=posts, pillars=True, sky=0.8, ground=0.4, her_albedo=0.5, walls=np.array([WALLS['half'], WALLS['height'], WALLS['albedo']], np.float32), fov=150.0, contacts=contacts,
+np.savez_compressed(args.out, fps=fps, chunk=CH, lum=np.concatenate(LUM), pose=np.array(POSE, np.float32), pose2=np.array(POSE2, np.float32), objects=posts, pillars=True, sky=0.8, ground=0.4, her_albedo=HER_ALB, walls=np.array([WALLS['half'], WALLS['height'], WALLS['albedo']], np.float32), fov=150.0, contacts=contacts,
                     az=np.degrees(np.arctan2(eye.dir0[:, 1], eye.dir0[:, 0])).astype(np.float32), el=np.degrees(np.arcsin(np.clip(eye.dir0[:, 2], -1, 1))).astype(np.float32), side=eye.side,
                     touch=np.array([{"L": 1, "R": 2, "B": 3}.get(t_, 0) for t_ in TOUCH], np.int8), touch_kind=np.array(TKIND, np.int8), body_r=BODY, her_r=HER_R, heading_chunk=np.array([p[2] for p in POSE[::CH]]),
                     **{f"n_{k}": np.repeat(np.array(v, np.int16), CH)[:Tn] for k, v in log.items() if k not in ("dist", "song", "v_m", "v_f")}, v_m=np.repeat(np.array(log["v_m"], np.float32), CH)[:Tn], v_f=np.repeat(np.array(log["v_f"], np.float32), CH)[:Tn], dist=np.repeat(np.array(log["dist"], np.float32), CH)[:Tn], song=np.repeat(np.array(log["song"], np.int8), CH)[:Tn])

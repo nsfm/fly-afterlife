@@ -1176,6 +1176,19 @@ touch-driven P1 again, now with the touch source known. pIP10 630 spikes in 5 mi
 no song bouts. viewer: `world/viewer_room_5min_walls.html` (local, stride 4; ring
 colours say what he touched).
 
+**she becomes visible (21:10 PDT).** nate, from the 5-minute viewer: the one moment he
+tracked her was when she passed in front of a dark pillar, and then she walked into
+the pillar (no collision) and vanished. her body was 0.5 against a 0.4 floor and 0.6
+walls: invisible by construction. nate proposed white for contrast; done the other way
+round, on his measured behaviour: flies are dark and every approach he has shown is
+toward dark things in a light world (posts, bar). so she is 0.1 and the pillars are
+pale (0.85), making her the only dark object in the room; and she now collides with
+pillars (held at the surface, her bristles on that side, her turn-away rule acts).
+60 s, seed 3: they met at 10 s (85 contact frames, his first real contact with her in
+this arena), wall time 5%; range rate when she is ahead of him -0.11 m/s. no approach
+claim from one minute: his yaw when she is ahead-left is -0.19 and ahead-right -0.48
+(his rightward lean, not her). three 2-minute seeds running to ask it properly.
+
 ## performance (20:40 PDT, `world/fastlif.py`)
 
 nate asked what bounds the sim (CPU: the LIF step) and whether a spike on it was worth
