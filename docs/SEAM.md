@@ -919,6 +919,41 @@ strength between the two would be tuning and was not run. **her sugar:** with on
 the four sweet types matching his names (71 of 408 gustatory cells driven) seven of her
 head motor neurons go from 0 to 4-44 Hz (CB0701 44 Hz). her proboscis circuit is live.
 
+**where the side of a smell lives (17:43 PDT).** her steering family and DNa02 do not
+lateralize with the odour side either (left-heavy for a smell on either antenna;
+silent below ~0.4 because she runs cold). one layer earlier, the projection neurons:
+his are right-heavy for a smell on either side (index -0.04 to -0.28, the right
+antennal lobe is the better traced); hers lean a few percent toward the stronger
+antenna at 2.5:1 (+0.055 vs -0.025) and lose it at plume ratios (0.3 vs 0.27: +0.061 vs
++0.049). consistent with the biology - fly ORNs project to both antennal lobes and the
+surviving bilateral contrast is small (Gaudry et al. 2013). bilateral odour steering is
+therefore weak at the PN level and absent at the DN level in both flies.
+
+**her mushroom body was cut out by my build threshold.** `enable_plasticity` found 14
+KC->MBON synapses in `brain_female.npz` (his: 33,496). her Kenyon cells make few
+synapses each onto an output neuron and the >= 5 cut was chosen on his counts. rebuilt
+at a lower threshold (`brain_female2.npz`); conditioning re-run below.
+
+**her Kenyon cells were labelled dopaminergic (17:45 PDT).** the FlyWire per-neuron
+transmitter predictions call 5,172 of her 5,177 Kenyon cells "dopamine"; the engine gives
+modulatory cells sign 0 and drops their synapses, so her whole KC->MBON layer vanished.
+the literature has them cholinergic (Barnstedt et al. 2016) and the annotation table's
+`known_nt` column says so for 5,177 of them. the builder now takes `known_nt` where it
+exists and forces KCs cholinergic, labelled. rebuilt at synapse count >= 2 (her KC->MBON
+connections carry a median of 2 synapses; at >= 5 only 16,073 of 89,315 survive):
+`brain_female2.npz`, 6.76M edges, **43,616 plastic KC->MBON synapses** (his 33,496).
+
+**her first conditioning, open loop:** odour A + sugar + PAM dopamine x5, B unpaired.
+KC->MBON weights 0.9993 of naive after five trials - a change of 0.07%. MBON response to
+A 243 -> 208 (-14%), to B 210 -> 216; MBON28 / MBON05 / MBON20 most suppressed for A.
+the sign is right (appetitive learning depresses the avoidance-driving MBONs) and the
+size is far below anything that could steer her. same class of problem the flybrain
+author hit on the male (see its FINDINGS: kc_normalise, trace scales, kc_thresh) and the
+same cause is likely: a KC code too sparse and weak for the eligibility traces to
+register. measured next: her KC activity per odour vs his and vs the biological ~5%.
+also noticed: her descending neurons answer odour B (588 spikes) and not A (4) before
+any training - the two synthetic odours are not equal to her.
+
 ## choices, labelled
 
 1. **orientation** of our hex grid onto theirs. not in the data. calibrated by biology:

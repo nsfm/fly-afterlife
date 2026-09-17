@@ -15,7 +15,7 @@ Kenyon_Cell, MBON, DAN, ALPN, descending_neuron, visual, cb_motor).
 import argparse, numpy as np, pandas as pd, pyarrow.feather as pf
 ap = argparse.ArgumentParser(); ap.add_argument("--out", default="brain_female.npz"); ap.add_argument("--min-weight", type=int, default=5); a = ap.parse_args()
 SIGN = {"acetylcholine": 1, "gaba": -1, "glutamate": -1, "histamine": -1, "dopamine": 0, "octopamine": 0, "serotonin": 0}
-ann = pd.read_csv("data/flywire/neuron_annotations.tsv", sep="\t", usecols=["root_id", "flow", "super_class", "cell_class", "cell_sub_class", "cell_type", "hemibrain_type", "top_nt", "side"], dtype={"root_id": np.int64}, low_memory=False)
+ann = pd.read_csv("data/flywire/neuron_annotations.tsv", sep="\t", usecols=["root_id", "flow", "super_class", "cell_class", "cell_sub_class", "cell_type", "hemibrain_type", "top_nt", "known_nt", "side"], dtype={"root_id": np.int64}, low_memory=False)
 print(f"{len(ann):,} neurons; super_class: {ann.super_class.value_counts().to_dict()}")
 print("cell_class (top):", ann.cell_class.value_counts().head(15).to_dict())
 ty = ann.cell_type.fillna(ann.hemibrain_type).fillna(ann.cell_class).fillna("unknown").astype(str)
@@ -27,7 +27,9 @@ cls[cls.str.lower().str.startswith("kenyon")] = "Kenyon_Cell"; cls[cls == "MBON"
 cls[(sc == "sensory") & cls.str.contains("visual")] = "visual"
 sc[sc == "descending"] = "descending_neuron"; sc[sc == "motor"] = "cb_motor"; sc[sc == "ascending"] = "ascending_neuron"; sc[sc == "endocrine"] = "cb_endocrine"; sc[sc == "central"] = "cb_intrinsic"; sc[sc == "optic"] = "ol_intrinsic"; sc[sc == "visual_projection"] = "visual_projection"; sc[sc == "visual_centrifugal"] = "visual_centrifugal"
 side = ann.side.fillna("").astype(str).str.lower().map({"left": "L", "right": "R", "center": "M", "na": "M"}).fillna("M")
-nt = ann.top_nt.fillna("unknown").astype(str).str.lower(); sign = np.array([SIGN.get(x, 0) for x in nt], np.int8)
+nt = ann.known_nt.fillna(ann.top_nt).fillna("unknown").astype(str).str.lower()   # known transmitter where the literature has one, else the prediction
+nt[cls == "Kenyon_Cell"] = "acetylcholine"                                           # KCs are cholinergic (Barnstedt et al. 2016); labelled override
+sign = np.array([SIGN.get(x, 0) for x in nt], np.int8)
 ids = ann.root_id.to_numpy(np.int64); order = np.argsort(ids); ids_s = ids[order]
 print(f"signs: + {int((sign>0).sum()):,}  - {int((sign<0).sum()):,}  0 {int((sign==0).sum()):,};  sides {side.value_counts().to_dict()}")
 con = pf.read_table("data/flywire/proofread_connections_783.feather", columns=["pre_pt_root_id", "post_pt_root_id", "syn_count"]).to_pandas()

@@ -21,7 +21,7 @@ from omma import Eye, Scene
 ap = argparse.ArgumentParser(); ap.add_argument("--mode", required=True); ap.add_argument("--out", required=True); ap.add_argument("--seconds", type=float, default=20.0)
 ap.add_argument("--model", default="flow/0000/000"); ap.add_argument("--gain", type=float, default=3.0); ap.add_argument("--smooth", type=float, default=3.0)
 ap.add_argument("--drive-gain", type=float, default=150.0); ap.add_argument("--seed", type=int, default=0); ap.add_argument("--bar-az", type=float, default=60.0)
-ap.add_argument("--speed", type=float, default=0.3); ap.add_argument("--tag", default=""); ap.add_argument("--touch", action="store_true", help="posts are solid: on contact he is held at the surface and the leg bristles on the touched side fire (150 Hz) into the LIF"); ap.add_argument("--body", type=float, default=0.05); ap.add_argument("--std", action="store_true", help="short-term synaptic depression in the LIF"); ap.add_argument("--std-scope", default="global", help="global | central (cb_intrinsic + descending presynaptic cells only)"); ap.add_argument("--std-u", type=float, default=0.08); ap.add_argument("--hp", type=int, default=0, help="running-baseline high-pass on the steering signal, in chunks (0 = off)"); ap.add_argument("--yawprefix", default="seam/worldN", help="prefix of the empty/yaw_left/yaw_right renders used for efference + motion calibration (per flyvis model)"); ap.add_argument("--efference", action="store_true", help="efference copy: subtract the wheel response predicted by his own last turn (calibrated open loop on world rotation at 90 deg/s; Kim, Fitzgerald & Maimon 2015)"); ap.add_argument("--brain-gains", default=None, help="world/brain_gains.npz: per-cell input gain (whole-brain hemisphere homeostasis)"); ap.add_argument("--dn-gains", default=None, help="world/dn_gains.json: per-type per-side input scaling on the wheel cells (tracing-asymmetry correction at the source)"); ap.add_argument("--brain", default="brain_whole.npz"); ap.add_argument("--wsyn", type=float, default=None, help="override mV per synapse (shiu 0.275)"); ap.add_argument("--wheel", default="dna02", help="dna02 | screened (pooled DN types from world/dn_wheel.json; carries vision, odour and touch)"); ap.add_argument("--norm", action="store_true", help="scale each side of the wheel by its own resting rate (plateau warm-up) and steer on the relative asymmetry: yaw = ngain * (L/L_rest - R/R_rest)"); ap.add_argument("--ngain", type=float, default=6.0); ap.add_argument("--norm-ref", default="still", help="still | motion: per-side reference rates from open-loop yaw_left + yaw_right renders (seam/worldN_yaw_*.npz), direction-averaged"); ap.add_argument("--wgain", type=float, default=1.0, help="deg per net pooled spike (L-R), screened wheel"); ap.add_argument("--rest-chunks", type=int, default=20); ap.add_argument("--smell-gain", type=float, default=0.3, help="deg per net DNa spike (L-R), toward the stronger side"); ap.add_argument("--plastic", action="store_true"); ap.add_argument("--reward", action="store_true", help="sugar + PAM dopamine on contact with the A post"); ap.add_argument("--memory-in", default=None); ap.add_argument("--memory-out", default=None); ap.add_argument("--odour-lambda", type=float, default=0.6); ap.add_argument("--no-landmarks", action="store_true"); ap.add_argument("--rest-sub", action="store_true", help="subtract the DNa02 R-L resting offset measured over a 2 s still-world warm-up (with visual drive) at the wheel"); ap.add_argument("--leg-gain", type=float, default=30.0, help="deg per chunk per unit leg-motor asymmetry (R-L)/(R+L), rest asymmetry subtracted; more left-leg drive = right turn"); ap.add_argument("--world-seed", type=int, default=1); args = ap.parse_args()
+ap.add_argument("--speed", type=float, default=0.3); ap.add_argument("--tag", default=""); ap.add_argument("--touch", action="store_true", help="posts are solid: on contact he is held at the surface and the leg bristles on the touched side fire (150 Hz) into the LIF"); ap.add_argument("--body", type=float, default=0.05); ap.add_argument("--std", action="store_true", help="short-term synaptic depression in the LIF"); ap.add_argument("--std-scope", default="global", help="global | central (cb_intrinsic + descending presynaptic cells only)"); ap.add_argument("--std-u", type=float, default=0.08); ap.add_argument("--hp", type=int, default=0, help="running-baseline high-pass on the steering signal, in chunks (0 = off)"); ap.add_argument("--yawprefix", default="seam/worldN", help="prefix of the empty/yaw_left/yaw_right renders used for efference + motion calibration (per flyvis model)"); ap.add_argument("--efference", action="store_true", help="efference copy: subtract the wheel response predicted by his own last turn (calibrated open loop on world rotation at 90 deg/s; Kim, Fitzgerald & Maimon 2015)"); ap.add_argument("--brain-gains", default=None, help="world/brain_gains.npz: per-cell input gain (whole-brain hemisphere homeostasis)"); ap.add_argument("--dn-gains", default=None, help="world/dn_gains.json: per-type per-side input scaling on the wheel cells (tracing-asymmetry correction at the source)"); ap.add_argument("--brain", default="brain_whole.npz"); ap.add_argument("--no-vision", action="store_true", help="no flyvis, no T4/T5 drive (a brain without a retinal column map, e.g. the female)"); ap.add_argument("--wsyn", type=float, default=None, help="override mV per synapse (shiu 0.275)"); ap.add_argument("--wheel", default="dna02", help="dna02 | screened (pooled DN types from world/dn_wheel.json; carries vision, odour and touch)"); ap.add_argument("--norm", action="store_true", help="scale each side of the wheel by its own resting rate (plateau warm-up) and steer on the relative asymmetry: yaw = ngain * (L/L_rest - R/R_rest)"); ap.add_argument("--ngain", type=float, default=6.0); ap.add_argument("--norm-ref", default="still", help="still | motion: per-side reference rates from open-loop yaw_left + yaw_right renders (seam/worldN_yaw_*.npz), direction-averaged"); ap.add_argument("--wgain", type=float, default=1.0, help="deg per net pooled spike (L-R), screened wheel"); ap.add_argument("--rest-chunks", type=int, default=20); ap.add_argument("--smell-gain", type=float, default=0.3, help="deg per net DNa spike (L-R), toward the stronger side"); ap.add_argument("--plastic", action="store_true"); ap.add_argument("--reward", action="store_true", help="sugar + PAM dopamine on contact with the A post"); ap.add_argument("--memory-in", default=None); ap.add_argument("--memory-out", default=None); ap.add_argument("--odour-lambda", type=float, default=0.6); ap.add_argument("--no-landmarks", action="store_true"); ap.add_argument("--rest-sub", action="store_true", help="subtract the DNa02 R-L resting offset measured over a 2 s still-world warm-up (with visual drive) at the wheel"); ap.add_argument("--leg-gain", type=float, default=30.0, help="deg per chunk per unit leg-motor asymmetry (R-L)/(R+L), rest asymmetry subtracted; more left-leg drive = right turn"); ap.add_argument("--world-seed", type=int, default=1); args = ap.parse_args()
 fps, CH = 100, 10; g = np.load("seam/eye_geom.npz"); eye = Eye("seam/eye_geom.npz"); rng = np.random.default_rng(args.world_seed)
 # ---- world
 posts = [(x, y, 0.2, 0.05) for x, y in rng.uniform(-2.5, 2.5, size=(8, 2)) if np.hypot(x + 2.0, y) > 0.8]
@@ -66,11 +66,13 @@ def shade_bar(self, origin, d):
     return _shade(self, origin, d)
 omma.Scene.shade = shade_bar
 # ---- flyvis
-import flyvis
-from flyvis import NetworkView
-net = NetworkView(args.model).init_network(); net.eval()
+if not args.no_vision:
+    import flyvis
+    from flyvis import NetworkView
+    net = NetworkView(args.model).init_network(); net.eval()
 lattice = sorted({(u, v) for u in range(-15, 16) for v in range(max(-15, -15 - u), min(15, 15 - u) + 1)}); idx_of = {uv: i for i, uv in enumerate(lattice)}
-ntype = net.connectome.nodes.type[:].astype(str); types = ["T4a", "T4b", "T4c", "T4d", "T5a", "T5b", "T5c", "T5d"]; tix = {t: np.flatnonzero(ntype == t) for t in types}
+types = ["T4a", "T4b", "T4c", "T4d", "T5a", "T5b", "T5c", "T5d"]
+if not args.no_vision: ntype = net.connectome.nodes.type[:].astype(str); tix = {t: np.flatnonzero(ntype == t) for t in types}
 eyemap = {}
 for s in "LR":
     k = np.flatnonzero(g["side"] == s); v = np.rint(+g["sx"][k]).astype(int); u = np.rint(-g["sy"][k] - v / 2.0).astype(int)
@@ -78,6 +80,7 @@ for s in "LR":
 state = {"L": None, "R": None}
 def flyvis_chunk(lum_chunk):
     out = {}
+    if args.no_vision: return out
     for s in "LR":
         k, col = eyemap[s]; movie = np.full((1, CH, 1, 721), 0.5, np.float32); movie[0, :, 0, col] = lum_chunk[:, k].T
         with torch.no_grad(): st = net.simulate(torch.tensor(movie, device=flyvis.device), dt=1 / fps, initial_state=state[s], as_states=True)
@@ -91,7 +94,7 @@ b = FlyBrain(args.brain, seed=args.seed, balance_hemispheres=(args.brain == "bra
 cols = np.load("seam/t4t5_columns.npz"); gkey = {(str(s), int(a), int(h)): i for i, (s, a, h) in enumerate(zip(g["side"], g["hex1"], g["hex2"]))}
 gi = np.array([gkey[(str(s), int(a), int(h))] for s, a, h in zip(cols["side"], cols["hex1"], cols["hex2"])])
 groups = {}
-for s in "LR":
+for s in ([] if args.no_vision else "LR"):
     k, col = eyemap[s]; colmap = dict(zip(k.tolist(), col.tolist()))
     for t in types:
         kk = (cols["type"] == t) & (cols["side"] == s); hx = np.array([colmap.get(int(i), -1) for i in gi[kk]]); ok = hx >= 0; groups[(t, s)] = (cols["idx"][kk][ok], hx[ok])
@@ -136,7 +139,7 @@ for c in range(10):
     sc, _ = scene_at(0.0); a = flyvis_chunk(render_frames(CH, sc, (x, y, 0.5), heading))
     if c >= 5:
         for k_, v_ in a.items(): acc.setdefault(k_, []).append(v_)
-rest = {k_: np.concatenate(v_).mean(0) for k_, v_ in acc.items()}
+rest = {k_: np.concatenate(v_).mean(0) for k_, v_ in acc.items()} if acc else {}
 for _ in range(500): b.step()
 def motion_reference(keyL, keyR):
     """open loop: drive the LIF with the yaw_left and yaw_right renders (1 s each), return per-side mean spikes per chunk over both."""
