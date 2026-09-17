@@ -77,8 +77,10 @@ loop is probably a bug (mechanosensation brief).
 - [x] contact-pheromone tap: 60 Hz burst, tau 300 ms, both ppk channels (done 22:40).
 - [ ] Gr32a/Gr33a aversive channel on male-male contact (10-60 Hz, phasic).
 - [ ] **LC10a gain P1-dependent** (Hindmarsh Sten 2021): without it he does not track her.
-- [ ] **pCd persistence** readout; P1 threshold-graded (aggression low, song high; Hoopfer 2015).
-      the song relay (P1 -> pIP10) stays blocked in this LIF; mAL gate measured.
+- [ ] **the courtship sequence as a state** (promoted 09-17 14:14): a persistent state (pCd, minutes)
+      that holds the brake (AN19A018) at her and drives following; her stop or receptivity (vpoEN);
+      P1 threshold-graded (Hoopfer 2015). the song relay (P1 -> pIP10) stays blocked; mAL gate measured.
+      --stop-at-her (brake on contact frames) did nothing: contact is too brief and she walks away.
 - [ ] walking-state gain on visual channels (Chiappe 2010; Suver 2012).
 - [ ] efference copy onto JO-A/B (Cheong 2024); JO wind/gravity; the wing-wash loop when he flies.
 - [ ] ocelli: light level; find his OCC/OCG cells (hers are typed, 63).

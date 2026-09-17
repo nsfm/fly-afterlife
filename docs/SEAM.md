@@ -1999,6 +1999,18 @@ when he reaches her (`--stop-at-her`: BRK driven at 50 Hz while in contact with 
 labelled; in life the stop is part of the courtship sequence, not a reflex), scored by
 contact time against the 264 frames of v6.
 
+**stop-at-her (14:14 PDT; seed 3, 300 s, brake at 50 Hz while in contact with her):** contact
+frames 132 in 3 bouts (longest 0.8 s) against 264 in 3 bouts (1.3 s) without; five
+encounters both; 78.7 m both; his P1 3,090 vs 2,340. **nothing.** the reason is mechanical
+and instructive: contact lasts a few frames because the bodies are pushed apart on
+overlap, the brake is on only while `kind == 2`, so it fires for tens of milliseconds and
+he walks on; and she keeps walking at her constant 0.15 m/s regardless. a stop keyed to a
+contact frame is not a state. the male that stops at her needs (a) a persistent state
+(the vision brief: persistence lives in pCd, minutes long, not in P1) that holds the brake
+and (b) something for her to do besides leave: her own stop, or his following. that is the
+courtship sequence proper, a build of its own, not an afternoon flag. recorded as the
+first thing the brake was tried on.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
