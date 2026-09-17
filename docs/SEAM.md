@@ -1756,6 +1756,20 @@ program defines an axis in leg-MN space (the left-bristle pattern minus the righ
 pattern, per cell); any input's motor pattern projected onto it has a sign the wiring set,
 not me. tested next, open loop first: do the thermal and visual patterns project onto the
 withdrawal axis at all?
+
+**projection onto the withdrawal axis (12:15 PDT; axis = per-cell leg-MN rates under a left
+bristle minus under a right bristle, seed 0; test patterns from seed 1, spikes/s along the
+axis, + = the left-bristle direction):** bristle L +717, bristle R -161 (the axis works for
+what built it, with a left-heavy magnitude); bristles at 30 Hz +65 / +3; **warm L +9.8, warm
+R +24.3** (both positive: warmth projects on the same side whichever antenna is warm; with
+the bilateral part removed, +6.2 / +18.8, still no sign flip); **world turning left 0.0,
+right -0.2**; rest 0.0. so the legs carry a directional program for touch only. the visual
+turn lives in DNa02 and does not appear in the leg code at these constants (the cord does
+not translate a DNa02 asymmetry into a leg asymmetry here, which is its own finding), and
+warmth has no directional motor expression at all. **the leg wheel is dropped as a
+steering readout;** DNa02 for vision and the touch reflex stand. thermotaxis needs the
+thermal descending types (the screen's ten) to produce a lateralised leg pattern when
+driven; tested next, directly.
 - **Shiu's constants, from the code not the paper:** rest/reset -52, threshold -45,
   tau_m 20 ms, tau_syn 5, refractory 2.2, delay 1.8, w_syn 0.275 (a free parameter),
   Poisson 150 Hz. our 150 Hz optic-lobe cap is Shiu's default, not a measurement.
