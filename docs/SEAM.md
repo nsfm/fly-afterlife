@@ -1167,6 +1167,15 @@ wall is exactly head-on: the class is gone for walls and pillars, whichever side
 bearing leans to owns the reflex. 60 s, seed 3: wall time 22%, longest pinned 11.2 s
 (was 92% / 273 s). 5-minute run relaunched under this rule.
 
+**the 5-minute room, walls that are walls (20:59 PDT, seed 3, `world/pair_long2.npz`).**
+wall time 30%, 12 wall visits, longest pinned 19 s; he covered 55 m at a mean 0.23
+m/s. **no contact with her in 5 minutes:** closest 0.25 m, two passes within 0.5 m
+(142 s for 2.2 s, 209 s for 1.7 s). his P1 by what he was touching: 9.9 spikes per
+chunk against a wall or pillar, 1.4 near her without contact, 0.1 free and far - the
+touch-driven P1 again, now with the touch source known. pIP10 630 spikes in 5 minutes,
+no song bouts. viewer: `world/viewer_room_5min_walls.html` (local, stride 4; ring
+colours say what he touched).
+
 ## performance (20:40 PDT, `world/fastlif.py`)
 
 nate asked what bounds the sim (CPU: the LIF step) and whether a spike on it was worth
