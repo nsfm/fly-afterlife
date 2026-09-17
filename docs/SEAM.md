@@ -1890,6 +1890,32 @@ is commanded (DNp09 and its relatives, Bidaye 2020; the "walk" and "brake" DNs o
 loop: DNp09 driven tonically, what the legs do; and whether DNa02 steers once the cord is
 walking (its own effect on the legs was 8-12 spikes/s in a standing cord).
 
+**walking-command descending neurons, driven (12:50 PDT; both sides tonic, 2 s, leg MN per
+chunk on the true set, and the leg model's forward / yaw_left at c = 1):**
+
+| DN (pair) | 30 Hz: leg L / R, forward, yaw_left | 100 Hz: leg L / R, forward, yaw_left | hind-leg drive L / R at 100 |
+|---|---|---|---|
+| DNp09 | 0.1 / 0.6, +5, +5 | **19 / 34, +143, +120** | +10 / **+130** |
+| DNa03 | 0.2 / 1.7, +15, +15 | 3 / 15, +106, +97 | +5 / +85 |
+| MDN | 0.8 / 0, +5, -5 | 22 / 9, +164, -27 | +73 / +53 |
+| DNp42 | 0 | 6 / 2, +15, +4 | |
+| DNg13 | 0.6 / 0 | 9 / 1, -20, +9 | (front legs, negative: swing) |
+| DNa02, DNa01, DNb01, DNb02 | 0 | 0-2 | nothing |
+| DNp09 100 + DNa02 L 100 / R 100 | | yaw_left +135 / +112 | DNa02 nudges ipsiversively, ~20 units |
+| DNp09 100 + DNa02 L 30 / R 30 | | +122 / +129 | nothing at 30 Hz |
+
+**there is a walking command:** DNp09 at ~100 Hz makes the cord produce five times the leg
+output of the visual baseline (the threshold lies between 30 and 100). in this male it is
+lopsided: the right hind legs get 130 units and the left 10, DNa03 the same way, the
+rightward tracing bias the record has met at every readout (the female's descending
+output is symmetric). DNa02 on a walking cord adds a ~20-unit ipsiversive nudge at 100 Hz
+and nothing at 30, so the visual turn is still essentially brain-side. MDN (backward
+walking in life) drives the legs bilaterally and the model, which has no direction of
+travel, reads it as forward; a stance/swing phase model is what would tell them apart.
+**next:** the room with the command on (`--walk 100`, DNp09 both sides tonic, labelled: in
+life the command is state-dependent), the leg model as effector with its running baseline
+absorbing the constant asymmetry, sight and touch on top.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
