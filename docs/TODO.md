@@ -11,8 +11,10 @@ loop is probably a bug (mechanosensation brief).
 - [x] approach test: 10 seeds x {her dark 0.1, her invisible 0.5} x 120 s (`world/approach/`).
       in the record 23:50: left-side effect was an artefact; right-side turn toward her survives
       (8/10, p 0.02) plus 1.8x time near her. re-run pre-registered after the steering fix.
-- [ ] corrected synapse constants, first minute (`world/pair_w185.npz`): male 0.185, female
-      0.275. compare baselines (rest offset, standing leg MN, reflex gain, pace) to the old.
+- [x] corrected synapse constants, first minute (`world/pair_w185.npz`): in the record 00:00.
+      standing baselines all zero; leg MN halves; he still finds her. PACE READOUT DEGENERATE
+      (standing = 0 saturates it): fix in effectors with an absolute reference + MN class weights.
+- [ ] oracle runs in flight (`world/oracle/`, 00:05).
 
 ## 1. the refactor (`docs/ARCHITECTURE.md`), before any new receptor
 

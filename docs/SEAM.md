@@ -1334,6 +1334,22 @@ what they correct, in order of consequence:
   protocol) is over. **decision: male 0.185, female 0.275, from the next room run
   (`--wsyn-m`, `--wsyn-f`); every baseline re-measured.** the rest-state test says
   nothing (both silent), the tonic MDN activity noted on 09-16 goes away at 0.185.
+
+**first minute at the corrected constants (2026-09-17 00:00 PDT, seed 3, `world/
+pair_w185.npz`).** standing baselines are all zero now: his DNa02 rest offset 0.00, his
+standing leg MN 0 (was 398 per chunk), her standing DN 0. walking, his leg MN halves
+(624 -> 306 per chunk), DN 238 -> 176, DNa02 4.3/3.9 -> 1.6/1.4 per chunk, her pC1 1,580
+-> 0, her DN 220 -> 72. he met her (101 contact frames) and his P1 fired 1,950 to touch.
+**the pace readout is degenerate at these constants:** speed = 0.05 + 0.45 x clip((leg MN
+- standing) / (4 x standing)) with standing = 0 saturates on any output, so he ran at
+0.50 m/s the whole minute (sd 0.02) and covered 27 m, wall time 25%. that rule assumed a
+tonic standing rate the corrected brain does not have (the physiology says slow leg MNs
+fire ~30 Hz standing; this LIF gives 0). the pace readout needs an absolute reference and,
+per the vision brief, weighting by MN class: an effectors-refactor item, not a midnight
+tune. the touch reflex recalibrated itself (gain 53). the corrected brain is quieter
+everywhere and still walks, feels, and finds her; the readouts on top of it are what have
+to be rebuilt, which is the plan. oracle runs (refactor step 1) launched 00:05:
+`world/oracle/room_{old,new}_s{3,4}.npz`, deterministic, 30 s.
 - **Shiu's constants, from the code not the paper:** rest/reset -52, threshold -45,
   tau_m 20 ms, tau_syn 5, refractory 2.2, delay 1.8, w_syn 0.275 (a free parameter),
   Poisson 150 Hz. our 150 Hz optic-lobe cap is Shiu's default, not a measurement.
