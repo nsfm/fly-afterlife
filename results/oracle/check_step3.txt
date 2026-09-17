@@ -1,0 +1,5 @@
+old s3: 69 arrays, differing: none
+old s4: 69 arrays, differing: none
+new s3: 69 arrays, differing: none
+new s4: 69 arrays, differing: none
+ORACLE CHECK PASS
