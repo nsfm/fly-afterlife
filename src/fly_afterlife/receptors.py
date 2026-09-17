@@ -146,6 +146,42 @@ class GaitLeg(Transducer):
 
 
 @dataclass
+class HotCells(Transducer):
+    """arista hot cells (Gr28b.d, VP2): tonic, absolute temperature, exponential: 17 / 37 / 74 Hz at 20 / 25 / 30 C,
+    Q10 ~4.4 (Budelli 2019, Neuron). rate = r25 x Q10^((T - 25) / 10). stim = T in C. the phasic on-warming component
+    (~1 s) is not modelled yet."""
+    r25: float = 37.0
+    q10: float = 4.4
+    source: str = "chemo brief 2026-09-16 s.4: Budelli et al. 2019 (Neuron); Gallio 2011; Ni 2013"
+    def step(self, stim, t, dt): return self.r25 * float(self.q10 ** ((float(stim) - 25.0) / 10.0))
+
+
+@dataclass
+class CoolingCells(Transducer):
+    """arista cooling cells (Ir21a/Ir25a/Ir93a, VP3): purely phasic. rest ~95 Hz regardless of temperature; >50%
+    above rest for a 0.1 C drop, ~3x for 0.2 C, peaking ~0.65 s after cooling onset and adapting back while the
+    cooling continues; suppressed by warming (Budelli 2019). model: c = -dT/dt (C/s, + = cooling) low-passed with
+    tau_rise, minus an adapting copy with tau_adapt; rate = rest x max(0, 1 + gain x (c_f - a)). gain 5 per C/s puts a
+    0.2 C drop over half a second at ~3x. stim = T in C; the transducer differentiates."""
+    rest_hz: float = 95.0
+    gain: float = 5.0
+    tau_rise_s: float = 0.3
+    tau_adapt_s: float = 2.0
+    source: str = "chemo brief 2026-09-16 s.4: Budelli et al. 2019 (Neuron), rates and time course; gain inferred from the 0.2 C / 3x figure"
+    _T: float | None = field(default=None, init=False)
+    _c: float = field(default=0.0, init=False)
+    _a: float = field(default=0.0, init=False)
+    def reset(self): self._T = None; self._c = 0.0; self._a = 0.0
+    def step(self, stim, t, dt):
+        T = float(stim)
+        if self._T is None: self._T = T
+        cool = -(T - self._T) / dt; self._T = T                       # C/s, positive when cooling
+        self._c += (cool - self._c) * dt / self.tau_rise_s
+        self._a += (self._c - self._a) * dt / self.tau_adapt_s
+        return self.rest_hz * max(0.0, 1.0 + self.gain * (self._c - self._a))
+
+
+@dataclass
 class Gate(Transducer):
     """multiply another transducer's rate by a state-dependent factor (e.g. 0 while a
     descending walk command is on, for hook FeCO axons: Dallmann 2025). stim = (inner_stim, gate_on)."""

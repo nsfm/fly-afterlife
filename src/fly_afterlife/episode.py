@@ -60,6 +60,10 @@ class Episode:
         for f in range(CH):
             t_f = (len(self.POSE) - CH + f) / fps
             st_ = {"a": a, "rest": self.rest, "f": f, "tm": touched_m[f], "kind": kind_m[f], "pace": float(np.clip(m.v / 0.45, 0, 1)), "t_chunk_end": len(self.POSE) / fps, "tf": touched_f[f], "singing": singing}
+            if hasattr(self.room, "temperature"):
+                px, py, ph = self.POSE[len(self.POSE) - CH + f]; hr = np.radians(ph); fwd = np.array([np.cos(hr), np.sin(hr)]); left = np.array([-np.sin(hr), np.cos(hr)])
+                aL_ = np.array([px, py]) + 0.1 * fwd + 0.15 * left; aR_ = np.array([px, py]) + 0.1 * fwd - 0.15 * left
+                st_["T_L"] = self.room.temperature(float(aL_[0]), float(aL_[1])); st_["T_R"] = self.room.temperature(float(aR_[0]), float(aR_[1]))
             self.REG.apply(self.M, st_, t_f, 1.0 / fps)
             if self.female: self.REGF.apply(self.F, st_, t_f, 1.0 / fps)
             for _ in range(self.SPF):

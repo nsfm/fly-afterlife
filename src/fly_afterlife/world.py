@@ -29,6 +29,15 @@ class Room:
     ground: float = 0.4
     posts: list = field(default_factory=list)   # (x, y, r, albedo): floor-to-sky cylinders
     contacts: int = 0            # frames of fly-fly contact
+    thermal: dict | None = None  # None = 25 C everywhere; else dict(base=25, x, y, dT, sigma): a warm spot, T = base + dT exp(-d^2 / 2 sigma^2)
+
+    def temperature(self, x: float, y: float) -> float:
+        """air temperature at a point (C). the room is 25 C (the preferred temperature, Sayeed & Benzer 1996)
+        unless a warm spot is set. scale: the fly is 0.16 m here vs 2.5 mm in life (x64), so a 5 C/cm gradient
+        in life (Ni 2013, enough for avoidance within a minute) is ~5 C per 0.64 m here."""
+        if self.thermal is None: return 25.0
+        th = self.thermal; d2 = (x - th["x"]) ** 2 + (y - th["y"]) ** 2
+        return th.get("base", 25.0) + th["dT"] * float(np.exp(-d2 / (2.0 * th["sigma"] ** 2)))
 
     # ---- the eye's view
     def scene(self, others: list[Body]) -> Scene:
