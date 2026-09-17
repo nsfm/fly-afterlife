@@ -64,10 +64,10 @@ loop is probably a bug (mechanosensation brief).
 - [x] **cooling cells** and **hot cells** as transducers (`CoolingCells`, `HotCells`, 09:49) with
       Budelli 2019's numbers; on in the room with `--thermo rest|field`.
 - [ ] **VP1m / VP1l label audit** before driving either (Marin 2020: VP1m humid, VP1l cool).
-- [~] **the warm corner** (12:05): no lateralised motor substrate for warmth (MN audit): the 7/10 trend
-      is thermokinesis at most. a motor-pattern readout (projection onto the bristle-defined axis) is
-      the next thing to test, open loop first; thermotaxis proper may need thermo-specific DNs the
-      screen found (DNp06 etc.) wired to leg circuits the audit can now name.
+- [~] **the warm corner** (12:30): thermal DNs (DNge125 above all) drive the CONTRALATERAL legs with a
+      motor pattern orthogonal to the withdrawal program; its turning sign needs a leg model. BLOCKED on
+      legs with muscles (see body: gait generator -> a muscle-level leg model). DNa02 does not reach the
+      legs at 0.185 (8-12 spikes/s at 100 Hz): the visual turn is brain-side only in this model.
 - [ ] **hygro**: dry/moist cells non-adapting, tens of Hz; a humidity field. Or42b ORNs are
       also humidity sensors (Li 2022).
 - [ ] **plumes**: intermittent (power-law whiffs/blanks, exponent -3/2), ORN rate from
@@ -83,6 +83,13 @@ loop is probably a bug (mechanosensation brief).
 - [ ] walking-state gain on visual channels (Chiappe 2010; Suver 2012).
 - [ ] efference copy onto JO-A/B (Cheong 2024); JO wind/gravity; the wing-wash loop when he flies.
 - [ ] ocelli: light level; find his OCC/OCG cells (hers are typed, 63).
+
+## 2b. legs with muscles (promoted 09-17 12:30)
+
+- [ ] a leg model that turns MN patterns into a turn: MN type -> muscle -> joint (the audit's
+      named types: sternotrochanter, trochanter flexor/extensor, tibia flexor/extensor, sternal
+      rotators, pleural remotor); stance/swing from the gait; yaw from left-right stance drive.
+      calibrate the sign on the withdrawal program (touch) and the drum; then DNge125's chord.
 
 ## 3. the eye track (independent of the above)
 

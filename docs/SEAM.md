@@ -1770,6 +1770,27 @@ warmth has no directional motor expression at all. **the leg wheel is dropped as
 steering readout;** DNa02 for vision and the touch reflex stand. thermotaxis needs the
 thermal descending types (the screen's ten) to produce a lateralised leg pattern when
 driven; tested next, directly.
+
+**the thermal descending types, driven directly (12:30 PDT; each type on one side at 100 Hz,
+2 s, leg-MN totals per side and the projection on the withdrawal axis):** six of the ten do
+nothing at the legs (DNge054, DNg56, DNpe002, DNge041, DNbe001 ~0; DNp35 bilateral 280 /
+280). **DNge125 is a clean contralateral driver:** left cell -> right legs 278/s, left legs
+0; right cell -> left legs 288/s, right legs 0. DNge037 the same, weakly (24 / 17). DNp06
+drives the left legs from either side. all ten together: side L -> R-L +262, side R -> -478,
+contralateral. and **DNa02 at 100 Hz moves the legs by 8-12 spikes/s**: the visual turn
+command does not reach the cord in this model at these constants, which is the finding
+behind the leg wheel's whisper.
+
+so a warm antenna recruits a contralateral leg drive through DNge125. by the one turning
+sign the wiring has provided (the withdrawal program: louder legs on a side = turn away
+from that side), contralateral drive from the warm side is a turn *toward* the warmth. but
+DNge125's pattern projects at 0.0 on the withdrawal axis: it is a different motor chord,
+and no behaviour in the record says which way that chord turns him. **thermotaxis is
+under-determined in this model**, and the reason is precise: the turning sign of an
+arbitrary leg-MN pattern needs a leg with muscles (which muscle, which joint, stance or
+swing), not a spike count. nate's question of 09-16 ("does this need physics-accurate
+legs?") now has its answer: for the sign of a motor pattern, yes. the warm corner stays in
+the world with its cells firing; the readout waits for legs.
 - **Shiu's constants, from the code not the paper:** rest/reset -52, threshold -45,
   tau_m 20 ms, tau_syn 5, refractory 2.2, delay 1.8, w_syn 0.275 (a free parameter),
   Poisson 150 Hz. our 150 Hz optic-lobe cap is Shiu's default, not a measurement.
