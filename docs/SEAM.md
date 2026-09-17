@@ -1842,6 +1842,35 @@ walking has, at these constants, almost no motor substrate; what a warm antenna 
 looks more like a take-off than a turn. recorded; the leg model is tested on what does
 reach the legs.
 
+## the leg model (13:20 PDT, `src/fly_afterlife/legs.py`)
+
+the brief's model, as an effector: leg MNs only (373), a running per-cell baseline, force
+per spike from input-synapse count as the size proxy ((S / median)^2.5, the ratio clipped
+to 0.2-5 because the raw counts span 0-19,000, a tracing confound), a saturating transfer
+(k = 5 spikes per bin), signed muscle weights by type name (remotor and posterior rotator
++1.0, sternotrochanter and trochanter extensor +0.8, tibia flexors +0.5, grip +0.4, tibia
+extensor +0.2, anterior rotator / promotor and trochanter flexors -0.6), segment weights
+(front 0.3, middle and hind 1.0) and segment yaw signs (front -0.5: braking), and the
+measured rule: turn toward the side with less stance drive. 290 of the 373 leg MNs have a
+named muscle. **open loop, two seeds, yaw_left (+ = left turn), c_y = 1:**
+
+| pattern | seed 1 | seed 3 | reading |
+|---|---|---|---|
+| DNa02 L / R at 100 Hz | +7.5 / -10.2 | +13.3 / -16.5 | **ipsiversive: Rayshubskiy 2020's sign, reproduced** |
+| DNge037 L / R at 100 Hz | +5.4 / -8.0 | +8.9 / -12.0 | crossed DN, contralateral legs, turns toward its own side (the DNg13 template) |
+| bristle L / R at 150 Hz | +43 / -26 | +51 / -21 | toward the touched leg (the brief's prediction: withdrawal = levation = less stance drive) |
+| bristle L / R at 30 Hz | +71 / -101 | +86 / -110 | toward the touched leg |
+| warm L / R | +8.6 / +10.4 | +8.7 / +9.1 | same sign both sides: no turn |
+
+the model is validated on the one published sign we have (DNa02), consistent with the
+brief on DNge037, and says touch turns him toward the touched leg in walking terms, which
+is the withdrawal reflex's opposite: the reflex (which does free him from walls, 15% vs
+91%) stays a separate labelled reflex, as the brief argues (withdrawal is not walking;
+Medeiros 2024). warmth has no lateral component in the legs, so thermotaxis by walking is
+not in this model at these constants, full stop. **adopted as the effector** (`--effector
+legs`: DNa02 wheel + the leg model's yaw, the touch reflex overriding on contact), to be
+scored in the room against the leg-set baseline.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
