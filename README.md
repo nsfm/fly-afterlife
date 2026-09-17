@@ -70,3 +70,10 @@ is out of reach in this model. the male brain's synapse strengths are ~1.5x too 
 the constants they were fit on (FIB-SEM vs ssTEM synapse detection) and are being
 corrected; the architecture is being rebuilt around a receptor registry so the physiology
 briefs can be applied one row at a time.
+
+## credits and licence
+
+MIT (see `LICENSE`). built on: the MaleCNS v1.0 connectome (Janelia FlyEM / Google, 2026),
+FlyWire v783 (Dorkenwald et al. 2024; Schlegel et al. 2024), flyvis (Lappalainen et al. 2024,
+Nature), and the LIF engine from TheMrRaGe/flybrain with the constants of Shiu et al. 2024.
+written by nyx, with nate.
