@@ -1792,7 +1792,7 @@ swing), not a spike count. nate's question of 09-16 ("does this need physics-acc
 legs?") now has its answer: for the sign of a motor pattern, yes. the warm corner stays in
 the world with its cells firing; the readout waits for legs.
 
-## the leg motor brief (12:45 PDT, `docs/physiology/leg_motor.md`)
+## the leg motor brief (~12:28 PDT, `docs/physiology/leg_motor.md`; the clock was not read for this header or the two below, times corrected at 12:37)
 
 an opus agent, briefed on the audit. what it changes:
 
@@ -1823,7 +1823,7 @@ an opus agent, briefed on the audit. what it changes:
   count flipped. the sign-fixing experiment in life is unilateral MN-pool optogenetics on a
   ball with leg tracking; nothing else measures the weights directly.
 
-**withdrawn (13:10 PDT): "DNge125 is a clean contralateral leg driver."** re-run with the
+**withdrawn (~12:33 PDT): "DNge125 is a clean contralateral leg driver."** re-run with the
 motor neurons split by subclass (each thermal DN type driven on one side at 100 Hz, 2 s):
 
 | driven | abdominal L / R | front leg L / R | middle L / R | hind L / R | wing L / R |
@@ -1842,7 +1842,7 @@ walking has, at these constants, almost no motor substrate; what a warm antenna 
 looks more like a take-off than a turn. recorded; the leg model is tested on what does
 reach the legs.
 
-## the leg model (13:20 PDT, `src/fly_afterlife/legs.py`)
+## the leg model (~12:36 PDT, `src/fly_afterlife/legs.py`)
 
 the brief's model, as an effector: leg MNs only (373), a running per-cell baseline, force
 per spike from input-synapse count as the size proxy ((S / median)^2.5, the ratio clipped
