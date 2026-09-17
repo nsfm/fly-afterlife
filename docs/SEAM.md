@@ -861,6 +861,19 @@ this. what would change it: a model with adaptation at every synapse (the transp
 has it; the LIF does not), or the female FlyWire brain as a second specimen to
 separate tracing asymmetry from model asymmetry.
 
+**efference copy (17:08 PDT, `loop.py --efference`) - the correction that held.** HS cells in
+Drosophila receive a copy of the turn command that cancels the expected visual
+reafference of the fly's own rotation (Kim, Fitzgerald & Maimon 2015). implemented
+at the wheel: open-loop calibration of each side's response per deg/s of world
+rotation (yaw renders at 90 deg/s, above the still pre-period), then in the loop the
+response his own last turn predicts is subtracted before steering. DNa02 calibration is
+clean and correctly lateralized (world left: L +1.8, R +0.07 per chunk; world right:
+L -0.4, R +2.8). drum, model 000: seed 0 still +1.0 / LEFT +17.7 / still -0.3 / RIGHT
+-27.2 / still -11.7; seed 1 -2.2 / +9.4 / +9.6 / -8.5 / +7.8. both ways, both seeds,
+the still segments near zero. on the pooled screened wheel it does not help (its
+response to 90 deg/s rotation is suppression on both sides, more on the left; the linear
+prediction is wrong for it). ensemble run with per-model calibration: `world/ens/eff_m*`.
+
 ## choices, labelled
 
 1. **orientation** of our hex grid onto theirs. not in the data. calibrated by biology:

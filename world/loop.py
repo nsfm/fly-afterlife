@@ -21,7 +21,7 @@ from omma import Eye, Scene
 ap = argparse.ArgumentParser(); ap.add_argument("--mode", required=True); ap.add_argument("--out", required=True); ap.add_argument("--seconds", type=float, default=20.0)
 ap.add_argument("--model", default="flow/0000/000"); ap.add_argument("--gain", type=float, default=3.0); ap.add_argument("--smooth", type=float, default=3.0)
 ap.add_argument("--drive-gain", type=float, default=150.0); ap.add_argument("--seed", type=int, default=0); ap.add_argument("--bar-az", type=float, default=60.0)
-ap.add_argument("--speed", type=float, default=0.3); ap.add_argument("--tag", default=""); ap.add_argument("--touch", action="store_true", help="posts are solid: on contact he is held at the surface and the leg bristles on the touched side fire (150 Hz) into the LIF"); ap.add_argument("--body", type=float, default=0.05); ap.add_argument("--std", action="store_true", help="short-term synaptic depression in the LIF"); ap.add_argument("--std-scope", default="global", help="global | central (cb_intrinsic + descending presynaptic cells only)"); ap.add_argument("--std-u", type=float, default=0.08); ap.add_argument("--hp", type=int, default=0, help="running-baseline high-pass on the steering signal, in chunks (0 = off)"); ap.add_argument("--brain-gains", default=None, help="world/brain_gains.npz: per-cell input gain (whole-brain hemisphere homeostasis)"); ap.add_argument("--dn-gains", default=None, help="world/dn_gains.json: per-type per-side input scaling on the wheel cells (tracing-asymmetry correction at the source)"); ap.add_argument("--wheel", default="dna02", help="dna02 | screened (pooled DN types from world/dn_wheel.json; carries vision, odour and touch)"); ap.add_argument("--norm", action="store_true", help="scale each side of the wheel by its own resting rate (plateau warm-up) and steer on the relative asymmetry: yaw = ngain * (L/L_rest - R/R_rest)"); ap.add_argument("--ngain", type=float, default=6.0); ap.add_argument("--norm-ref", default="still", help="still | motion: per-side reference rates from open-loop yaw_left + yaw_right renders (seam/worldN_yaw_*.npz), direction-averaged"); ap.add_argument("--wgain", type=float, default=1.0, help="deg per net pooled spike (L-R), screened wheel"); ap.add_argument("--rest-chunks", type=int, default=20); ap.add_argument("--smell-gain", type=float, default=0.3, help="deg per net DNa spike (L-R), toward the stronger side"); ap.add_argument("--plastic", action="store_true"); ap.add_argument("--reward", action="store_true", help="sugar + PAM dopamine on contact with the A post"); ap.add_argument("--memory-in", default=None); ap.add_argument("--memory-out", default=None); ap.add_argument("--odour-lambda", type=float, default=0.6); ap.add_argument("--no-landmarks", action="store_true"); ap.add_argument("--rest-sub", action="store_true", help="subtract the DNa02 R-L resting offset measured over a 2 s still-world warm-up (with visual drive) at the wheel"); ap.add_argument("--leg-gain", type=float, default=30.0, help="deg per chunk per unit leg-motor asymmetry (R-L)/(R+L), rest asymmetry subtracted; more left-leg drive = right turn"); ap.add_argument("--world-seed", type=int, default=1); args = ap.parse_args()
+ap.add_argument("--speed", type=float, default=0.3); ap.add_argument("--tag", default=""); ap.add_argument("--touch", action="store_true", help="posts are solid: on contact he is held at the surface and the leg bristles on the touched side fire (150 Hz) into the LIF"); ap.add_argument("--body", type=float, default=0.05); ap.add_argument("--std", action="store_true", help="short-term synaptic depression in the LIF"); ap.add_argument("--std-scope", default="global", help="global | central (cb_intrinsic + descending presynaptic cells only)"); ap.add_argument("--std-u", type=float, default=0.08); ap.add_argument("--hp", type=int, default=0, help="running-baseline high-pass on the steering signal, in chunks (0 = off)"); ap.add_argument("--yawprefix", default="seam/worldN", help="prefix of the empty/yaw_left/yaw_right renders used for efference + motion calibration (per flyvis model)"); ap.add_argument("--efference", action="store_true", help="efference copy: subtract the wheel response predicted by his own last turn (calibrated open loop on world rotation at 90 deg/s; Kim, Fitzgerald & Maimon 2015)"); ap.add_argument("--brain-gains", default=None, help="world/brain_gains.npz: per-cell input gain (whole-brain hemisphere homeostasis)"); ap.add_argument("--dn-gains", default=None, help="world/dn_gains.json: per-type per-side input scaling on the wheel cells (tracing-asymmetry correction at the source)"); ap.add_argument("--wheel", default="dna02", help="dna02 | screened (pooled DN types from world/dn_wheel.json; carries vision, odour and touch)"); ap.add_argument("--norm", action="store_true", help="scale each side of the wheel by its own resting rate (plateau warm-up) and steer on the relative asymmetry: yaw = ngain * (L/L_rest - R/R_rest)"); ap.add_argument("--ngain", type=float, default=6.0); ap.add_argument("--norm-ref", default="still", help="still | motion: per-side reference rates from open-loop yaw_left + yaw_right renders (seam/worldN_yaw_*.npz), direction-averaged"); ap.add_argument("--wgain", type=float, default=1.0, help="deg per net pooled spike (L-R), screened wheel"); ap.add_argument("--rest-chunks", type=int, default=20); ap.add_argument("--smell-gain", type=float, default=0.3, help="deg per net DNa spike (L-R), toward the stronger side"); ap.add_argument("--plastic", action="store_true"); ap.add_argument("--reward", action="store_true", help="sugar + PAM dopamine on contact with the A post"); ap.add_argument("--memory-in", default=None); ap.add_argument("--memory-out", default=None); ap.add_argument("--odour-lambda", type=float, default=0.6); ap.add_argument("--no-landmarks", action="store_true"); ap.add_argument("--rest-sub", action="store_true", help="subtract the DNa02 R-L resting offset measured over a 2 s still-world warm-up (with visual drive) at the wheel"); ap.add_argument("--leg-gain", type=float, default=30.0, help="deg per chunk per unit leg-motor asymmetry (R-L)/(R+L), rest asymmetry subtracted; more left-leg drive = right turn"); ap.add_argument("--world-seed", type=int, default=1); args = ap.parse_args()
 fps, CH = 100, 10; g = np.load("seam/eye_geom.npz"); eye = Eye("seam/eye_geom.npz"); rng = np.random.default_rng(args.world_seed)
 # ---- world
 posts = [(x, y, 0.2, 0.05) for x, y in rng.uniform(-2.5, 2.5, size=(8, 2)) if np.hypot(x + 2.0, y) > 0.8]
@@ -138,26 +138,6 @@ for c in range(10):
         for k_, v_ in a.items(): acc.setdefault(k_, []).append(v_)
 rest = {k_: np.concatenate(v_).mean(0) for k_, v_ in acc.items()}
 for _ in range(500): b.step()
-leg_rest = 0.0; rest_net = 0.0; dna_rest = 0.0
-if args.mode == "forage":
-    sc0, _ = scene_at(0.0); dl = dr_ = 0; nch = 20
-    for c in range(nch):
-        a0 = flyvis_chunk(render_frames(CH, sc0, (x, y, 0.5), heading))
-        for f in range(CH):
-            for (tt, s_), (idx, hx) in groups.items(): b.drive_hz[idx] = args.drive_gain * np.clip((a0[(s_, tt)][f] - rest[(s_, tt)])[hx], 0, 1)
-            for _ in range(SPF):
-                spk = b.step(); dl += int(spk[R["DNa_L"]].sum()); dr_ += int(spk[R["DNa_R"]].sum())
-    dna_rest = (dl - dr_) / nch; print(f"DNa offset with vision on, no odour (L-R per chunk): {dna_rest:+.2f}")
-if args.rest_sub:
-    sc0, _ = scene_at(0.0); rl = rr = 0; nch = args.rest_chunks
-    for c in range(nch):
-        a0 = flyvis_chunk(render_frames(CH, sc0, (x, y, 0.5), heading))
-        for f in range(CH):
-            for (tt, s_), (idx, hx) in groups.items(): b.drive_hz[idx] = args.drive_gain * np.clip((a0[(s_, tt)][f] - rest[(s_, tt)])[hx], 0, 1)
-            for _ in range(SPF):
-                spk = b.step(); rl += int(spk[R["DNa02_L"]].sum()); rr += int(spk[R["DNa02_R"]].sum())
-    rest_net = (rr - rl) / nch; dL_rest, dR_rest = max(rl / nch, 0.05), max(rr / nch, 0.05); print(f"DNa02 resting offset (R-L per chunk): {rest_net:+.2f}  (L {rl}, R {rr} over {nch} chunks)")
-    if args.norm_ref == "motion": dL_rest, dR_rest = motion_reference("DNa02_L", "DNa02_R"); print(f"DNa02 MOTION reference per chunk: L {dL_rest:.2f} R {dR_rest:.2f}")
 def motion_reference(keyL, keyR):
     """open loop: drive the LIF with the yaw_left and yaw_right renders (1 s each), return per-side mean spikes per chunk over both."""
     restN = np.load("seam/worldN_empty.npz"); tot = {"L": 0, "R": 0}; nch = 0
@@ -178,7 +158,51 @@ def motion_reference(keyL, keyR):
     b.reset(); b.drive_hz[:] = 0; b.g[:] = 0; b.refrac[:] = 0
     for _ in range(500): b.step()
     return max(tot["L"] / nch, 0.05), max(tot["R"] / nch, 0.05)
-w_rest = 0.0
+def efference_calibration(keyL, keyR):
+    """per side: spikes per chunk per (deg/s of world rotation), signed: world moving LEFT positive. from yaw_left/yaw_right renders (90 deg/s)."""
+    restN = np.load(f"{args.yawprefix}_empty.npz"); resp = {}
+    for k, worldrate in (("right", +90.0), ("left", -90.0)):   # yaw_right render = fly turned right = world moved LEFT
+        w = np.load(f"{args.yawprefix}_yaw_{k}.npz"); gr = {}
+        for s_ in "LR":
+            colmap = dict(zip(w[f"{s_}_idx"].tolist(), w[f"{s_}_col"].tolist()))
+            for t in types:
+                kk = (cols["type"] == t) & (cols["side"] == s_); hx = np.array([colmap.get(int(i), -1) for i in gi[kk]]); ok = hx >= 0
+                gr[(t, s_)] = (cols["idx"][kk][ok], hx[ok], w[f"{s_}_{t}"], restN[f"{s_}_{t}"][20:100].mean(0))
+        b.reset(); b.drive_hz[:] = 0; b.g[:] = 0; b.refrac[:] = 0; cl_ = cr_ = 0; pl = pr = 0
+        for f in range(200):
+            for (t, s_), (idx, hx, a, r_) in gr.items(): b.drive_hz[idx] = args.drive_gain * np.clip((a[f] - r_)[hx], 0, 1)
+            for _ in range(SPF):
+                spk = b.step(); L_ = int(spk[R[keyL]].sum()); R_ = int(spk[R[keyR]].sum())
+                if f >= 100: cl_ += L_; cr_ += R_
+                elif f >= 20: pl += L_; pr += R_
+        resp[worldrate] = ((cl_ - pl * 100 / 80) / 10, (cr_ - pr * 100 / 80) / 10)   # per chunk, above the still pre-period
+    b.reset(); b.drive_hz[:] = 0; b.g[:] = 0; b.refrac[:] = 0
+    for _ in range(500): b.step()
+    kL = (resp[90.0][0] - resp[-90.0][0]) / 180.0; kR = (resp[90.0][1] - resp[-90.0][1]) / 180.0
+    print(f"efference calibration: world LEFT 90 deg/s -> L {resp[90.0][0]:+.2f} R {resp[90.0][1]:+.2f} per chunk; world RIGHT -> L {resp[-90.0][0]:+.2f} R {resp[-90.0][1]:+.2f}; slope per deg/s: L {kL:+.4f} R {kR:+.4f}")
+    return kL, kR
+leg_rest = 0.0; rest_net = 0.0; dna_rest = 0.0
+if args.mode == "forage":
+    sc0, _ = scene_at(0.0); dl = dr_ = 0; nch = 20
+    for c in range(nch):
+        a0 = flyvis_chunk(render_frames(CH, sc0, (x, y, 0.5), heading))
+        for f in range(CH):
+            for (tt, s_), (idx, hx) in groups.items(): b.drive_hz[idx] = args.drive_gain * np.clip((a0[(s_, tt)][f] - rest[(s_, tt)])[hx], 0, 1)
+            for _ in range(SPF):
+                spk = b.step(); dl += int(spk[R["DNa_L"]].sum()); dr_ += int(spk[R["DNa_R"]].sum())
+    dna_rest = (dl - dr_) / nch; print(f"DNa offset with vision on, no odour (L-R per chunk): {dna_rest:+.2f}")
+if args.rest_sub:
+    sc0, _ = scene_at(0.0); rl = rr = 0; nch = args.rest_chunks
+    for c in range(nch):
+        a0 = flyvis_chunk(render_frames(CH, sc0, (x, y, 0.5), heading))
+        for f in range(CH):
+            for (tt, s_), (idx, hx) in groups.items(): b.drive_hz[idx] = args.drive_gain * np.clip((a0[(s_, tt)][f] - rest[(s_, tt)])[hx], 0, 1)
+            for _ in range(SPF):
+                spk = b.step(); rl += int(spk[R["DNa02_L"]].sum()); rr += int(spk[R["DNa02_R"]].sum())
+    rest_net = (rr - rl) / nch; dL_rest, dR_rest = max(rl / nch, 0.05), max(rr / nch, 0.05); print(f"DNa02 resting offset (R-L per chunk): {rest_net:+.2f}  (L {rl}, R {rr} over {nch} chunks)")
+    if args.norm_ref == "motion": dL_rest, dR_rest = motion_reference("DNa02_L", "DNa02_R"); print(f"DNa02 MOTION reference per chunk: L {dL_rest:.2f} R {dR_rest:.2f}")
+    if args.efference: eff_kL, eff_kR = efference_calibration("DNa02_L", "DNa02_R")
+w_rest = 0.0; eff_kL = eff_kR = 0.0; last_yaw_rate = 0.0
 if args.wheel == "screened":
     sc0, _ = scene_at(0.0); wl = wr = 0; nch = args.rest_chunks
     for c in range(nch):
@@ -189,6 +213,7 @@ if args.wheel == "screened":
                 spk = b.step(); wl += int(spk[R["W_L"]].sum()); wr += int(spk[R["W_R"]].sum())
     w_rest = (wl - wr) / nch; wL_rest, wR_rest = max(wl / nch, 0.05), max(wr / nch, 0.05); print(f"screened wheel resting offset (L-R per chunk, vision on): {w_rest:+.2f}  ({wl} / {wr} over {nch} chunks)")
     if args.norm_ref == "motion": wL_rest, wR_rest = motion_reference("W_L", "W_R"); print(f"screened wheel MOTION reference per chunk: L {wL_rest:.2f} R {wR_rest:.2f}")
+    if args.efference: eff_kL, eff_kR = efference_calibration("W_L", "W_R")
 # ---- loop
 T = int(args.seconds * fps); LUM, POSE, PHASE, TOUCH, SMELL, REWARD = [], [], [], [], [], []; n_reward_frames = 0; A_contacts = B_contacts = 0; log = {k: [] for k in R}; hits = 0; ema = 0.0; hp_base = 0.0; t0 = time.time(); bearing = []
 for c in range(T // CH):
@@ -245,6 +270,11 @@ for c in range(T // CH):
         for _ in range(SPF):
             spk = b.step()
             for k, r in R.items(): cnt[k] += int(spk[r].sum())
+    if args.efference:
+        world_rate_from_self = -last_yaw_rate                       # deg/s; his left turn = world moving right
+        predL, predR = eff_kL * world_rate_from_self, eff_kR * world_rate_from_self
+        for kL_, kR_ in ((("W_L", "W_R") if args.wheel == "screened" else ("DNa02_L", "DNa02_R")),):
+            cnt[kL_] = max(cnt[kL_] - predL, 0.0); cnt[kR_] = max(cnt[kR_] - predR, 0.0)
     if args.wheel == "screened":
         if args.norm: net_ = cnt["W_L"] / wL_rest - cnt["W_R"] / wR_rest; gain_ = args.ngain
         else: net_ = (cnt["W_L"] - cnt["W_R"]) - w_rest; gain_ = args.wgain
@@ -266,7 +296,7 @@ for c in range(T // CH):
         touched_chunk = any(TOUCH[c * CH + f] for f in range(CH) if c * CH + f < len(TOUCH))
         if not touched_chunk: leg_rest += (asym - leg_rest) / 20.0          # running baseline from untouched chunks
         else: yaw += float(np.clip(args.leg_gain * (asym - leg_rest), -12, 12))   # more right-leg drive -> left turn (+heading); only while touching
-    heading += yaw
+    heading += yaw; last_yaw_rate = yaw * fps / CH
     for k in R: log[k].append(cnt[k])
     if args.mode == "bar": bearing.append(((bar["az_world"] - heading + 180) % 360) - 180)
     if args.mode == "forage" and c % 50 == 49: print(f"   smell A L/R {SMELL[-1][0][chr(65)]:.2f}/{SMELL[-1][1][chr(65)]:.2f} B {SMELL[-1][0][chr(66)]:.2f}/{SMELL[-1][1][chr(66)]:.2f}  reward frames {n_reward_frames}  mem {b.learn() if getattr(b, chr(112)+chr(108)+chr(97)+chr(115)+chr(116)+chr(105)+chr(99)+chr(95)+chr(111)+chr(110), False) else 1.0:.4f}", flush=True)
