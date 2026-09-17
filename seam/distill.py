@@ -15,7 +15,7 @@ subtracted (so we match responses, not operating points). no loom-specific targe
 import os, sys, json, time, argparse, numpy as np, torch
 sys.path.insert(0, "seam"); os.environ.setdefault("FLYVIS_ROOT_DIR", "/home/nate/code/fly-afterlife/flyvis_data")
 ap = argparse.ArgumentParser(); ap.add_argument("--check", action="store_true"); ap.add_argument("--steps", type=int, default=200); ap.add_argument("--out", default="seam/tx_distilled.npz")
-ap.add_argument("--clip", type=int, default=40); ap.add_argument("--fps", type=int, default=100); ap.add_argument("--dt", type=float, default=0.005); ap.add_argument("--lr", type=float, default=0.01); ap.add_argument("--eye", default="L"); args = ap.parse_args()
+ap.add_argument("--clip", type=int, default=40); ap.add_argument("--pre", type=int, default=60, help="grey frames before each clip (stability + rest anchor)"); ap.add_argument("--rest-w", type=float, default=0.3); ap.add_argument("--norm-per-type", action="store_true", help="divide each type's loss by the variance of the teacher's response for that type, so small-response types (T4/T5) count as much as large ones"); ap.add_argument("--act-w", type=float, default=1e-3); ap.add_argument("--fps", type=int, default=100); ap.add_argument("--dt", type=float, default=0.005); ap.add_argument("--lr", type=float, default=0.01); ap.add_argument("--eye", default="L"); args = ap.parse_args()
 dev = torch.device("cuda")
 import flyvis
 from flyvis import NetworkView
@@ -128,6 +128,7 @@ common = [t for t in type_names if t in tt_idx and not t.startswith("R") and not
 teacher_rest = None
 def clip_loss(m, rng_seed=0):
     global teacher_rest
+    m = np.concatenate([np.full((args.pre, 721), 0.5, np.float32), m])    # grey pre-period
     hexmovie = torch.tensor(m[None, :, None, :], device=dev)
     te = teacher_run(hexmovie)
     lum_ours = torch.tensor(m[:, np.maximum(our2hex, 0)], device=dev); lum_ours[:, our2hex < 0] = 0.5
@@ -139,8 +140,10 @@ def clip_loss(m, rng_seed=0):
         hexes = our2hex[cols_[ok]]; tcol = np.array([t_uv[t].get(lattice[h], -1) for h in hexes]); ok2 = tcol >= 0
         if ok2.sum() < 5: continue
         sel = np.flatnonzero(ok)[ok2]; tt = te[t][:, torch.tensor(tcol[ok2], device=dev)]; ss = st[t][:, torch.tensor(sel, device=dev)]
-        tt = tt - tt[:5].mean(0); ss = ss - ss[:5].mean(0)             # responses, not operating points
-        loss = loss + torch.mean((ss - tt) ** 2); n += 1
+        pr = args.pre; tt_r = tt[pr - 10:pr].mean(0); ss_r = ss[pr - 10:pr].mean(0)
+        tr = tt[pr:] - tt_r; sr = ss[pr:] - ss_r; scale = (tr.var() + 1e-4) if args.norm_per_type else 1.0
+        loss = loss + torch.mean((sr - tr) ** 2) / scale + args.rest_w * torch.mean((ss_r - tt_r) ** 2)   # response match (per-type normalised) + rest anchor
+        loss = loss + args.act_w * torch.mean(torch.relu(ss) ** 2); n += 1
     return loss / max(n, 1)
 if args.check:
     rng = np.random.default_rng(0); kind, m = make_clip(args.clip, rng)

@@ -102,7 +102,8 @@ print(f"edges: {n_real_edges} real (+CT1 compartments) + {len(E_pre) - n_real_ed
 print("  biggest dropped:", sorted(dropped.items(), key=lambda x: -x[1])[:6])
 if args.distilled:
     D_ = np.load(args.distilled); dstr = dict(zip(D_["pairs"].astype(str), D_["strength"])); dtau = dict(zip(D_["types"].astype(str), D_["tau"])); dbias = dict(zip(D_["types"].astype(str), D_["bias"])); dins = dict(zip(D_["types"].astype(str), D_["inscale"]))
-    E_w = [wt / strength[k] * dstr.get(k, strength[k]) for wt, k in zip(E_w, E_key)]
+    E_w = [wt if strength[k] != 0 and k not in dstr else (wt / strength[k] * dstr[k] if strength[k] != 0 else 0.0) for wt, k in zip(E_w, E_key)]
+    # pairs whose flyvis strength is exactly 0 stay 0 (they carried no weight in the teacher either); all others take the distilled strength
     tau = np.array([dtau.get(t_, P["nodes"][t_]["tau_s"]) for t_ in node_type], np.float32); bias = np.array([dbias.get(t_, P["nodes"][t_]["bias"]) for t_ in node_type], np.float32)
     print(f"distilled parameters loaded: {len(dstr)} pair strengths, {len(dtau)} types; strength change median {np.median([dstr[k]/strength[k] for k in dstr if k in strength]):.2f}x")
 Ew = np.array(E_w, np.float32) * args.gain; print(f"weights: finite {np.isfinite(Ew).all()}, |w| max {np.abs(Ew).max():.3f}, mean {np.abs(Ew).mean():.4f}; in-degree max {np.bincount(E_post).max()}; per-node |in| max {pd.Series(np.abs(Ew)).groupby(np.array(E_post)).sum().max():.2f}")

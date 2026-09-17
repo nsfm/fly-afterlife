@@ -1123,6 +1123,17 @@ scatter (the sparse product's backward wanted 6 GB). 3 s per clip on the 1650, 0
 0.80x flyvis (IQR 0.59-1.01), time constants 0.84x, input scales 0.82x. nothing about
 looms is in the objective; the loom is the exam.
 
+**distilled model 1, examined (19:26 PDT).** a loading bug first (dividing by flyvis
+strengths that are exactly zero gave NaN weights; fixed: zero pairs stay zero). then:
+finite, stable, ON pathway alive (Mi1 mod 0.36, Mi4 0.80, T4a 0.49, T4b 0.34), **OFF
+pathway collapsed** (T5a/T5b mod 0.01, 70-90% of cells silent), and no direction
+preference in the T4 means (|shift| < 0.04). the ball reads polarity-shaped as before.
+the MSE on rest-subtracted activity is dominated by the large-response types; T5's
+small responses barely register, and without a rest anchor a type can go dead for
+free. retrains: (2) 60 grey frames before each clip + a rest anchor to flyvis's rest +
+a small activity penalty; (3) as (2) with each type's loss divided by the teacher's
+response variance for that type, so T4/T5 count as much as Mi4.
+
 ## choices, labelled
 
 1. **orientation** of our hex grid onto theirs. not in the data. calibrated by biology:

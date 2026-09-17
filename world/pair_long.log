@@ -49,3 +49,7 @@ t=200.0s  him (+0.88,-1.32)   -189  her (+1.81,-1.13)  dist 0.95  pC1 3 pIP10 0 
 t=205.0s  him (+0.62,-1.08)   -318  her (+1.45,-1.15)  dist 0.84  pC1 0 pIP10 0 LC10a 0 | her pC1 0 vpoEN 0 | contacts 113 songs 0 | pace him 0.09 her 0.15 m/s  (1329s)
 t=210.0s  him (+1.25,-1.06)   -349  her (+0.79,-1.48)  dist 0.62  pC1 0 pIP10 0 LC10a 0 | her pC1 0 vpoEN 0 | contacts 113 songs 0 | pace him 0.13 her 0.15 m/s  (1360s)
 t=215.0s  him (+1.90,-1.21)   -346  her (+0.40,-1.88)  dist 1.64  pC1 0 pIP10 1 LC10a 0 | her pC1 0 vpoEN 0 | contacts 113 songs 0 | pace him 0.14 her 0.15 m/s  (1392s)
+t=220.0s  him (+1.56,-1.20)   +545  her (-0.17,-1.42)  dist 1.74  pC1 0 pIP10 2 LC10a 0 | her pC1 0 vpoEN 0 | contacts 113 songs 0 | pace him 0.11 her 0.15 m/s  (1427s)
+t=225.0s  him (+1.70,-1.05)   +361  her (-0.75,-0.96)  dist 2.45  pC1 8 pIP10 1 LC10a 0 | her pC1 0 vpoEN 0 | contacts 113 songs 0 | pace him 0.12 her 0.15 m/s  (1458s)
+t=230.0s  him (+1.71,-1.15)   -174  her (-1.41,-0.61)  dist 3.16  pC1 0 pIP10 1 LC10a 0 | her pC1 0 vpoEN 0 | contacts 113 songs 0 | pace him 0.13 her 0.15 m/s  (1492s)
+t=235.0s  him (+1.15,-1.14)   -181  her (-1.85,-0.60)  dist 3.05  pC1 0 pIP10 0 LC10a 0 | her pC1 0 vpoEN 0 | contacts 113 songs 0 | pace him 0.11 her 0.15 m/s  (1525s)
