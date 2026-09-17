@@ -9,3 +9,4 @@ world/viewer_*.html
 world/*.npz
 world/ens/
 data/flywire/
+!world/viewer_template.html

@@ -1,0 +1,190 @@
+<title>Fly Afterlife Viewer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{--her:#e07a9a;--bg:#0e1117;--panel:#151a23;--line:#242b38;--ink:#e6e1d6;--ink-2:#9aa3b2;--L:#e2a63b;--R:#6fb5d6;--threat:#e4572e;--gf:#ff9d7a;--font:'IBM Plex Sans',system-ui,sans-serif;--mono:'IBM Plex Mono',ui-monospace,monospace;color-scheme:dark}
+html,body{height:100%}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 var(--font);padding-inline:16px;padding-block:12px}
+h1{font:500 15px/1.2 var(--mono);letter-spacing:.02em;margin:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:12px 18px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.bar .sp{flex:1}
+button{font:500 13px var(--mono);background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:5px 12px;cursor:pointer}
+button:hover{border-color:var(--ink-2)}button:focus-visible{outline:2px solid var(--L);outline-offset:2px}
+input[type=range]{width:min(420px,50vw);accent-color:var(--L)}
+.t{font:500 13px var(--mono);color:var(--ink-2);font-variant-numeric:tabular-nums}.t b{color:var(--ink);font-weight:500}
+.grid{display:grid;grid-template-columns:minmax(280px,5fr) minmax(320px,7fr);gap:14px;padding-top:14px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px 12px 12px;min-width:0}
+.panel h2{font:500 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);margin:0 0 8px;display:flex;gap:10px;align-items:baseline}
+.panel h2 .sub{text-transform:none;letter-spacing:0;color:var(--ink-2);font-weight:400}
+canvas{display:block;width:100%;height:auto;max-width:100%;border-radius:3px;background:#000}
+.col{display:flex;flex-direction:column;gap:14px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font:12px var(--mono);color:var(--ink-2);margin-top:8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.traces{grid-column:1/-1}
+.tr{display:grid;grid-template-columns:118px 1fr 70px;align-items:center;gap:10px;height:34px}
+.tr .n{font:12px var(--mono);color:var(--ink-2)}.tr .n b{color:var(--ink);font-weight:500}
+.tr canvas{height:30px;border-radius:2px}
+.tr .v{font:500 13px var(--mono);text-align:right;font-variant-numeric:tabular-nums}
+.note{font:12px/1.5 var(--font);color:var(--ink-2);margin:8px 0 0}
+@media (max-width:760px){.grid{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<div class="bar">
+  <h1>fly afterlife · episode 0</h1>
+  <button id="play">play</button>
+  <input id="scrub" type="range" min="0" max="0" value="0" aria-label="frame">
+  <span class="t">t <b id="tt">0.00</b> s · frame <b id="ff">0</b> · heading <b id="hh">0</b>°</span>
+  <span class="t" id="touchinfo" style="color:var(--threat)"></span>
+  <span class="sp"></span>
+  <span class="t">speed <button id="spd" title="playback speed">1×</button></span>
+</div>
+<div class="grid">
+  <div class="col">
+    <div class="panel"><h2>human view <span class="sub">pinhole, 150° fov, eye height, raytraced here in the browser</span></h2><canvas id="human" width="480" height="270"></canvas></div>
+    <div class="panel"><h2>arena <span class="sub">top-down, from the object list</span></h2><canvas id="map" width="480" height="480"></canvas>
+      <div class="legend"><span><i style="background:var(--L)"></i>left eye field</span><span><i style="background:var(--R)"></i>right eye field</span><span><i style="background:#fff"></i>bright ball</span><span><i style="background:#333;border:1px solid #666"></i>pillar</span><span><i style="border:2px solid rgba(154,163,178,.9)"></i>touching wall/pillar</span><span><i style="border:2px solid var(--her)"></i>touching her</span></div></div>
+  </div>
+  <div class="col">
+    <div class="panel"><h2>through his eyes <span class="sub">the world resampled by 1,764 columns · 190° per eye · left of the fly is left · no colour, no resolution beyond his</span></h2><canvas id="pano" width="960" height="360"></canvas></div>
+    <div class="panel"><h2>fly sight <span class="sub">1,764 retinal columns, what each one samples · azimuth across, elevation up · left of the fly is left</span></h2><canvas id="eye" width="960" height="500"></canvas>
+      <div class="legend"><span><i style="background:var(--L)"></i>left eye rim</span><span><i style="background:var(--R)"></i>right eye rim</span><span id="eyeinfo"></span></div></div>
+    <div class="panel"><h2>what he's doing with it <span class="sub">this frame</span></h2>
+      <div class="tr"><span class="n">HS <b>L</b> / <b>R</b> <span class="sub">wide-field motion</span></span><canvas id="mini_hs" width="600" height="30"></canvas><span class="v" id="v_hs"></span></div>
+      <div class="tr"><span class="n">DNa02 <b>L</b> / <b>R</b> <span class="sub">steering</span></span><canvas id="mini_dna" width="600" height="30"></canvas><span class="v" id="v_dna"></span></div>
+      <p class="note">HS cells prefer front-to-back motion on their own side: a left turn sweeps the world front-to-back in the <em>right</em> eye, so HS R should lead during left turns. DNa02 is the best-characterised turning neuron. Spikes per 10 ms frame, smoothed over 100 ms.</p></div>
+  </div>
+  <div class="panel traces" id="motion" hidden><h2>behaviour <span class="sub">his heading (amber) against the drum angle (grey), degrees, whole episode</span></h2><canvas id="beh" width="1200" height="90"></canvas></div>
+  <div class="panel traces"><h2>traces <span class="sub">spikes per 100 ms, whole episode · playhead follows the scrubber</span></h2><div id="traces"></div></div>
+</div>
+<script>
+const D = /*__DATA__*/null;
+const lum = Uint8Array.from(atob(D.lum_b64), c => c.charCodeAt(0));
+const T = D.T, n = D.n, fps = D.fps;
+let frame = 0, playing = false, speed = 1, acc = 0, last = 0;
+const $ = id => document.getElementById(id);
+const scrub = $('scrub'); scrub.max = T - 1;
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+// ---------- human view: an independent raytracer (sky/ground gradient + spheres), same conventions as omma.py
+const hc = $('human'), hx = hc.getContext('2d'); const HW = hc.width, HH = hc.height; const img = hx.createImageData(HW, HH);
+const fov = D.fov * Math.PI / 180, fx = Math.tan(fov / 2), fy = fx * HH / HW;
+let drumPhase = 0;
+function shade(ox, oy, oz, dx, dy, dz) {
+  const SKY = D.sky ?? 0.85, GND = D.ground ?? 0.35; const band = Math.min(1, Math.max(0, 0.5 + dz / 0.15)); let l = GND + (SKY - GND) * band; let tmin = Infinity;
+  if (D.drum) { const elv = Math.asin(Math.max(-1, Math.min(1, dz))) * 180 / Math.PI; if (Math.abs(elv) < D.drum.half_height) { const az = Math.atan2(dy, dx) * 180 / Math.PI; const k = Math.floor((az - drumPhase) / (D.drum.period / 2)); l = ((k % 2) + 2) % 2 === 0 ? D.drum.lo : D.drum.hi; } }
+  if (D.walls) { const [half, hgt, alb] = D.walls; for (const [ax, sg] of [[0, 1], [0, -1], [1, 1], [1, -1]]) { const dd = ax === 0 ? dx : dy, oo = ax === 0 ? ox : oy; if (Math.abs(dd) < 1e-9) continue; const t = (sg * half - oo) / dd; if (t <= 0 || t >= tmin) continue; const hp = (ax === 0 ? oy + t * dy : ox + t * dx), hz = oz + t * dz; if (Math.abs(hp) <= half + 1e-6 && hz >= 0 && hz <= hgt) { tmin = t; l = alb; } } }
+  for (const o of D.objects) { if (D.pillars) { const cx = ox - o[0], cy = oy - o[1]; const a = dx * dx + dy * dy, bq = cx * dx + cy * dy, cq = cx * cx + cy * cy - o[2] * o[2]; const disc = bq * bq - a * cq; if (disc > 0 && a > 1e-9) { const t = (-bq - Math.sqrt(disc)) / a; if (t > 0 && t < tmin) { tmin = t; l = o[3]; } } continue; }
+    const cx = o[0] - ox, cy = o[1] - oy, cz = 0.5 - oz; const b = dx * cx + dy * cy + dz * cz; const disc = b * b - (cx * cx + cy * cy + cz * cz - o[2] * o[2]);
+    if (disc > 0) { const t = b - Math.sqrt(disc); if (t > 0 && t < tmin) { tmin = t; l = o[3]; } } }
+  if (D.pose2 && D.frame2) { const [fx, fy] = D.frame2; const cx = fx - ox, cy = fy - oy, cz = 0.5 - oz; const b = dx * cx + dy * cy + dz * cz; const hr = D.her_r ?? 0.1; const disc = b * b - (cx * cx + cy * cy + cz * cz - hr * hr); if (disc > 0) { const t = b - Math.sqrt(disc); if (t > 0 && t < tmin) { tmin = t; l = D.her_albedo ?? 0.15; } } }
+  return l;
+}
+function drawHuman(f) {
+  if (D.drum) drumPhase = D.drum.phase[f];
+  if (D.pose2) D.frame2 = D.pose2[f];
+  const [x, y, h] = D.pose[f]; const hr = h * Math.PI / 180, ch = Math.cos(hr), sh = Math.sin(hr); let p = 0;
+  for (let j = 0; j < HH; j++) { const py = (1 - (j + 0.5) / HH * 2) * fy; for (let i = 0; i < HW; i++) { const px = ((i + 0.5) / HW * 2 - 1) * fx;
+    let dx = 1, dy = -px, dz = py; const nrm = Math.hypot(dx, dy, dz); dx /= nrm; dy /= nrm; dz /= nrm;
+    const wx = ch * dx - sh * dy, wy = sh * dx + ch * dy; const l = shade(x, y, 0.5, wx, wy, dz) * 255;
+    img.data[p++] = l; img.data[p++] = l; img.data[p++] = l; img.data[p++] = 255; } }
+  hx.putImageData(img, 0, 0);
+  hx.strokeStyle = 'rgba(230,225,214,.35)'; hx.beginPath(); hx.moveTo(HW / 2, HH / 2 - 8); hx.lineTo(HW / 2, HH / 2 + 8); hx.moveTo(HW / 2 - 8, HH / 2); hx.lineTo(HW / 2 + 8, HH / 2); hx.stroke();
+}
+// ---------- arena map
+const mc = $('map'), mx = mc.getContext('2d'); const MS = mc.width; const S = MS / 6.4;   // 6.4 m across
+const W2 = (x, y) => [MS / 2 + x * S, MS / 2 - y * S];
+function drawMap(f) {
+  mx.fillStyle = '#0b0e14'; mx.fillRect(0, 0, MS, MS); mx.strokeStyle = css('--line'); mx.lineWidth = 1;
+  for (let g = -3; g <= 3; g++) { const [a, b] = W2(g, -3), [c, d] = W2(g, 3); mx.beginPath(); mx.moveTo(a, b); mx.lineTo(c, d); mx.stroke(); const [e, q] = W2(-3, g), [r, s] = W2(3, g); mx.beginPath(); mx.moveTo(e, q); mx.lineTo(r, s); mx.stroke(); }
+  mx.strokeStyle = 'rgba(230,225,214,.45)'; mx.lineWidth = 1.5; mx.beginPath();
+  if (D.walls) { const h = D.walls[0]; const [a, b] = W2(-h, h), [c, d] = W2(h, -h); mx.strokeStyle = 'rgba(200,190,170,.7)'; mx.lineWidth = 2; mx.strokeRect(a, b, c - a, d - b); mx.lineWidth = 1; }
+  for (let i = 0; i <= f; i++) { const [a, b] = W2(D.pose[i][0], D.pose[i][1]); i ? mx.lineTo(a, b) : mx.moveTo(a, b); } mx.stroke();
+  const [x, y, h] = D.pose[f]; const hr = h * Math.PI / 180;
+  for (const [side, col, sgn] of [['L', css('--L'), 1], ['R', css('--R'), -1]]) {   // eye fields: az -10..170 on each side (approx.)
+    mx.fillStyle = col.replace(')', ',.10)').replace('rgb(', 'rgba(').replace('#', ''); mx.fillStyle = side === 'L' ? 'rgba(226,166,59,.12)' : 'rgba(111,181,214,.12)';
+    const [cx, cy] = W2(x, y); mx.beginPath(); mx.moveTo(cx, cy); const a0 = hr + sgn * (-10 * Math.PI / 180), a1 = hr + sgn * (170 * Math.PI / 180);
+    mx.arc(cx, cy, 1.2 * S, -a0, -a1, sgn === 1); mx.closePath(); mx.fill(); }
+  if (D.drum) { const ph = D.drum.phase[f]; for (let k = 0; k < 360 / (D.drum.period / 2); k++) { const a0 = (ph + k * D.drum.period / 2) * Math.PI / 180, a1 = a0 + D.drum.period / 2 * Math.PI / 180; mx.beginPath(); mx.arc(MS / 2, MS / 2, 2.9 * S, -a1, -a0); mx.strokeStyle = (k % 2 === 0) ? 'rgba(60,60,60,1)' : 'rgba(230,225,214,.9)'; mx.lineWidth = 10; mx.stroke(); } mx.lineWidth = 1; }
+  for (const o of D.objects) { const [a, b] = W2(o[0], o[1]); mx.beginPath(); mx.arc(a, b, o[2] * S, 0, 7); mx.fillStyle = o[3] > 0.5 ? '#f2efe6' : '#2a2f3a'; mx.fill(); mx.strokeStyle = o[3] > 0.5 ? '#f2efe6' : '#6a7280'; mx.stroke(); }
+  if (D.touch && D.touch[f]) { const [tx, ty] = W2(x, y); mx.beginPath(); mx.arc(tx, ty, 9, 0, 7); mx.strokeStyle = (D.touch_kind && D.touch_kind[f] === 2) ? css('--her') : 'rgba(154,163,178,.9)'; mx.lineWidth = 2; mx.stroke(); mx.lineWidth = 1; }
+  if (D.body_r) { const [bx, by] = W2(x, y); mx.beginPath(); mx.arc(bx, by, D.body_r * S, 0, 7); mx.strokeStyle = 'rgba(226,166,59,.5)'; mx.stroke(); }
+  if (D.pose2 && D.her_r) { const [hx, hy] = W2(D.pose2[f][0], D.pose2[f][1]); mx.beginPath(); mx.arc(hx, hy, D.her_r * S, 0, 7); mx.strokeStyle = 'rgba(224,122,154,.5)'; mx.stroke(); }
+  if (D.pose2) { mx.strokeStyle = 'rgba(224,122,154,.5)'; mx.lineWidth = 1.5; mx.beginPath(); for (let i = 0; i <= f; i++) { const [a, b] = W2(D.pose2[i][0], D.pose2[i][1]); i ? mx.lineTo(a, b) : mx.moveTo(a, b); } mx.stroke();
+    const [fx, fy, fh] = D.pose2[f]; const [qx, qy] = W2(fx, fy); mx.save(); mx.translate(qx, qy); mx.rotate(-fh * Math.PI / 180); mx.fillStyle = css('--her'); mx.beginPath(); mx.moveTo(8, 0); mx.lineTo(-5, 4); mx.lineTo(-5, -4); mx.closePath(); mx.fill(); mx.restore();
+    if (D.song && D.song[f]) { mx.strokeStyle = css('--her'); mx.lineWidth = 1; for (let r = 12; r <= 28; r += 8) { mx.beginPath(); mx.arc(qx, qy, r, 0, 7); mx.stroke(); } } }
+  const [cx, cy] = W2(x, y); mx.save(); mx.translate(cx, cy); mx.rotate(-hr); mx.fillStyle = css('--ink'); mx.beginPath(); mx.moveTo(10, 0); mx.lineTo(-6, 5); mx.lineTo(-6, -5); mx.closePath(); mx.fill(); mx.restore();
+  mx.fillStyle = css('--ink-2'); mx.font = '11px IBM Plex Mono, monospace'; mx.fillText('1 m grid · him at (' + x.toFixed(2) + ', ' + y.toFixed(2) + ')' + (D.dist ? ' · distance ' + D.dist[f].toFixed(2) + ' m' : ''), 8, MS - 8);
+}
+// ---------- fly sight
+const ec = $('eye'), ex = ec.getContext('2d'); const EW = ec.width, EH = ec.height;
+const X = D.az.map(a => (180 - a) / 360 * EW), Y = D.el.map(e => (90 - e) / 180 * EH);
+function drawEye(f) {
+  ex.fillStyle = '#05070a'; ex.fillRect(0, 0, EW, EH); ex.strokeStyle = css('--line'); ex.lineWidth = 1;
+  for (const a of [-90, 0, 90]) { const xx = (180 - a) / 360 * EW; ex.beginPath(); ex.moveTo(xx, 0); ex.lineTo(xx, EH); ex.stroke(); }
+  ex.beginPath(); ex.moveTo(0, EH / 2); ex.lineTo(EW, EH / 2); ex.stroke();
+  ex.fillStyle = css('--ink-2'); ex.font = '11px IBM Plex Mono, monospace';
+  for (const [a, l] of [[90, 'left 90°'], [0, 'ahead'], [-90, 'right 90°']]) ex.fillText(l, (180 - a) / 360 * EW + 4, 12);
+  const base = f * n;
+  for (let i = 0; i < n; i++) { const l = lum[base + i]; ex.fillStyle = 'rgb(' + l + ',' + l + ',' + l + ')'; ex.beginPath(); ex.arc(X[i], Y[i], 3.1, 0, 7); ex.fill(); }
+  // rim tint: outline columns near each eye's edge in the eye's colour (so the layout is legible)
+  ex.lineWidth = 1;
+  for (let i = 0; i < n; i++) if (Math.abs(D.el[i]) > 60 || Math.abs(D.az[i]) < 14 || Math.abs(D.az[i]) > 160) { ex.strokeStyle = D.side[i] === 'L' ? css('--L') : css('--R'); ex.beginPath(); ex.arc(X[i], Y[i], 3.6, 0, 7); ex.stroke(); }
+}
+// ---------- panorama: splat each column as a soft disc, nearest-column fill
+const pc_ = $('pano'), pcx = pc_.getContext('2d'); const PW = pc_.width, PH = pc_.height;
+const pimg = pcx.createImageData(PW, PH);
+// precompute nearest column for every pixel (azimuth across, elevation up), angular distance in degrees; blank beyond 5.5 deg
+const nearest = new Int32Array(PW * PH).fill(-1);
+{ const azs = D.az.map(a => a * Math.PI / 180), els = D.el.map(e => e * Math.PI / 180);
+  const cx = azs.map((a, i) => Math.cos(els[i]) * Math.cos(a)), cy = azs.map((a, i) => Math.cos(els[i]) * Math.sin(a)), cz = els.map(e => Math.sin(e));
+  const cosLim = Math.cos(5.5 * Math.PI / 180);
+  for (let j = 0; j < PH; j++) { const el = (90 - (j + 0.5) / PH * 180) * Math.PI / 180, ce = Math.cos(el), se = Math.sin(el);
+    for (let i = 0; i < PW; i++) { const az = (180 - (i + 0.5) / PW * 360) * Math.PI / 180; const px = ce * Math.cos(az), py = ce * Math.sin(az), pz = se;
+      let best = -1, bd = cosLim; for (let k = 0; k < n; k++) { const d = px * cx[k] + py * cy[k] + pz * cz[k]; if (d > bd) { bd = d; best = k; } }
+      nearest[j * PW + i] = best; } } }
+function drawPano(f) {
+  const base = f * n; let p = 0;
+  for (let q = 0; q < PW * PH; q++) { const k = nearest[q]; const l = k < 0 ? 4 : lum[base + k]; pimg.data[p++] = l; pimg.data[p++] = l; pimg.data[p++] = l; pimg.data[p++] = 255; }
+  pcx.putImageData(pimg, 0, 0);
+  pcx.strokeStyle = 'rgba(226,166,59,.35)'; pcx.beginPath(); pcx.moveTo(PW / 2, 0); pcx.lineTo(PW / 2, PH); pcx.stroke();
+  pcx.fillStyle = 'rgba(230,225,214,.6)'; pcx.font = '11px IBM Plex Mono, monospace'; pcx.fillText('left', 8, 14); pcx.fillText('ahead', PW / 2 + 6, 14); pcx.fillText('right', PW - 40, 14);
+}
+// ---------- traces
+const sm = (arr, w) => arr.map((_, i) => { let s = 0, c = 0; for (let j = Math.max(0, i - w + 1); j <= i; j++) { s += arr[j]; c++; } return s; });
+const specs = [['his pC1', 'm_pC1', 'm_pC1', 'courtship command (both = same)'], ['his pIP10', 'm_pIP10', 'm_pIP10', 'song neuron'], ['his LC10a', 'm_LC10a', 'm_LC10a', 'female tracking'], ['her pC1', 'f_pC1', 'f_pC1', 'her courtship cluster'], ['her vpoEN', 'f_vpoEN', 'f_vpoEN', 'receptivity'], ['his DNa02', 'm_DNa02_L', 'm_DNa02_R', 'steering'], ['HS', 'HS_L', 'HS_R', 'wide-field motion'], ['DNa02', 'DNa02_L', 'DNa02_R', 'steering neuron'], ['DNa', 'DNa_L', 'DNa_R', 'steering family'], ['LPLC2', 'LPLC2_L', 'LPLC2_R', 'loom detector'], ['GF', 'GF_L', 'GF_R', 'giant fiber, escape'], ['all DN', 'DN_L', 'DN_R', 'descending bus']];
+const tracesEl = $('traces'); const tc = [];
+for (const [name, l, r, sub] of specs) {
+  if (!D.traces[l] || !D.traces[r]) continue;
+  const row = document.createElement('div'); row.className = 'tr';
+  row.innerHTML = '<span class="n"><b>' + name + '</b> <span class="sub">' + sub + '</span></span><canvas width="1200" height="30"></canvas><span class="v"></span>';
+  tracesEl.appendChild(row); tc.push({ name, L: sm(D.traces[l], 10), R: sm(D.traces[r], 10), cv: row.querySelector('canvas'), v: row.querySelector('.v'), col: name === 'LPLC2' || name === 'GF' ? 'threat' : null });
+}
+function drawTrace(t, f, cv, colL, colR) {
+  const c = cv.getContext('2d'), W = cv.width, H = cv.height; c.fillStyle = '#0b0e14'; c.fillRect(0, 0, W, H);
+  const mx_ = Math.max(1, ...t.L, ...t.R);
+  for (const [arr, col] of [[t.L, colL], [t.R, colR]]) { c.strokeStyle = col; c.lineWidth = 1.2; c.beginPath(); for (let i = 0; i < T; i++) { const x = i / (T - 1) * W, y = H - 2 - arr[i] / mx_ * (H - 4); i ? c.lineTo(x, y) : c.moveTo(x, y); } c.stroke(); }
+  c.strokeStyle = 'rgba(230,225,214,.7)'; c.beginPath(); const px = f / (T - 1) * W; c.moveTo(px, 0); c.lineTo(px, H); c.stroke();
+}
+function drawTraces(f) {
+  for (const t of tc) { const cL = t.col ? css('--threat') : css('--L'), cR = t.col ? css('--gf') : css('--R'); drawTrace(t, f, t.cv, cL, cR); t.v.textContent = t.L[f] + ' / ' + t.R[f]; }
+  if (tc.length > 1) { drawTrace(tc[0], f, $('mini_hs'), css('--L'), css('--R')); $('v_hs').textContent = tc[0].L[f] + ' / ' + tc[0].R[f]; drawTrace(tc[1], f, $('mini_dna'), css('--L'), css('--R')); $('v_dna').textContent = tc[1].L[f] + ' / ' + tc[1].R[f]; }
+}
+let render = function(f) {
+  frame = f; scrub.value = f; $('tt').textContent = (f / fps).toFixed(2); $('ff').textContent = f; $('hh').textContent = D.pose[f][2].toFixed(0); if (D.touch) { const s = D.touch[f]; $('touchinfo').textContent = s ? ('touching ' + ((D.touch_kind && D.touch_kind[f] === 2) ? 'HER' : 'a wall or pillar') + ' · ' + (s === 1 ? 'left' : s === 2 ? 'right' : 'front')) : ''; }
+  drawHuman(f); drawMap(f); drawPano(f); drawEye(f); drawTraces(f);
+}
+function tick(ts) { if (playing) { const dt = (ts - last) / 1000; last = ts; acc += dt * fps * speed; while (acc >= 1) { acc -= 1; frame = (frame + 1) % T; } render(frame); } requestAnimationFrame(tick); }
+$('play').onclick = () => { playing = !playing; $('play').textContent = playing ? 'pause' : 'play'; last = performance.now(); };
+$('spd').onclick = () => { speed = speed === 1 ? 0.25 : speed === 0.25 ? 0.5 : speed === 0.5 ? 2 : 1; $('spd').textContent = speed + '×'; };
+scrub.oninput = () => { playing = false; $('play').textContent = 'play'; render(+scrub.value); };
+document.addEventListener('keydown', e => { if (e.code === 'Space') { e.preventDefault(); $('play').click(); } if (e.code === 'ArrowRight') render(Math.min(T - 1, frame + 1)); if (e.code === 'ArrowLeft') render(Math.max(0, frame - 1)); });
+$('eyeinfo').textContent = D.side.filter(s => s === 'L').length + ' L + ' + D.side.filter(s => s === 'R').length + ' R columns · ' + T + ' frames @ ' + fps + ' fps';
+function drawBeh(f) {
+  if (!D.drum) return; const cv = $('beh'), c = cv.getContext('2d'), W = cv.width, H = cv.height; c.fillStyle = '#0b0e14'; c.fillRect(0, 0, W, H);
+  const hd = D.pose.map(p => p[2]), dr = D.drum.phase; const lo = Math.min(...hd, ...dr), hi = Math.max(...hd, ...dr), sp = Math.max(1, hi - lo);
+  c.strokeStyle = css('--line'); c.beginPath(); const y0 = H - 2 - (0 - lo) / sp * (H - 4); c.moveTo(0, y0); c.lineTo(W, y0); c.stroke();
+  for (const [arr, col] of [[dr, 'rgba(154,163,178,.9)'], [hd, css('--L')]]) { c.strokeStyle = col; c.lineWidth = 1.5; c.beginPath(); for (let i = 0; i < T; i++) { const x = i / (T - 1) * W, y = H - 2 - (arr[i] - lo) / sp * (H - 4); i ? c.lineTo(x, y) : c.moveTo(x, y); } c.stroke(); }
+  c.strokeStyle = 'rgba(230,225,214,.7)'; c.beginPath(); const px = f / (T - 1) * W; c.moveTo(px, 0); c.lineTo(px, H); c.stroke();
+  c.fillStyle = css('--ink-2'); c.font = '11px IBM Plex Mono, monospace'; c.fillText(lo.toFixed(0) + '°', 4, H - 4); c.fillText(hi.toFixed(0) + '°', 4, 12);
+}
+if (D.drum) { $('motion').hidden = false; const _r = render; render = f => { _r(f); drawBeh(f); }; }
+render(0); requestAnimationFrame(tick);
+</script>
