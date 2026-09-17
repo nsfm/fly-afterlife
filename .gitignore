@@ -15,3 +15,5 @@ world/approach/
 *.prof
 results/**/*.npz
 world/*.log
+world/oracle/*.log
+world/oracle/*.npz
