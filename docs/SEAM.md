@@ -1065,6 +1065,24 @@ MBON-to-A 654 -> 652; B rewarded, MBON-to-B 776 -> 725 (-7%), MBON-to-A +10%. th
 co-transmitter bug and are withdrawn as numbers; the direction survives weakly. memory
 forms at the synapse; on the honest build it is not yet expressed at the output.
 
+## the song (18:40 PDT)
+
+**the hop works:** drive his P1 (156 pC1-type cells) at 50 Hz and pIP10, the song
+descending neuron, fires 142 spikes/s (71 per cell); at 150 Hz, 276. P1 -> pIP10 is 93
+edges, 1,796 synapses. so silence in the room is upstream of P1.
+
+**P1's sensory drive is net inhibitory under contact.** P1's largest inputs are mAL_m8
+(-3,241), mAL_m1 (-3,182), SMP702m, oviIN, SIP116m - the mAL gate. bristles + fly odour
+give P1 ~60 spikes/s over 156 cells; the contact-pheromone leg neurons exist
+(`receptorType` putative_ppk23, 269 cells; putative_ppk25, 257) and driving all of them
+gives P1 0 and mAL 104 - the brake. biology: ppk23 has F-cells (female pheromone -> P1)
+and M-cells (male pheromone -> mAL -> P1 off; Thistle et al. 2012); the annotation does
+not split them. vAB3 does not exist by that name here (the path runs through AN05B102).
+**an arousal hold on P1** (tonic drive, as the engine's mbon_hold) at 0.85 of threshold
+makes him sing alone (13 pIP10 spikes, no female) and contact then REDUCES P1 (1168 ->
+552). wrong twice; discarded. next: split ppk23 by wiring (two-hop reach to P1 vs to
+mAL) into F-like and M-like, and drive only the F-like on contact with her.
+
 ## choices, labelled
 
 1. **orientation** of our hex grid onto theirs. not in the data. calibrated by biology:
