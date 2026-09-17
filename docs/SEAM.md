@@ -1636,6 +1636,19 @@ convention is known for DNa02 and unknown for the population. flipping the therm
 sign would make him avoid heat by construction, so it is not done. **next:** a screen of
 descending types for a lateralised thermal response, and whether any of them is a turning
 neuron with a known sign; the thermal channel gets built from those or not at all.
+
+**the DN thermal screen (10:20 PDT; standing, 0.185 mV, 33 C on one antenna vs 25, two
+seeds, 3 s each; lateralised = the (L-R) change flips sign with the warm side in both
+seeds, |change| >= 2 spikes/s):** 10 descending types qualify, **all ipsilateral**: DNp06
+(warm-right change -33/s), DNp35 (-19), DNge054, DNg56, DNpe002, DNp31, DNge037, DNge041,
+DNbe001, DNge125. none is a neuron with a published turning sign (DNa02 and DNa01 are
+absent; DNp09 and MDN are absent). so a thermal steering channel cannot be built from the
+literature's signs, and the two-channel wheel's approach-or-nothing was reading ten
+unsigned neurons with DNa02's sign. **the model has its own answer to "which way does
+this neuron turn him":** the leg-MN asymmetry it evokes through the cord, the signal the
+touch reflex already steers by. if the leg-MN asymmetry carries the visual turn on the
+drum, it is the effector for everything, and the descending code's sign is decided by the
+wiring rather than by me. tested next: `--wheel legMN` on the drum.
 - **Shiu's constants, from the code not the paper:** rest/reset -52, threshold -45,
   tau_m 20 ms, tau_syn 5, refractory 2.2, delay 1.8, w_syn 0.275 (a free parameter),
   Poisson 150 Hz. our 150 Hz optic-lobe cap is Shiu's default, not a measurement.
