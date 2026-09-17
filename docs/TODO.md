@@ -64,8 +64,9 @@ loop is probably a bug (mechanosensation brief).
 - [x] **cooling cells** and **hot cells** as transducers (`CoolingCells`, `HotCells`, 09:49) with
       Budelli 2019's numbers; on in the room with `--thermo rest|field`.
 - [ ] **VP1m / VP1l label audit** before driving either (Marin 2020: VP1m humid, VP1l cool).
-- [~] **the warm corner** (12:56): DNge125 claim withdrawn (contaminated set); thermal DNs reach wing
-      MNs mostly, DNge037 the legs weakly; warmth bilateral at the legs. retest on a walking cord.
+- [ ] **the warm corner** (13:28): no avoidance on a walking cord either (2/3 warmer with the field).
+      thermal DNs reach wing MNs mostly; warmth is bilateral at the legs. parked: thermotaxis by walking
+      is not in this model at these constants. what warmth does do: drives the legs harder (kinesis).
 - [ ] **hygro**: dry/moist cells non-adapting, tens of Hz; a humidity field. Or42b ORNs are
       also humidity sensors (Li 2022).
 - [ ] **plumes**: intermittent (power-law whiffs/blanks, exponent -3/2), ORN rate from

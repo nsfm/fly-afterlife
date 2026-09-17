@@ -1943,6 +1943,25 @@ where in life it is a state. what it unlocks, run next: the drum on a walking co
 DNa02's nudge now show in the legs?), the warm corner on a walking cord, and the room with
 her.
 
+**on a walking cord (13:28 PDT):**
+
+*drum, 3 seeds, `--walk 100`:* DNa02 wheel +3.1 / -18.6, +15.7 / -10.0, +1.0 / -19.4: **3 of 3**
+(the command does not break vision). leg model as steering: +59.5 / +52.8, +32.8 / +59.6,
++22.5 / +40.7: **0 of 3**, a leftward 20-60 deg/s whatever the drum does. the lopsided DNp09
+drive dominates, and the model's per-cell baseline rectifies fluctuations (delta = max(c -
+base, 0)), so the stronger side always wins. as a wheel the leg model fails on this cord; as
+the source of his pace it is what walks him. **steering stays DNa02.** one specific fix to
+test: a signed delta.
+
+*warm corner, 3 seeds, walking, rest vs field:* time above 28 C 16.7 -> 14.8%, 4.8 -> 27.7%,
+5.2 -> 43.5%; mean temperature 26.28 -> 26.19, 25.63 -> 26.91, 25.83 -> 27.82; with the field
+he is on walls 40% of the time (rest 0-13%). **no avoidance; two of three warmer.** warmth on
+a walking cord drives the legs harder on both sides, and harder is not away.
+
+*the room with her, walking, 5 min, seed 3:* 77.8 m, wall 34%, three encounters, **269
+frames of contact with her**, his P1 4,560, hers 0. viewer next in the honest configuration
+(command on, DNa02 steering, legs for pace).
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
