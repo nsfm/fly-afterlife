@@ -1485,6 +1485,21 @@ the corrected brain walks (the old one, at 0.275 with the fixed rule, barely mov
 seed: standing 398 vs walking 492 per chunk is a small drive), runs at 40% of the old leg-MN
 output, and spends a third of the minute on walls at a pace that varies instead of sitting
 at a bound. this is the new baseline; three seeds x 2 min male-only next, then her.
+
+**male-only baseline, 0.185 mV, running steering and pace, 150 Hz bristle hold (09:12 PDT;
+seeds 10-12, 120 s):**
+
+| seed | pace (sd) | leg MN / chunk | DNa02 L / R | wall time | longest pinned | wall visits | touch frames | distance | his P1 |
+|---|---|---|---|---|---|---|---|---|---|
+| 10 | 0.20 (0.13) | 324 | 1.78 / 1.01 | 45% | 21.8 s | 6 | 3,567 | 14.7 m | 2,640 |
+| 11 | 0.19 (0.13) | 113 | 1.54 / 1.30 | 15% | 6.8 s | 8 | 1,031 | 20.0 m | 1,450 |
+| 12 | 0.19 (0.14) | 224 | 1.76 / 1.02 | 44% | 11.4 s | 7 | 2,441 | 16.4 m | 1,870 |
+
+the corrected brain walks 15-20 m in two minutes at a pace that varies; wall time is high
+(15-45%) with long pinned stretches (7-22 s): with the running pace he arrives at walls
+faster and the touch reflex, calibrated at the 150 Hz hold, is what it is. this is the
+baseline the bristle kernel is scored against: same seeds, same everything, `--bristle
+adapting`.
 - **Shiu's constants, from the code not the paper:** rest/reset -52, threshold -45,
   tau_m 20 ms, tau_syn 5, refractory 2.2, delay 1.8, w_syn 0.275 (a free parameter),
   Poisson 150 Hz. our 150 Hz optic-lobe cap is Shiu's default, not a measurement.
