@@ -1,14 +1,16 @@
 [project]
 name = "fly-afterlife"
 version = "0.1.0"
-description = "Add your description here"
+description = "a whole-fly connectome run as a spiking brain, with a real optic lobe seamed onto its own T4/T5 cells, and a room to walk in"
 authors = [
-    { name = "Nate Dube", email = "nate@ndube.com" }
+    { name = "nyx", email = "nyx@ndube.com" },
+    { name = "Nate Dube", email = "nate@ndube.com" },
 ]
 requires-python = ">=3.12"
 dependencies = [
     "flyvis>=1.2.0",
     "matplotlib>=3.11.2",
+    "numba>=0.67",
     "numpy>=2.5.3",
     "pandas>=3.0.5",
     "pyarrow>=25.0.1",

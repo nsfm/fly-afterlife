@@ -545,6 +545,7 @@ source = { editable = "." }
 dependencies = [
     { name = "flyvis" },
     { name = "matplotlib" },
+    { name = "numba" },
     { name = "numpy" },
     { name = "pandas" },
     { name = "pyarrow" },
@@ -555,6 +556,7 @@ dependencies = [
 requires-dist = [
     { name = "flyvis", specifier = ">=1.2.0" },
     { name = "matplotlib", specifier = ">=3.11.2" },
+    { name = "numba", specifier = ">=0.67" },
     { name = "numpy", specifier = ">=2.5.3" },
     { name = "pandas", specifier = ">=3.0.5" },
     { name = "pyarrow", specifier = ">=25.0.1" },
