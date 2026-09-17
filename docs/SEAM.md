@@ -1083,6 +1083,22 @@ makes him sing alone (13 pIP10 spikes, no female) and contact then REDUCES P1 (1
 552). wrong twice; discarded. next: split ppk23 by wiring (two-hop reach to P1 vs to
 mAL) into F-like and M-like, and drive only the F-like on contact with her.
 
+**F/M split by wiring (18:45 PDT, `world/ppk23_split.npz`).** two-hop signed reach from
+each putative ppk23 cell to P1 and to mAL. the bottom 40% by (P1 - mAL) reach drive
+mAL hard (658) and P1 not at all: M-like. the top 40% leave mAL alone (10) and, with
+bristles and fly odour, give P1 147 spikes/s - twice what all 269 together give (66),
+because the M-like brake is out of the sum. **still two orders of magnitude short of
+the ~7,000 P1 spikes/s that make pIP10 sing.** the song is not reachable from his
+senses in this model; the gate is real and the drive is small. left there.
+
+**pace, from the wiring:** leg motor neurons (699 in his cord) fire ~4,000 spikes/s
+standing, ~6,400 with an odour, ~25,000 when touched; DNp09 (forward walking, 2 cells)
+and MDN (backward, 4) are both present and each raises leg output ~70% when driven.
+in `pair.py`: his speed = 0.45 m/s x clip((legMN - standing) / (4 x standing), 0, 1) +
+0.05; reversed at half speed when MDN outfires DNp09. she has no cord: her descending
+total stands in, labelled. his contact with HER (not with a pillar) now also drives
+the F-like ppk23 neurons.
+
 ## choices, labelled
 
 1. **orientation** of our hex grid onto theirs. not in the data. calibrated by biology:
