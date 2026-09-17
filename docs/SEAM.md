@@ -1668,6 +1668,35 @@ freeing him from walls is suspect (the onset burst kicking, as suspected at 09:2
 leg wheel is the effector that lets the wiring decide the sign of every input**, at the
 price of a weak visual gain; tested next in the warm room at both signs and both arms,
 and the touch reflex's sign re-tested on its own.
+
+## thermotaxis (10:45 PDT): the warm corner with the leg-MN wheel
+
+male-only, 120 s, `--wheel legMN`, the sign set by the drum (gain +0.3: more right-leg spikes
+= right turn), rest (cells at 25 C rates, no field) vs field, three seeds; and the opposite
+sign as the control that the sign matters:
+
+| sign | seed | arm | mean T felt | time T > 28 | time T > 30 | closest | mean distance | wall |
+|---|---|---|---|---|---|---|---|---|
+| drum's (+0.3) | 10 | rest | 27.25 | 33.8% | 21.0% | 0.00 | 1.83 | 16% |
+| | 10 | field | **25.09** | **0.0%** | **0.0%** | **1.76** | **3.04** | 16% |
+| | 11 | rest | 26.94 | 30.2% | 18.3% | 0.20 | 1.96 | 19% |
+| | 11 | field | **25.78** | **9.7%** | 3.9% | 0.18 | 2.48 | 25% |
+| | 12 | rest | 26.48 | 20.4% | 15.1% | 0.08 | 2.32 | 11% |
+| | 12 | field | 26.33 | 18.1% | 10.9% | 0.12 | 2.19 | 9% |
+| opposite (-0.3) | 10 | rest / field | 27.51 / 26.92 | 38.2 / 26.6% | | | 1.95 / 2.13 | 36 / 55% |
+| | 11 | rest / field | 25.89 / **27.29** | 12.3 / **31.3%** | | | 2.99 / 1.95 | 32 / 58% |
+| | 12 | rest / field | 27.30 / 26.97 | 34.9 / 27.5% | | | 1.99 / 2.14 | 31 / 42% |
+
+**he avoids the heat: 3 of 3 seeds cooler with the field than without**, one of them (seed
+10) never entering the warm zone at all. the opposite sign is mixed (one seed warmer with
+the field) and spends half its time on walls. what makes this a result and not a fit: the
+sign of the leg wheel was fixed by the drum, a different behaviour, before this test ran;
+the thermal cells' rates are Budelli 2019's; the control arm has the same cells firing at
+the same rest rates; and no thermal steering channel exists: the same effector that turns
+him to a moving drum turns him away from a warm antenna, because the descending code
+for both lands on the leg motor neurons with one sign. n = 3, so a pre-registered ten-seed
+replication follows in the same chain as the touch reflex's sign test. this is the first
+behaviour in the record that arrived from a sense the physiology briefs added.
 - **Shiu's constants, from the code not the paper:** rest/reset -52, threshold -45,
   tau_m 20 ms, tau_syn 5, refractory 2.2, delay 1.8, w_syn 0.275 (a free parameter),
   Poisson 150 Hz. our 150 Hz optic-lobe cap is Shiu's default, not a measurement.

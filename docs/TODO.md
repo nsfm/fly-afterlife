@@ -63,10 +63,8 @@ loop is probably a bug (mechanosensation brief).
 - [x] **cooling cells** and **hot cells** as transducers (`CoolingCells`, `HotCells`, 09:49) with
       Budelli 2019's numbers; on in the room with `--thermo rest|field`.
 - [ ] **VP1m / VP1l label audit** before driving either (Marin 2020: VP1m humid, VP1l cool).
-- [~] **the warm corner**: built (09:49). no thermotaxis with the DNa02 wheel (silent to T); the DN
-      population is lateralised ipsilaterally to warmth; a two-channel wheel gives approach-or-nothing
-      because the population's turning sign is unknown (10:11). next: screen DN types for a lateralised
-      thermal response and a known turning sign; build the channel from those or not at all.
+- [x] **the warm corner** (10:45): avoidance 3/3 with the leg-MN wheel whose sign the drum set; no
+      thermal channel. ten-seed replication in flight; reflex-sign test in flight.
 - [ ] **hygro**: dry/moist cells non-adapting, tens of Hz; a humidity field. Or42b ORNs are
       also humidity sensors (Li 2022).
 - [ ] **plumes**: intermittent (power-law whiffs/blanks, exponent -3/2), ORN rate from
