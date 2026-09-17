@@ -14,9 +14,10 @@ import numpy as np
 RHO = 4.5; N_RAYS = 24
 
 class Scene:
-    def __init__(self, sky=0.85, ground=0.35, horizon_soft=0.15, spheres=(), drum=None):
+    def __init__(self, sky=0.85, ground=0.35, horizon_soft=0.15, spheres=(), drum=None, pillars=()):
         self.sky, self.ground, self.soft = sky, ground, horizon_soft
         self.spheres = list(spheres)             # (centre xyz, radius, albedo)
+        self.pillars = list(pillars)             # (x, y, radius, albedo): vertical cylinders, floor to sky
         self.drum = drum                         # None or dict(period_deg, phase_deg, lo, hi, half_height_deg): a striped cylinder at infinity
     def shade(self, origin, d):
         """d: (N,3) unit rays from origin. returns (N,) luminance."""
@@ -27,6 +28,10 @@ class Scene:
             band = np.abs(elv) < dr["half_height_deg"]; stripe = ((az - dr["phase_deg"]) // (dr["period_deg"] / 2)) % 2 == 0
             lum = np.where(band, np.where(stripe, dr["lo"], dr["hi"]), lum).astype(np.float32)
         tmin = np.full(len(d), np.inf)
+        for px, py, r, alb in self.pillars:            # ray-cylinder in the xy plane
+            ox, oy = origin[0] - px, origin[1] - py; a = d[:, 0] ** 2 + d[:, 1] ** 2; bq = ox * d[:, 0] + oy * d[:, 1]; cq = ox * ox + oy * oy - r * r
+            disc = bq * bq - a * cq; hit = (disc > 0) & (a > 1e-9); t = (-bq - np.sqrt(np.where(hit, disc, 0))) / np.maximum(a, 1e-9)
+            ok = hit & (t > 0) & (t < tmin); tmin[ok] = t[ok]; lum[ok] = alb
         for c, r, alb in self.spheres:
             oc = origin - c; b = d @ oc; disc = b * b - (oc @ oc - r * r)
             hit = disc > 0; t = -b - np.sqrt(np.where(hit, disc, 0))

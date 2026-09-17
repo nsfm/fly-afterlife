@@ -25,7 +25,7 @@ ap = argparse.ArgumentParser(); ap.add_argument("--out", required=True); ap.add_
 ap.add_argument("--model", default="flow/0000/000"); ap.add_argument("--no-female", action="store_true"); ap.add_argument("--gain", type=float, default=3.0); ap.add_argument("--drive-gain", type=float, default=150.0)
 args = ap.parse_args(); fps, CH = 100, 10; rng = np.random.default_rng(args.seed)
 g = np.load("seam/eye_geom.npz"); eye = Eye("seam/eye_geom.npz")
-posts = np.array([(0.0, 1.6, 0.2, 0.05), (0.0, -1.6, 0.2, 0.05)], np.float32)
+posts = np.array([(0.0, 1.6, 0.35, 0.08), (0.0, -1.6, 0.35, 0.08)], np.float32)   # pillars: floor-to-sky cylinders, bark-dark
 # ---- flyvis (his eye)
 import flyvis
 from flyvis import NetworkView
@@ -67,7 +67,7 @@ M._driven_idx = np.flatnonzero(M.driven); M.reset(); SPF = int(round(1000 / fps 
 # ---- her brain
 RF = {}
 if not args.no_female:
-    F = FlyBrain("brain_female2.npz", seed=args.seed + 100, balance_hemispheres=False, params=Params(mv_per_synapse=0.5)); fty = F.type.astype(str); fns = F.side.astype(str); fcls = F.cls.astype(str)
+    F = FlyBrain("brain_female2.npz", seed=args.seed + 100, balance_hemispheres=False, params=Params(mv_per_synapse=0.45)); fty = F.type.astype(str); fns = F.side.astype(str); fcls = F.cls.astype(str)
     RF = {}
     for name, sel in [("DNa02", fty == "DNa02"), ("pC1", np.char.startswith(fty, "pC1")), ("vpoEN", fty == "vpoEN"), ("ORN_DA1", fty == "ORN_DA1"), ("JO", np.char.startswith(fty, "JO")), ("DN", F.sc == "descending_neuron")]:
         for s in "LR": RF[f"{name}_{s}"] = np.flatnonzero(sel & (fns == s))
@@ -82,9 +82,9 @@ print(f"his readouts: pC1 {len(RM['pC1'])}, pIP10 {len(RM['pIP10'])}, mAL {len(R
 # ---- world state
 mx, my, mh = -1.2, 0.0, 0.0; fx, fy, fh = 1.2, 0.3, 180.0; LAM = 0.8; BODY = 0.05
 def scene_now():
-    sph = [(np.array([x, y, 0.5]), r, a) for x, y, r, a in posts]
-    if not args.no_female: sph.append((np.array([fx, fy, 0.5]), 0.15, 0.1))
-    return Scene(spheres=sph)
+    sph = []
+    if not args.no_female: sph.append((np.array([fx, fy, 0.5]), 0.12, 0.5))   # her: the larger sex, fly-coloured (a mid-tone against bark and sky)
+    return Scene(sky=0.8, ground=0.4, spheres=sph, pillars=[(x, y, r, a) for x, y, r, a in posts])
 def antennae(x, y, h):
     hr = np.radians(h); fwd = np.array([np.cos(hr), np.sin(hr)]); left = np.array([-np.sin(hr), np.cos(hr)]); p = np.array([x, y])
     return p + 0.1 * fwd + 0.15 * left, p + 0.1 * fwd - 0.15 * left
@@ -132,7 +132,8 @@ for c in range(T // CH):
         if not args.no_female:
             dd = np.hypot(mx - fx, my - fy)
             if dd < 2 * BODY + 0.1:
-                contacts += 1; brg = (np.degrees(np.arctan2(fy - my, fx - mx)) - mh + 180) % 360 - 180; touched_m[f] = "L" if brg > 8 else ("R" if brg < -8 else "B")
+                contacts += 1; push = (2 * BODY + 0.1 - dd) / 2; ux_, uy_ = (mx - fx) / max(dd, 1e-6), (my - fy) / max(dd, 1e-6); mx += ux_ * push; my += uy_ * push; fx -= ux_ * push; fy -= uy_ * push   # solid bodies
+                brg = (np.degrees(np.arctan2(fy - my, fx - mx)) - mh + 180) % 360 - 180; touched_m[f] = "L" if brg > 8 else ("R" if brg < -8 else "B")
                 brg2 = (np.degrees(np.arctan2(my - fy, mx - fx)) - fh + 180) % 360 - 180; touched_f[f] = "L" if brg2 > 8 else ("R" if brg2 < -8 else "B")
         TOUCH.append(touched_m[f])
     a = flyvis_chunk(lum); cntM = {k: 0 for k in RM}; cntF = {k: 0 for k in RF} if not args.no_female else {}
@@ -175,7 +176,7 @@ for c in range(T // CH):
         print(f"t={(c+1)/10:5.1f}s  him ({mx:+.2f},{my:+.2f}) {mh:+6.0f}  her ({fx:+.2f},{fy:+.2f})  dist {dist:4.2f}  pC1 {sum(log['m_pC1'][-50:])} pIP10 {sum(log['m_pIP10'][-50:])} LC10a {sum(log['m_LC10a'][-50:])} | her pC1 {sum(log['f_pC1'][-50:]) if not args.no_female else '-'} vpoEN {sum(log['f_vpoEN'][-50:]) if not args.no_female else '-'} | contacts {contacts} songs {sum(log['song'][-50:])}  ({time.time()-t0:.0f}s)", flush=True)
     LUM.append((np.clip(lum, 0, 1) * 255).astype(np.uint8))
 Tn = len(POSE)
-np.savez_compressed(args.out, fps=fps, chunk=CH, lum=np.concatenate(LUM), pose=np.array(POSE, np.float32), pose2=np.array(POSE2, np.float32), objects=posts, fov=150.0, contacts=contacts,
+np.savez_compressed(args.out, fps=fps, chunk=CH, lum=np.concatenate(LUM), pose=np.array(POSE, np.float32), pose2=np.array(POSE2, np.float32), objects=posts, pillars=True, sky=0.8, ground=0.4, her_r=0.12, her_albedo=0.5, fov=150.0, contacts=contacts,
                     az=np.degrees(np.arctan2(eye.dir0[:, 1], eye.dir0[:, 0])).astype(np.float32), el=np.degrees(np.arcsin(np.clip(eye.dir0[:, 2], -1, 1))).astype(np.float32), side=eye.side,
                     touch=np.array([{"L": 1, "R": 2, "B": 3}.get(t_, 0) for t_ in TOUCH], np.int8), heading_chunk=np.array([p[2] for p in POSE[::CH]]),
                     **{f"n_{k}": np.repeat(np.array(v, np.int16), CH)[:Tn] for k, v in log.items() if k not in ("dist", "song")}, dist=np.repeat(np.array(log["dist"], np.float32), CH)[:Tn], song=np.repeat(np.array(log["song"], np.int8), CH)[:Tn])

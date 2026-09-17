@@ -1045,6 +1045,26 @@ visually driven turns and feeds the turn back positively (the antenna on the out
 the turn moves into the wing wash). he walks, so not now; the flight motor neurons (DLMn,
 DVMn) are in his nerve cord, and that loop is the first thing to wire when he flies.
 
+**the room, take two (18:21 PDT).** nate, from the render: the posts were fly-sized
+spheres, so a post and the female were the same object to him, and he orbited the post;
+the flies passed through each other. fixed: posts are pillars (floor-to-sky cylinders,
+r 0.35, bark-dark 0.08; `omma.Scene(pillars=...)`, and the viewer's own raytracer draws
+them too), the flies are solid (pushed apart on contact), her body is the larger sex's
+(r 0.12 to his 0.05 collision body) and fly-toned (0.5) against a 0.4 ground and 0.8 sky.
+her W_syn is 0.45 on the fixed build (6.0% KC sparsity). with pillars he stops bumping
+things and his P1 stays at 0-1 spikes per 5 s the whole run (it was touch after all);
+they came within 0.47 m and touched for 36 frames; pIP10 1 spike; her pC1 2. **no
+courtship behaviour yet:** his P1 needs contact-pheromone input (the ppk23 leg neurons
+are not typed by name in either build), his song neuron does not follow P1 in this LIF,
+and her receptivity neuron vpoEN is silent to everything tried.
+
+**her conditioning, redone on the fixed build (W 0.45):** weights depress as before
+(reward A: 1,388 synapses < 90%; unpaired: 164) but the output barely moves: A rewarded,
+MBON-to-A 654 -> 652; B rewarded, MBON-to-B 776 -> 725 (-7%), MBON-to-A +10%. the
+16-26% drops reported above were measured with 27,547 of her neurons silenced by the
+co-transmitter bug and are withdrawn as numbers; the direction survives weakly. memory
+forms at the synapse; on the honest build it is not yet expressed at the output.
+
 ## choices, labelled
 
 1. **orientation** of our hex grid onto theirs. not in the data. calibrated by biology:
