@@ -1999,7 +1999,7 @@ when he reaches her (`--stop-at-her`: BRK driven at 50 Hz while in contact with 
 labelled; in life the stop is part of the courtship sequence, not a reflex), scored by
 contact time against the 264 frames of v6.
 
-**stop-at-her (14:14 PDT; seed 3, 300 s, brake at 50 Hz while in contact with her):** contact
+**stop-at-her (13:59 PDT; seed 3, 300 s, brake at 50 Hz while in contact with her):** contact
 frames 132 in 3 bouts (longest 0.8 s) against 264 in 3 bouts (1.3 s) without; five
 encounters both; 78.7 m both; his P1 3,090 vs 2,340. **nothing.** the reason is mechanical
 and instructive: contact lasts a few frames because the bodies are pushed apart on
