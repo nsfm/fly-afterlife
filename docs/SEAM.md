@@ -1108,6 +1108,21 @@ walked him backward for a whole run. no reverse rule; MDN's tonic activity is no
 a model property (in life it is silent unless triggered). she has no cord: constant
 0.15 m/s, labelled.
 
+## the transplant learns from flyvis (19:24 PDT, `seam/distill.py`)
+
+student-teacher: the transplant (flyvis dynamics on the MaleCNS per-cell optic lobe,
+left eye: 40,180 cells incl. virtual R1-R8 and CT1 compartments, 933k edges) is trained
+to reproduce flyvis model 000's responses, cell type by cell type, column by column,
+on synthetic clips (moving bars, gratings, expanding discs, drifting dots; 40 frames at
+100 fps) rendered on the flyvis lattice and mapped to our columns by the derived map.
+learnable: 604 pair strengths, 65 time constants, 65 biases, 65 per-type input scales
+(all log-parametrised where positive). loss: MSE of rest-subtracted activity over 49
+shared types. adaptation (300 ms) on. gradients flow through an edge-list gather-
+scatter (the sparse product's backward wanted 6 GB). 3 s per clip on the 1650, 0.8 GB.
+**400 steps: loss 0.12 -> 0.009.** the physiology moved moderately: strengths median
+0.80x flyvis (IQR 0.59-1.01), time constants 0.84x, input scales 0.82x. nothing about
+looms is in the objective; the loom is the exam.
+
 ## choices, labelled
 
 1. **orientation** of our hex grid onto theirs. not in the data. calibrated by biology:
