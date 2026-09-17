@@ -908,6 +908,17 @@ her per-connection totals) is a labelled, principled experiment for the drift.
 to come from lamina cell positions or the FlyWire optic-lobe column tables. smell and
 touch loops need no eye and can run on her now.
 
+**synaptic strength (17:20 PDT).** per central-brain cell the male carries 1,009 synapses
+of input on average, the female 435 (ratio 0.43); mean synapses per edge 14.4 vs 11.7.
+the male at the female's per-cell level (W_syn 0.275 -> 0.119) goes silent on the drum:
+DNa02 0 / 60 spikes over 12 s, no following, the efference calibration reads zero. so
+"match her totals" is not the normalization - at her level the T4/T5 drive of the seam
+(150 Hz) no longer reaches the steering neuron. the honest statement is only that his
+synaptic density is ~2x hers and the LIF's single strength constant was fit on hers; a
+strength between the two would be tuning and was not run. **her sugar:** with only two of
+the four sweet types matching his names (71 of 408 gustatory cells driven) seven of her
+head motor neurons go from 0 to 4-44 Hz (CB0701 44 Hz). her proboscis circuit is live.
+
 ## choices, labelled
 
 1. **orientation** of our hex grid onto theirs. not in the data. calibrated by biology:
