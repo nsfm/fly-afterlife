@@ -33,7 +33,7 @@ for cl in b.SENSORY_CLASSES: b.driven[b.cls == cl] = True
 for t, (idx, _) in groups.items(): b.driven[idx] = True
 b._driven_idx = np.flatnonzero(b.driven); b.reset(); b.drive_hz[:] = 0; b.g[:] = 0; b.refrac[:] = 0; SPF = int(round(1000 / fps / b.p.dt))
 RM = {}
-for name, sel in [("DNa02", ty == "DNa02"), ("HS", np.char.startswith(ty, "HS")), ("legMN", b.sc == "vnc_motor"), ("DN", b.sc == "descending_neuron"), ("pIP10", ty == "pIP10")]:
+for name, sel in [("DNa02", ty == "DNa02"), ("HS", np.char.startswith(ty, "HS")), ("legMN", np.isin(np.arange(b.N), np.load("world/legmn.npz")["leg"])), ("DN", b.sc == "descending_neuron"), ("pIP10", ty == "pIP10")]:
     for s in "LR": RM[f"{name}_{s}"] = np.flatnonzero(sel & (ns == s))
     RM[name] = np.flatnonzero(sel)
 REG = Registry()

@@ -38,17 +38,19 @@ def annotations(path: str = ANNOT) -> pd.DataFrame:
 
 def select(brain, cls: str | None = None, type_prefix: str | None = None, side: str | None = None,
            entry_nerve: str | list[str] | None = None, root_side: str | None = None,
-           receptor_type: str | None = None, body_ids=None) -> np.ndarray:
+           receptor_type: str | None = None, body_ids=None, subclass: str | list[str] | None = None) -> np.ndarray:
     """indices into `brain` of the cells matching every given filter. class/type/side come
-    from the brain's own arrays (fast path); entryNerve/rootSide/receptorType come from the
-    annotation table by bodyId. returns a sorted int64 index array."""
+    from the brain's own arrays (fast path); entryNerve/rootSide/receptorType/subclass come from the
+    annotation table by bodyId (MN subclass: fl/ml/hl = front/middle/hind leg, ad abdominal, wm wing, hm haltere, nm neck; Marin 2024). returns a sorted int64 index array."""
     m = np.ones(brain.N, bool)
     if cls is not None: m &= brain.cls.astype(str) == cls
     if type_prefix is not None: m &= np.char.startswith(brain.type.astype(str), type_prefix)
     if side is not None: m &= brain.side.astype(str) == side
     if body_ids is not None: m &= np.isin(brain.bodyId, np.asarray(body_ids))
-    if entry_nerve is not None or root_side is not None or receptor_type is not None:
+    if entry_nerve is not None or root_side is not None or receptor_type is not None or subclass is not None:
         a = annotations(); am = np.ones(len(a), bool)
+        if subclass is not None:
+            subs = [subclass] if isinstance(subclass, str) else list(subclass); am &= a["subclass"].astype(str).isin(subs).to_numpy()
         if entry_nerve is not None:
             nerves = [entry_nerve] if isinstance(entry_nerve, str) else list(entry_nerve)
             am &= a["entryNerve"].astype(str).isin(nerves).to_numpy()
