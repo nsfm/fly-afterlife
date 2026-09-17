@@ -44,9 +44,9 @@ loop is probably a bug (mechanosensation brief).
       0.275. re-measure every baseline. reconcile her 0.45 KC-sparsity calibration with the
       22:55 odour test (4.7% at 0.275): different odour protocol, find which was right.
       re-examine MDN's tonic activity (present at 0.275, gone at 0.185) and the reverse-walk rule.
-- [ ] **steering baseline**: running per-side DNa02 baseline (~2 s) before differencing
-      (Rayshubskiy: zero difference = zero turn). the still/plateau offsets tried were fixed,
-      not running. re-test the drum both ways across the ensemble.
+- [x] **steering baseline**: `RunningBaselineSteering` (01:55). model 000: 3/3 seeds (fixed 2/3);
+      ensemble 3/10 (fixed 2/10), biases from +-100 to +-20, and two models revealed as anti-followers.
+      adopted as the estimator; the wheel's per-model sign is a seam question, not a steering one.
 - [ ] **DNa02 gain**: 5 deg/s per Hz (bracketed 3-10; ours is 3).
 - [ ] **bristles** (mechano brief): 200 Hz onset burst, tau ~30 ms, 10-25 Hz plateau,
       direction-gated (about half a contact patch fires), seconds-scale fatigue. by body part.

@@ -1435,6 +1435,33 @@ baseline adapts to the moving-phase rate, so when the drum stops the difference 
 after-effect of the estimator (waterfall illusions are real biology; this one is 2 s of
 arithmetic and should be called what it is). the test that matters is the ensemble, where
 fixed was 2-3 of 10; running now.
+
+**the ensemble (01:55 PDT; 10 flyvis models, seed 0, heading rate deg/s in the +30 / -30
+phases):**
+
+| model | fixed offset | both | running baseline | both |
+|---|---|---|---|---|
+| 000 | +11.9 / -26.8 | yes | +8.7 / -14.0 | yes |
+| 001 | -40.6 / -30.9 | no | -18.4 / +0.4 | no |
+| 002 | +33.3 / +15.0 | no | +7.1 / +3.9 | no |
+| 003 | -4.9 / -16.2 | no | +7.2 / -11.6 | yes |
+| 004 | -91.6 / -29.5 | no | -16.4 / +13.8 | no (anti) |
+| 005 | -103.2 / -107.6 | no | -20.8 / +18.5 | no (anti) |
+| 006 | -13.4 / -13.5 | no | -2.3 / -1.3 | no |
+| 007 | -8.2 / -28.7 | no | -4.8 / -19.8 | no |
+| 008 | +2.8 / -10.9 | yes | +11.6 / -12.1 | yes |
+| 009 | -0.2 / -8.8 | no | +4.0 / +0.9 | no |
+
+**fixed 2/10, running 3/10.** what the running baseline does: it removes the lean (biases
+of -100 deg/s become +-20) and so makes the wheel's sign readable per model; what it
+reveals is that two models (004, 005) follow the drum *backwards* in both phases, which
+the fixed offset had buried under the bias, and four are near zero. so the running baseline
+is the right estimator and not a fix: the one-neuron DNa02 readout's sign is not consistent
+across flyvis models on this seam, as the 09-16 ensemble section already said from the
+other direction (HS robust 8/10, DNa02 not). the steering rule stays running-baseline from
+here (it is what the physiology says and it does not hide anything); the wheel's
+model-dependence goes back on the list as a seam question (direction selectivity per
+model), not a steering one.
 - **Shiu's constants, from the code not the paper:** rest/reset -52, threshold -45,
   tau_m 20 ms, tau_syn 5, refractory 2.2, delay 1.8, w_syn 0.275 (a free parameter),
   Poisson 150 Hz. our 150 Hz optic-lobe cap is Shiu's default, not a measurement.
