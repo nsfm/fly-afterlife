@@ -1462,6 +1462,29 @@ other direction (HS robust 8/10, DNa02 not). the steering rule stays running-bas
 here (it is what the physiology says and it does not hide anything); the wheel's
 model-dependence goes back on the list as a seam question (direction selectivity per
 model), not a steering one.
+
+## morning, 2026-09-17: the pace readout, then the corrected brain (08:58 PDT)
+
+**`RunningPace`:** v = 0.05 + 0.45 x clip(legMN / (2 x running mean legMN), 0, 1), mean
+updated after use (tau 20 chunks). the same estimator the steering now uses: his own recent
+history is the reference, so it works at any synapse constant. labelled; the physiology item
+(MN class weights, Azevedo 2020) stays open. `pair.py --steer running --pace running`.
+
+**male-only minute, seed 3, old vs corrected:**
+
+| | 0.275 mV, fixed rules | 0.185 mV, running rules |
+|---|---|---|
+| pace mean (sd) | 0.08 (0.03), at minimum 6% of the time... | 0.20 (0.13) |
+| leg MN / chunk | 492 | 193 |
+| DNa02 L / R per chunk | 3.92 / 4.03 | 2.14 / 0.63 |
+| wall time | 0% | 35% |
+| distance | 4.7 m | 9.0 m |
+| his P1 (touch-driven) | 0 | 660 |
+
+the corrected brain walks (the old one, at 0.275 with the fixed rule, barely moved in this
+seed: standing 398 vs walking 492 per chunk is a small drive), runs at 40% of the old leg-MN
+output, and spends a third of the minute on walls at a pace that varies instead of sitting
+at a bound. this is the new baseline; three seeds x 2 min male-only next, then her.
 - **Shiu's constants, from the code not the paper:** rest/reset -52, threshold -45,
   tau_m 20 ms, tau_syn 5, refractory 2.2, delay 1.8, w_syn 0.275 (a free parameter),
   Poisson 150 Hz. our 150 Hz optic-lobe cap is Shiu's default, not a measurement.

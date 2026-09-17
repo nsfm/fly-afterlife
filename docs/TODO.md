@@ -40,8 +40,8 @@ loop is probably a bug (mechanosensation brief).
 
 ## 2. physiology-driven changes, one per run, in this order
 
-- [ ] **synapse constants** (vision brief): male 0.185 (0.275 / 1.49, Plaza 2025), female
-      0.275. re-measure every baseline. reconcile her 0.45 KC-sparsity calibration with the
+- [~] **synapse constants** (vision brief): male 0.185, female 0.275; `RunningPace` fixes the
+      degenerate pace (08:58); male-only baseline in progress; then her. re-measure every baseline. reconcile her 0.45 KC-sparsity calibration with the
       22:55 odour test (4.7% at 0.275): different odour protocol, find which was right.
       re-examine MDN's tonic activity (present at 0.275, gone at 0.185) and the reverse-walk rule.
 - [x] **steering baseline**: `RunningBaselineSteering` (01:55). model 000: 3/3 seeds (fixed 2/3);

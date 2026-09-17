@@ -79,6 +79,28 @@ class Pace:
 
 
 @dataclass
+class RunningPace:
+    """his speed from leg-MN output against its own running mean: v = v_min + v_range x clip(count / (k x mean), 0, 1),
+    mean updated after use (tau chunks). the fixed rule referenced a standing rate the corrected brain does not have
+    (0 at 0.185 mV), so it saturated; this one is the same estimator the steering now uses: the fly's recent history
+    is the reference. k = 2: his mean output is half speed, twice it is full. no class weighting yet (Azevedo 2020:
+    slow MNs tonic ~30 Hz, force per spike 0.1 / 1 / 10 uN by class); the readout still counts every leg MN alike."""
+    k: float = 2.0
+    tau: float = 20.0
+    v_min: float = 0.05
+    v_range: float = 0.45
+    mean: float | None = None
+    source: str = "2026-09-17 morning; estimator, labelled; MN class weights are the physiology item"
+
+    def step(self, cnt: dict) -> float:
+        c = float(cnt["legMN"])
+        if self.mean is None: self.mean = max(c, 1.0)
+        v = self.v_range * float(np.clip(c / max(self.k * self.mean, 1.0), 0, 1)) + self.v_min
+        self.mean += (c - self.mean) / self.tau
+        return v
+
+
+@dataclass
 class HerSteering:
     """her yaw per chunk: DNa02 left-minus-right x 3, clip 12, plus N(0, 1.5) heading noise; on contact, turn away
     from the touched side (labelled stand-in for the leg reflex she has no cord for). consumes the episode rng."""
