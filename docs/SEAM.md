@@ -1916,6 +1916,12 @@ travel, reads it as forward; a stance/swing phase model is what would tell them 
 life the command is state-dependent), the leg model as effector with its running baseline
 absorbing the constant asymmetry, sight and touch on top.
 
+**the leg model as effector, no walking command (12:50 PDT; male-only, 120 s, seeds 10-12):**
+pace 0.09 / 0.07 / 0.06, leg MN 8 / 4 / 1 per chunk, 7.4 / 6.7 / 7.0 m, wall 15 / 9 / 2%:
+indistinguishable from the wheel on the same set (0.10 / 0.09 / 0.08; 6.5-7.3 m). expected:
+a readout cannot matter until the cord produces something to read. the walking command
+runs next.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
