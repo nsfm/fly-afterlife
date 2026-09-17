@@ -1148,6 +1148,46 @@ room of mid-grey wall is a calmer scene than open sky. that is a property of the
 readout, recorded, not tuned away. the 5-minute room is being re-run under these rules
 (`world/pair_long2.npz`). viewer: `world/viewer_walls.html` (local).
 
+**the room is not repeatable, and why (20:25 PDT).** two runs of the same seed diverge in
+the first chunk, in his leg-MN count, before he has moved. rendering is identical for
+those frames and the LIF step is deterministic (the compiled step matches the numpy
+step spike-for-spike from the same seed, 1,000/1,000 on both brains), so it is flyvis:
+the same 10 frames through `net.simulate` three times give three answers differing at
+1.4e-6 (GPU scatter order), which is enough to flip a Poisson draw in the T4/T5 drive,
+and the two brains then take their own paths. so every "N seeds" in this record was N
+seeds plus GPU chaos - fine for behaviour claims, which are statistical, and no good for
+exact regression checks. `torch.use_deterministic_algorithms(True)` fixes it (three
+calls identical) at 72 ms vs 8 ms per eye per chunk; `pair.py --deterministic` turns it
+on, off by default.
+
+**head-on (20:42 PDT).** the first 5-minute re-run (seed 3) sat pushing into a wall for
+273 of 300 s: head-on contact ("B", |bearing| < 8 deg) drove both bristle sides, the
+leg asymmetry was ~0, and yaw was +1.6 deg/chunk against a wall he could not pass. no
+wall is exactly head-on: the class is gone for walls and pillars, whichever side the
+bearing leans to owns the reflex. 60 s, seed 3: wall time 22%, longest pinned 11.2 s
+(was 92% / 273 s). 5-minute run relaunched under this rule.
+
+## performance (20:40 PDT, `world/fastlif.py`)
+
+nate asked what bounds the sim (CPU: the LIF step) and whether a spike on it was worth
+it ("drastically improves our guess-and-check solutioning"). done tonight, not tomorrow:
+
+- **the LIF step, compiled (numba).** the edge walk for propagation (was a ragged
+  gather + `np.add.at`) and the membrane update (decay, integrate, refractory, floor,
+  threshold) fused into one pass; delay line, APL, Poisson receptors, STD, plasticity
+  stay numpy. same arithmetic order and float32 constants: **spike-for-spike identical
+  to flysim.step, 1,000/1,000 steps on both brains** (17,225 and 130,179 spikes). 0.31
+  ms/step vs ~2 ms on an idle box (8 threads beat 16; the kernels are memory-bound).
+  `FastFlyBrain` is a drop-in subclass; `pair.py --numpy-engine` keeps the original.
+- **the ommatidium shader, compiled.** one ray per iteration, same primitives (sky,
+  ground, drum, walls, pillars, spheres): 0.26 ms vs 5 ms per 42k-ray render, max
+  difference 2e-8.
+- **readout counting** once per chunk from accumulated spike indices instead of 25
+  fancy-index sums per brain per step (exact by construction).
+- **room, 10 s, seed 2, idle box:** numpy engine 53 s -> compiled 21 s; a 60 s episode
+  191 s (bristle-driven stretches spike more). the flyvis chunk is now the largest
+  single piece (8 ms per eye per chunk, GPU) after the two brains' steps.
+
 ## the transplant learns from flyvis (19:24 PDT, `seam/distill.py`)
 
 student-teacher: the transplant (flyvis dynamics on the MaleCNS per-cell optic lobe,

@@ -22,7 +22,7 @@ os.environ.setdefault("FLYVIS_ROOT_DIR", "/home/nate/code/fly-afterlife/flyvis_d
 from omma import Eye, Scene
 from flysim import FlyBrain, Params
 from fastlif import FastFlyBrain   # numba step, verified spike-for-spike against flysim (world/fastlif.py)
-ap = argparse.ArgumentParser(); ap.add_argument("--out", required=True); ap.add_argument("--seconds", type=float, default=30.0); ap.add_argument("--seed", type=int, default=0); ap.add_argument("--numpy-engine", action="store_true", help="use the original numpy LIF step instead of the numba one (same spikes, slower)")
+ap = argparse.ArgumentParser(); ap.add_argument("--out", required=True); ap.add_argument("--seconds", type=float, default=30.0); ap.add_argument("--seed", type=int, default=0); ap.add_argument("--numpy-engine", action="store_true", help="use the original numpy LIF step instead of the numba one (same spikes, slower)"); ap.add_argument("--deterministic", action="store_true", help="torch deterministic algorithms for flyvis: same seed -> same run, bit for bit (default GPU kernels differ at 1e-6 per call, which flips Poisson draws); costs ~+130 ms per chunk")
 ap.add_argument("--model", default="flow/0000/000"); ap.add_argument("--no-female", action="store_true"); ap.add_argument("--gain", type=float, default=3.0); ap.add_argument("--drive-gain", type=float, default=150.0)
 args = ap.parse_args(); fps, CH = 100, 10; rng = np.random.default_rng(args.seed)
 g = np.load("seam/eye_geom.npz"); eye = Eye("seam/eye_geom.npz")
@@ -30,6 +30,7 @@ posts = np.array([(0.0, 1.6, 0.35, 0.08), (0.0, -1.6, 0.35, 0.08)], np.float32)
 WALLS = dict(half=2.0, height=1.0, albedo=0.6)   # the room: 4 x 4 m, walls 1 m tall, lighter than the floor, darker than the sky   # pillars: floor-to-sky cylinders, bark-dark
 # ---- flyvis (his eye)
 import flyvis
+if args.deterministic: os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8"); torch.use_deterministic_algorithms(True)
 from flyvis import NetworkView
 net = NetworkView(args.model).init_network(); net.eval()
 lattice = sorted({(u, v) for u in range(-15, 16) for v in range(max(-15, -15 - u), min(15, 15 - u) + 1)}); idx_of = {uv: i for i, uv in enumerate(lattice)}
@@ -156,7 +157,7 @@ for c in range(T // CH):
             if py_ < -W_: py_ = -W_; ny_ = 1.0
             if nx_ == 0.0 and ny_ == 0.0: return px_, py_, None
             brg_ = (np.degrees(np.arctan2(-ny_, -nx_)) - hh_ + 180) % 360 - 180      # bearing of the wall (opposite the inward normal)
-            return px_, py_, ("L" if brg_ > 8 else ("R" if brg_ < -8 else "B"))
+            return px_, py_, ("L" if brg_ >= 0 else "R")   # no head-on class for a wall: whichever side touched first owns the reflex (both sides driven = no asymmetry = pinned for minutes, seed 3)
         mx, my, wm = wall(mx, my, mh, BODY); fx, fy, wf = wall(fx, fy, fh, HER_R)
         if wm: touched_m[f] = wm; kind_m[f] = 1
         if wf: touched_f[f] = wf
@@ -165,7 +166,7 @@ for c in range(T // CH):
             dd = np.hypot(mx - ox, my - oy)
             if dd < r_ + BODY:
                 mx, my = ox + (mx - ox) / max(dd, 1e-6) * (r_ + BODY), oy + (my - oy) / max(dd, 1e-6) * (r_ + BODY)
-                brg = (np.degrees(np.arctan2(oy - my, ox - mx)) - mh + 180) % 360 - 180; touched_m[f] = "L" if brg > 8 else ("R" if brg < -8 else "B"); kind_m[f] = 1
+                brg = (np.degrees(np.arctan2(oy - my, ox - mx)) - mh + 180) % 360 - 180; touched_m[f] = "L" if brg >= 0 else "R"; kind_m[f] = 1
         if not args.no_female:
             dd = np.hypot(mx - fx, my - fy)
             if dd < BODY + HER_R:
@@ -173,7 +174,7 @@ for c in range(T // CH):
                 brg = (np.degrees(np.arctan2(fy - my, fx - mx)) - mh + 180) % 360 - 180; touched_m[f] = "L" if brg > 8 else ("R" if brg < -8 else "B")
                 brg2 = (np.degrees(np.arctan2(my - fy, mx - fx)) - fh + 180) % 360 - 180; touched_f[f] = "L" if brg2 > 8 else ("R" if brg2 < -8 else "B")
         TOUCH.append(touched_m[f]); TKIND.append(kind_m[f])
-    a = flyvis_chunk(lum); cntM = {k: 0 for k in RM}; cntF = {k: 0 for k in RF} if not args.no_female else {}
+    a = flyvis_chunk(lum); cntM = {k: 0 for k in RM}; cntF = {k: 0 for k in RF} if not args.no_female else {}; accM = np.zeros(M.N, np.int32); accF = np.zeros(F.N, np.int32) if not args.no_female else None
     dist = np.hypot(mx - fx, my - fy) if not args.no_female else np.inf
     # smells at antennae (chunk-constant)
     aL, aR = antennae(mx, my, mh)
@@ -191,11 +192,11 @@ for c in range(T // CH):
             for s_ in "LR": F.drive_hz[TACT_F[s_]] = 150.0 if (tf == "B" or tf == s_) else 0.0
             F.drive_hz[JO] = 100.0 if singing else 0.0
         for _ in range(SPF):
-            spk = M.step()
-            for k, r in RM.items(): cntM[k] += int(spk[r].sum())
-            if not args.no_female:
-                spf = F.step()
-                for k, r in RF.items(): cntF[k] += int(spf[r].sum())
+            M.step(); accM[M.last_idx] += 1          # per-cell spike counts for the chunk; groups are summed once per chunk (same numbers, far fewer calls)
+            if not args.no_female: F.step(); accF[F.last_idx] += 1
+    for k, r in RM.items(): cntM[k] = int(accM[r].sum())
+    if not args.no_female:
+        for k, r in RF.items(): cntF[k] = int(accF[r].sum())
     # his steering: DNa02 (vision) + leg asymmetry on touch
     net_ = cntM["DNa02_R"] - cntM["DNa02_L"] - rest_net; ema += (net_ - ema) / 3.0; yaw = float(np.clip(args.gain * ema, -12, 12)) * -1
     asym = (cntM["legMN_R"] - cntM["legMN_L"]) / max(cntM["legMN_R"] + cntM["legMN_L"], 1)
