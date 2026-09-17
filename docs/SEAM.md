@@ -1719,6 +1719,43 @@ claim of thermotaxis.** the thermal leg asymmetry is small (open loop: 661 L vs 
 the right antenna warm, 5%), and at walls the wheel and the reflex now pull with opposite
 conventions, which the MN audit may resolve. the seed-10 avoidance run stands as what it
 is: one run.
+
+## the motor neuron audit (12:05 PDT)
+
+open loop, standing, 0.185 mV, 2 s each: every leg-MN type's left-minus-right response to a
+bristle on one side (150 Hz), warmth on one side (33 vs 25 C at the antennae, cooling cells
+at 95 Hz), and the world turning (the yaw renders through the seam). 142 MN types, 699
+cells; totals per side, spikes/s:
+
+| input | leg MN L | leg MN R |
+|---|---|---|
+| rest | 0 | 0 |
+| bristle L | 7,539 | 5,614 |
+| bristle R | 4,626 | 5,333 |
+| warm L | 396 | 363 |
+| warm R | 662 | 610 |
+| world turning left | 10 | 28 |
+| world turning right | 45 | 27 |
+
+**three inputs, three different motor pictures.** a bristle drives the legs enormously and
+in a muscle-specific pattern with names: sternotrochanter MN (R-L change -579 with the
+left bristle, +208 with the right), trochanter flexor (+341 / -209), sternal posterior
+rotator (+324 / -318), tibia extensor (-251 / +159), sternal anterior rotator, pleural
+remotor/abductor, tibia flexor: each muscle with its own left-right sign. that is a
+withdrawal program, and it is why the touch reflex's direction is real and why a count over
+all MNs had a sign that only worked for touch. the world turning reaches the legs as a
+whisper, 20-45 spikes/s in total and no type above 3/s: the leg wheel's drum following rode
+that. **warmth raises leg output on both sides alike** (per type, the warm-left and
+warm-right changes are equal), no lateralisation at all. **so the thermal avoidance had no
+lateralised motor substrate: at most it is thermokinesis** (he walks faster when warm, the
+running pace carries him out of warm air sooner) plus noise, which is what 7 of 10 and
+p = 0.14 look like. the morning's "he avoids the heat" is downgraded to that, in place.
+
+what the audit gives instead: a turning readout with a wiring-derived sign. the bristle
+program defines an axis in leg-MN space (the left-bristle pattern minus the right-bristle
+pattern, per cell); any input's motor pattern projected onto it has a sign the wiring set,
+not me. tested next, open loop first: do the thermal and visual patterns project onto the
+withdrawal axis at all?
 - **Shiu's constants, from the code not the paper:** rest/reset -52, threshold -45,
   tau_m 20 ms, tau_syn 5, refractory 2.2, delay 1.8, w_syn 0.275 (a free parameter),
   Poisson 150 Hz. our 150 Hz optic-lobe cap is Shiu's default, not a measurement.
