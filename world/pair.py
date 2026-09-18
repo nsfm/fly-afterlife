@@ -37,7 +37,7 @@ M = Brain("brain_whole.npz", seed=args.seed, params=Params(mv_per_synapse=args.w
 groups = fe.groups(M)
 RM = {}
 _lm = np.load("world/legmn.npz"); LEGMN_SEL = (M.sc == "vnc_motor") if args.legmn == "all" else np.isin(np.arange(M.N), _lm["leg"])
-for name, sel in [("DNa02", mty == "DNa02"), ("pC1", np.char.startswith(mty, "pC1")), ("pIP10", mty == "pIP10"), ("mAL", np.char.startswith(mty, "mAL")), ("LC10a", mty == "LC10a"), ("ORN_VA1v", mty == "ORN_VA1v"), ("legMN", LEGMN_SEL), ("DN", M.sc == "descending_neuron")]:
+for name, sel in [("DNa02", mty == "DNa02"), ("DNa01", mty == "DNa01"), ("DNb06", mty == "DNb06"), ("DNg13", mty == "DNg13"), ("pC1", np.char.startswith(mty, "pC1")), ("pIP10", mty == "pIP10"), ("mAL", np.char.startswith(mty, "mAL")), ("LC10a", mty == "LC10a"), ("ORN_VA1v", mty == "ORN_VA1v"), ("legMN", LEGMN_SEL), ("DN", M.sc == "descending_neuron")]:
     for s in "LR": RM[f"{name}_{s}"] = np.flatnonzero(sel & (mns == s))
     if name in ("pC1", "pIP10", "mAL", "LC10a"): RM[name] = np.flatnonzero(sel)
 TACT_M = {s_: np.flatnonzero((mcls == "mechanosensory_tactile") & (mns == s_)) for s_ in "LR"}

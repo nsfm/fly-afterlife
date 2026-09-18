@@ -2661,6 +2661,14 @@ adopted: `--brake-dn DNg105` the default; `--feeding 3 --satiety 8` explicit, a 
 the garden config of record from here. a 180 s run of the satiety fly (seed 12) is the one to watch:
 satiety decays with tau 180 s, so he may come back.
 
+**DNa01 on the drum (14:34 PDT; the review's first steering test; silent-brain drum as the record runs it, DNp09
+100, 0.185 mV, running baseline, three seeds):** DNa02 follows both ways 3/3 (heading rate up to 15 deg/s
+in the drum's direction); DNa01 follows 2/3 by sign, at 0.3-1.8 deg/s, barely above the drift. the rates say
+why: DNa02 fires 2.0 left / 0.3 right per chunk on the drum, DNa01 0.2 / 0.2. **DNa01 is balanced and
+nearly silent;** DNa02 is loud and one-sided. so DNa01 is not a wheel at these rates, but it is the first
+candidate with a live right cell, and its rates under the floor (where everything is louder) are being
+logged now, with DNb06 and DNg13. `pair.py` logs all three from here.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
