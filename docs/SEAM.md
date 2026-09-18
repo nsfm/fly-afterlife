@@ -2084,6 +2084,19 @@ visual field with vertical contrast everywhere, the standing pillars do not, and
 DNa02 wheel gets less to steer by near walls. the render bug had been part of his
 behaviour. tested directly next: pillars at 1.5 m vs infinite, same seeds, rest arm.
 
+**the control (18:15 PDT): the pillars were not it.** same seeds, rest arm, walking cord:
+infinite pillars wall 40 / 38 / 40%, 23.6 / 24.0 / 22.4 m; pillars at 1.5 m wall 40 / 49 / 42%,
+20.7 / 19.8 / 21.5 m. the same. **the confound sentence above is withdrawn:** the render fix did
+not change his wall time. what differs between the 13:28 runs (0-13%) and these is the
+*effector*: those used the leg model as steering, whose constant leftward drift (20-60 deg/s)
+keeps a walking fly circling off the walls; these use the DNa02 wheel, which barely drifts,
+so he walks straight into walls and the reflex has to free him each time (9-13 visits).
+and the wheel's input on a walking cord is one-sided: DNa02 L 2.5-2.7 spikes per chunk,
+**DNa02 R 0.01-0.03**, where a standing cord gave 1.6 / 1.4. the walking command (DNp09,
+lopsided right) silences the right DNa02 through the brain, and the running baseline can
+only read fluctuations of one side. that is the kind of interaction nate warned about at
+17:20: a command we added changed a readout we trusted. on the list.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,

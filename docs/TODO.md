@@ -44,6 +44,9 @@ loop is probably a bug (mechanosensation brief).
       resting rate by default (ORNs ~8 Hz generic, Or67d 0.12, hot 37, cooling 95, dry/moist ~20,
       JO still-air, proprioceptors under standing load, gustatory ~2, ocelli by light), the world only
       modulating. one step against the current baseline; expect the operating point to move.
+- [ ] the walking command silences DNa02 R (2.6 L / 0.02 R per chunk on a walking cord; 1.6 / 1.4
+      standing): an interaction between the command and the visual wheel. trace it (DNp09 -> ? -> DNa02 R)
+      and decide whether the wheel reads DNa02 at all on a walking cord (18:15).
 - [ ] thermokinesis: turning rate up when warming is in the wiring (17:20); the pace sign is inverted
       (readout interaction with turning). understand, then the cold corner and the extremes.
 - [~] **synapse constants** (vision brief): male 0.185, female 0.275; `RunningPace` fixes the
