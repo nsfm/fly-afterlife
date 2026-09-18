@@ -121,8 +121,10 @@ loop is probably a bug (mechanosensation brief).
 - [x] a walking command (12:56): `--walk 100` (DNp09 tonic); he walks 31 m / 2 min on the true leg set.
       **09-18 11:30: DNp09 is inert under the tonic floor; the command is DNg100 (BDN2) now, a dose in the loop
       (16 / 35 / 50 m at 0 / 100 / 200 Hz), pace read against the standing tonus measured in the floor.**
-      next: EMA before the pace rule (rectified noise reads as a slow walk with no command); the closed-loop
-      floor-row ablation (which row lifts the resting cord: thermal? ORN?); MN class weights (Azevedo 2020).
+      **12:20: `--pace state` (threshold + hysteresis on the smoothed cord; DeAngelis 2019 bimodal): he stands
+      with no command and walks in bouts with it. config of record.** next: the closed-loop floor-row
+      ablation (which row lifts the resting cord: thermal? ORN?); MN class weights (Azevedo 2020); the brake
+      re-measured against DNg100 (30 Hz did nothing open loop).
       still to do: the command as a state (walk / stop / brake DNs, Sapkal 2024); stance/swing phase
       so MDN reads as backward; the DNp09 right-bias (tracing) as a labelled correction or not.
       the leg model is NOT a wheel (drum 0/3 rectified, 1/3 signed): pace + diagnostic only.

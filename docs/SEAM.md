@@ -2525,6 +2525,30 @@ loop's tonus above standing: the review's ablation, closed loop; nate's "flee re
 lives here, since the thermal floor carries half the tonus and the ORN floor runs the wing motor).
 one change per run, the readout first.
 
+**the pace as a state (12:22 PDT; `StatePace`, `--pace state`; nate: "flies swap between no-walk and fast-walk").**
+the cord's count smoothed over three chunks; walking switches on above 1.25x the standing tonus and off
+below 1.10x; standing is v = 0; walking speed 0.15 + 0.35 x clip((c - 1.25 s) / s). labelled as the
+assumption it is: forward velocity is bimodal, modes at zero and ~17 mm/s (DeAngelis 2019), and the
+switch in life is the descending walk / halt state on a premotor network this LIF holds no state in,
+so the threshold stands in for it at the readout. garden, three seeds, 120 s:
+
+| command | standing | bouts | mean bout | v walking | walked | leg MN per chunk |
+|---|---|---|---|---|---|---|
+| none | 52, 60, 89 % | 56, 66, 15 | 1.0, 0.7, 0.9 s | 0.19, 0.17, 0.18 | 10.9, 8.1, 2.4 m | 65, 64, 59 |
+| DNg100 100 Hz | 19, 14, 6 % | 20, 23, 8 | 4.9, 4.5, 14.1 s | 0.30, 0.30, 0.32 | 28.9, 31.5, 35.7 m | 86, 91, 94 |
+| DNg100 200 Hz | 1, 0, 4 % | 3, 2, 9 | 40, 60, 13 s | 0.40, 0.42, 0.36 | 48.0, 50.4, 42.0 m | 117, 119, 118 |
+
+**he stands, and he walks in bouts.** no command: standing most of the run, one-second fidgets; the
+command at 100 Hz: bouts of five to fourteen seconds with stops between; at 200 Hz: nearly
+continuous. the first velocity histogram of his with two modes. **adopted as the config of record**
+(`--pace state` the default; the oracle pins `--pace fixed`), with `--walk 100`. **the residual, now
+smaller and sharper:** two seeds of three fidget half the run with no command, because the resting
+cord in the loop crosses 1.25x standing often (65 against 58); one seed stands 89%. which floor row
+lifts the resting cord above its own calibration is the ablation, next, closed loop, no command:
+the full floor against the floor without the thermal cells, without the ORNs, without JO, without
+the leg proprioceptors. nate's question of the morning ("a flee response justifying a constant
+walking rate?") is what that run answers.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
