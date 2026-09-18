@@ -12,7 +12,7 @@ for w in old new; do
     if [ "$1" = "--make-oracle" ] || [ ! -f "world/oracle/room_${w}_s$s.npz" ]; then
       uv run python world/oracle/pair_oracle.py --seconds 30 --seed $s --deterministic --wsyn-m $WM --wsyn-f $WF --out "world/oracle/room_${w}_s$s.npz" > "world/oracle/room_${w}_s$s.log" 2>&1 || echo "oracle $w s$s FAILED"
     fi
-    uv run python world/pair.py --seconds 30 --seed $s --deterministic --wsyn-m $WM --wsyn-f $WF --bristle hold --legmn all --out "world/oracle/port_${w}_s$s.npz" > "world/oracle/port_${w}_s$s.log" 2>&1 || echo "port $w s$s FAILED"
+    uv run python world/pair.py --seconds 30 --seed $s --deterministic --wsyn-m $WM --wsyn-f $WF --bristle hold --legmn all --no-floor --out "world/oracle/port_${w}_s$s.npz" > "world/oracle/port_${w}_s$s.log" 2>&1 || echo "port $w s$s FAILED"
   done
 done
 uv run python - <<'PY'
