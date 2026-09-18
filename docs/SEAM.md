@@ -2669,6 +2669,25 @@ nearly silent;** DNa02 is loud and one-sided. so DNa01 is not a wheel at these r
 candidate with a live right cell, and its rates under the floor (where everything is louder) are being
 logged now, with DNb06 and DNg13. `pair.py` logs all three from here.
 
+**the right side, at the level of single types (14:40 PDT; open loop, floor + DNg100 100, no vision, seeds 1 + 3
+pooled, every descending type's left and right cell):** under the floor in the garden run, DNa01 is silent
+on both sides, DNg13 silent, DNb06 6.0 left / 0.0 right, DNa02 1.6 / 0.05: every named steering type has
+a dead right cell. but the descending population is balanced (159 L / 148 R per chunk in that run), and
+across the 43 bilateral DN types that fire open loop the median right share is 0.45, with nine types
+right-silent and nine left-silent: **the one-sidedness is per type and goes both ways**, not a lesion
+of a hemisphere (the 22:14 conclusion holds at the population and fails type by type). the big tonic
+types are symmetric (DNb05 191 / 198, DNg33 174 / 174, DNg100 74 / 80); the thermal pair fires right
+only (DNp06 0 / 61, DNp35 0 / 55); DNb06, DNb09, DNp18, DNp20 left-heavy. is it the wiring? partly:
+across 471 bilateral DN types the median right / left excitatory input weight is 0.93, 44 types have
+the right below 0.7x and 28 the left; the correlation between a type's right rate share and its right
+input-weight share is 0.48. DNb06 is a tracing hole (32 vs 710 excitatory input weight). **DNa02 is
+not:** its right cell has 0.9x the left's input (2,540 vs 2,819 excitatory, 1,305 vs 1,362 inhibitory)
+and fires nothing, so its silence comes from upstream, from whichever presynaptic partners are
+themselves one-sided (22:14 named DNp09 R at 0.74x and AN03A008 R at 0.48x; under DNg100 the pattern
+is the same). next: log DNa02's strongest presynaptic partners per cell in the loop and find the
+one-sided ones; the fix, if it is a tracing asymmetry in a mirror pair, is a labelled per-type mirror
+normalisation of the wiring, opt-in, oracle-checked.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
