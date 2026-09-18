@@ -2180,6 +2180,39 @@ whether these are tracing or the animal, the female cannot say (she has no cord)
 honest label from here is "a few asymmetric connections, named", and the wheel should be
 read with a per-side normalisation on a walking cord.
 
+## the garden (22:36 PDT; `src/fly_afterlife/garden.py`, `docs/GARDEN.md`)
+
+built tonight from nate's "a more exciting playground": a 6 x 6 m patch at fly scale with a
+real floor plane carrying a two-scale soil-and-litter texture (value noise, ~1.2 cm per
+texel; moss patches), thirty grass stalks of 0.5-2 m, three leaves overhead with shade
+beneath (darker floor, 3 C cooler), a pale stone, a dark red fruit (a plume downwind with
+intermittent whiffs; sugar on its skin, on his 719 leg gustatory neurons at contact), a
+puddle (humidity 0.9 above it, cooler), a sunlit patch (+6 C; the sky brightens toward the
+sun), and a 0.3 m rim. the world carries RGB; his eye reduces it with a fly weighting (0.2
+R, 0.7 G, 0.1 B: green-heavy, red-blind), so the red fruit is dark on the litter to him.
+the raytracer grew a floor plane with a texture lookup, horizontal discs and a sun, in the
+numpy path and the kernel alike (agree to 1e-8; the room path bit-identical, oracle
+re-run). the fruit's plume drives the five fruit-odour receptor types (Or42b, Or92a, Or59b,
+Or22a, Or85a; 118 L / 142 R cells) through a Weber-Fechner transducer with a 1 s running
+mean; humidity drives the 28 dry and 12 moist cells; temperature the hot and cooling
+cells as before. `pair.py --world garden`. `docs/figures/garden_first_look.png` is the
+view through his own tracer; `garden_map.png` the world from above.
+
+**his first minute (seed 3, walking command, floor, DNa02 steering):** 16.6 m; rim time
+7%, 299 touch frames (grass, the stone); closest approach to the fruit 0.89 m, to the
+puddle 1.08 m, to the sun patch 1.26 m; never inside any of them. the path
+(`garden_first_walk.png`): out from under the leaf he started under, around it, then the
+long way round the patch along the rim, past the fruit without turning. the fruit's
+odour neurons ran at 4.5 spikes per chunk mean on a plume he mostly crossed at its
+fringe. a rim-walker still, in a bigger loop; the scores that ask whether any sense
+steers him here (plume on / off, fruit dark / litter-toned) run next, three seeds each.
+
+**the viewer question (nate):** the browser's raytracer was a second implementation of the
+same primitives, checked by eye. from tonight the human view is rendered by his own
+kernel: `world/replay.py` serves an episode on localhost and renders each pinhole frame on
+demand (0.5 ms, same function as his retina); the JavaScript tracer retires for anything
+beyond the plain room.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
