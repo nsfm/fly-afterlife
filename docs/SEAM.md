@@ -2416,6 +2416,23 @@ synapses against DNp09's 10 as the other walking command. the closed-loop dose-r
 (`--walk 0 | 100` under the floor, and `--no-floor --walk 100`, three seeds) is on the cores
 behind the downwind batch.
 
+**the dose-response in the loop (09:44 PDT; garden, config of record, three seeds, 120 s):**
+
+| arm | walked | leg MN per chunk | DNp09 per chunk | rim | sugar frames |
+|---|---|---|---|---|---|
+| floor, `--walk 0` | 32.4, 32.7, 32.6 m | 55, 66, 58 | 0.0 | 0.06, 0.06, 0.11 | 0, 0, 150 |
+| floor, `--walk 100` | 32.7, 32.5, 32.6 m | 57, 60, 60 | 15.3 | 0.07, 0.10, 0.05 | 0, 0, 131 |
+| no floor, `--walk 100` | 32.0, 32.4, 32.1 m | 44, 46, 45 | 15.4 | 0.07, 0.06, 0.08 | 0, 0, 81 |
+
+thirty-two metres in every arm. the leg-MN rate moves (44 to 66 per chunk across the arms) and
+the distance does not, because `RunningPace` divides the rate by its own running mean and lands
+at v = 0.275 whatever the cord does. so the walking command is inert in the loop under the
+floor, as in the open loop, and the distance walked has been the estimator's since the readout
+was adopted (08:58 yesterday): the 20 to 30 m differences in the record were rim and wall time,
+not pace. the calibration fix (`apply_tonic` in `effectors.py`: the floor, the command and the
+thermal cells at 25 C applied during the three calibrations) is in and being checked against the
+oracle and against these runs; the pace reference is next.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
