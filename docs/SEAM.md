@@ -2776,6 +2776,21 @@ seed 10 walked onto it at 2.5 s and fed for 117 s, 98% of the run, because at fu
 satiety began to decay, and a hair under one the taste latched again, every frame. hysteresis: full at
 one, hungry again below half (`rearm`). the noisy wheel used to carry him off before it mattered.
 
+**the settled fly (16:30 PDT; HS wheel, ten chunks of smoothing, no population channel, DNg100 walking at 100 Hz,
+the state pace, DNg105 halting, feeding with satiety and hysteresis; beside the fruit, 120 s, three seeds):**
+
+| seed | onto the fruit at | fed for | feeding, whole run | heading noise (deg/s rms) | chunks over 45 deg/s | walked |
+|---|---|---|---|---|---|---|
+| 10 | 2.1 s | 9.9 s | 7 % | 25 | 8 % | 24.0 m |
+| 11 | 1.9 s | 8.7 s | 7 % | 25 | 8 % | 22.3 m |
+| 12 | 2.0 s | 10.8 s | 7 % | 27 | 9 % | 23.1 m |
+
+**three of three:** he walks onto the fruit in two seconds, eats until full, leaves, and wanders for the
+rest of the run. heading noise 25-27 deg/s rms (from 50-53 with the population channel and three chunks;
+Katsov 2017's saccade threshold is 45, and he crosses it in 8 % of chunks now against 29-36 %). the walk
+from the usual start is scored below when its files land. this is the config of record from here, and
+the fly nate gets to watch.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
