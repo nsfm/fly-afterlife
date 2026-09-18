@@ -65,6 +65,11 @@ class Episode:
                 px, py, ph = self.POSE[len(self.POSE) - CH + f]; hr = np.radians(ph); fwd = np.array([np.cos(hr), np.sin(hr)]); left = np.array([-np.sin(hr), np.cos(hr)])
                 aL_ = np.array([px, py]) + 0.1 * fwd + 0.15 * left; aR_ = np.array([px, py]) + 0.1 * fwd - 0.15 * left
                 st_["T_L"] = self.room.temperature(float(aL_[0]), float(aL_[1])); st_["T_R"] = self.room.temperature(float(aR_[0]), float(aR_[1]))
+                if hasattr(self.room, "odour"):
+                    oL = self.room.odour(float(aL_[0]), float(aL_[1]), t_f); oR = self.room.odour(float(aR_[0]), float(aR_[1]), t_f)
+                    st_["odour_L"] = oL; st_["odour_R"] = oR
+                if hasattr(self.room, "humidity"): st_["humidity"] = self.room.humidity(float(px), float(py))
+                st_["taste"] = getattr(m, "taste", None)
             self.REG.apply(self.M, st_, t_f, 1.0 / fps)
             if self.female: self.REGF.apply(self.F, st_, t_f, 1.0 / fps)
             if self.female and self.threads:   # the two brains are independent within a chunk: step them in parallel (numba kernels release the GIL)

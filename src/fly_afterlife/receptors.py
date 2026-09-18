@@ -184,6 +184,24 @@ class CoolingCells(Transducer):
 
 
 @dataclass
+class WeberFechner(Transducer):
+    """an olfactory receptor neuron: rate = rest + gain x c / (c + c0 + running mean of c), the running mean over
+    tau_s (Weber-Fechner: the gain scales with 1 / mean; Gorur-Shandilya 2017, Nagel & Wilson 2011). stim = concentration
+    (a plume sample, intermittent). rest 8 Hz generic (Hallem & Carlson 2006), evoked up to ~250 Hz saturating."""
+    rest_hz: float = 8.0
+    gain_hz: float = 200.0
+    c0: float = 0.05
+    tau_s: float = 1.0
+    source: str = "chemo brief s.1: Hallem & Carlson 2006; Nagel & Wilson 2011; Gorur-Shandilya 2017 (Weber-Fechner, ~1 s)"
+    _mean: float = field(default=0.0, init=False)
+    def reset(self): self._mean = 0.0
+    def step(self, stim, t, dt):
+        c = max(float(stim), 0.0); r = self.rest_hz + self.gain_hz * c / (c + self.c0 + self._mean)
+        self._mean += (c - self._mean) * dt / self.tau_s
+        return r
+
+
+@dataclass
 class Gate(Transducer):
     """multiply another transducer's rate by a state-dependent factor (e.g. 0 while a
     descending walk command is on, for hook FeCO axons: Dallmann 2025). stim = (inner_stim, gate_on)."""
