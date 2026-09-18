@@ -2748,6 +2748,19 @@ and their left-right difference is the flow-balance signal insects steer by (Sri
 so the wheel reads one synapse upstream of the descending neuron, which is where the lesion cannot reach
 it. `--wheel HS` in the garden next, from the usual start and from beside the fruit; DNa02 stays logged.
 
+**HS in the garden (15:40 PDT; `--wheel HS`, the config of record otherwise, three seeds from the usual start and
+three from beside the fruit):** equal to DNa02, not better: from the usual start he finds the fruit in one
+seed (at 6.6 s, eats 12.9 s) as DNa02 did in one; from beside it two of three, as before; rim time the
+same (0.04-0.14). HS at 41-54 per chunk on both sides. **adopted as the default wheel** on principle (both
+cells alive, sign validated on the drum, upstream of the cord's hole; behaviour no worse); the oracle pins
+`--wheel DNa02`. so reaching the fruit was never the wheel's dead cell. **it is noise:** his heading
+change per chunk while walking has an sd of 4.2-5.6 degrees on every file, either wheel, which is 42-56
+deg/s rms, and Katsov 2017 calls anything over 45 deg/s a saccade. he is saccading continuously, in
+random directions, because the wheel reads the difference of two Poisson counts of ~50 through a gain
+with three chunks of smoothing. no fly walks like that, and no fly reaches a fruit 0.7 m away through
+it. one change: the wheel's smoothing, three chunks to ten (`--steer-ema 10`; a graded HS cell
+integrates over that anyway), on the drum and in the garden, heading noise measured.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,

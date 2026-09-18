@@ -48,6 +48,7 @@ class RunningBaselineSteering:
     gain: float
     leg_gain: float
     tau: float = 20.0                  # chunks (2 s at 100 ms): the brief's ~2 s
+    ema_n: float = 3.0            # chunks of smoothing (3 = the record; 10 = one second, 09-18)
     wheel: str = "DNa02"              # readout population: "DNa02" (one type, the record) or "DN" (every descending neuron)
     ema: float = 0.0
     leg_rest: float = 0.0
@@ -58,7 +59,7 @@ class RunningBaselineSteering:
     def step(self, cnt: dict, touched_any: bool) -> float:
         L, R = float(cnt[self.wheel + "_L"]), float(cnt[self.wheel + "_R"])
         if self.base_L is None: self.base_L, self.base_R = L, R
-        net_ = (R - self.base_R) - (L - self.base_L); self.ema += (net_ - self.ema) / 3.0; yaw = float(np.clip(self.gain * self.ema, -12, 12)) * -1
+        net_ = (R - self.base_R) - (L - self.base_L); self.ema += (net_ - self.ema) / self.ema_n; yaw = float(np.clip(self.gain * self.ema, -12, 12)) * -1
         self.base_L += (L - self.base_L) / self.tau; self.base_R += (R - self.base_R) / self.tau   # update after use: the current chunk is compared to the past
         asym = (cnt["legMN_R"] - cnt["legMN_L"]) / max(cnt["legMN_R"] + cnt["legMN_L"], 1)
         if touched_any: yaw = float(np.clip(self.leg_gain * (asym - self.leg_rest), -12, 12))
@@ -89,6 +90,7 @@ class MultiWheelSteering:
     wheels: list
     leg_gain: float
     tau: float = 20.0
+    ema_n: float = 3.0          # chunks of smoothing on the net signal (3 = the record; 10 = one second, 09-18 15:45: heading noise)
     ema: dict = field(default_factory=dict)
     base: dict = field(default_factory=dict)
     leg_rest: float = 0.0
@@ -99,7 +101,7 @@ class MultiWheelSteering:
         for w, g in self.wheels:
             L, R = float(cnt[w + "_L"]), float(cnt[w + "_R"])
             if w not in self.base: self.base[w] = [L, R]; self.ema[w] = 0.0
-            net_ = (R - self.base[w][1]) - (L - self.base[w][0]); self.ema[w] += (net_ - self.ema[w]) / 3.0; yaw += g * self.ema[w] * -1
+            net_ = (R - self.base[w][1]) - (L - self.base[w][0]); self.ema[w] += (net_ - self.ema[w]) / self.ema_n; yaw += g * self.ema[w] * -1
             self.base[w][0] += (L - self.base[w][0]) / self.tau; self.base[w][1] += (R - self.base[w][1]) / self.tau
         yaw = float(np.clip(yaw, -12, 12))
         asym = (cnt["legMN_R"] - cnt["legMN_L"]) / max(cnt["legMN_R"] + cnt["legMN_L"], 1)
