@@ -409,11 +409,11 @@ def run(args):
                 elif e.key == pg.K_RIGHTBRACKET: spd = min(len(SPEEDS) - 1, spd + 1)
                 elif e.key == pg.K_HOME: pos = 0.0
                 elif e.key == pg.K_END: pos = ep.n - 1
-            elif e.type == pg.MOUSEBUTTONDOWN and e.button == 1 and R_BAR.collidepoint(e.pos):
-                dragging = True; pos = np.clip((e.pos[0] - R_BAR.x) / R_BAR.w, 0, 1) * (ep.n - 1)
+            elif e.type == pg.MOUSEBUTTONDOWN and e.button == 1 and R_BAR.collidepoint(tuple(v / SCALE for v in e.pos)):
+                dragging = True; pos = np.clip((tuple(v / SCALE for v in e.pos)[0] - R_BAR.x) / R_BAR.w, 0, 1) * (ep.n - 1)
             elif e.type == pg.MOUSEBUTTONUP and e.button == 1: dragging = False
             elif e.type == pg.MOUSEMOTION and dragging:
-                pos = np.clip((e.pos[0] - R_BAR.x) / R_BAR.w, 0, 1) * (ep.n - 1)
+                pos = np.clip((tuple(v / SCALE for v in e.pos)[0] - R_BAR.x) / R_BAR.w, 0, 1) * (ep.n - 1)
         now = time.perf_counter(); dt = now - last; last = now
         if playing and not dragging:
             pos += SPEEDS[spd] * ep.fps * dt                # the episode's own clock; frames drop, time does not
