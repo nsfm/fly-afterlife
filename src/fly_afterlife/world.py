@@ -37,8 +37,11 @@ class Room:
         unless a warm spot is set. scale: the fly is 0.16 m here vs 2.5 mm in life (x64), so a 5 C/cm gradient
         in life (Ni 2013, enough for avoidance within a minute) is ~5 C per 0.64 m here."""
         if self.thermal is None: return 25.0
-        th = self.thermal; d2 = (x - th["x"]) ** 2 + (y - th["y"]) ** 2
-        return th.get("base", 25.0) + th["dT"] * float(np.exp(-d2 / (2.0 * th["sigma"] ** 2)))
+        spots = self.thermal if isinstance(self.thermal, list) else [self.thermal]   # one spot or several (a warm corner and a cold one)
+        T = spots[0].get("base", 25.0)
+        for th in spots:
+            d2 = (x - th["x"]) ** 2 + (y - th["y"]) ** 2; T += th["dT"] * float(np.exp(-d2 / (2.0 * th["sigma"] ** 2)))
+        return T
 
     # ---- the eye's view
     def scene(self, others: list[Body]) -> Scene:
