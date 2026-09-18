@@ -2293,6 +2293,32 @@ because warmth is bilateral. the odour does not gate the wind response in open l
 life the gate is central and state-dependent), so the gate is a labelled stand-in, tested
 both ways. sound on one ear (JO-A/B) lateralises nothing.
 
+**hunger (00:54 PDT; nate: "might smell only steer if he's hungry?").** in life, yes, twice:
+starvation raises the food-odour receptors' gain (Or42b presynaptic facilitation through
+sNPF, Root 2011) and hunger sharpens sugar taste (Inagaki 2012); fed flies do not track
+plumes. his connectome carries the machinery by name: 16 insulin-producing cells (satiety;
+silent when starved), 2 NPF (hunger), 2 allatostatin-A and 4 DSK (satiety), 12 leucokinin,
+4 hugin; sNPF and SIFamide untyped. **at baseline he has no hunger state:** the insulin
+cells sit at zero (starved) and the NPF cells at zero (fed); nothing reads either. open
+loop, three states x fruit odour on one antenna x the Or42b gain raised 2.5x, two seeds:
+
+| state | odour side | DN L / R (delta) | legs yaw_left |
+|---|---|---|---|
+| none | L / R | -7 / -1, 0 / -12 | +0.5, +1.1 / +4.4, +0.9 |
+| none, Or42b x2.5 | L / R | -5 / -3, +1 / -9 | -0.1, -0.2 / +1.4, -0.5 |
+| hungry (NPF 30, LK 30) | L / R | -9 / -5, -1 / -14 | +0.2, -1.0 / -2.3, +0.1 |
+| hungry, Or42b x2.5 | L / R | -8 / -6, -5 / -10 | -1.1, +3.5 / -0.6, +6.0 |
+| fed (IPC 30, AstA, DSK, hugin 20) | L / R | -9 / -4, -1 / -11 | +1.0, -2.4 / +3.1, -3.5 |
+
+**nothing, under any state.** the lesson is about the engine: neuropeptide neurons act in
+life through slow receptors that change other cells' excitability over minutes; this LIF
+has fast synapses only, so driving the hunger cells drives a few dozen weakly connected
+neurons and changes no gain anywhere. hunger as a state has to be modelled as *what it
+does* (a gain on the food receptors, a threshold on the food outputs, a drive on the
+walking command) and labelled as such; and even then, the table of 00:44 says there is no
+lateralised path downstream of the odour for it to unmask. smell in this brain is state,
+not direction; the wind is the direction, and the wind runs are on the cores.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
