@@ -2787,9 +2787,16 @@ the state pace, DNg105 halting, feeding with satiety and hysteresis; beside the 
 
 **three of three:** he walks onto the fruit in two seconds, eats until full, leaves, and wanders for the
 rest of the run. heading noise 25-27 deg/s rms (from 50-53 with the population channel and three chunks;
-Katsov 2017's saccade threshold is 45, and he crosses it in 8 % of chunks now against 29-36 %). the walk
-from the usual start is scored below when its files land. this is the config of record from here, and
-the fly nate gets to watch.
+Katsov 2017's saccade threshold is 45, and he crosses it in 8 % of chunks now against 29-36 %). this is the config of record from here, and the fly nate gets to watch.
+
+**[16:48 PDT] the walk from the usual start, same config, three seeds** (the first attempt was killed
+mid-batch by another agent's process kill; relaunched): walked 25-28 m, standing 15-24 %, rim 0.07-0.14,
+heading noise 20-29 deg/s rms (from 37-41 with the population channel out and 42-56 this morning), chunks
+over 45 deg/s 4-9 %. **no seed found the fruit from the far corner** (0/3; the earlier "found by sight" runs
+were 1-2 of 3 with a wheel whose noise walked him into things). so the settled fly walks straight, eats
+when he reaches food and leaves when full; he does not seek it by sight from four metres. seeking from
+afar is the plume and the wind gate, and the anemotaxis result of 09:12 was measured on a fly that could
+not hold a heading: that is the experiment to re-run first on this one.
 
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
