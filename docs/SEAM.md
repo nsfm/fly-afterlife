@@ -2697,6 +2697,19 @@ from the long tail of weak ones, hundreds of cells, and that is where the left-r
 the question is a pathway, not a partner: the same run with every presynaptic cell logged (3,000), summed
 by type, is on the cores.
 
+**the pathway (14:53 PDT; all 3,451 presynaptic cells of DNa02 logged, garden, 60 s, seed 12):** the
+excitation into the two cells is nearly equal and it is the horizontal system: HSS 130 (L) / 64 (R), HSE
+55 / 64, HSN 0 / 41, the lobula plate's wide-field motion cells, the pathway the physiology names
+(Rayshubskiy 2020). **the difference is inhibition: 88 into the left, 205 into the right.** one type carries
+most of it: IN12B014, a crossing inhibitory pair in the cord whose left cell projects to DNa02 R at -18.9
+and whose right cell projects to DNa02 L at -20.7 (a mirror), and whose left cell fires ten times more
+(2.95 / 0.31 per chunk). the rest: MBON31 (-12 / -34), PS321 (0 / -14), IN19A003 (-9 / -21), PS100 (-4 / -15).
+so DNa02 R is not dead; it is held under by a cord interneuron that is louder on the left, which puts
+the asymmetry one level up, in the cord's own left-heaviness (348 / 211 leg-MN spikes at rest this
+morning). the floor rows themselves are balanced per side (leg proprioceptors 292 / 288, JO 348 / 324,
+GRN 706 / 710; only the ORNs lean right, 883 / 1,343), so the floor is not the lopsided input. next:
+IN12B014's own inputs (logged), and the cord's per-side wiring.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
