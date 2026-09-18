@@ -2604,6 +2604,13 @@ of feeding and ends it, decaying over three minutes, and while full the taste no
 first thing in him that outlasts its stimulus, modelled as what it does, labelled (the hunger lesson of
 00:54). one change: the latch without satiety first; prediction: he stops on the fruit and stays.
 
+**[13:38 PDT] the latch did not halt him either** (3.0 s on the fruit in one seed, the cord *rising* to 132 per
+chunk on contact, no halt), and the open-loop time course says the halt is fast (two chunks on, one chunk
+off). the cause is neither: `pair.py` only marked the brake cells as driven for `--stop-at-her`, so the
+fruit brake and the feeding latch set a rate on two cells the engine never drew. both brake runs today
+drove nothing; the "two reasons" above were plausible and beside the point. fixed; the state is logged
+per chunk now (`feeding`, `sat100`); the latch re-run.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,

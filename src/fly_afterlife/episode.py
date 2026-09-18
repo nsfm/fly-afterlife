@@ -104,6 +104,7 @@ class Episode:
             song = self.songdet.step(cntM["pIP10"]) if (self.songdet is not None and "pIP10" in cntM) else False
             log["song"].append(song and self.female and dist < 0.4); log["dist"].append(dist); log["v_m"].append(m.v); log["v_f"].append(0.0 if self.solo else her.v)
             if self.on_chunk is not None: self.on_chunk(self, c, cntM)
+            if self.state is not None: log.setdefault("feeding", []).append(int(self.state.feeding)); log.setdefault("sat100", []).append(int(round(100 * self.state.sat)))
             for k in self.RM: log[f"m_{k}"].append(cntM[k])
             for k in self.RF: log[f"f_{k}"].append(cntF[k])
             if c % self.log_every == self.log_every - 1 and self.solo:

@@ -95,7 +95,7 @@ M.driven[:] = False
 for cl in M.SENSORY_CLASSES: M.driven[M.cls == cl] = True
 for t, (idx, _) in groups.items(): M.driven[idx] = True
 if args.walk > 0: M.driven[WALK] = True   # the command cells must be in the driven set (after the sensory reset above)
-if args.stop_at_her > 0: M.driven[BRK] = True
+if args.stop_at_her > 0 or args.stop_at_fruit > 0 or args.feeding > 0: M.driven[BRK] = True   # (13:40: only --stop-at-her marked them; the fruit brake and the feeding latch drove cells the engine never drew)
 M._driven_idx = np.flatnonzero(M.driven); M.reset(); SPF = int(round(1000 / fps / M.p.dt))
 # ---- her brain
 RF = {}
