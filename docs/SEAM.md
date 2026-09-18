@@ -2487,6 +2487,16 @@ skips the walk row); the three arms are re-running. and the arm with no command 
 (62-68) sits above the calibration's standing tonus (51): vision, contact and the fields drive the
 legs above standing even with no command. that residual is real and stays in view.
 
+**second attempt (10:55 PDT):** the three arms walked 14-19 m alike again (v 0.12-0.16), and the standing
+baselines printed for one seed were 82, 106 and 58 per chunk across the arms, against 51 in the calibration
+run an hour earlier. two causes, both mine: skipping the walk row left its cells at the drive the previous
+calibration had set (the row was skipped, the cells were not zeroed); and the calibrations count from the
+moment the brain is built, so the one-second standing measurement lands inside the floor's settling
+transient (the open-loop probe settled 1.5 s before counting; that is why its 559 was stable). fixed:
+a two-second warm-up under the tonic rows before any calibration, and the walk cells zeroed for the
+standing measurement. third attempt on the cores; the oracle re-run alongside (the warm-up only runs
+when tonic rows exist, so the silent brain is untouched).
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,

@@ -141,7 +141,13 @@ def render_chunk(): return flyvis_chunk(np.stack([eye.render(room.scene([her]), 
 def drive_frame(a, f):
     for (t, s), (idx, hx) in groups.items(): M.drive_hz[idx] = args.drive_gain * np.clip((a[(s, t)][f] - rest[(s, t)])[hx], 0, 1)
 TONIC = (lambda t_: apply_tonic(REG, M, t_, 1.0 / fps))   # the standing brain: floor, command, thermal cells at 25 C (09-18)
-TONIC_STAND = (lambda t_: apply_tonic(REG, M, t_, 1.0 / fps, skip=TONIC_SKIP + ("walk_",)))   # standing = the floor without the walking command (10:31: with it, the pace reference rose with the dose)
+def TONIC_STAND(t_):   # standing = the floor without the walking command (10:31: with it, the pace reference rose with the dose; 10:55: the cells kept their drive when the row was skipped)
+    apply_tonic(REG, M, t_, 1.0 / fps, skip=TONIC_SKIP + ("walk_",))
+    if args.walk > 0: M.drive_hz[WALK] = 0.0
+_tonic_rows = [rc for rc in REG.classes if not rc.name.startswith(TONIC_SKIP)]
+for f_ in range(2 * fps if _tonic_rows else 0):   # warm-up (only when tonic rows exist, so the oracle's silent brain is untouched): two seconds under the tonic rows before any calibration (10:55: the floor's settling transient was being measured as standing: 51 / 82 / 106 / 58 per chunk for one seed)
+    TONIC(f_ / fps)
+    for _ in range(SPF): M.step()
 rest_net = dna02_rest_offset(M, RM, drive_frame, render_chunk, CH, SPF, tonic=TONIC); print(f"his DNa02 rest offset {rest_net:+.2f}/chunk")
 leg_stand, dn_stand_f = standing_baselines(M, F if not args.no_female else None, RM, RF, drive_frame, render_chunk, CH, SPF, tonic=TONIC_STAND); print(f"pace baselines per chunk: his leg MN {leg_stand:.0f}, her DN {dn_stand_f:.0f}")
 leg_gain, asym_side = reflex_gain(M, RM, TACT_M, CH, SPF, kernel=(None if args.bristle == "hold" else Adapting()), fps=fps, tonic=TONIC); leg_gain *= args.reflex_sign; print(f"touch reflex: leg-MN asymmetry (R-L)/(R+L) with left bristles {asym_side['L']:+.3f}, right {asym_side['R']:+.3f} -> gain {leg_gain:.0f} deg per unit asymmetry")
