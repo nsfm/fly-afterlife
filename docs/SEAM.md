@@ -2236,6 +2236,38 @@ walking carries him; smell, taste, warmth and humidity are felt and change nothi
 the senses that do not steer are the same three the record already knew could not reach
 DNa02; the garden makes the gap visible in one table.
 
+## which sense reaches which readout (00:44 PDT; the woken brain, cord walking)
+
+open loop, floor on, DNp09 at 100 Hz, 0.185 mV, no vision; each sense driven on one side for
+2 s; readouts: DNa02 L / R (spikes per chunk), the descending population and the leg MNs
+as deltas from baseline, and the leg model's yaw (+ = left; its sign validated on DNa02);
+two seeds:
+
+| input | DNa02 L / R | DN L / R (delta) | leg MN L / R (delta) | legs yaw_left (s1, s3) |
+|---|---|---|---|---|
+| baseline | 0.0 / 0.0 | +110 / +105 | +34 / +19 | 0 |
+| fruit odour L / R (150 Hz) | 0 / 0 | -9 / -3, -0 / -12 | -4 / -2, -0 / -2 | -0.2, +1.1 / +6.0, -0.5 |
+| fly odour L / R | 0 / 0 | -0 / +1, -12 / -20 | ~0 | +2.2, +0.2 / +4.9, +3.1 |
+| sugar on left / right legs (26 Hz) | 0 / 0 | +9 / +4, +9 / +8 | +5 / +1, 0 / 0 | **+8.7, +1.3** / -0.9, +0.2 |
+| warm L / R antenna (33 C) | 0 / 0 | +3 / +1, +6 / +19 | +2 / 0, 0 / +1 | **+10.5, +4.2** / +4.9, -3.2 |
+| bristles L / R (40 Hz) | 0 / 0 | +58 / +54, +52 / +53 | -2 / -7, -13 / +1 | -3.6, -6.3 / -5.4, -6.9 |
+| DNa02 L / R at 100 (control) | 7.5 / 0, 0 / 8.4 | +19 / +1, -0 / +3 | -8 / -1, +1 / -1 | **+9.6, +12.4 / -8.2, -2.1** |
+
+**no sense but vision reaches DNa02** (every row 0.0 but the control). **smell lateralises
+nothing**: fruit and fly odour on one antenna move the descending population and the legs
+by a handful of spikes with no consistent side, and fly odour suppresses the DN population
+a little, bilaterally. **taste and warmth show left-only leg effects**: sugar on the left
+legs turns the leg model toward that leg in both seeds, sugar on the right does nothing;
+warmth on the left antenna turns him toward it, on the right inconsistently: this male's
+left-heavy leg wiring, not a channel. touch drives the DN population bilaterally (+55 each
+side) and the leg model reads a rightward bias whichever side is touched.
+
+so closed-loop smell and taste runs would only re-measure this. what the biology does
+instead of "turn toward the odour" is turn *upwind when the odour arrives* (odour-gated
+anemotaxis: Budick & Dickinson 2006; Alvarez-Salvado 2018), and the wind sense is
+Johnston's organ, which we hold at rest. that is the smell experiment worth running:
+wind on the ear, odour gating it. built and tested open loop next.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
