@@ -2136,6 +2136,22 @@ the floor, 8.0% with it, MBONs 12.6 / 12.5 Hz. the floor woke the brain without 
 what it hears. every result in this record before this section was measured on the silent
 brain; the room is being re-run on the woken one.
 
+**the walking room on the woken brain (18:27 PDT; male-only, 120 s, seeds 10-12, same
+configuration as the 18:07 rest arm, `--floor` the only change):**
+
+| | seed | pace | leg MN / chunk | DNa02 L / R | wall | longest pinned | visits | touch frames | walked | his P1 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| no floor | 10 / 11 / 12 | 0.28 | 54 / 55 / 53 | 2.7 / 0.02 | 40 / 49 / 42% | 31 / 50 / 27 s | 4 / 9 / 13 | 5,193 / 5,514 / 4,691 | 20.7 / 19.8 / 21.5 m | 7,230 / 8,050 / 6,340 |
+| **floor** | 10 / 11 / 12 | 0.28 | 56 / 56 / 57 | 2.5 / 0.01 | **26 / 22 / 47%** | **10 / 8 / 23 s** | 14 / 11 / 10 | 2,559 / 2,016 / 4,932 | **28.4 / 30.6 / 22.7 m** | 2,420 / 1,550 / 5,190 |
+
+the woken brain pins less (two seeds clearly, one marginal), walks further, and touches
+walls half as much; his pace and leg output are unchanged (the walking command sets
+those); the walking-cord wheel is still one-sided (DNa02 R 0.01), which the floor was
+never going to fix. modest, in the direction every added sense has pushed: a brain with
+its floor is calmer at walls than a brain on silence. **the floor is the configuration of
+record from here** (`--floor` on by default, `--no-floor` for the record before it; the
+oracle pins `--no-floor`).
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,

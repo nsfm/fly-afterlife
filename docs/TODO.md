@@ -40,7 +40,9 @@ loop is probably a bug (mechanosensation brief).
 
 ## 2. physiology-driven changes, one per run, in this order
 
-- [ ] **THE TONIC FLOOR** (promoted 09-17 17:20, nate): every typed sensory class at its physiological
+- [x] **THE TONIC FLOOR** (built 09-17 18:27): central 0.013 -> 0.53 Hz, DN symmetric, KC code unchanged;
+      room: less pinned, further walked. default from here. rates marked (E) still to source; JO, proprio.
+- [ ] (was:) every typed sensory class at its physiological
       resting rate by default (ORNs ~8 Hz generic, Or67d 0.12, hot 37, cooling 95, dry/moist ~20,
       JO still-air, proprioceptors under standing load, gustatory ~2, ocelli by light), the world only
       modulating. one step against the current baseline; expect the operating point to move.
