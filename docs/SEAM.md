@@ -2109,6 +2109,33 @@ stays. the wheel on a walking cord needs re-thinking (a per-side normalisation, 
 readout that is not DNa02), and the asymmetry itself joins the list of things the female
 does not have.
 
+## the tonic floor (18:18 PDT; nate's point of 17:20, built)
+
+`receptors.FLOOR`: twelve rows, applied before every other row so the world overrides them
+on the cells it drives. every typed sense at its physiological resting rate from the
+briefs, estimates marked: olfactory receptor neurons 8 Hz (2,635 cells; Or67d 0.12, Or47b
+and Or88a 3, Or65a 0.5), gustatory 2 Hz (1,416), hot cells 37, cooling cells 95, VP1m 10
+(label under audit), hygrosensory 20 (66), Johnston's organ 5 Hz in still air (672, E),
+the 580 leg-nerve proprioceptors 15 Hz under standing load (E). bristles stay silent
+until touched; his own photoreceptors stay silent (flyvis sees for him). `pair.py --floor`.
+
+**the standing operating point (no vision, 3 s):**
+
+| | whole brain | central (non-KC) | KC | KC active | DN L / R per s | leg MN per s | cells > 10 Hz |
+|---|---|---|---|---|---|---|---|
+| floor off (the record) | 0.002 Hz | 0.013 Hz | 0 | 0% | 0 / 4 | 0 | 2 |
+| **floor on** | **0.387 Hz** | **0.533 Hz** | 0.013 Hz | 0.2% | **1,061 / 1,002** | **593** | 1,415 |
+
+**his central brain now rests at 0.53 Hz, inside the 0.5-5 Hz band the vision brief gives
+for a living fly brain** (Turner 2008: PNs 4.6 Hz, KCs 0.1); it was two orders of magnitude
+below it, on silence. his descending output is a thousand spikes a second per side and
+symmetric, where the record's asymmetries were measured on a near-silent population; his
+legs carry a standing tonus (1.6 Hz per leg MN; the physiology's slow-MN 30 Hz is still
+above that). and the odour code is untouched: odour A wakes 7.8% of Kenyon cells without
+the floor, 8.0% with it, MBONs 12.6 / 12.5 Hz. the floor woke the brain without blurring
+what it hears. every result in this record before this section was measured on the silent
+brain; the room is being re-run on the woken one.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
