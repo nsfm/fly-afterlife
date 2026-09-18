@@ -2152,6 +2152,34 @@ its floor is calmer at walls than a brain on silence. **the floor is the configu
 record from here** (`--floor` on by default, `--no-floor` for the record before it; the
 oracle pins `--no-floor`).
 
+## the left-right question, re-measured on the woken brain (22:14 PDT; nate: "still a fly with a brain lesion?")
+
+synapse counts by side, from the build (input synapses summed over cells):
+
+| population | cells L / R | input synapses L / R | R / L |
+|---|---|---|---|
+| every neuron | 80,171 / 81,558 | 40.96 M / 40.99 M | **1.00** |
+| descending neurons | 653 / 647 | 1.87 M / 1.74 M | 0.93 |
+| leg motor neurons (373) | 189 / 184 | 518 k / 444 k | 0.86 |
+| DNp09 (the walking command) | 1 / 1 | 7,123 / 5,258 | 0.74 |
+| DNa02 (the wheel) | 1 / 1 | 22,601 / 20,781 | 0.92 |
+| AN03A008 (the cord's feedback onto DNa02) | 1 / 1 | 1,186 / 575 | **0.48** |
+
+**not a lesion.** the brain as a whole is balanced to one percent, and with the corrected
+constants and the floor its standing descending output is symmetric (1,061 / 1,002 per s).
+what the record has been calling "the male map's asymmetry" is a handful of specific
+pathways, 10-50% off in synapse count, which the LIF's threshold turns into 2-5x in spikes:
+the walking command's cell has a quarter fewer inputs on the right, its feedback neuron
+onto the wheel half as many, and the right leg motor neurons get 14% fewer synapses. so the
+DNa02 wheel on a walking cord reads a lopsided loop, and DNp09 drives the right hind legs
+harder (the leg model's leftward drift). the running baseline removes the constant part of
+these; the one that still matters is the walking-cord echo (DNa02 L 2.6 / R 0.02), which is
+one crooked wire, AN03A008, not a hemisphere. the fixed "rightward lean" of 09-16 was
+measured on the silent brain at 0.275 mV and is not present on the woken one at rest.
+whether these are tracing or the animal, the female cannot say (she has no cord); the
+honest label from here is "a few asymmetric connections, named", and the wheel should be
+read with a per-side normalisation on a walking cord.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
