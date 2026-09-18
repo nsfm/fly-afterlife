@@ -99,6 +99,20 @@ loop is probably a bug (mechanosensation brief).
 - [ ] efference copy onto JO-A/B (Cheong 2024); JO wind/gravity; the wing-wash loop when he flies.
 - [ ] ocelli: light level; find his OCC/OCG cells (hers are typed, 63).
 
+## 2a. the enriched world (promoted 09-17 22:05, nate; before the rival)
+
+- [ ] a real floor plane in both raytracers with an albedo pattern (the floor is a gradient by ray
+      direction today); walls with structure; objects of several sizes and tones; a sky with a
+      light direction. grey on grey is masking the visual wheel.
+- [ ] smells done properly: odour sources (food, her, later a rival) with intermittent plumes
+      (power-law whiffs, exponent -3/2) and Weber-Fechner normalisation at the ORNs; his 2,635
+      ORNs are at the floor and nothing modulates them.
+- [ ] a food spot: sugar GRNs (~65 Hz at 100 mM, adapting) + its odour plume; a water spot with
+      humidity; the warm corner stays. a room with several things in it.
+- [ ] bristles by body part (antenna, head, legs, wings are typed); the head-on class returns for
+      head bristles.
+- [ ] status of every sense: `docs/SENSES.md`.
+
 ## 2b. legs with muscles (promoted 09-17 12:30)
 
 - [x] the leg MN SET: 373 leg MNs by subclass fl/ml/hl (12:45; the 699 included abdominal, wing,
