@@ -2011,7 +2011,7 @@ and (b) something for her to do besides leave: her own stop, or his following. t
 courtship sequence proper, a build of its own, not an afternoon flag. recorded as the
 first thing the brake was tried on.
 
-## the pillars went through the floor (14:08 PDT; nate's report)
+## the pillars went through the floor (17:15 PDT; nate's report)
 
 nate, from the viewer: the pillars render full height "through / in front of the floor", an
 optical illusion from his point of view. a raytracer bug, in both raytracers: pillars were
