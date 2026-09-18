@@ -123,6 +123,31 @@ loop is probably a bug (mechanosensation brief).
       so MDN reads as backward; the DNp09 right-bias (tracing) as a labelled correction or not.
       the leg model is NOT a wheel (drum 0/3 rectified, 1/3 signed): pace + diagnostic only.
 
+## 2c. what the fly asked for (09-18 01:02, `docs/SCENARIOS.md`; the unmet items, in his order)
+
+- [ ] **persistent internal states** as scalars with decay constants: hunger, thirst, satiety, arousal,
+      sleep pressure, aggression threshold, the loser effect. modelled as what they do (gains on
+      food receptors, thresholds on outputs, a drive on the walking command), labelled; the engine has
+      fast synapses only, so driving the peptide cells does nothing (SEAM 00:54). breaks six of his
+      twenty scenarios by itself. the next build.
+- [ ] the plume with power-law whiff / blank durations (see 2a) and the wind that carries it also
+      deflecting his aristae (done: `--wind on`).
+- [ ] **bitter as a field** on the same surface as sugar, non-adapting, Gr32a/Gr33a; the PER threshold
+      under the satiety state. (sugar, water: done.)
+- [ ] **the escape path**: loom -> giant fibre -> jump, outside the deliberative loop, both take-off
+      modes; needs a loom detector the eye track does not have yet (§3).
+- [ ] **sensory and motor delays** (5-15 ms in, 20-40 ms out): without them he is more stable than a
+      fly and we cannot tell which successes came from that. frame-level today (10 ms).
+- [ ] **humidity with a state-dependent sign** (sated: dry; desiccated: moist, faster in dry air): one
+      field, one sign, from the thirst scalar above.
+- [ ] **a compass with drift** (menotaxis: sky direction, updated by his own turns, holdable at an
+      offset for minutes): the central complex has it; a sun in the garden already; measure whether
+      EPG / PEN bump exists in him before building anything.
+- [ ] **luminance- and temperature-dependent bandwidth** (eye Q10 6.5; dusk): a gain on the eye
+      front end, later.
+- [ ] **efference copy into the wide-field visual channels** at saccade onset (with the JO one in §2).
+- [ ] declined by him, agreed: no wings, no oscillating halteres, no colour (until the eye track).
+
 ## 3. the eye track (independent of the above)
 
 - [ ] ensemble-averaged flyvis T4/T5 as the seam input (per-position DS check first).
