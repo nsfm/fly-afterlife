@@ -224,3 +224,34 @@ class Registry:
     def table(self) -> str:
         """one line per class: name, cell count, transducer, source. for the record."""
         return "\n".join(f"{rc.name:24s} {rc.cells.size:6d} cells  {type(rc.transducer).__name__:10s} {rc.transducer.source or rc.source}" for rc in self.classes)
+
+
+# ---- the tonic floor: every typed sense at its physiological resting rate (2026-09-17 evening, nate's point:
+# the real brain never sees silence; every circuit downstream was tuned against these rates). rows are applied
+# FIRST, so the world's rows (thermal field, taps, bristles, T4/T5) override them on the cells they drive.
+FLOOR = [
+    # (name, selector kwargs, rest Hz, source)
+    ("floor_ORN", dict(type_prefix="ORN_"), 8.0, "chemo brief s.1: generic food ORN spontaneous ~8 Hz (per class 1-15; Hallem & Carlson 2006)"),
+    ("floor_ORN_DA1", dict(type_prefix="ORN_DA1"), 0.12, "chemo brief: Or67d 0.12 Hz (van der Goes van Naters & Carlson 2007)"),
+    ("floor_ORN_VA1v", dict(type_prefix="ORN_VA1v"), 3.0, "chemo brief: Or47b ~1-5 Hz"),
+    ("floor_ORN_VA1d", dict(type_prefix="ORN_VA1d"), 3.0, "chemo brief: Or88a ~1-5 Hz"),
+    ("floor_ORN_DL3", dict(type_prefix="ORN_DL3"), 0.5, "chemo brief: Or65a ~0.1-1 Hz"),
+    ("floor_GRN", dict(cls="gustatory"), 2.0, "chemo brief s.3: sugar / bitter GRNs ~0-5 Hz at rest (E)"),
+    ("floor_hot", dict(type_prefix="TRN_VP2"), 37.0, "Budelli 2019: hot cells 37 Hz at 25 C"),
+    ("floor_cool", dict(type_prefix="TRN_VP3"), 95.0, "Budelli 2019: cooling cells ~95 Hz, temperature-independent"),
+    ("floor_VP1m", dict(type_prefix="TRN_VP1m"), 10.0, "chemo brief: VP1m ~5-20 Hz (inferred; label under audit, Marin 2020)"),
+    ("floor_hygro", dict(cls="hygrosensory"), 20.0, "chemo brief s.5: dry / moist cells ~10-30 Hz, non-adapting (other-insect scale)"),
+    ("floor_JO", dict(type_prefix="JO"), 5.0, "mechano brief s.4: JO in still air, low tonic (E)"),
+    ("floor_leg_proprio", dict(cls="mechanosensory_proprioceptive", entry_nerve=["ProLN", "MesoLN", "MetaLN"]), 15.0, "mechano brief s.2: hair plates / campaniforms under standing load, tonic (E, ~10-20 Hz)"),
+]
+
+
+def tonic_floor(brain, registry: "Registry") -> list:
+    """add the floor rows to `registry` (in front of everything already there). returns the rows."""
+    rows = []
+    for name, sel, hz, src in FLOOR:
+        cells = select(brain, **sel)
+        if cells.size == 0: continue
+        rows.append(ReceptorClass(name, cells, Hold(hz), lambda st: True, source=src))
+    registry.classes = rows + registry.classes
+    return rows
