@@ -286,7 +286,7 @@ def run(args):
     R_BAR = pg.Rect(PAD, BAR_Y, WIN_W - 2 * PAD, 16)
 
     pg.init(); pg.display.set_caption(f"replay - {os.path.basename(args.npz)}")
-    screen = pg.display.set_mode((WIN_W, WIN_H))
+    SCALE = float(args.scale); display = pg.display.set_mode((int(WIN_W * SCALE), int(WIN_H * SCALE))); screen = pg.Surface((WIN_W, WIN_H))   # draw at the layout size, blit up for high-DPI screens
     f_lab = pg.font.Font(None, 19); f_leg = pg.font.Font(None, 16); f_info = pg.font.Font(None, 20)
 
     hv = HumanView(ep, HVW, HVH, args.fov, cap=args.cache)
@@ -368,6 +368,8 @@ def run(args):
         info = (f"frame {i} / {ep.n - 1}    t = {i / ep.fps:6.2f} s    heading {ep.pose[i][2] % 360:5.1f} deg"
                 f"    x{SPEEDS[spd]:g}    {'playing' if playing else 'paused'}    {clock.get_fps():4.0f} fps{lag}")
         screen.blit(f_info.render(info, True, INK), (PAD, BAR_Y + 26))
+        if SCALE != 1.0: display.blit(pg.transform.smoothscale(screen, display.get_size()), (0, 0))
+        else: display.blit(screen, (0, 0))
         pg.display.flip()
         stats["chrome"].append(time.perf_counter() - t)
 
@@ -426,7 +428,7 @@ def run(args):
 def main():
     ap = argparse.ArgumentParser(description="native replay viewer for a fly episode npz")
     ap.add_argument("npz"); ap.add_argument("--fov", type=float, default=150.0); ap.add_argument("--size", default="640x320")
-    ap.add_argument("--cache", type=int, default=256, help="human-view frames kept (LRU)")
+    ap.add_argument("--cache", type=int, default=256, help="human-view frames kept (LRU)"); ap.add_argument("--scale", type=float, default=1.0, help="window scale for high-DPI screens (e.g. 1.5 or 2)")
     ap.add_argument("--her", default="auto", choices=("auto", "always", "never"), help="put her in his scene: auto believes the episode's dist / her pose moving")
     ap.add_argument("--bench", type=int, default=0, help="render N frames headless, print timings, no window")
     ap.add_argument("--shot", default=None, help="with --bench: save the last window to this png")
