@@ -112,7 +112,7 @@ class Scene:
             sn = self.sun; sunv = np.zeros(5)
             if sn is not None: sd = np.asarray(sn["dir"], float); sd = sd / np.linalg.norm(sd); sunv = np.array([sd[0], sd[1], sd[2], sn["boost"], sn["k"]], np.float64)
             _shade_kernel(np.asarray(origin, np.float64), np.ascontiguousarray(d, np.float64), float(self.sky), float(self.ground), float(self.soft), dr is not None, drum, wl is not None, walls, pil, sph, lum, fl is not None, ftex, fhalf, dsc, sn is not None, sunv)
-            return lum
+            return np.clip(lum, 0, 1) if sn is not None else lum
         lum = np.where(d[:, 2] > 0, self.sky, self.ground).astype(np.float32)
         band = np.clip(0.5 + d[:, 2] / self.soft, 0, 1); lum = self.ground + (self.sky - self.ground) * band
         if self.drum is not None:
@@ -146,7 +146,7 @@ class Scene:
             oc = origin - c; b = d @ oc; disc = b * b - (oc @ oc - r * r)
             hit = disc > 0; t = -b - np.sqrt(np.where(hit, disc, 0))
             ok = hit & (t > 0) & (t < tmin); tmin[ok] = t[ok]; lum[ok] = alb
-        return lum
+        return np.clip(lum, 0, 1) if self.sun is not None else lum   # the sun can push the sky past 1; the eye sees [0, 1]
 
 class Eye:
     def __init__(self, path="seam/eye_geom.npz", seed=0):
