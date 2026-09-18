@@ -2097,6 +2097,18 @@ lopsided right) silences the right DNa02 through the brain, and the running base
 only read fluctuations of one side. that is the kind of interaction nate warned about at
 17:20: a command we added changed a readout we trusted. on the list.
 
+**traced (18:17 PDT):** DNa02's strongest input on each side is an *ascending* neuron from
+the cord (AN03A008, 741 synapses on the left cell, 654 on the right), so the wheel reads
+the cord as much as the brain. driving DNp09 alone, no vision: left DNp09 at 100 Hz gives
+DNa02 L 12.7/s and R 0; right DNp09 gives R 2.7 and L 0; both give 14.0 / 0.7. **the walking
+command excites its own side's DNa02 through the cord's feedback, and this male's right
+loop is five times weaker than his left.** so on a walking cord the DNa02 wheel is mostly
+the command's asymmetric echo, with vision riding on the left side; it followed the drum
+3 of 3 through that. the running baseline removes the constant part; the one-sidedness
+stays. the wheel on a walking cord needs re-thinking (a per-side normalisation, or a
+readout that is not DNa02), and the asymmetry itself joins the list of things the female
+does not have.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
