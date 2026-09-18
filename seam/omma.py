@@ -21,7 +21,7 @@ except ImportError:  # pragma: no cover
 
 if _HAVE_NUMBA:
     @njit(cache=True, parallel=True)
-    def _shade_kernel(origin, d, sky, ground, soft, has_drum, drum, has_walls, walls, pillars, spheres, lum):
+    def _shade_kernel(origin, d, sky, ground, soft, has_drum, drum, has_walls, walls, pillars, spheres, lum, has_floor, floor_tex, floor_half, discs, has_sun, sun):
         """same primitives as Scene.shade, one ray per iteration. drum = (period, phase, lo, hi, half_height); walls = (half, height, albedo);
         pillars (k, 5) = x, y, r, albedo, height (standing on z = 0); spheres (k, 5) = cx, cy, cz, r, albedo."""
         ox, oy, oz = origin[0], origin[1], origin[2]
@@ -39,7 +39,27 @@ if _HAVE_NUMBA:
                 if abs(elv) < drum[4]:
                     az = np.degrees(np.arctan2(dy, dx))
                     l = drum[2] if (np.floor((az - drum[1]) / (drum[0] / 2)) % 2) == 0 else drum[3]
+            if has_sun and dz > 0:
+                ca = dx * sun[0] + dy * sun[1] + dz * sun[2]
+                if ca > 0: l += sun[3] * ca ** sun[4]
             tmin = np.inf
+            if has_floor and dz < -1e-9:
+                t = -oz / dz
+                if t < tmin:
+                    hx = ox + t * dx; hy = oy + t * dy; H = floor_tex.shape[0]; W = floor_tex.shape[1]
+                    ix = int((hx + floor_half) / (2 * floor_half) * W); iy = int((hy + floor_half) / (2 * floor_half) * H)
+                    if ix < 0: ix = 0
+                    if ix > W - 1: ix = W - 1
+                    if iy < 0: iy = 0
+                    if iy > H - 1: iy = H - 1
+                    tmin = t; l = floor_tex[iy, ix]
+            for k in range(discs.shape[0]):
+                if abs(dz) > 1e-9:
+                    t = (discs[k, 2] - oz) / dz
+                    if t > 0 and t < tmin:
+                        hx = ox + t * dx; hy = oy + t * dy
+                        if (hx - discs[k, 0]) ** 2 + (hy - discs[k, 1]) ** 2 <= discs[k, 3] * discs[k, 3]:
+                            tmin = t; l = discs[k, 4]
             if has_walls:
                 for w in range(4):
                     axis = 0 if w < 2 else 1; sgn = 1.0 if (w % 2) == 0 else -1.0
@@ -70,8 +90,11 @@ if _HAVE_NUMBA:
             lum[i] = l
 
 class Scene:
-    def __init__(self, sky=0.85, ground=0.35, horizon_soft=0.15, spheres=(), drum=None, pillars=(), walls=None, pillar_height=1.5):
+    def __init__(self, sky=0.85, ground=0.35, horizon_soft=0.15, spheres=(), drum=None, pillars=(), walls=None, pillar_height=1.5, floor=None, discs=(), sun=None):
         self.sky, self.ground, self.soft = sky, ground, horizon_soft; self.pillar_height = pillar_height
+        self.floor = floor                       # None = the sky/ground gradient by ray direction (the room); else dict(tex=(H,W) float32 luminance albedo, half=extent in m): a real plane at z = 0
+        self.discs = list(discs)                 # (x, y, z, r, albedo): horizontal discs (leaves, a puddle), seen from below and above
+        self.sun = sun                           # None or dict(dir=(dx, dy, dz) unit, boost, k): sky brightens toward the sun as boost * max(0, d.dir)^k
         self.walls = walls                       # None or dict(half, height, albedo): a square room |x|,|y| <= half, walls from the floor to `height`
         self.spheres = list(spheres)             # (centre xyz, radius, albedo)
         self.pillars = list(pillars)             # (x, y, radius, albedo): vertical cylinders, floor to sky
@@ -84,7 +107,11 @@ class Scene:
             pil = np.array([[p[0], p[1], p[2], p[3], (p[4] if len(p) > 4 else self.pillar_height)] for p in self.pillars], np.float64).reshape(-1, 5)
             sph = np.array([[c[0], c[1], c[2], r, a] for c, r, a in self.spheres], np.float64).reshape(-1, 5)
             lum = np.empty(len(d), np.float32)
-            _shade_kernel(np.asarray(origin, np.float64), np.ascontiguousarray(d, np.float64), float(self.sky), float(self.ground), float(self.soft), dr is not None, drum, wl is not None, walls, pil, sph, lum)
+            fl = self.floor; ftex = np.ascontiguousarray(fl["tex"], np.float32) if fl is not None else np.zeros((1, 1), np.float32); fhalf = float(fl["half"]) if fl is not None else 1.0
+            dsc = np.array([[x, y, z, r, a] for x, y, z, r, a in self.discs], np.float64).reshape(-1, 5)
+            sn = self.sun; sunv = np.zeros(5)
+            if sn is not None: sd = np.asarray(sn["dir"], float); sd = sd / np.linalg.norm(sd); sunv = np.array([sd[0], sd[1], sd[2], sn["boost"], sn["k"]], np.float64)
+            _shade_kernel(np.asarray(origin, np.float64), np.ascontiguousarray(d, np.float64), float(self.sky), float(self.ground), float(self.soft), dr is not None, drum, wl is not None, walls, pil, sph, lum, fl is not None, ftex, fhalf, dsc, sn is not None, sunv)
             return lum
         lum = np.where(d[:, 2] > 0, self.sky, self.ground).astype(np.float32)
         band = np.clip(0.5 + d[:, 2] / self.soft, 0, 1); lum = self.ground + (self.sky - self.ground) * band
@@ -92,7 +119,18 @@ class Scene:
             dr = self.drum; az = np.degrees(np.arctan2(d[:, 1], d[:, 0])); elv = np.degrees(np.arcsin(np.clip(d[:, 2], -1, 1)))
             band = np.abs(elv) < dr["half_height_deg"]; stripe = ((az - dr["phase_deg"]) // (dr["period_deg"] / 2)) % 2 == 0
             lum = np.where(band, np.where(stripe, dr["lo"], dr["hi"]), lum).astype(np.float32)
+        if self.sun is not None:
+            sd = np.asarray(self.sun["dir"], float); sd /= np.linalg.norm(sd); cosang = np.clip(d @ sd, 0, 1)
+            lum = np.where(d[:, 2] > 0, lum + self.sun["boost"] * cosang ** self.sun["k"], lum).astype(np.float32)
         tmin = np.full(len(d), np.inf)
+        if self.floor is not None:                     # the ground is a plane at z = 0 with a texture; the horizon gradient only above it
+            fl = self.floor; down = d[:, 2] < -1e-9; t = np.where(down, -origin[2] / np.where(down, d[:, 2], -1.0), np.inf)
+            hx = origin[0] + t * d[:, 0]; hy = origin[1] + t * d[:, 1]; tex = fl["tex"]; H, W = tex.shape; half = fl["half"]
+            ix = np.clip(((hx + half) / (2 * half) * W).astype(np.int64), 0, W - 1); iy = np.clip(((hy + half) / (2 * half) * H).astype(np.int64), 0, H - 1)
+            ok = down & (t < tmin); tmin[ok] = t[ok]; lum[ok] = tex[iy[ok], ix[ok]]
+        for dx_, dy_, dz_, r_, alb_ in self.discs:     # horizontal disc at height dz_
+            dd = d[:, 2]; t = np.where(np.abs(dd) > 1e-9, (dz_ - origin[2]) / np.where(np.abs(dd) > 1e-9, dd, 1.0), np.inf)
+            hx = origin[0] + t * d[:, 0]; hy = origin[1] + t * d[:, 1]; ok = (t > 0) & (t < tmin) & ((hx - dx_) ** 2 + (hy - dy_) ** 2 <= r_ * r_); tmin[ok] = t[ok]; lum[ok] = alb_
         if self.walls is not None:                     # four axis-aligned planes; the fly is inside, so the nearest forward hit is the wall it faces
             wl = self.walls
             for axis, sgn in ((0, 1), (0, -1), (1, 1), (1, -1)):
