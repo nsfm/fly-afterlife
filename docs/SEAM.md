@@ -1924,6 +1924,8 @@ runs next.
 
 ## he walks (12:56 PDT): the walking command in the room
 
+**[09:14 PDT, 09-18: silent-brain result: with the tonic floor on (18:18) the command adds nothing to the cord (09-18 motor review, confirmed by probe below).]**
+
 `--walk 100` (DNp09, both sides, tonic) with the leg model as effector, the true leg set, running
 steering and pace, adapting bristles; male-only, 120 s, seeds 10-12:
 
@@ -1974,6 +1976,8 @@ frames of contact with her, mean yaw -0.98 deg per chunk (the DNa02 wheel's know
 his P1 2,340, hers 0. the room artifact, v6.
 
 ## the brake (13:55 PDT): halting is in the wiring
+
+**[09:14 PDT, 09-18: silent-brain result: with the tonic floor on the brake does not brake (09-18 motor review, confirmed by probe below).]**
 
 Sapkal 2024 (Nature): halting is active, a brain-side inhibition of the walking neurons
 (Foxglove, Bluebell) and a cord-side brake (BRK) that co-contracts the legs. the
@@ -2345,6 +2349,72 @@ back. not yet a claim: the effect is "he stays and returns", in 2/3, from a star
 plume hard to reach. the proper test, pre-registered and on the cores: `--start 2.26,-0.94,90`, one
 metre downwind of the fruit inside its plume, facing crosswind; all three arms; prediction: gated
 and ungated both turn him upwind onto the fruit within the first seconds and the control does not.
+
+**the downwind start (09:15 PDT; `--start 2.26,-0.94,90`: one metre downwind of the fruit inside its
+plume, facing crosswind; the laptop slept through the gated arm, hence the morning stamp).** the
+prediction was that gated and ungated wind both turn him upwind onto the fruit within seconds and
+the control does not. **it failed, and the way it failed is the finding:**
+
+| arm | first 10 s: upwind cos | d fruit at 10 s | in plume, whole run | d fruit min | sugar frames | rim |
+|---|---|---|---|---|---|---|
+| off (control) | +0.18, +0.07, -0.19 | 1.32, 1.29, 1.70 | 40%, 24%, 32% | 0.38, 0.63, 0.38 | 135, 0, 72 | 0.04, 0.05, 0.01 |
+| wind, ungated | **+0.42, +0.50, +0.19** | 2.48, 2.06, 2.05 | 8%, 4%, 5% | 0.90 x3 (= the start) | 0, 0, 0 | 0.18, 0.11, 0.23 |
+| wind, gated | +0.59, -0.01, -0.05 | 1.17, 1.92, 1.33 | 11%, 6%, 23% | 0.38, 0.40, 0.52 | 44, 0, 0 | 0.05, 0.08, 0.02 |
+
+**the wind turns him upwind, replicated:** ungated, three of three seeds swing toward the wind in
+the first ten seconds, well above the control, and the whole-run tilt (+0.10 to +0.16) matches
+the upwind-start runs (+0.12, +0.14), five of six ungated seeds positive against a control
+scattered around zero. **and it never brings him to the fruit:** at a pace pinned at 0.275 m/s
+(motor review, below) the turn is an arc, not a saccade; by ten seconds the arc has carried him
+two metres north and out of the plume, the heading only two-thirds of the way round, and he
+rim-walks the east edge. the control, drifting, spends more of the run in the plume than he does.
+the gate turns him once (seed 10, +0.59, one visit) and does nothing in the other two. so the
+upwind-start result ("he stays and returns", 2/3) is **not confirmed** from the start that was
+meant to confirm it; what survives is the heading channel: right sign, modest size, in six
+seeds. anemotaxis in this fly waits on the one thing the review says he cannot do: slow down
+while he turns. the two results are the same finding.
+
+**the motor review (09:14 PDT; `docs/MOTOR_REVIEW.md`, an opus agent that read the code first, at nate's
+three questions: steering, speed, walking vs wings).** its central finding, which i then reproduced
+with my own probe (open loop, no vision, 4 s after a 1.5 s settle, the 373 leg MNs, seeds 1 / 3):
+
+| floor | DNp09 0 | 100 | 200 | 100 + brake 30 | other VNC motor (wing, neck, abdominal, haltere) at DNp09 100 |
+|---|---|---|---|---|---|
+| on | 559 / 586 | 526 / 551 | 504 / 516 | 543 / 553 | 1,131 / 1,160 |
+| off | 0 / 0 | 388 / 404 | 618 / 655 | 1 / 8 | 618 / 978 |
+
+**the walking command and the brake are silent-brain results.** on the silent brain DNp09 at
+100 Hz is everything (0 to 388) and AN19A018 at 30 Hz halts the cord (388 to 1), which is what
+12:56 and 13:55 say. with the tonic floor on, the cord fires 560-590 leg-MN spikes a second of
+its own, the command adds nothing (slightly negative at 200 Hz), and the brake does nothing.
+the floor's tonus is not one row: the review ablated them and found the fourteen thermal cells
+alone carry half of it (526 to 288 without them), JO a fifth, the leg proprioceptors a tenth.
+and the motor neurons we do not read, the 326 other VNC motor cells, fire at twice the legs'
+rate, led by the flight power muscles (DVMn, DLMn at 25-53 Hz per cell), driven mostly by the
+ORN resting rate (the review: 867 to 195 spikes/s without the five ORN rows).
+
+**what this does to the record since 18:27.** `--walk 100` in the config of record has been
+inert; "he walks" has been `RunningPace`'s fixed point (the running mean makes v = 0.275 the
+attractor: median 0.277-0.279 in every garden run, 0 of 12,000 frames at the floor speed).
+the distance walked, the rim time, the fruit visits and the wind result all stand as measured,
+but their pace was the estimator's, not the cord's. the wheel, too, is one cell: DNa02 R sits at
+0.02-0.07 spikes per chunk in every garden run, so the difference reduces to the left cell
+against its own mean; the review also notes AN03A008 fires 0.0 on the woken brain, so my 18:17
+explanation for the pinned right cell belongs to the silent brain as well. **and the three
+calibrations run on the silent brain:** `dna02_rest_offset`, `standing_baselines` and
+`reflex_gain` drive vision and the bristles only; the floor rows are applied in the episode loop
+alone (`episode.py`), so the rest offset (+0.00), the standing baselines (0) and the touch-reflex
+gain were measured in a regime the loop never visits. that one is a bug of mine and is fixed
+next, one change, with the oracle (which pins `--no-floor`) unaffected.
+
+the review's other findings, untested by me yet and queued: DNa01 (2 cells, the published
+partner of DNa02, read by nothing), DNg13, DNb06 (alive and lateralised), PFL3 (24, the compass's
+output onto DNa02); the seven types the old wheel screen picked are mostly neck neurons (gaze,
+on a body with no head); the `--dn-gain` channel is eight tonic types, one of them our own DNp09,
+and it steers *toward* warmth while DNa02 steers away; DNg100 (BDN2) with 1,870 direct leg
+synapses against DNp09's 10 as the other walking command. the closed-loop dose-response
+(`--walk 0 | 100` under the floor, and `--no-floor --walk 100`, three seeds) is on the cores
+behind the downwind batch.
 
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
