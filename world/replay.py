@@ -12,7 +12,7 @@ room; this is the reference view.
 """
 import sys, io, json, argparse, base64, threading
 import numpy as np
-from http.server import HTTPServer, BaseHTTPRequestHandler
+from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 sys.path.insert(0, "seam"); sys.path.insert(0, "src")
 from omma import Scene
 
@@ -37,13 +37,16 @@ def scene_at(i):
 fov = np.radians(args.fov); fx = np.tan(fov / 2); fy = fx * H / W
 u = (np.arange(W) + 0.5) / W * 2 - 1; v = 1 - (np.arange(H) + 0.5) / H * 2; U, V = np.meshgrid(u, v)
 RAYS0 = np.stack([np.ones_like(U), -U * fx, V * fy], -1).reshape(-1, 3); RAYS0 /= np.linalg.norm(RAYS0, axis=1, keepdims=True)
-_cache = {}
+_cache = {}; _lock = threading.Lock()
 def render(i):
     if i in _cache: return _cache[i]
+    with _lock:
+        if i in _cache: return _cache[i]
+        return _render(i)
+def _render(i):
     x, y, h = pose[i]; hr = np.radians(h); R = np.array([[np.cos(hr), -np.sin(hr), 0], [np.sin(hr), np.cos(hr), 0], [0, 0, 1]])
     img = scene_at(i).shade(np.array([x, y, 0.5]), RAYS0 @ R.T).reshape(H, W)
-    out = (np.clip(img, 0, 1) * 255).astype(np.uint8); _cache[i] = out
-    if len(_cache) > 400: _cache.pop(next(iter(_cache)))
+    out = png((np.clip(img, 0, 1) * 255).astype(np.uint8)); _cache[i] = out
     return out
 
 def png(gray):
@@ -103,7 +106,8 @@ const trace = document.createElement('canvas'); trace.width = 700; trace.height 
 function drawTraces(i) { tc.drawImage(trace, 0, 0); const px = (i / step) / Math.max(1, Math.floor(M.n / step)) * 700; tc.strokeStyle = '#fff'; tc.beginPath(); tc.moveTo(px, 0); tc.lineTo(px, 260); tc.stroke(); }
 // ---- frames: prefetch ahead
 const pre = new Map(); function prefetch(i) { for (let k = i; k < Math.min(M.n, i + 12 * stride); k += stride) if (!pre.has(k)) { const im = new Image(); im.src = '/frame/' + k; pre.set(k, im); if (pre.size > 200) pre.delete(pre.keys().next().value); } }
-async function show(i) { f = i; const im = pre.get(i); $('hv').src = im ? im.src : '/frame/' + i; prefetch(i + stride); const r = await fetch('/retina/' + i); paintRetina(new Uint8Array(await r.arrayBuffer()));
+let RET = null; fetch('/retina_all').then(r => r.arrayBuffer()).then(b => { RET = new Uint8Array(b); show(f); });
+async function show(i) { f = i; const im = pre.get(i); $('hv').src = im ? im.src : '/frame/' + i; prefetch(i + stride); if (RET) paintRetina(RET.subarray(i * az.length, (i + 1) * az.length)); else { const r = await fetch('/retina/' + i); paintRetina(new Uint8Array(await r.arrayBuffer())); }
   drawMap(i); drawTraces(i); $('s').value = i; $('info').textContent = `frame ${i} / ${M.n}  t = ${(i / M.fps).toFixed(2)} s  heading ${M.pose[i][2].toFixed(0)} deg`; }
 $('legend').innerHTML = (M.garden ? '<span><i style="background:rgba(60,120,40,.7)"></i>leaf overhead (shade beneath: darker, 3 C cooler)</span><span><i style="background:rgba(255,208,112,.6)"></i>sun patch (+6 C)</span><span><i style="background:#2a5a1a"></i>grass stalk</span><span><i style="background:#a09a90"></i>stone</span><span><i style="background:#9a1a1a"></i>fruit (odour plume downwind, sugar on contact)</span><span><i style="background:rgba(51,68,102,.9)"></i>puddle (humid, cooler, water)</span><span>white arrow: wind</span>' : '<span><i style="background:#f2efe6;border:1px solid #666"></i>pillar</span>') + '<span><i style="background:#e2a63b"></i>him (line = heading)</span>' + (M.pose2 ? '<span><i style="background:#e07a9a"></i>her</span>' : '') + '<span><i style="border:2px solid rgba(154,163,178,.9)"></i>touching a wall, rim, stalk or stone</span><span><i style="border:2px solid #e07a9a"></i>touching her</span>';
 $('s').oninput = e => show(+e.target.value); $('speed').textContent = 'x' + stride;
@@ -116,10 +120,17 @@ class Handler(BaseHTTPRequestHandler):
     def log_message(self, *a): pass
     def do_GET(self):
         p = self.path
-        if p.startswith("/frame/"): body = png(render(int(p[7:]))); ct = "image/png"
+        if p.startswith("/frame/"): body = render(int(p[7:])); ct = "image/png"
         elif p.startswith("/retina/"): body = LUM[int(p[8:])].tobytes(); ct = "application/octet-stream"
+        elif p == "/retina_all": body = LUM.tobytes(); ct = "application/octet-stream"
         else: body = PAGE.replace("__META__", json.dumps(meta)).replace("__W__", str(W)).replace("__H__", str(H)).replace("__FOV__", str(int(args.fov))).replace("__N1__", str(n - 1)).encode(); ct = "text/html; charset=utf-8"
-        self.send_response(200); self.send_header("Content-Type", ct); self.send_header("Content-Length", str(len(body))); self.end_headers(); self.wfile.write(body)
+        try:
+            self.send_response(200); self.send_header("Content-Type", ct); self.send_header("Content-Length", str(len(body))); self.end_headers(); self.wfile.write(body)
+        except (BrokenPipeError, ConnectionResetError): pass   # the browser cancelled a prefetch
 
-print(f"replay: {args.npz} ({n} frames, {world}) at http://localhost:{args.port}/   (ctrl-c to stop)"); render(0)
-HTTPServer(("127.0.0.1", args.port), Handler).serve_forever()
+print(f"replay: {args.npz} ({n} frames, {world}) at http://localhost:{args.port}/   (ctrl-c to stop; frames pre-render in the background)"); render(0)
+def prerender():
+    for i in range(0, n, 1):
+        if i not in _cache: render(i)
+threading.Thread(target=prerender, daemon=True).start()
+ThreadingHTTPServer(("127.0.0.1", args.port), Handler).serve_forever()
