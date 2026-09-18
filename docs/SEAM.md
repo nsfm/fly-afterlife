@@ -2023,7 +2023,7 @@ away: it spans -21 to +38 degrees of elevation, floor to top, as geometry says. 
 what he sees, so the oracle is re-frozen (same frozen script, corrected raytracer); every
 run before this section saw the old pillars.
 
-## thermokinesis, the physiology's own answer (17:40 PDT; nate's question)
+## thermokinesis, the physiology's own answer (17:20 PDT; nate's question)
 
 nate: the apparatus (two aristae half a millimetre apart) can hardly support a spatial
 gradient; "move fast, erratically" would be the simplest solution. the physiology agrees:

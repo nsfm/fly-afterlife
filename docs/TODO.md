@@ -40,11 +40,11 @@ loop is probably a bug (mechanosensation brief).
 
 ## 2. physiology-driven changes, one per run, in this order
 
-- [ ] **THE TONIC FLOOR** (promoted 09-17 17:40, nate): every typed sensory class at its physiological
+- [ ] **THE TONIC FLOOR** (promoted 09-17 17:20, nate): every typed sensory class at its physiological
       resting rate by default (ORNs ~8 Hz generic, Or67d 0.12, hot 37, cooling 95, dry/moist ~20,
       JO still-air, proprioceptors under standing load, gustatory ~2, ocelli by light), the world only
       modulating. one step against the current baseline; expect the operating point to move.
-- [ ] thermokinesis: turning rate up when warming is in the wiring (17:40); the pace sign is inverted
+- [ ] thermokinesis: turning rate up when warming is in the wiring (17:20); the pace sign is inverted
       (readout interaction with turning). understand, then the cold corner and the extremes.
 - [~] **synapse constants** (vision brief): male 0.185, female 0.275; `RunningPace` fixes the
       degenerate pace (08:58); male-only baseline in progress; then her. re-measure every baseline. reconcile her 0.45 KC-sparsity calibration with the
