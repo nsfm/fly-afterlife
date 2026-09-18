@@ -2688,6 +2688,15 @@ is the same). next: log DNa02's strongest presynaptic partners per cell in the l
 one-sided ones; the fix, if it is a tracing asymmetry in a mirror pair, is a labelled per-type mirror
 normalisation of the wiring, opt-in, oracle-checked.
 
+**DNa02's partners (14:46 PDT; `--log-pre DNa02`, the 40 strongest inputs to each cell logged per chunk, garden,
+60 s):** the wiring into the two cells is a mirror: AN03A008 137 (L) / 121 (R), PS049 -91 / -89, DNa03 47 / 50,
+LAL018 45 / 54, CB0431 43 / 52, DNae005 54 / 43, and so on down the list. **and every one of the eighty is
+silent in the loop** (0.00-0.07 spikes per chunk; the weighted drive from them is small and net inhibitory
+on both sides: L -5.3, R -2.7). DNa02 L's 1.44 per chunk does not come from its strong inputs; it comes
+from the long tail of weak ones, hundreds of cells, and that is where the left-right difference is. so
+the question is a pathway, not a partner: the same run with every presynaptic cell logged (3,000), summed
+by type, is on the cores.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
