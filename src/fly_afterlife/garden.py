@@ -134,7 +134,7 @@ class Garden(Room):
                 dd = np.hypot(b.x - ox, b.y - oy)
                 if dd < r_ + b.r:
                     b.x, b.y = ox + (b.x - ox) / max(dd, 1e-6) * (r_ + b.r), oy + (b.y - oy) / max(dd, 1e-6) * (r_ + b.r); b.touched = "L" if b.bearing_to(ox, oy) >= 0 else "R"; b.kind = 1
-                    if (ox, oy) == (self.fruit[0], self.fruit[1]) and b is m: m.taste = "sugar"
+                if (ox, oy) == (self.fruit[0], self.fruit[1]) and b is m and dd < r_ + b.r + 0.01: m.taste = "sugar"   # tarsi on the skin: standing against the fruit is tasting it (09-18 14:05; before, only pushing into it counted, and a halted fly does not push)
             px, py, _, pr, _ = self.puddle
             if np.hypot(b.x - px, b.y - py) < pr and b is m: m.taste = "water" if m.taste is None else m.taste
         if f is not None and f.present: self.pair(m, f)

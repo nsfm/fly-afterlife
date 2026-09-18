@@ -2611,6 +2611,24 @@ fruit brake and the feeding latch set a rate on two cells the engine never drew.
 drove nothing; the "two reasons" above were plausible and beside the point. fixed; the state is logged
 per chunk now (`feeding`, `sat100`); the latch re-run.
 
+**he stops for the fruit (14:01 PDT; `--feeding 3 --brake-dn DNg105`, start 0.7 m east of the fruit facing it,
+60 s, three seeds; the brake cells driven this time):**
+
+| arm | reached the fruit | longest stay | feeding | leg MN feeding / walking | v feeding / other |
+|---|---|---|---|---|---|
+| control (walk 100) | 2 of 3 (2.1, 2.2 s) | 1.2, 1.2 s | | / 86-91 | / 0.20-0.24 |
+| latch | 2 of 3 (55, 31 s) | **5.0, 9.2 s** | 8 %, 34 % of the run | **52, 59** / 86-90 | **0.02, 0.05** / 0.21 |
+
+**the halt works in the loop:** while feeding, DNg105 takes the cord from ~88 to 52-59 per chunk (the
+open-loop 0.57x), the state pace reads standing, and he stays on the fruit five and nine seconds
+against the control's 1.2. the first time he has stopped for something he wants. (the start "facing
+the fruit" did not deliver it: two seeds per arm reached it, at 2 s or at 31-55 s; the wheel drifts
+him off a 0.7 m line.) **why he leaves:** the collision leaves him standing exactly at the fruit's
+surface and the taste fired only while he pushed *into* it; a halted fly does not push, so the
+taste stopped, the three-second latch ran out, the reflex returned. a fly standing on fruit is
+tasting it: one centimetre of tolerance on the tarsal contact (`garden.py`). rerun; prediction:
+he stays until the run ends, since nothing releases him; satiety next.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
