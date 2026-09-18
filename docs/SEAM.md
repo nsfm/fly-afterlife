@@ -2268,6 +2268,31 @@ anemotaxis: Budick & Dickinson 2006; Alvarez-Salvado 2018), and the wind sense i
 Johnston's organ, which we hold at rest. that is the smell experiment worth running:
 wind on the ear, odour gating it. built and tested open loop next.
 
+**wind on Johnston's organ (00:46 PDT; open loop, woken walking brain).** his JO is typed in
+groups (A 50, B 88, C 68, D 8, E 267, F 78, plus untyped): C and E are the wind and gravity
+groups (Yorozu 2009). driven as typed, the left wind cells (203) lift his descending
+population fivefold and turn the leg model hard right, the right ones (132) do almost
+nothing, and both together look like the left alone: **a typing and tracing asymmetry**
+(the left cells carry 99,376 output synapses, median 462 per cell; the right 33,204, median
+177). with the populations equalised (132 per side, 20 Hz):
+
+| wind from | DN L / R (delta) | leg MN L / R | legs yaw_left (s1, s3) |
+|---|---|---|---|
+| left | +17 / +5, +25 / +6 | -2 / 0, -1 / +2 | **+5.0, +5.4** (left: into the wind) |
+| right | +12 / +29, +2 / +21 | +3 / +3, +1 / +2 | **-5.5, -3.8** (right: into the wind) |
+| left + fruit odour | +14 / -6, +13 / -8 | | +7.0, +0.9 |
+| right + fruit odour | +7 / +18, -3 / +9 | | -2.8, -2.5 |
+| both sides | +29 / +32, +24 / +25 | | -6.0, -8.5 (the residual asymmetry) |
+
+**an upwind-turning channel exists in the wiring:** wind on one antenna drives that side's
+descending population and turns the leg model toward the wind, in both seeds, both
+sides, with the sign the DNa02 validation fixed. the two-channel wheel (DNa02 + the DN
+population through a running baseline) reads it with the right sign by DNa02's own
+convention (left up, turn left), which is the convention that read warmth wrongly
+because warmth is bilateral. the odour does not gate the wind response in open loop (in
+life the gate is central and state-dependent), so the gate is a labelled stand-in, tested
+both ways. sound on one ear (JO-A/B) lateralises nothing.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
