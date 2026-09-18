@@ -2710,6 +2710,21 @@ morning). the floor rows themselves are balanced per side (leg proprioceptors 29
 GRN 706 / 710; only the ORNs lean right, 883 / 1,343), so the floor is not the lopsided input. next:
 IN12B014's own inputs (logged), and the cord's per-side wiring.
 
+**the amplifier, and the hole (15:00 PDT).** IN12B014's own inputs, all 3,123 logged: its loudest is DNb05, the
+balanced tonic pair (190 / 198 spikes/s), and the *weights* differ: DNb05 L -> IN12B014 L 11.5, DNb05 R ->
+IN12B014 R 7.1; DNbe007 12.8 / 6.1; total excitatory drive 262 into the left, 168 into the right. and the
+pair inhibits each other (L -> R -25, R -> L -14), a winner-take-all, so a 1.6x weight difference becomes a
+100x rate difference (34 / 0 open loop), and the winner sits on DNa02 R. structurally the whole right
+ventral cord is under-traced: right / left total input weight 0.85 for the leg MNs, 0.82 for all cord
+interneurons, 0.69 for IN12B014; the brain's descending neurons 0.93. **so the lesion is real, it is in
+the reconstruction, it is the right cord, and a bistable pair carries it to the wheel.** the correction:
+`wiring.mirror_normalise` (`--mirror all|vnc`, off by default, the oracle untouched): for every bilateral
+type, each cell's excitatory and inhibitory input scaled to the pair's mean, factors clipped at 2x.
+labelled as what it is: bilateral pairs taken as mirrors, count differences taken as tracing. open loop,
+walking (seed 1): mirror off, leg MN 479 L / 342 R, IN12B014 34 / 0, DNb06 29 / 0; mirror all, 379 / 424,
+27 / 12, DNb06 0.8 / 0 (that pair is a hole at one end, 32 vs 710, and the clip cannot mend it); with the
+cord scope (the measured bias) the numbers are below. the loop test next: DNa02 R, the drum, the fruit.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
