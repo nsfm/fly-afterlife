@@ -2725,6 +2725,20 @@ walking (seed 1): mirror off, leg MN 479 L / 342 R, IN12B014 34 / 0, DNb06 29 / 
 27 / 12, DNb06 0.8 / 0 (that pair is a hole at one end, 32 vs 710, and the clip cannot mend it); with the
 cord scope (the measured bias) the numbers are below. the loop test next: DNa02 R, the drum, the fruit.
 
+**the cord mirror in the loop (15:09 PDT; `--mirror vnc`: 3,389 bilateral cord types, 474 factors at the clip):**
+open loop, walking: leg MN 392 L / 451 R (from 479 / 342: it overshoots, so the cord's output asymmetry is
+not only its input weight), IN12B014 28 / 10 (from 34 / 0). drum, DNa02 wheel: follows 3/3 (unchanged;
+the drum runs the silent brain). garden beside the fruit, three seeds: he walks onto it in two (1.2 and
+1.4 s), eats 9 and 10 s, fills, leaves; leg MN 41 / 48 per chunk (from 50 / 40); IN12B014 2.1-3.0 / 0.9-1.1
+(from 2.95 / 0.31). **and DNa02 did not get its right cell back:** R 0.03-0.16 (from 0.05), and L fell to
+0.04-0.59 (from 1.56), because the woken right IN12B014 now inhibits DNa02 L as its mirror did DNa02 R.
+the correction evens the cord and quiets the wheel on both sides. **not adopted** (a change that silences
+the one live steering cell is not an improvement; it stays opt-in, labelled, for the cord questions).
+what the pathway said stands: the excitation into both DNa02 cells is the horizontal system, alive on
+both sides at 10-20 per chunk. HS left minus right is the flow-balance signal (Srinivasan 1991; Kern
+2012; `docs/GARDEN.md`), and it is what drives DNa02 in life; reading the wheel one synapse upstream, at
+HS, is the next test, on the drum first, both signs.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
