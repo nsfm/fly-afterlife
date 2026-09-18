@@ -2639,6 +2639,28 @@ taste stopped, the three-second latch ran out, the reflex returned. a fly standi
 tasting it: one centimetre of tolerance on the tarsal contact (`garden.py`). rerun; prediction:
 he stays until the run ends, since nothing releases him; satiety next.
 
+**he eats, and he leaves (14:13 PDT; the latch with the tarsal tolerance, and the latch with satiety filling in
+8 s of feeding; start 0.7 m east of the fruit facing it, 60 s, three seeds each):**
+
+| arm | seed | reached the fruit at | stayed | feeding | cord feeding / walking | v feeding | satiety |
+|---|---|---|---|---|---|---|---|
+| latch | 11 | 1.9 s | **58.1 s (to the end)** | 97 % | 48 / 87 | 0.00 | |
+| latch | 12 | 56.7 s | 3.3 s (to the end) | 5 % | 66 / 92 | 0.02 | |
+| latch | 10 | never | | | | | |
+| latch + satiety | 12 | 15.4 s | **10.3 s, then left** | 20 % | 59 / 81 | 0.06 | reached 100 |
+| latch + satiety | 10, 11 | never | | | | | |
+
+**the state does what it says in every seed that reaches the fruit:** with the tolerance, a halted fly
+keeps tasting and the latch holds him for the rest of the run (seed 11: 0.4 m walked in a minute, the
+cord at 48 per chunk, speed zero); with satiety, he eats for ten seconds, fills, and walks away (seed
+12: 9 m after leaving). the first thing in him that outlasts its stimulus, and the first thing he has
+done on purpose: scenarios 5 and 7 of `docs/SCENARIOS.md`, in the loop. **what is weak is reaching
+it:** from 0.7 m facing the fruit, one or two seeds in three get there, because the wheel is one cell
+(DNa02 L against its own mean; the review, 09:14) and the arc is wide. the steering item is next.
+adopted: `--brake-dn DNg105` the default; `--feeding 3 --satiety 8` explicit, a labelled state, in
+the garden config of record from here. a 180 s run of the satiety fly (seed 12) is the one to watch:
+satiety decays with tau 180 s, so he may come back.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,

@@ -131,7 +131,9 @@ loop is probably a bug (mechanosensation brief).
 
 ## 2c. what the fly asked for (09-18 01:02, `docs/SCENARIOS.md`; the unmet items, in his order)
 
-- [ ] **persistent internal states** as scalars with decay constants: hunger, thirst, satiety, arousal,
+- [~] **persistent internal states** (09-18 14:15: the FIRST one is built: `FeedingState`, sugar latches feeding,
+      holds the halt on DNg105, silences withdrawal; satiety fills and releases; he eats and leaves. the rest:)
+      as scalars with decay constants: hunger, thirst, satiety, arousal,
       sleep pressure, aggression threshold, the loser effect. modelled as what they do (gains on
       food receptors, thresholds on outputs, a drive on the walking command), labelled; the engine has
       fast synapses only, so driving the peptide cells does nothing (SEAM 00:54). breaks six of his
