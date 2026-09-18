@@ -2056,6 +2056,34 @@ calling the result the wiring. the proprioception result and the thermal "rest" 
 this principle by accident. next: every typed sense at its resting rate from the briefs by
 default, the world modulating, as its own step against the current baseline.
 
+## the cold corner and the extremes (18:07 PDT; nate's 10 C)
+
+walking cord, three seeds, 120 s, pillars now on the floor (this section and everything
+after it sees the corrected pillars; the "rest" arm is the same room with the cells at
+their 25 C rates and no field). `field2` = warm corner 33 C + cold corner 10 C at the
+opposite corner; `field2x` = 40 C + 10 C.
+
+| arm | seed | mean T | time > 28 | time < 20 | time < 15 | wall | walked |
+|---|---|---|---|---|---|---|---|
+| rest | 10 / 11 / 12 | (22.4 / 20.5 / 22.7 if the field were on) | 9 / 0 / 12% | 18 / 25 / 19% | 6 / 15 / 10% | **40 / 49 / 42%** | 20.7 / 19.8 / 21.5 m |
+| field2 (33 / 10) | 10 / 11 / 12 | 22.3 / 27.1 / 22.0 | 12 / 36 / 4% | 33 / 0 / 27% | 16 / 0 / 20% | **15 / 14 / 10%** | 29.3 / 31.4 / 31.3 m |
+| field2x (40 / 10) | 10 / 11 / 12 | 21.6 / 26.1 / 21.0 | 12 / 31 / 9% | 34 / 13 / 38% | 24 / 9 / 24% | 17 / 13 / 17% | 29.8 / 31.4 / 31.2 m |
+
+**no taxis, warm or cold, at 33 or at 40:** two of three seeds spend *more* time in the cold
+corner with the field than without, one seed (11) leaves the cold entirely and sits in the
+warm. **the robust effect is the kinesis:** with any field on, wall time drops from 40-49%
+to 10-17% and he walks 30 m instead of 20, in every seed, both fields. thermal transients
+as he moves (the cooling cells are differentiators) keep his cord active and free him
+from walls; the warmth of the world moves him, it does not aim him. nate's prediction
+("move fast, erratically") is what the model does with heat and cold alike.
+
+**a confound found on the way, recorded:** the rest arm's wall time here (40-49%) is far
+above the walking baseline of 13:28 (0-13%, `world/thermo5`, same configuration). the
+difference between the runs is the pillar fix: the infinite pillars filled his lower
+visual field with vertical contrast everywhere, the standing pillars do not, and the
+DNa02 wheel gets less to steer by near walls. the render bug had been part of his
+behaviour. tested directly next: pillars at 1.5 m vs infinite, same seeds, rest arm.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
