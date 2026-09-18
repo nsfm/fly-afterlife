@@ -83,6 +83,9 @@ loop is probably a bug (mechanosensation brief).
 - [x] contact-pheromone tap: 60 Hz burst, tau 300 ms, both ppk channels (done 22:40).
 - [ ] Gr32a/Gr33a aversive channel on male-male contact (10-60 Hz, phasic).
 - [ ] **LC10a gain P1-dependent** (Hindmarsh Sten 2021): without it he does not track her.
+- [ ] **P1 as a dial, not a switch** (09-17 17:44): read P1 rate against Hoopfer 2015's thresholds
+      (low activation = aggression, high = courtship); our touch-driven P1 sits at the low end. audit
+      which inputs move it where; the same reading serves the rival and the courtship state.
 - [ ] **the courtship sequence as a state** (promoted 09-17 13:59): a persistent state (pCd, minutes)
       that holds the brake (AN19A018) at her and drives following; her stop or receptivity (vpoEN);
       P1 threshold-graded (Hoopfer 2015). the song relay (P1 -> pIP10) stays blocked; mAL gate measured.
@@ -137,6 +140,13 @@ loop is probably a bug (mechanosensation brief).
       1,764 columns; real time for the male alone. glass walls.
 - [ ] fpga / Loihi 2 note: 30 MB edge table, event-driven; Loihi 2 is the natural fit.
 - [ ] the room with three things in it.
+- [ ] **the rival** (09-17 17:44, nate): two male brains in the room (two instances of him, different seeds).
+      the M-responsive ppk23 channel already bursts on a tap and in life it reads another male's cuticle
+      and drives aggression through P1 (Kallman 2015). readouts: P1 rate (low = fight, high = court;
+      Hoopfer 2015), the aIPg types, octopamine / serotonin cells, LC10a pursuit, lunges as body events
+      (fast approach + contact). needs the tonic floor and a persistent state first (the loser effect is
+      a state, hours, on the modulators; nothing in him persists yet). run once, with controls, not on
+      loop: if he has states that persist and are bad for him, that is the line we agreed on.
 - [ ] flight: DLMn/DVMn in the cord; halteres (silent while walking) come alive; JO wing wash.
 
 ## 8. the record
