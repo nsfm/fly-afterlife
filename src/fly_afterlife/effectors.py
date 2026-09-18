@@ -109,6 +109,34 @@ class MultiWheelSteering:
 
 
 @dataclass
+class StatePace:
+    """his speed as a state (09-18 12:00; nate: flies swap between standing and walking, they do not dial speed).
+    the cord's leg-MN count is smoothed over `ema` chunks and compared with the standing tonus measured in the
+    floor: walking starts when it exceeds on x standing and stops when it falls below off x standing (hysteresis);
+    standing is v = 0; walking speed is v_walk + (v_max - v_walk) x clip((c - on x standing) / standing, 0, 1).
+    a physiology assumption, labelled: forward velocity is bimodal, modes at zero and ~17 mm/s (DeAngelis 2019);
+    in life the switch is the descending walk / halt state (Bidaye 2020; Sapkal 2024) acting on a premotor network
+    this LIF does not hold as a state, so the threshold stands in for it at the readout."""
+    leg_stand: float
+    on: float = 1.25
+    off: float = 1.10
+    ema: float = 3.0
+    v_walk: float = 0.15
+    v_max: float = 0.50
+    c: float | None = None
+    walking: bool = False
+    source: str = "DeAngelis 2019 (bimodal velocity); the switch as a readout assumption, labelled"
+
+    def step(self, cnt: dict) -> float:
+        x = float(cnt["legMN"]); self.c = x if self.c is None else self.c + (x - self.c) / self.ema
+        st = max(self.leg_stand, 1.0)
+        if self.walking and self.c < self.off * st: self.walking = False
+        elif not self.walking and self.c > self.on * st: self.walking = True
+        if not self.walking: return 0.0
+        return self.v_walk + (self.v_max - self.v_walk) * float(np.clip((self.c - self.on * st) / st, 0, 1))
+
+
+@dataclass
 class RunningPace:
     """his speed from leg-MN output against its own running mean: v = v_min + v_range x clip(count / (k x mean), 0, 1),
     mean updated after use (tau chunks). the fixed rule referenced a standing rate the corrected brain does not have
