@@ -121,7 +121,9 @@ class FeedingState:
     hold: float = 3.0
     t_full: float = 0.0          # 0: no satiety (feeding lasts as long as the taste keeps refreshing it)
     tau_sat: float = 180.0
+    rearm: float = 0.5           # full at 1; hungry again below this (16:10: at "a hair under one" he re-latched every frame and never left the fruit)
     feeding: bool = False
+    full: bool = False
     sat: float = 0.0
     until: float = -1.0
     t_last: float | None = None
@@ -131,8 +133,10 @@ class FeedingState:
         dt = 0.0 if self.t_last is None else max(t - self.t_last, 0.0); self.t_last = t
         if self.feeding and self.t_full > 0: self.sat = min(self.sat + dt / self.t_full, 1.0)
         elif self.tau_sat > 0: self.sat = max(self.sat - dt * self.sat / self.tau_sat, 0.0)
-        if taste == "sugar" and self.sat < 1.0: self.until = t + self.hold
-        self.feeding = (t < self.until) and self.sat < 1.0
+        if self.sat >= 1.0: self.full = True
+        elif self.sat < self.rearm: self.full = False
+        if taste == "sugar" and not self.full: self.until = t + self.hold
+        self.feeding = (t < self.until) and not self.full
 
 
 @dataclass

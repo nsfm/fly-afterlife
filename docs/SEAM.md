@@ -2761,6 +2761,21 @@ with three chunks of smoothing. no fly walks like that, and no fly reaches a fru
 it. one change: the wheel's smoothing, three chunks to ten (`--steer-ema 10`; a graded HS cell
 integrates over that anyway), on the drum and in the garden, heading noise measured.
 
+**the smoothing, and where the noise is (16:09 PDT; `--steer-ema 10`):** drum, HS wheel, three seeds: follows
+3/3 (+16 / -31 deg/s), and the still phases are flat where at three chunks they drifted at 10-25 deg/s.
+garden: touch frames 366-718 (from 1,070-2,452), rim the same, heading noise 37-41 deg/s rms (from
+42-50): less than the smoothing alone predicts, so the HS counts are not the noise. reconstructing each
+channel's yaw from the logged counts (walk, seed 10): **the HS channel contributes 1.3 degrees per chunk,
+the descending-population channel 3.6** (its raw L-R has an sd of 17.5 spikes per chunk across 1,310
+cells), and their sum matches his actual heading change at r = 0.87. the population channel, added for
+warmth (10:15 yesterday) and kept for the wind, is the noise on the wheel; the review said retire it
+(09:14). **adopted:** ten chunks the default (the oracle pins three); the population channel out of the
+garden's config of record (`--dn-gain 0.5` stays a flag for the wind question, whose result stands as
+recorded with it on). **and a bug in satiety, found because he finally stayed put:** beside the fruit,
+seed 10 walked onto it at 2.5 s and fed for 117 s, 98% of the run, because at full the state ended,
+satiety began to decay, and a hair under one the taste latched again, every frame. hysteresis: full at
+one, hungry again below half (`rearm`). the noisy wheel used to carry him off before it mattered.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
