@@ -2023,6 +2023,39 @@ away: it spans -21 to +38 degrees of elevation, floor to top, as geometry says. 
 what he sees, so the oracle is re-frozen (same frozen script, corrected raytracer); every
 run before this section saw the old pillars.
 
+## thermokinesis, the physiology's own answer (17:40 PDT; nate's question)
+
+nate: the apparatus (two aristae half a millimetre apart) can hardly support a spatial
+gradient; "move fast, erratically" would be the simplest solution. the physiology agrees:
+the cooling cells are differentiators (rate of change, threefold for 0.2 C, adapting), a
+temporal sensor for a moving animal, and the algorithm that falls out is a biased random
+walk: turn more and go faster when warming, straight when cooling. so the question for the
+model is not "does he turn away from the spot" but "does warming change his turning rate
+and his pace." from the walking-cord runs of 13:28 (`world/thermo5`, per 100 ms chunk, off
+the walls, |dT/dt| > 0.05 C/s):
+
+| arm | seed | n | Spearman dT/dt vs pace | vs turning rate | turning rate warming / cooling | pace warming / cooling |
+|---|---|---|---|---|---|---|
+| rest (cells at rest, no field) | 10 / 11 / 12 | 672 / 806 / 831 | -0.07 / -0.00 / -0.03 | +0.01 / -0.01 / -0.02 | 8.0 / 8.2, 8.0 / 7.9, 8.3 / 8.1 | 0.27 / 0.28, 0.28 / 0.27, 0.27 / 0.27 |
+| field | 10 / 11 / 12 | 603 / 526 / 597 | **-0.19 / -0.24 / -0.20** (p < 0.01) | +0.08 (p 0.06) / -0.01 / **+0.09 (p 0.03)** | **9.4 / 8.6, 9.0 / 8.8, 8.5 / 7.7** | 0.26 / 0.27, 0.25 / 0.28, 0.25 / 0.27 |
+
+**when he is warming he turns more, in all three seeds** (two significant), and the rest
+arm shows nothing: the turning half of the klinokinesis is in the wiring. the speed half
+has the wrong sign: he slows when warming, in all three, where the algorithm and the
+open-loop leg output (warmth raises it) both say faster. that is a readout question: the
+running pace normalises by his own recent mean, and a warming fly that turns more covers
+less ground per chunk; the pace rule and the turning interact. the thermal story, restated
+honestly: no taxis, a weak klinokinesis with the turning sign right and the speed sign to
+be understood.
+
+**nate's other point, adopted as the next build: the tonic floor.** this brain rests at
+0 Hz on nearly every sensory channel and the real one does not (ORNs a few Hz, hot cells 37,
+cooling 95, slow leg MNs 30 standing, proprioceptors under load, JO in still air); every
+circuit downstream was tuned against that floor, and we have been handing it silence and
+calling the result the wiring. the proprioception result and the thermal "rest" arm were
+this principle by accident. next: every typed sense at its resting rate from the briefs by
+default, the world modulating, as its own step against the current baseline.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
