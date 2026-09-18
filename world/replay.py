@@ -67,35 +67,49 @@ if world == "garden":
 LUM = (np.clip(lum, 0, 1) * 255).astype(np.uint8) if lum.dtype != np.uint8 else lum
 
 PAGE = """<!doctype html><meta charset=utf-8><title>replay</title>
-<style>body{margin:0;background:#0b0e14;color:#d8dee9;font:14px system-ui;padding:12px}.row{display:flex;gap:12px;flex-wrap:wrap}canvas{background:#000;border-radius:4px}#c{width:min(100%,__W__px)}h2{font:600 13px system-ui;margin:8px 0 4px;color:#9aa3b2}input[type=range]{width:100%}</style>
+<style>body{margin:0;background:#0b0e14;color:#d8dee9;font:14px system-ui;padding:12px}.row{display:flex;gap:12px;flex-wrap:wrap}canvas{background:#000;border-radius:4px}h2{font:600 13px system-ui;margin:8px 0 4px;color:#9aa3b2}input[type=range]{width:100%}.legend{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:#9aa3b2;margin:4px 0}.legend i{display:inline-block;width:11px;height:11px;border-radius:50%;vertical-align:-1px;margin-right:4px}button{font:500 13px system-ui;background:#151a24;color:#d8dee9;border:1px solid #2a3140;border-radius:4px;padding:4px 10px;cursor:pointer}</style>
 <div class=row><div><h2>human view: his raytracer, pinhole __FOV__ deg</h2><img id=hv width=__W__ height=__H__ style="border-radius:4px;background:#000"></div>
-<div><h2>his retina</h2><canvas id=ret width=560 height=280></canvas></div></div>
-<div class=row><div><h2>map</h2><canvas id=map width=420 height=420></canvas></div><div style="flex:1;min-width:320px"><h2>traces</h2><canvas id=tr width=700 height=260></canvas></div></div>
-<input id=s type=range min=0 max=__N1__ value=0><div id=info></div><button id=play>play</button>
+<div><h2>his retina (left of fly = left of panel)</h2><canvas id=ret width=560 height=280></canvas></div></div>
+<div class=row><div><h2>map</h2><canvas id=map width=420 height=420></canvas><div class=legend id=legend></div></div><div style="flex:1;min-width:320px"><h2>traces (spikes per chunk, each scaled to its own max)</h2><canvas id=tr width=700 height=260></canvas></div></div>
+<input id=s type=range min=0 max=__N1__ value=0><div id=info></div><button id=play>play</button> <button id=slower>slower</button> <button id=faster>faster</button> <span id=speed></span>
 <script>
-const M = __META__; const $ = id => document.getElementById(id); let f = 0, playing = false;
-const az = M.az, el = M.el, side = M.side; const rc = $('ret').getContext('2d'), mc = $('map').getContext('2d'), tc = $('tr').getContext('2d');
+const M = __META__; const $ = id => document.getElementById(id); let f = 0, playing = false, stride = 3;
+const az = M.az, el = M.el; const rc = $('ret').getContext('2d'), mc = $('map').getContext('2d'), tc = $('tr').getContext('2d');
 let floorImg = null; if (M.floor_png) { floorImg = new Image(); floorImg.src = M.floor_png; }
 const half = M.garden ? M.garden.half : (M.walls ? M.walls[0] : 2.5); const S = 420 / (2 * half + 0.4); const W2 = (x, y) => [210 + x * S, 210 - y * S];
-async function show(i) { f = i; $('hv').src = '/frame/' + i; const r = await fetch('/retina/' + i); const l = new Uint8Array(await r.arrayBuffer());
-  rc.fillStyle = '#000'; rc.fillRect(0, 0, 560, 280); for (let k = 0; k < l.length; k++) { const x = 280 - az[k] / 190 * 280, y = 140 - el[k] / 95 * 140; rc.fillStyle = `rgb(${l[k]},${l[k]},${l[k]})`; rc.fillRect(x - 1.5, y - 1.5, 3, 3); }
-  drawMap(i); drawTraces(i); $('s').value = i; $('info').textContent = `frame ${i} / ${M.n}  t = ${(i / M.fps).toFixed(2)} s  heading ${M.pose[i][2].toFixed(0)}`; }
-function drawMap(i) { mc.fillStyle = '#0b0e14'; mc.fillRect(0, 0, 420, 420); const [a, b] = W2(-half, half), [c, d] = W2(half, -half);
-  if (floorImg && floorImg.complete) mc.drawImage(floorImg, a, b, c - a, d - b); mc.strokeStyle = 'rgba(200,190,170,.7)'; mc.strokeRect(a, b, c - a, d - b);
-  if (M.garden) { const g = M.garden; for (const [x, y, z, r] of g.leaves) { const [px, py] = W2(x, y); mc.fillStyle = 'rgba(60,120,40,.35)'; mc.beginPath(); mc.arc(px, py, r * S, 0, 7); mc.fill(); }
-    for (const [x, y, r] of g.grass) { const [px, py] = W2(x, y); mc.fillStyle = '#2a5a1a'; mc.beginPath(); mc.arc(px, py, 3, 0, 7); mc.fill(); }
-    for (const [o, col] of [[g.stone, '#a09a90'], [g.fruit, '#9a1a1a'], [g.puddle, 'rgba(51,68,102,.8)']]) { const [px, py] = W2(o[0], o[1]); mc.fillStyle = col; mc.beginPath(); mc.arc(px, py, o[3] * S, 0, 7); mc.fill(); }
-    const [sx, sy] = W2(g.sunspot[0], g.sunspot[1]); mc.fillStyle = 'rgba(255,208,112,.25)'; mc.beginPath(); mc.arc(sx, sy, g.sunspot[2] * S, 0, 7); mc.fill(); }
-  else for (const o of M.objects) { const [px, py] = W2(o[0], o[1]); mc.fillStyle = o[3] > 0.5 ? '#f2efe6' : '#2a2f3a'; mc.beginPath(); mc.arc(px, py, o[2] * S, 0, 7); mc.fill(); }
-  mc.strokeStyle = 'rgba(226,166,59,.6)'; mc.beginPath(); for (let k = 0; k <= i; k += 2) { const [px, py] = W2(M.pose[k][0], M.pose[k][1]); k ? mc.lineTo(px, py) : mc.moveTo(px, py); } mc.stroke();
+// ---- retina: precomputed pixel positions, painted into an ImageData (one putImageData per frame)
+const RW = 560, RH = 280; const rimg = rc.createImageData(RW, RH); const rpos = az.map((a, k) => [Math.round(280 - a / 190 * 280), Math.round(140 - el[k] / 95 * 140)]);
+function paintRetina(l) { rimg.data.fill(0); for (let i = 3; i < rimg.data.length; i += 4) rimg.data[i] = 255; for (let k = 0; k < l.length; k++) { const [x, y] = rpos[k]; for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= RW || yy >= RH) continue; const o = (yy * RW + xx) * 4; rimg.data[o] = rimg.data[o + 1] = rimg.data[o + 2] = l[k]; } } rc.putImageData(rimg, 0, 0); }
+// ---- map: the static world on one offscreen canvas, the path on another that only grows
+const base = document.createElement('canvas'); base.width = base.height = 420; const bc = base.getContext('2d');
+const pathc = document.createElement('canvas'); pathc.width = pathc.height = 420; const pc = pathc.getContext('2d'); let pathUpTo = 0;
+function drawBase() { bc.fillStyle = '#0b0e14'; bc.fillRect(0, 0, 420, 420); const [a, b] = W2(-half, half), [c, d] = W2(half, -half);
+  if (floorImg && floorImg.complete && floorImg.naturalWidth) bc.drawImage(floorImg, a, b, c - a, d - b); bc.strokeStyle = 'rgba(200,190,170,.7)'; bc.strokeRect(a, b, c - a, d - b);
+  if (M.garden) { const g = M.garden; for (const [x, y, z, r] of g.leaves) { const [px, py] = W2(x, y); bc.fillStyle = 'rgba(60,120,40,.35)'; bc.beginPath(); bc.arc(px, py, r * S, 0, 7); bc.fill(); }
+    const [sx, sy] = W2(g.sunspot[0], g.sunspot[1]); bc.fillStyle = 'rgba(255,208,112,.25)'; bc.beginPath(); bc.arc(sx, sy, g.sunspot[2] * S, 0, 7); bc.fill();
+    for (const [x, y, r] of g.grass) { const [px, py] = W2(x, y); bc.fillStyle = '#2a5a1a'; bc.beginPath(); bc.arc(px, py, 3, 0, 7); bc.fill(); }
+    for (const [o, col] of [[g.stone, '#a09a90'], [g.fruit, '#9a1a1a'], [g.puddle, 'rgba(51,68,102,.85)']]) { const [px, py] = W2(o[0], o[1]); bc.fillStyle = col; bc.beginPath(); bc.arc(px, py, o[3] * S, 0, 7); bc.fill(); }
+    const [wx, wy] = W2(-half + 0.4, half - 0.4); bc.strokeStyle = '#fff'; bc.beginPath(); bc.moveTo(wx, wy); bc.lineTo(wx + g.wind[0] * 30, wy - g.wind[1] * 30); bc.stroke(); bc.fillStyle = '#fff'; bc.fillText('wind', wx + 4, wy + 14); }
+  else for (const o of M.objects) { const [px, py] = W2(o[0], o[1]); bc.fillStyle = o[3] > 0.5 ? '#f2efe6' : '#2a2f3a'; bc.beginPath(); bc.arc(px, py, o[2] * S, 0, 7); bc.fill(); } }
+function extendPath(i) { if (i < pathUpTo) { pc.clearRect(0, 0, 420, 420); pathUpTo = 0; } pc.strokeStyle = 'rgba(226,166,59,.7)'; pc.lineWidth = 1.2; pc.beginPath(); const [sx, sy] = W2(M.pose[pathUpTo][0], M.pose[pathUpTo][1]); pc.moveTo(sx, sy); for (let k = pathUpTo + 1; k <= i; k++) { const [px, py] = W2(M.pose[k][0], M.pose[k][1]); pc.lineTo(px, py); } pc.stroke(); pathUpTo = i; }
+function drawMap(i) { mc.drawImage(base, 0, 0); extendPath(i); mc.drawImage(pathc, 0, 0);
   const [hx, hy] = W2(M.pose[i][0], M.pose[i][1]); mc.fillStyle = '#e2a63b'; mc.beginPath(); mc.arc(hx, hy, 5, 0, 7); mc.fill(); const hr = M.pose[i][2] * Math.PI / 180; mc.strokeStyle = '#e2a63b'; mc.beginPath(); mc.moveTo(hx, hy); mc.lineTo(hx + 14 * Math.cos(hr), hy - 14 * Math.sin(hr)); mc.stroke();
   if (M.pose2) { const [qx, qy] = W2(M.pose2[i][0], M.pose2[i][1]); mc.fillStyle = '#e07a9a'; mc.beginPath(); mc.arc(qx, qy, 5, 0, 7); mc.fill(); }
   if (M.touch && M.touch[i]) { mc.strokeStyle = (M.touch_kind && M.touch_kind[i] === 2) ? '#e07a9a' : 'rgba(154,163,178,.9)'; mc.lineWidth = 2; mc.beginPath(); mc.arc(hx, hy, 9, 0, 7); mc.stroke(); mc.lineWidth = 1; } }
-function drawTraces(i) { tc.fillStyle = '#0b0e14'; tc.fillRect(0, 0, 700, 260); const keys = Object.keys(M.traces); const n = keys.length; const step = Math.max(1, Math.floor(M.n / 2000)); const cols = ['#e2a63b', '#7ab8ff', '#9be29b', '#e07a9a', '#c9a0ff', '#ffd070', '#7fd0d0', '#ff9e7a', '#aaa'];
-  keys.forEach((k, j) => { const v = M.traces[k]; const mx = Math.max(1, ...v); const y0 = j * (260 / n), hgt = 260 / n - 4; tc.strokeStyle = cols[j % cols.length]; tc.beginPath(); v.forEach((val, x) => { const px = x / v.length * 700, py = y0 + hgt - val / mx * hgt; x ? tc.lineTo(px, py) : tc.moveTo(px, py); }); tc.stroke(); tc.fillStyle = cols[j % cols.length]; tc.fillText(k + ' (max ' + mx + ')', 4, y0 + 11); });
-  const px = (i / step) / Math.max(1, Math.floor(M.n / step)) * 700; tc.strokeStyle = '#fff'; tc.beginPath(); tc.moveTo(px, 0); tc.lineTo(px, 260); tc.stroke(); }
-$('s').oninput = e => show(+e.target.value); $('play').onclick = () => { playing = !playing; $('play').textContent = playing ? 'pause' : 'play'; (async function loop() { while (playing && f < M.n - 3) { await show(f + 3); await new Promise(r => setTimeout(r, 30)); } })(); };
-show(0);
+// ---- traces: drawn once; only the playhead moves
+const trace = document.createElement('canvas'); trace.width = 700; trace.height = 260; const trc = trace.getContext('2d'); const keys = Object.keys(M.traces); const step = Math.max(1, Math.floor(M.n / 2000));
+(function () { trc.fillStyle = '#0b0e14'; trc.fillRect(0, 0, 700, 260); const cols = ['#e2a63b', '#7ab8ff', '#9be29b', '#e07a9a', '#c9a0ff', '#ffd070', '#7fd0d0', '#ff9e7a', '#aaa']; const n = keys.length;
+  keys.forEach((k, j) => { const v = M.traces[k]; const mx = Math.max(1, ...v); const y0 = j * (260 / n), hgt = 260 / n - 4; trc.strokeStyle = cols[j % cols.length]; trc.beginPath(); v.forEach((val, x) => { const px = x / v.length * 700, py = y0 + hgt - val / mx * hgt; x ? trc.lineTo(px, py) : trc.moveTo(px, py); }); trc.stroke(); trc.fillStyle = cols[j % cols.length]; trc.fillText(k + ' (max ' + mx + ')', 4, y0 + 11); }); })();
+function drawTraces(i) { tc.drawImage(trace, 0, 0); const px = (i / step) / Math.max(1, Math.floor(M.n / step)) * 700; tc.strokeStyle = '#fff'; tc.beginPath(); tc.moveTo(px, 0); tc.lineTo(px, 260); tc.stroke(); }
+// ---- frames: prefetch ahead
+const pre = new Map(); function prefetch(i) { for (let k = i; k < Math.min(M.n, i + 12 * stride); k += stride) if (!pre.has(k)) { const im = new Image(); im.src = '/frame/' + k; pre.set(k, im); if (pre.size > 200) pre.delete(pre.keys().next().value); } }
+async function show(i) { f = i; const im = pre.get(i); $('hv').src = im ? im.src : '/frame/' + i; prefetch(i + stride); const r = await fetch('/retina/' + i); paintRetina(new Uint8Array(await r.arrayBuffer()));
+  drawMap(i); drawTraces(i); $('s').value = i; $('info').textContent = `frame ${i} / ${M.n}  t = ${(i / M.fps).toFixed(2)} s  heading ${M.pose[i][2].toFixed(0)} deg`; }
+$('legend').innerHTML = (M.garden ? '<span><i style="background:rgba(60,120,40,.7)"></i>leaf overhead (shade beneath: darker, 3 C cooler)</span><span><i style="background:rgba(255,208,112,.6)"></i>sun patch (+6 C)</span><span><i style="background:#2a5a1a"></i>grass stalk</span><span><i style="background:#a09a90"></i>stone</span><span><i style="background:#9a1a1a"></i>fruit (odour plume downwind, sugar on contact)</span><span><i style="background:rgba(51,68,102,.9)"></i>puddle (humid, cooler, water)</span><span>white arrow: wind</span>' : '<span><i style="background:#f2efe6;border:1px solid #666"></i>pillar</span>') + '<span><i style="background:#e2a63b"></i>him (line = heading)</span>' + (M.pose2 ? '<span><i style="background:#e07a9a"></i>her</span>' : '') + '<span><i style="border:2px solid rgba(154,163,178,.9)"></i>touching a wall, rim, stalk or stone</span><span><i style="border:2px solid #e07a9a"></i>touching her</span>';
+$('s').oninput = e => show(+e.target.value); $('speed').textContent = 'x' + stride;
+$('play').onclick = () => { playing = !playing; $('play').textContent = playing ? 'pause' : 'play'; (async function loop() { while (playing && f < M.n - stride) { const t0 = performance.now(); await show(f + stride); const dt = performance.now() - t0; await new Promise(r => setTimeout(r, Math.max(0, 1000 / M.fps * stride - dt))); } })(); };
+$('slower').onclick = () => { stride = Math.max(1, stride - 1); $('speed').textContent = 'x' + stride; }; $('faster').onclick = () => { stride = Math.min(30, stride + 1); $('speed').textContent = 'x' + stride; };
+(floorImg ? new Promise(r => { floorImg.onload = r; if (floorImg.complete) r(); }) : Promise.resolve()).then(() => { drawBase(); show(0); });
 </script>"""
 
 class Handler(BaseHTTPRequestHandler):
