@@ -2213,6 +2213,29 @@ kernel: `world/replay.py` serves an episode on localhost and renders each pinhol
 demand (0.5 ms, same function as his retina); the JavaScript tracer retires for anything
 beyond the plain room.
 
+**the first garden scores (2026-09-18 00:25 PDT; male alone, 120 s, walking, floor, three seeds
+per arm; a first attempt crossed the arm and tag lists in the runner's grid and overwrote
+its own outputs: discarded, rerun one batch per arm):**
+
+| arm | seed | walked | rim | touch frames | closest to fruit | time < 0.6 m | sugar contacts | closest to puddle | in sun | in shade |
+|---|---|---|---|---|---|---|---|---|---|---|
+| full garden | 10 / 11 / 12 | 32-33 m | 6-10% | 1,081 / 613 / 561 | **0.38** / 0.59 / 1.17 | 2.4 / 0.6 / 0% | **88** / 0 / 0 | 1.07 / 0.85 / 1.02 | 3.4 / 3.7 / 1.3% | 4 / 9 / 7% |
+| fruit without its plume | 10 / 11 / 12 | 32-33 m | 7-12% | 1,165 / 613 / 745 | **0.38** / 0.59 / **0.38** | 2.5 / 0.8 / 3.3% | **89** / 0 / **99** | 0.39 / 0.88 / 1.03 | 0 / 0 / 6.8% | 8 / 6 / 21% |
+| fruit toned like the litter (invisible) | 10 / 11 / 12 | 33 m | 7-9% | 587 / 842 / 829 | 0.63 / 1.33 / 1.14 | 0 / 0 / 0% | **0 / 0 / 0** | 0.37 / 0.48 / 1.08 | 3.2 / 0 / 0% | 11 / 10 / 13% |
+
+**the fruit is found by sight, not by smell.** with the fruit dark he reaches it and tastes
+it in one seed (full) or two (no plume); with the fruit invisible, never, closest 0.63 m.
+and the plume changes nothing: seeds 10 and 11 give the same closest approach with and
+without it (0.38, 0.59), because his path was the same, because the fruit's odour
+neurons, driven through Weber-Fechner at up to ~200 Hz, do not reach the steering
+readout (the record's smell-steering null of 09-16, in the garden). the dark fruit
+attracting him is the walk's "approach to dark posts" of 09-16 with a reason to exist.
+the puddle, the sun patch and the shade see him 0-7%, 0-7% and 4-21% of the time: passed
+through, not sought. so, in the garden as built: **vision steers him, touch turns him,
+walking carries him; smell, taste, warmth and humidity are felt and change nothing yet.**
+the senses that do not steer are the same three the record already knew could not reach
+DNa02; the garden makes the gap visible in one table.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,

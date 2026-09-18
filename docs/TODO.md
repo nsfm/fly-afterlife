@@ -101,14 +101,14 @@ loop is probably a bug (mechanosensation brief).
 
 ## 2a. the enriched world (promoted 09-17 22:05, nate; before the rival)
 
-- [ ] a real floor plane in both raytracers with an albedo pattern (the floor is a gradient by ray
-      direction today); walls with structure; objects of several sizes and tones; a sky with a
-      light direction. grey on grey is masking the visual wheel.
-- [ ] smells done properly: odour sources (food, her, later a rival) with intermittent plumes
-      (power-law whiffs, exponent -3/2) and Weber-Fechner normalisation at the ORNs; his 2,635
-      ORNs are at the floor and nothing modulates them.
-- [ ] a food spot: sugar GRNs (~65 Hz at 100 mM, adapting) + its odour plume; a water spot with
-      humidity; the warm corner stays. a room with several things in it.
+- [x] the garden (09-17 night): floor plane with texture, grass, leaves + shade, stone, fruit (plume +
+      sugar), puddle (humidity), sun patch, rim; RGB reduced to fly luminance; both raytracers.
+- [x] first scores (09-18 00:24): the fruit is found by sight (0/3 when invisible), the plume changes
+      nothing (smell does not reach the steering readout); puddle / sun / shade passed through.
+- [ ] the plume: power-law whiff / blank durations (simplified Bernoulli today); her odour and a rival's
+      through the same field; the smell-steering gap (ORN -> ... -> DNa02 is silent) is the wall.
+- [ ] the garden with her; the garden with the courtship state when it exists.
+- [ ] terrain (nate): a gentle heightfield tilting his pose, feeding JO gravity and leg load (phase 2).
 - [ ] bristles by body part (antenna, head, legs, wings are typed); the head-on class returns for
       head bristles.
 - [ ] status of every sense: `docs/SENSES.md`.
