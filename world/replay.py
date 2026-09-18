@@ -21,11 +21,12 @@ W, H = (int(v) for v in args.size.split("x"))
 E = np.load(args.npz, allow_pickle=True); pose = E["pose"]; pose2 = E["pose2"] if "pose2" in E.files else None; lum = E["lum"]; fps = int(E["fps"]); n = len(pose)
 world = str(E["world"]) if "world" in E.files else "room"
 her_r = float(E["her_r"]) if "her_r" in E.files else 0.12; her_alb = float(E["her_albedo"]) if "her_albedo" in E.files else 0.1
+HER_PRESENT = ("dist" in E.files and np.isfinite(E["dist"]).any())   # --no-female runs log her pose but she was never in his scene (found by the replay_app agent)
 FLY_W = np.array([0.20, 0.70, 0.10])
 
 def scene_at(i):
     """rebuild the Scene for frame i from what the episode saved (the same call the eye made)."""
-    sph = [(np.array([pose2[i][0], pose2[i][1], 0.5]), her_r, her_alb)] if pose2 is not None else []
+    sph = [(np.array([pose2[i][0], pose2[i][1], 0.5]), her_r, her_alb)] if (pose2 is not None and HER_PRESENT) else []
     if world == "garden":
         rgb = E["floor_rgb"].astype(np.float32) / 255.0; tex = (rgb @ FLY_W).astype(np.float32); half = float(E["floor_half"])
         st = E["stone"]; fr = E["fruit"]; pu = E["puddle"]; sph += [(np.array([st[0], st[1], st[2]]), float(st[3]), float(st[4])), (np.array([fr[0], fr[1], fr[2]]), float(fr[3]), float(fr[4]))]
@@ -56,7 +57,7 @@ def png(gray):
     return b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", gray.shape[1], gray.shape[0], 8, 0, 0, 0, 0)) + chunk(b"IDAT", zlib.compress(raw, 6)) + chunk(b"IEND", b"")
 
 az = np.degrees(np.arctan2(E["az"], 1)) if False else E["az"]; el = E["el"]
-meta = dict(n=n, fps=fps, world=world, pose=pose.tolist(), pose2=(pose2.tolist() if pose2 is not None else None), az=az.tolist(), el=el.tolist(), side=[str(s) for s in E["side"]],
+meta = dict(n=n, fps=fps, world=world, pose=pose.tolist(), pose2=(pose2.tolist() if (pose2 is not None and HER_PRESENT) else None), az=az.tolist(), el=el.tolist(), side=[str(s) for s in E["side"]],
             touch=(E["touch"].tolist() if "touch" in E.files else None), touch_kind=(E["touch_kind"].tolist() if "touch_kind" in E.files else None),
             objects=(E["objects"].tolist() if "objects" in E.files else []), walls=(E["walls"].tolist() if "walls" in E.files else None), W=W, H=H,
             traces={k[2:]: E[k][::max(1, n // 2000)].astype(float).tolist() for k in E.files if k.startswith("n_m_") and k[4:] in ("DNa02_L", "DNa02_R", "legMN", "pC1", "pIP10", "DN_L", "DN_R", "HS_L", "HS_R")},
@@ -87,7 +88,7 @@ function paintRetina(l) { rimg.data.fill(0); for (let i = 3; i < rimg.data.lengt
 const base = document.createElement('canvas'); base.width = base.height = 420; const bc = base.getContext('2d');
 const pathc = document.createElement('canvas'); pathc.width = pathc.height = 420; const pc = pathc.getContext('2d'); let pathUpTo = 0;
 function drawBase() { bc.fillStyle = '#0b0e14'; bc.fillRect(0, 0, 420, 420); const [a, b] = W2(-half, half), [c, d] = W2(half, -half);
-  if (floorImg && floorImg.complete && floorImg.naturalWidth) bc.drawImage(floorImg, a, b, c - a, d - b); bc.strokeStyle = 'rgba(200,190,170,.7)'; bc.strokeRect(a, b, c - a, d - b);
+  if (floorImg && floorImg.complete && floorImg.naturalWidth) { bc.save(); bc.translate(0, 420); bc.scale(1, -1); bc.drawImage(floorImg, a, 420 - d, c - a, d - b); bc.restore(); }   // omma's texture row 0 is y = -half: flip for the map bc.strokeStyle = 'rgba(200,190,170,.7)'; bc.strokeRect(a, b, c - a, d - b);
   if (M.garden) { const g = M.garden; for (const [x, y, z, r] of g.leaves) { const [px, py] = W2(x, y); bc.fillStyle = 'rgba(60,120,40,.35)'; bc.beginPath(); bc.arc(px, py, r * S, 0, 7); bc.fill(); }
     const [sx, sy] = W2(g.sunspot[0], g.sunspot[1]); bc.fillStyle = 'rgba(255,208,112,.25)'; bc.beginPath(); bc.arc(sx, sy, g.sunspot[2] * S, 0, 7); bc.fill();
     for (const [x, y, r] of g.grass) { const [px, py] = W2(x, y); bc.fillStyle = '#2a5a1a'; bc.beginPath(); bc.arc(px, py, 3, 0, 7); bc.fill(); }
