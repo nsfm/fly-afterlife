@@ -73,10 +73,11 @@ class Pace:
     leg_stand: float
     v_min: float = 0.05
     v_range: float = 0.45
+    k: float = 4.0        # 4: the record; 1: twice the standing tonus is full speed (09-18, standing measured in the floor)
     source: str = "pair.py 2026-09-16 18:54; Azevedo 2020: slow MNs fire ~30 Hz standing, force per spike 0.1/1/10 uN by class"
 
     def step(self, cnt: dict) -> float:
-        drive_m = (cnt["legMN"] - self.leg_stand) / max(4 * self.leg_stand, 1); return self.v_range * float(np.clip(drive_m, 0, 1)) + self.v_min
+        drive_m = (cnt["legMN"] - self.leg_stand) / max(self.k * self.leg_stand, 1); return self.v_range * float(np.clip(drive_m, 0, 1)) + self.v_min
 
 
 @dataclass
@@ -156,23 +157,38 @@ class SongDetector:
 
 # ---- calibrations (run once per brain configuration; each is pair.py's loop, verbatim)
 
-def dna02_rest_offset(M, RM, drive_frame, render_chunk, CH, SPF, chunks=20) -> float:
+
+# ---- the standing brain for calibration: every tonic row (the floor, the walking command, the thermal cells at 25 C, the
+# fields at rest) applied each frame, so the calibrations measure the regime the loop runs in (09-18: before this they ran
+# on the silent brain; the motor review found it). vision, bristles, proprioception, pheromone and the brake are the
+# calibrations' own business and are skipped.
+STANDING_STATE = {"tm": None, "kind": 0, "pace": 0.0, "t_chunk_end": 0.0, "T_L": 25.0, "T_R": 25.0, "humidity": 0.4, "taste": None, "wind_rel": 0.0, "odour_L": {}, "odour_R": {}}
+TONIC_SKIP = ("T4T5_", "bristle_", "proprio_", "ppk_", "brake_")
+
+def apply_tonic(REG, M, t: float, dt: float, skip=TONIC_SKIP) -> None:
+    for rc in REG.classes:
+        if not rc.enabled or rc.cells.size == 0 or rc.name.startswith(skip): continue
+        M.drive_hz[rc.cells] = rc.transducer.step(rc.stimulus(STANDING_STATE), t, dt)
+
+def dna02_rest_offset(M, RM, drive_frame, render_chunk, CH, SPF, chunks=20, tonic=None) -> float:
     """his DNa02 right-minus-left per chunk while standing with vision on: the fixed offset the wheel subtracts."""
     rl = rr = 0
     for c in range(chunks):
         a = render_chunk()
         for f in range(CH):
+            if tonic is not None: tonic((c * CH + f) / 100.0)
             drive_frame(a, f)
             for _ in range(SPF): spk = M.step(); rl += int(spk[RM["DNa02_L"]].sum()); rr += int(spk[RM["DNa02_R"]].sum())
     return (rr - rl) / chunks
 
 
-def standing_baselines(M, F, RM, RF, drive_frame, render_chunk, CH, SPF, chunks=10) -> tuple[float, float]:
+def standing_baselines(M, F, RM, RF, drive_frame, render_chunk, CH, SPF, chunks=10, tonic=None) -> tuple[float, float]:
     """his leg-MN spikes per chunk and her DN spikes per chunk, standing with vision on."""
     leg_stand = 0; dn_stand_f = 0
     for c in range(chunks):
         a = render_chunk()
         for f in range(CH):
+            if tonic is not None: tonic((c * CH + f) / 100.0)
             drive_frame(a, f)
             for _ in range(SPF):
                 leg_stand += int(M.step()[RM["legMN"]].sum())
@@ -180,7 +196,7 @@ def standing_baselines(M, F, RM, RF, drive_frame, render_chunk, CH, SPF, chunks=
     return leg_stand / chunks, dn_stand_f / chunks
 
 
-def reflex_gain(M, RM, TACT_M, CH, SPF, reflex_deg=6.0, chunks=10, drive_hz=150.0, kernel=None, fps=100) -> tuple[float, dict]:
+def reflex_gain(M, RM, TACT_M, CH, SPF, reflex_deg=6.0, chunks=10, drive_hz=150.0, kernel=None, fps=100, tonic=None) -> tuple[float, dict]:
     """drive his left bristles, then his right, standing; the leg-MN asymmetry (R-L)/(R+L) each evokes is worth
     reflex_deg per chunk. returns (gain, asymmetry per side). leaves the bristles at 0. with `kernel` (a transducer
     such as Adapting) the bristles get the kernel's own time course for sustained contact instead of a constant,
@@ -192,6 +208,7 @@ def reflex_gain(M, RM, TACT_M, CH, SPF, reflex_deg=6.0, chunks=10, drive_hz=150.
         rl = rr = 0
         for c in range(chunks):
             for f in range(CH):
+                if tonic is not None: tonic((c * CH + f) / fps)
                 if kernel is not None: M.drive_hz[TACT_M[s_]] = kernel.step(True, (c * CH + f) / fps, 1.0 / fps)
                 for _ in range(SPF): spk = M.step(); rl += int(spk[RM["legMN_L"]].sum()); rr += int(spk[RM["legMN_R"]].sum())
         asym_side[s_] = (rr - rl) / max(rr + rl, 1)
