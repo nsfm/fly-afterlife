@@ -2319,6 +2319,33 @@ walking command) and labelled as such; and even then, the table of 00:44 says th
 lateralised path downstream of the odour for it to unmask. smell in this brain is state,
 not direction; the wind is the direction, and the wind runs are on the cores.
 
+**wind in the garden (01:12 PDT; closed loop, `--wind on`, `--wind-gate none|odour`, `--dn-gain 0.5`,
+three seeds, 120 s, male alone, the config of record).** the wind on JO-C/E (equalised 132 per side,
+up to 20 Hz on the windward side) read by the two-channel wheel. scored on where he heads relative to
+upwind, the fruit (dark, with its plume), and, reconstructed from his path, how much of the run he
+spent inside the plume envelope (C > 0.02, whiffs ignored):
+
+| arm | upwind cos | rim | in plume | d fruit min | visits < 0.6 m | sugar frames |
+|---|---|---|---|---|---|---|
+| off (control) | -0.11, +0.06, -0.08 | 0.06, 0.12, 0.06 | 2%, 2%, 31% | 0.38 x3 | 1, 1, 1 | 78, 46, 119 |
+| wind, ungated | +0.14, +0.12, -0.02 | 0.28, 0.20, 0.13 | 0%, 0%, 2% | 1.77, 1.11, 0.38 | 0, 0, 1 | 0, 0, 113 |
+| wind, odour-gated | -0.01, -0.04, -0.06 | 0.08, 0.05, 0.02 | 4%, 26%, 43% | 0.38 x3 | 1, 3, 5 | 59, 278, 411 |
+
+**the design has a flaw, stated first:** he starts at (-0.5, -0.5), upwind of the fruit, with no
+odour on him. so the ungated wind measures pure anemotaxis, and pure anemotaxis walks him to the
+upwind rim (rim time doubled or tripled, two seeds never in the plume, the fruit lost in both);
+the heading tilt is small (+0.12 to +0.14 mean cos in those two seeds against about zero) because
+the rim reflex dominates once he is there. **the gated wind is the mechanism working in two seeds
+of three:** the gate only opens inside the plume, which is downwind of the fruit, and there the wind
+turns him upwind, which is toward the fruit; seeds 11 and 12 spend 26% and 43% of the run inside
+the plume and return to the fruit three and five times (every control visits once and leaves), with
+three to five times the sugar contact. seed 10 is indistinguishable from its control. the control
+with 31% plume time (seed 12) visited once: being in the plume without the gate did not bring him
+back. not yet a claim: the effect is "he stays and returns", in 2/3, from a start that makes the
+plume hard to reach. the proper test, pre-registered and on the cores: `--start 2.26,-0.94,90`, one
+metre downwind of the fruit inside its plume, facing crosswind; all three arms; prediction: gated
+and ungated both turn him upwind onto the fruit within the first seconds and the control does not.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
