@@ -47,6 +47,16 @@ graded in life and the LIF can't do ON/OFF contrast; CT1's compartments collapse
 one cell; the motion pathway (13,500 T4/T5) fires zero spikes to a loom. so nobody's
 fly can see a threat.
 
+> **[2026-09-18 14:12 PDT: no longer true as written.** it was true of every *published* model when
+> this was written; since the MaleCNS release (2026-06-08) at least five projects have put a 2026
+> connectome in a body with sensory transduction, and one of them (`tel-0s/flyverse-core`, MIT,
+> created 2026-09-10) ray-traces spectral radiance onto 5,895 photoreceptors on real hex columns,
+> runs the optic lobe as graded rate units on the signed connectome into a Shiu LIF for the rest,
+> and reports loom -> LC4 / LPLC2 -> giant fibre in 9 of 9 runs: the result this record's eye track
+> does not have. the survey is `docs/LANDSCAPE.md`; the repositories were checked by hand. what
+> stays ours: the eye rendered on the measured geometry of the same fly whose wiring we run, with
+> flyvis's trained physiology transplanted onto his own optic-lobe cells rather than tiled.]**
+
 flyvis (lappalainen et al., nature 2024) is the opposite object: a graded model of ONE
 optic-lobe column tiled 721 times, 65 cell types, 45,669 cells, per-type physiology
 *learned* by training on optic flow. it stops at T4/T5. no projection neurons, no giant
