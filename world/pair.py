@@ -136,13 +136,14 @@ for _ in range(500):
     M.step()
     if not args.no_female: F.step()
 # calibrations (src/fly_afterlife/effectors.py): the same standing loops, once per run
-from fly_afterlife.effectors import Steering, RunningBaselineSteering, MultiWheelSteering, Pace, RunningPace, HerSteering, SongDetector, dna02_rest_offset, standing_baselines, reflex_gain, apply_tonic
+from fly_afterlife.effectors import Steering, RunningBaselineSteering, MultiWheelSteering, Pace, RunningPace, HerSteering, SongDetector, dna02_rest_offset, standing_baselines, reflex_gain, apply_tonic, TONIC_SKIP
 def render_chunk(): return flyvis_chunk(np.stack([eye.render(room.scene([her]), pos=(m.x, m.y, 0.5), heading_deg=m.h) for _ in range(CH)]))
 def drive_frame(a, f):
     for (t, s), (idx, hx) in groups.items(): M.drive_hz[idx] = args.drive_gain * np.clip((a[(s, t)][f] - rest[(s, t)])[hx], 0, 1)
 TONIC = (lambda t_: apply_tonic(REG, M, t_, 1.0 / fps))   # the standing brain: floor, command, thermal cells at 25 C (09-18)
+TONIC_STAND = (lambda t_: apply_tonic(REG, M, t_, 1.0 / fps, skip=TONIC_SKIP + ("walk_",)))   # standing = the floor without the walking command (10:31: with it, the pace reference rose with the dose)
 rest_net = dna02_rest_offset(M, RM, drive_frame, render_chunk, CH, SPF, tonic=TONIC); print(f"his DNa02 rest offset {rest_net:+.2f}/chunk")
-leg_stand, dn_stand_f = standing_baselines(M, F if not args.no_female else None, RM, RF, drive_frame, render_chunk, CH, SPF, tonic=TONIC); print(f"pace baselines per chunk: his leg MN {leg_stand:.0f}, her DN {dn_stand_f:.0f}")
+leg_stand, dn_stand_f = standing_baselines(M, F if not args.no_female else None, RM, RF, drive_frame, render_chunk, CH, SPF, tonic=TONIC_STAND); print(f"pace baselines per chunk: his leg MN {leg_stand:.0f}, her DN {dn_stand_f:.0f}")
 leg_gain, asym_side = reflex_gain(M, RM, TACT_M, CH, SPF, kernel=(None if args.bristle == "hold" else Adapting()), fps=fps, tonic=TONIC); leg_gain *= args.reflex_sign; print(f"touch reflex: leg-MN asymmetry (R-L)/(R+L) with left bristles {asym_side['L']:+.3f}, right {asym_side['R']:+.3f} -> gain {leg_gain:.0f} deg per unit asymmetry")
 from fly_afterlife.legs import LegModel, LegSteering
 steer = LegSteering(LegModel(M), wheel_gain=args.gain, leg_gain=leg_gain) if args.effector == "legs" else Steering(gain=args.gain, rest_net=rest_net, leg_gain=leg_gain) if args.steer == "fixed" else (RunningBaselineSteering(gain=(args.gain if args.wheel == "DNa02" else (args.wheel_gain if args.wheel_gain is not None else -0.3)), leg_gain=leg_gain, wheel=args.wheel) if args.dn_gain == 0 else MultiWheelSteering(wheels=[("DNa02", args.gain), ("DN", args.dn_gain)], leg_gain=leg_gain))

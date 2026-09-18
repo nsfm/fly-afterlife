@@ -2475,6 +2475,18 @@ pace rule can reference. three garden seeds, same config, before and after: walk
 longer. no behavioural claim; the claim is that the numbers the effectors run on are now measured
 where they are used. adopted (it is a bug fix, not a tune).
 
+**DNg100 in the loop, first attempt (10:31 PDT; `--walk-dn DNg100`, `--pace fixed --pace-k 1`, three seeds):**
+walked 15-18 m with no command, 17-20 m at 100 Hz, **10-13 m at 200 Hz**, while the cord went 62-68 ->
+90-95 -> 121-124 spikes per chunk. the higher dose walked slower. the reason is in the calibration i had
+just fixed: `apply_tonic` applies the walking command too, so the standing tonus the pace rule
+references was measured *with* the command on (76 per chunk at 100 Hz, more at 200), and the rule
+read only the excess over the command's own output. the rest offset and the reflex gain should see
+the command, because the loop runs with it; the standing reference must not. fixed (`TONIC_STAND`
+skips the walk row); the three arms are re-running. and the arm with no command did not stand:
+41 / 28 / 30 % of frames at the floor speed, mean 0.13-0.15 m/s, because the loop's leg output
+(62-68) sits above the calibration's standing tonus (51): vision, contact and the fields drive the
+legs above standing even with no command. that residual is real and stays in view.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
