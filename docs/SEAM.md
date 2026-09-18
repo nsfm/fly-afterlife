@@ -2497,6 +2497,34 @@ a two-second warm-up under the tonic rows before any calibration, and the walk c
 standing measurement. third attempt on the cores; the oracle re-run alongside (the warm-up only runs
 when tonic rows exist, so the silent brain is untouched).
 
+**he walks, from the cord (11:41 PDT; third attempt: warm-up, standing tonus without the command; garden,
+three seeds, 120 s; `--walk-dn DNg100`, `--pace fixed --pace-k 1`):** the standing tonus now calibrates at
+57 / 58 / 59 per chunk across the arms (one seed), the same number whichever command the run will use.
+
+| arm | walked | v mean | frames at floor speed | frames above 0.4 | leg MN per chunk | rim | sugar frames |
+|---|---|---|---|---|---|---|---|
+| no command | 16.5, 16.4, 19.5 m | 0.14, 0.14, 0.16 | 35, 34, 29 % | 1, 1, 2 % | 64, 64, 64 | 0.04, 0.09, 0.05 | 0, 0, 0 |
+| DNg100 100 Hz | **33.7, 35.9, 36.5 m** | 0.28, 0.30, 0.31 | 15, 17, 10 % | 29, 36, 34 % | 89, 89, 91 | 0.11, 0.09, 0.13 | 406, 0, 0 |
+| DNg100 200 Hz | **49.8, 48.7, 50.4 m** | 0.42, 0.41, 0.42 | 1, 2, 2 % | 68, 67, 70 % | 117, 121, 119 | 0.12, 0.18, 0.16 | 59, 0, 48 |
+
+**a dose, three of three, for the first time in the loop:** no command 16-20 m, 100 Hz 34-37 m, 200 Hz
+49-50 m, with the cord at 64 -> 90 -> 119 per chunk and the pace reading it against a standing
+tonus that is finally a measured number. his speed is the brain's now, and the walking command
+does what the record said it did, on the brain we actually run. **config of record from here:**
+`--walk-dn DNg100 --walk 100 --pace fixed --pace-k 1` (DNg100 and k = 1 are the defaults now;
+`--walk 100` still explicit) with the floor, adapting bristles, running steering and the two-channel
+wheel as before; 100 Hz because its 0.29 m/s matches the estimator's 0.275 that every result since
+yesterday morning was measured at, so those results stay comparable. every oracle pin unchanged.
+
+**the residual, stated:** with no command he does not stand. the loop's leg output (64) sits a tenth
+above the calibrated standing tonus (58), and the fixed rule half-wave rectifies the fluctuation, so
+a cord that is merely noisy around standing reads as a slow walk (0.14 m/s, a third of frames at the
+floor). two candidates, in order: the readout (an EMA over three chunks before the rule, as the
+steering has, so noise does not rectify into speed), then the physiology (which floor row lifts the
+loop's tonus above standing: the review's ablation, closed loop; nate's "flee response" question
+lives here, since the thermal floor carries half the tonus and the ORN floor runs the wing motor).
+one change per run, the readout first.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
