@@ -2457,6 +2457,24 @@ next, one change each: `--walk-dn DNg100` in the loop, then the pace read agains
 tonus measured in the floor (the fixed rule, its reference finally non-zero), so that standing
 and walking are two readings of the cord and not two ends of an estimator.
 
+**the calibrations in the standing brain (10:06 PDT; `apply_tonic`; oracle PASS, bit for bit, since it pins
+`--no-floor`).** what the three calibrations measure now, against what they measured on the silent brain
+(seed 10, config of record):
+
+| calibration | silent brain (the record) | standing brain (now) |
+|---|---|---|
+| DNa02 rest offset (R - L per chunk) | +0.00 | -0.45 |
+| standing leg-MN tonus per chunk | 0 | 51 |
+| touch reflex asymmetry, left / right bristles | -0.099 / +0.041 -> gain 86 | -0.393 / +0.118 -> gain 24 |
+
+the reflex is four times more lateralised on the woken cord than the silent one showed, so the
+gain the loop needs is a third of what it had; the standing tonus is finally a number the fixed
+pace rule can reference. three garden seeds, same config, before and after: walked 32.7 / 32.5 /
+32.6 m -> 28.7 / 32.0 / 32.6; rim 0.07 / 0.10 / 0.05 -> 0.28 / 0.04 / 0.04; sugar frames
+0 / 0 / 131 -> 387 / 279 / 0. two seeds within scatter, seed 10 pinned longer and on the fruit
+longer. no behavioural claim; the claim is that the numbers the effectors run on are now measured
+where they are used. adopted (it is a bug fix, not a tune).
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
