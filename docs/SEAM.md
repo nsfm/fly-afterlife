@@ -2433,6 +2433,30 @@ not pace. the calibration fix (`apply_tonic` in `effectors.py`: the floor, the c
 thermal cells at 25 C applied during the three calibrations) is in and being checked against the
 oracle and against these runs; the pace reference is next.
 
+**the other walking command (09:53 PDT; open loop, floor on, no vision, seeds 1 / 3, leg-MN spikes/s, L / R):**
+
+| drive | seed 1 | seed 3 |
+|---|---|---|
+| floor only | 559 (348 / 211) | 586 (362 / 224) |
+| DNg100 30 Hz | 627 (390 / 238) | 670 (416 / 254) |
+| DNg100 100 Hz | **821** (479 / 342) | **808** (464 / 344) |
+| DNg100 200 Hz | **1,121** (590 / 531) | **1,130** (602 / 528) |
+| DNp09 100 + DNg100 100 | 762 | 790 |
+| DNg100 100 + brake 30 | 786 | 791 |
+| DNg74_a 100 | 457 | 470 |
+| DNg105 100 | 299 | 306 |
+
+**DNg100 (annotated BDN2; 2 cells; 1,870 direct synapses onto leg MNs against DNp09's 10) walks
+the woken cord, as a dose:** half again at 100 Hz, double at 200, in both seeds; and it evens the
+split the floor leaves left-heavy (62 / 38 at rest, 53 / 47 at 200 Hz), which bears on the
+one-sided readouts of 22:14. DNp09 added to it subtracts a little, as it did alone. the brake at
+30 Hz does not touch it. DNg74_a and DNg105, both heavy onto leg MNs by synapse count, turn the
+legs *down* (to 0.8x and 0.5x the floor): the count says nothing about the sign. so the fly has
+a walking command that works on the brain we run; it is not the one the record wired at 12:56.
+next, one change each: `--walk-dn DNg100` in the loop, then the pace read against the standing
+tonus measured in the floor (the fixed rule, its reference finally non-zero), so that standing
+and walking are two readings of the cord and not two ends of an estimator.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
