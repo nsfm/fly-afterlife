@@ -2549,6 +2549,30 @@ the full floor against the floor without the thermal cells, without the ORNs, wi
 the leg proprioceptors. nate's question of the morning ("a flee response justifying a constant
 walking rate?") is what that run answers.
 
+**the floor-row ablation, closed loop (13:11 PDT; no command, state pace, garden, three seeds; nate's
+question: is a missing or wrong signal producing a flee response that would justify a constant walk?):**
+
+| floor | standing | bouts | walked | standing tonus (calibrated) | leg MN per chunk (loop) | DN per chunk |
+|---|---|---|---|---|---|---|
+| full | **92, 88, 91 %** | 10, 21, 16 | 1.7, 2.5, 2.0 m | 58 | 58, 61, 57 | 375, 341, 359 |
+| without hot + cooling cells | 61, 69, 80 % | 34, 22, 26 | 7.7, 6.8, 4.4 m | 61 | 66, 62, 61 | 288, 335, 348 |
+| without the ORNs | 73, 50, 85 % | 54, 44, 35 | 5.7, 11.1, 2.9 m | 61 | 60, 63, 58 | 243, 258, 227 |
+| without JO | 53, 52, 66 % | 42, 44, 50 | 11.1, 9.5, 7.0 m | 49 | 53, 58, 55 | 224, 234, 242 |
+| without the leg proprioceptors | 51, 71, 58 % | 37, 26, 51 | 10.8, 5.2, 9.1 m | 52 | 58, 62, 57 | 277, 286, 273 |
+
+**no row pushes him to walk; every row taken out makes him fidget more.** the full floor stands
+best, and the floor's tonus behaves as ballast: with less of it, vision and contact are a larger
+fraction of the resting cord, more fluctuations cross the walking threshold, and the one-second
+bouts multiply. so at the legs the flee hypothesis gets a no: a resting fly under the whole floor
+is the stillest fly we have had. two things stay open. the descending population drops by a
+third without the ORNs or JO (360 -> 230-250 per chunk), which is where the review's wing-motor
+finding lives (the ORN resting rate runs the flight power muscles, open loop; not measured in
+the loop yet). and the scatter: this same configuration stood 52, 60 and 89 % an hour ago
+(12:20) and 92, 88, 91 % now, so run-to-run variance on the standing fraction is large (flyvis
+on the GPU is not deterministic by default, and one-second bouts are triggered by fluctuations),
+and three seeds per arm is thin for differences under about twenty points. the ordering (full
+above every ablation, in every seed) is the claim; the sizes are not.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
