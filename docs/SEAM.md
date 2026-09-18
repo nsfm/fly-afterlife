@@ -2739,6 +2739,15 @@ both sides at 10-20 per chunk. HS left minus right is the flow-balance signal (S
 2012; `docs/GARDEN.md`), and it is what drives DNa02 in life; reading the wheel one synapse upstream, at
 HS, is the next test, on the drum first, both signs.
 
+**HS as the wheel (15:13 PDT; drum, `--wheel HS --wheel-gain +0.5 | -0.5`, running baseline, DNp09 100, 0.185, three
+seeds):** at +0.5 he follows both ways 3/3, heading rate 12-16 deg/s with the drum at +30 and 28-35 deg/s
+at -30 (DNa02's wheel: up to 15), with HS at 20-24 per chunk on *both* sides; at -0.5 he anti-follows and
+spins at the clip (120 deg/s) in every seed. the sign is decisive. HSN / HSE / HSS are the cells that
+drive DNa02 in life and in this brain (the pathway, 14:53), they are alive under the floor on both sides,
+and their left-right difference is the flow-balance signal insects steer by (Srinivasan 1991; Kern 2012).
+so the wheel reads one synapse upstream of the descending neuron, which is where the lesion cannot reach
+it. `--wheel HS` in the garden next, from the usual start and from beside the fruit; DNa02 stays logged.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
