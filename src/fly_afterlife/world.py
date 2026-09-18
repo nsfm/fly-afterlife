@@ -29,6 +29,7 @@ class Room:
     ground: float = 0.4
     posts: list = field(default_factory=list)   # (x, y, r, albedo): floor-to-sky cylinders
     contacts: int = 0            # frames of fly-fly contact
+    pillar_height: float = 1.5   # pillars stand on the floor up to this height (they were infinite cylinders through the floor until 09-17: nate's optical-illusion report)
     thermal: dict | None = None  # None = 25 C everywhere; else dict(base=25, x, y, dT, sigma): a warm spot, T = base + dT exp(-d^2 / 2 sigma^2)
 
     def temperature(self, x: float, y: float) -> float:
@@ -42,7 +43,7 @@ class Room:
     # ---- the eye's view
     def scene(self, others: list[Body]) -> Scene:
         sph = [(np.array([b.x, b.y, 0.5]), b.r, b.albedo) for b in others if b.present]
-        return Scene(sky=self.sky, ground=self.ground, spheres=sph, pillars=[(x, y, r, a) for x, y, r, a in self.posts], walls=dict(half=self.half, height=self.height, albedo=self.albedo))
+        return Scene(sky=self.sky, ground=self.ground, spheres=sph, pillars=[(x, y, r, a) for x, y, r, a in self.posts], walls=dict(half=self.half, height=self.height, albedo=self.albedo), pillar_height=self.pillar_height)
 
     # ---- contacts
     def wall(self, b: Body) -> None:

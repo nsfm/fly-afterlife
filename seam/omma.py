@@ -23,7 +23,7 @@ if _HAVE_NUMBA:
     @njit(cache=True, parallel=True)
     def _shade_kernel(origin, d, sky, ground, soft, has_drum, drum, has_walls, walls, pillars, spheres, lum):
         """same primitives as Scene.shade, one ray per iteration. drum = (period, phase, lo, hi, half_height); walls = (half, height, albedo);
-        pillars (k, 4) = x, y, r, albedo; spheres (k, 5) = cx, cy, cz, r, albedo."""
+        pillars (k, 5) = x, y, r, albedo, height (standing on z = 0); spheres (k, 5) = cx, cy, cz, r, albedo."""
         ox, oy, oz = origin[0], origin[1], origin[2]
         for i in prange(d.shape[0]):
             dx, dy, dz = d[i, 0], d[i, 1], d[i, 2]
@@ -51,13 +51,15 @@ if _HAVE_NUMBA:
                             if abs(hp) <= walls[0] + 1e-6 and hz >= 0 and hz <= walls[1]:
                                 tmin = t; l = walls[2]
             for k in range(pillars.shape[0]):
-                px, py, r, alb = pillars[k, 0], pillars[k, 1], pillars[k, 2], pillars[k, 3]
+                px, py, r, alb, ph = pillars[k, 0], pillars[k, 1], pillars[k, 2], pillars[k, 3], pillars[k, 4]
                 cx = ox - px; cy = oy - py; a = dx * dx + dy * dy; bq = cx * dx + cy * dy; cq = cx * cx + cy * cy - r * r
                 disc = bq * bq - a * cq
                 if disc > 0 and a > 1e-9:
                     t = (-bq - np.sqrt(disc)) / a
                     if t > 0 and t < tmin:
-                        tmin = t; l = alb
+                        hz = oz + t * dz
+                        if hz >= 0 and hz <= ph:
+                            tmin = t; l = alb
             for k in range(spheres.shape[0]):
                 cx = ox - spheres[k, 0]; cy = oy - spheres[k, 1]; cz = oz - spheres[k, 2]; r = spheres[k, 3]
                 b = dx * cx + dy * cy + dz * cz; disc = b * b - (cx * cx + cy * cy + cz * cz - r * r)
@@ -68,8 +70,8 @@ if _HAVE_NUMBA:
             lum[i] = l
 
 class Scene:
-    def __init__(self, sky=0.85, ground=0.35, horizon_soft=0.15, spheres=(), drum=None, pillars=(), walls=None):
-        self.sky, self.ground, self.soft = sky, ground, horizon_soft
+    def __init__(self, sky=0.85, ground=0.35, horizon_soft=0.15, spheres=(), drum=None, pillars=(), walls=None, pillar_height=1.5):
+        self.sky, self.ground, self.soft = sky, ground, horizon_soft; self.pillar_height = pillar_height
         self.walls = walls                       # None or dict(half, height, albedo): a square room |x|,|y| <= half, walls from the floor to `height`
         self.spheres = list(spheres)             # (centre xyz, radius, albedo)
         self.pillars = list(pillars)             # (x, y, radius, albedo): vertical cylinders, floor to sky
@@ -79,7 +81,7 @@ class Scene:
         if _HAVE_NUMBA and not numpy:
             dr = self.drum; drum = np.array([dr["period_deg"], dr["phase_deg"], dr["lo"], dr["hi"], dr["half_height_deg"]], np.float64) if dr is not None else np.zeros(5)
             wl = self.walls; walls = np.array([wl["half"], wl["height"], wl["albedo"]], np.float64) if wl is not None else np.zeros(3)
-            pil = np.array([[px, py, r, a] for px, py, r, a in self.pillars], np.float64).reshape(-1, 4)
+            pil = np.array([[p[0], p[1], p[2], p[3], (p[4] if len(p) > 4 else self.pillar_height)] for p in self.pillars], np.float64).reshape(-1, 5)
             sph = np.array([[c[0], c[1], c[2], r, a] for c, r, a in self.spheres], np.float64).reshape(-1, 5)
             lum = np.empty(len(d), np.float32)
             _shade_kernel(np.asarray(origin, np.float64), np.ascontiguousarray(d, np.float64), float(self.sky), float(self.ground), float(self.soft), dr is not None, drum, wl is not None, walls, pil, sph, lum)
@@ -97,10 +99,11 @@ class Scene:
                 dd = d[:, axis]; t = np.where(np.abs(dd) > 1e-9, (sgn * wl["half"] - origin[axis]) / np.where(np.abs(dd) > 1e-9, dd, 1.0), np.inf)
                 oth = 1 - axis; hp = origin[oth] + t * d[:, oth]; hz = origin[2] + t * d[:, 2]
                 ok = (t > 0) & (np.abs(hp) <= wl["half"] + 1e-6) & (hz >= 0) & (hz <= wl["height"]) & (t < tmin); tmin[ok] = t[ok]; lum[ok] = wl["albedo"]
-        for px, py, r, alb in self.pillars:            # ray-cylinder in the xy plane
+        for pil in self.pillars:                       # ray-cylinder in the xy plane, standing on the floor (z = 0) up to `height` (default 1.5 m)
+            px, py, r, alb = pil[:4]; ph = pil[4] if len(pil) > 4 else self.pillar_height
             ox, oy = origin[0] - px, origin[1] - py; a = d[:, 0] ** 2 + d[:, 1] ** 2; bq = ox * d[:, 0] + oy * d[:, 1]; cq = ox * ox + oy * oy - r * r
             disc = bq * bq - a * cq; hit = (disc > 0) & (a > 1e-9); t = (-bq - np.sqrt(np.where(hit, disc, 0))) / np.maximum(a, 1e-9)
-            ok = hit & (t > 0) & (t < tmin); tmin[ok] = t[ok]; lum[ok] = alb
+            hz = origin[2] + t * d[:, 2]; ok = hit & (t > 0) & (t < tmin) & (hz >= 0) & (hz <= ph); tmin[ok] = t[ok]; lum[ok] = alb
         for c, r, alb in self.spheres:
             oc = origin - c; b = d @ oc; disc = b * b - (oc @ oc - r * r)
             hit = disc > 0; t = -b - np.sqrt(np.where(hit, disc, 0))

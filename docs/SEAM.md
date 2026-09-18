@@ -2011,6 +2011,18 @@ and (b) something for her to do besides leave: her own stop, or his following. t
 courtship sequence proper, a build of its own, not an afternoon flag. recorded as the
 first thing the brake was tried on.
 
+## the pillars went through the floor (14:08 PDT; nate's report)
+
+nate, from the viewer: the pillars render full height "through / in front of the floor", an
+optical illusion from his point of view. a raytracer bug, in both raytracers: pillars were
+infinite cylinders and the floor is not a plane but a gradient by ray direction, so a pillar
+continued below the floor to infinity and hid the ground under it. fixed: pillars have a
+height (1.5 m, standing on z = 0; `Scene(pillar_height=)`, `Room.pillar_height`, the viewer's
+own tracer, `pillar_height` saved in the npz). check from his eye at 0.5 m, a pillar 1.25 m
+away: it spans -21 to +38 degrees of elevation, floor to top, as geometry says. this changes
+what he sees, so the oracle is re-frozen (same frozen script, corrected raytracer); every
+run before this section saw the old pillars.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,

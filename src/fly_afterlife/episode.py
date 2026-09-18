@@ -113,7 +113,7 @@ class Episode:
                    touch=np.array([{"L": 1, "R": 2, "B": 3}.get(t_, 0) for t_ in self.TOUCH], np.int8), touch_kind=np.array(self.TKIND, np.int8), body_r=body_r, heading_chunk=np.array([p[2] for p in POSE[::CH]]),
                    **{f"n_{k}": np.repeat(np.array(v, np.int16), CH)[:Tn] for k, v in log.items() if k not in ("dist", "song", "v_m", "v_f")}, v_m=np.repeat(np.array(log["v_m"], np.float32), CH)[:Tn], v_f=np.repeat(np.array(log["v_f"], np.float32), CH)[:Tn], dist=np.repeat(np.array(log["dist"], np.float32), CH)[:Tn], song=np.repeat(np.array(log["song"], np.int8), CH)[:Tn])
         if not self.solo: out["pose2"] = np.array(self.POSE2, np.float32)
-        if posts is not None: out["objects"] = posts; out["pillars"] = True
+        if posts is not None: out["objects"] = posts; out["pillars"] = True; out["pillar_height"] = getattr(self.room, "pillar_height", 1.5)
         if walls is not None: out["walls"] = np.array([walls['half'], walls['height'], walls['albedo']], np.float32)
         if her_albedo is not None: out["her_albedo"] = her_albedo
         if her_r is not None: out["her_r"] = her_r
