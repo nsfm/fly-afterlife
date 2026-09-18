@@ -2573,6 +2573,26 @@ on the GPU is not deterministic by default, and one-second bouts are triggered b
 and three seeds per arm is thin for differences under about twenty points. the ordering (full
 above every ablation, in every seed) is the claim; the sizes are not.
 
+**the brake against the walking command (13:15 PDT; open loop, floor on, seeds 1 / 3, leg-MN spikes/s):**
+
+| drive | seed 1 | seed 3 |
+|---|---|---|
+| DNg100 100 | 821 | 808 |
+| + AN19A018 30 / 100 / 300 | 786 / 747 / 760 | 791 / 774 / 770 |
+| AN19A018 100 alone | 547 | 556 |
+| **+ DNg105 100** | **469** | **485** |
+| + DNg74_a 100 | 614 | 636 |
+
+**AN19A018 cannot halt the woken cord** at any rate, and alone it leaves the floor's tonus where
+it is (13:55 yesterday was the silent brain). **DNg105 halts it:** against the walking command it
+takes the legs to 0.57x, below the floor's own standing tonus, in both seeds; under the state pace
+that is a stop. DNg74_a halts halfway. which of Sapkal 2024's halting types these are by name is
+an audit item (the record called AN19A018 "BRK" from the silent-brain result; the type identities
+against the paper's IDs are unverified). `--brake-dn DNg105` from here for the halting rows, and
+the first piece of a feeding state, one change: `--stop-at-fruit 100`, the brake driven while
+sugar is on his tarsi. nothing releases it yet, so the prediction is that he stops on the fruit
+and stays; the satiety scalar that lets him go is the next change.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
