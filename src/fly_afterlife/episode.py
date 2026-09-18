@@ -69,6 +69,7 @@ class Episode:
                     oL = self.room.odour(float(aL_[0]), float(aL_[1]), t_f); oR = self.room.odour(float(aR_[0]), float(aR_[1]), t_f)
                     st_["odour_L"] = oL; st_["odour_R"] = oR
                 if hasattr(self.room, "humidity"): st_["humidity"] = self.room.humidity(float(px), float(py))
+                if hasattr(self.room, "wind"): st_["wind_rel"] = float((np.degrees(np.arctan2(-self.room.wind[1], -self.room.wind[0])) - ph + 180) % 360 - 180)   # where the wind comes FROM, relative to his heading (+ = from his left)
                 st_["taste"] = getattr(m, "taste", None)
             self.REG.apply(self.M, st_, t_f, 1.0 / fps)
             if self.female: self.REGF.apply(self.F, st_, t_f, 1.0 / fps)
