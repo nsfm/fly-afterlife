@@ -16,10 +16,10 @@ import numpy as np
 
 
 class Episode:
-    def __init__(self, fps, chunk, eye, room, him, her, brains, readouts, registries, front_end, rest, effectors, lam=0.8, log_every=50, on_chunk=None, threads=True):
+    def __init__(self, fps, chunk, eye, room, him, her, brains, readouts, registries, front_end, rest, effectors, lam=0.8, log_every=50, on_chunk=None, threads=True, state=None):
         """room: any world with scene(bodies) / step_frame(m, f, fps) / contacts (Room, Drum). her: a Body or None.
         effectors: (steer, pace, her_steer or None, song or None). on_chunk(ep, c, cntM): optional per-chunk hook."""
-        self.on_chunk = on_chunk; self.threads = threads
+        self.on_chunk = on_chunk; self.threads = threads; self.state = state   # an internal state object with update(t, taste) and .feeding / .sat, or None (09-18)
         from concurrent.futures import ThreadPoolExecutor; self.pool = ThreadPoolExecutor(max_workers=1)
         self.fps, self.CH, self.SPF = fps, chunk, 1000 // fps
         self.eye, self.room, self.m, self.her = eye, room, him, her
@@ -71,6 +71,7 @@ class Episode:
                 if hasattr(self.room, "humidity"): st_["humidity"] = self.room.humidity(float(px), float(py))
                 if hasattr(self.room, "wind"): st_["wind_rel"] = float((np.degrees(np.arctan2(-self.room.wind[1], -self.room.wind[0])) - ph + 180) % 360 - 180)   # where the wind comes FROM, relative to his heading (+ = from his left)
                 st_["taste"] = getattr(m, "taste", None)
+            if self.state is not None: self.state.update(t_f, getattr(m, "taste", None)); st_["feeding"] = self.state.feeding; st_["sat"] = self.state.sat
             self.REG.apply(self.M, st_, t_f, 1.0 / fps)
             if self.female: self.REGF.apply(self.F, st_, t_f, 1.0 / fps)
             if self.female and self.threads:   # the two brains are independent within a chunk: step them in parallel (numba kernels release the GIL)
@@ -96,7 +97,8 @@ class Episode:
             self.smells()
             singing = (bool(self.songdet.hist) and len(self.songdet.hist) >= 5 and (log["song"] and log["song"][-1]) and dist < 0.4) if self.songdet is not None else False
             cntM, cntF = self.drive_and_step(a, touched_m, kind_m, touched_f, singing)
-            m.h += (self.steer.step(cntM, any(touched_m), self.last_accM) if getattr(self.steer, "needs_cells", False) else self.steer.step(cntM, any(touched_m)))
+            touched_any = any(touched_m) and not (self.state is not None and self.state.feeding)   # feeding silences the withdrawal reflex (09-18)
+            m.h += (self.steer.step(cntM, touched_any, self.last_accM) if getattr(self.steer, "needs_cells", False) else self.steer.step(cntM, touched_any))
             m.v = self.pace.step(cntM)
             if self.female and self.hers is not None: her.h += self.hers.step(cntF, touched_f)
             song = self.songdet.step(cntM["pIP10"]) if (self.songdet is not None and "pIP10" in cntM) else False

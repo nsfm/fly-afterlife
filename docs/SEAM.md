@@ -2593,6 +2593,17 @@ the first piece of a feeding state, one change: `--stop-at-fruit 100`, the brake
 sugar is on his tarsi. nothing releases it yet, so the prediction is that he stops on the fruit
 and stays; the satiety scalar that lets him go is the next change.
 
+**the brake at the fruit, per frame (13:24 PDT; `--brake-dn DNg105 --stop-at-fruit 100`, three seeds):** he did
+not stop. sugar on his tarsi for 0.6-0.8 s at most (control 0.5 s), the cord on the fruit at 94-100 per
+chunk, walking pace. two reasons, both visible: the halt has a latency the contact never outlasts, and
+the fruit is a solid he collides with, so the touch reflex steers him off it in the same frames he tastes
+it. a fly on fruit does not withdraw from it. so the feeding state is built as a state (`FeedingState`,
+`--feeding 3`): sugar latches it for three seconds (refreshed while he tastes), it holds the halt on
+DNg105 and silences the withdrawal reflex while it lasts; satiety (`--satiety T`) fills at 1/T per second
+of feeding and ends it, decaying over three minutes, and while full the taste no longer latches. the
+first thing in him that outlasts its stimulus, modelled as what it does, labelled (the hunger lesson of
+00:54). one change: the latch without satiety first; prediction: he stops on the fruit and stays.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,

@@ -109,6 +109,31 @@ class MultiWheelSteering:
 
 
 @dataclass
+class FeedingState:
+    """the first thing in him that outlasts its stimulus (09-18, the fly's own list #1; SEAM 'hunger'): sugar on the tarsi
+    latches feeding for `hold` seconds (refreshed while he tastes); while feeding, the halting population is driven
+    (the brake row reads st["feeding"]) and the touch withdrawal reflex is silenced (a fly on fruit does not withdraw
+    from it). satiety fills at 1 / t_full per second of feeding and decays with tau_sat; at 1 it ends feeding and
+    taste no longer latches (a fed fly leaves and does not track the plume: Root 2011, Inagaki 2012). labelled: in
+    life these are slow neuropeptide states this LIF cannot hold (SEAM 00:54), modelled here as what they do."""
+    hold: float = 3.0
+    t_full: float = 0.0          # 0: no satiety (feeding lasts as long as the taste keeps refreshing it)
+    tau_sat: float = 180.0
+    feeding: bool = False
+    sat: float = 0.0
+    until: float = -1.0
+    t_last: float | None = None
+    source: str = "a state as what it does, labelled (09-18)"
+
+    def update(self, t: float, taste) -> None:
+        dt = 0.0 if self.t_last is None else max(t - self.t_last, 0.0); self.t_last = t
+        if self.feeding and self.t_full > 0: self.sat = min(self.sat + dt / self.t_full, 1.0)
+        elif self.tau_sat > 0: self.sat = max(self.sat - dt * self.sat / self.tau_sat, 0.0)
+        if taste == "sugar" and self.sat < 1.0: self.until = t + self.hold
+        self.feeding = (t < self.until) and self.sat < 1.0
+
+
+@dataclass
 class StatePace:
     """his speed as a state (09-18 12:00; nate: flies swap between standing and walking, they do not dial speed).
     the cord's leg-MN count is smoothed over `ema` chunks and compared with the standing tonus measured in the
