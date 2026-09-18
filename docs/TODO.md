@@ -156,6 +156,17 @@ loop is probably a bug (mechanosensation brief).
 - [ ] **efference copy into the wide-field visual channels** at saccade onset (with the JO one in §2).
 - [ ] declined by him, agreed: no wings, no oscillating halteres, no colour (until the eye track).
 
+## 2d. the benchmark (09-18 14:30, `docs/BENCHMARKS.md`)
+
+- [ ] a circular open-field arena at the published size (8.4 cm = 5.6 sim m; Soibam 2012, Valente 2007), lit,
+      male alone, 600 s runs (exploration is non-stationary; 120 s is too short to compare).
+- [ ] score against opynfield's bundled trajectories (243 lone lit Canton-S males, 8.4 cm, 600 s, ~31 Hz):
+      speed modes and stop threshold (Valente 2007: walking mode 11-15 mm/s, stop < 1 mm/s), bout and pause
+      durations, turn-angle distributions at the paper's sampling interval (decimate the 100 Hz log), wall
+      occupancy (88-90 % within 6 mm), and Soibam 2012's two-parameter model (persistence + wall attraction,
+      F0 0.0268 / cm, Rc 0.6 cm) as the thing to beat; with a time-rescaling control for our ~3x slow gait.
+- [ ] the hourglass arena (Soibam): wall-following as a visual object vs touch contact; the cheap discriminator.
+
 ## 3. the eye track (independent of the above)
 
 - [ ] ensemble-averaged flyvis T4/T5 as the seam input (per-position DS check first).

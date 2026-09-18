@@ -37,7 +37,7 @@ WALK = np.flatnonzero(np.char.startswith(ty, "DNp09") & (b.sc == "descending_neu
 if args.walk > 0: b.driven[WALK] = True
 b._driven_idx = np.flatnonzero(b.driven); b.reset(); b.drive_hz[:] = 0; b.g[:] = 0; b.refrac[:] = 0; SPF = int(round(1000 / fps / b.p.dt))
 RM = {}
-for name, sel in [("DNa02", ty == "DNa02"), ("HS", np.char.startswith(ty, "HS")), ("legMN", np.isin(np.arange(b.N), np.load("world/legmn.npz")["leg"])), ("DN", b.sc == "descending_neuron"), ("pIP10", ty == "pIP10")]:
+for name, sel in [("DNa02", ty == "DNa02"), ("DNa01", ty == "DNa01"), ("HS", np.char.startswith(ty, "HS")), ("legMN", np.isin(np.arange(b.N), np.load("world/legmn.npz")["leg"])), ("DN", b.sc == "descending_neuron"), ("pIP10", ty == "pIP10")]:
     for s in "LR": RM[f"{name}_{s}"] = np.flatnonzero(sel & (ns == s))
     RM[name] = np.flatnonzero(sel)
 REG = Registry()
@@ -63,7 +63,7 @@ for c in range(10):
 dn_rest = (acc_[RM["DN_L"]].sum() + acc_[RM["DN_R"]].sum()) / 10 / 2; print(f"DN per side per chunk at rest: {dn_rest:.1f}")
 class Still:
     def step(self, cnt): return 0.0
-wgain = args.gain if args.wheel in ("DNa02", "DNa02+DN") else (args.wheel_gain if args.wheel_gain else args.gain * 2.0 / max(dn_rest, 1.0))
+wgain = args.gain if args.wheel in ("DNa02", "DNa01", "DNa02+DN") else (args.wheel_gain if args.wheel_gain else args.gain * 2.0 / max(dn_rest, 1.0))
 steer = LegSteering(LegModel(b, signed=args.legs_signed), wheel_gain=args.gain, leg_gain=0.0) if args.effector == "legs" else Steering(gain=args.gain, rest_net=rest_net, leg_gain=0.0) if args.steer == "fixed" else (MultiWheelSteering(wheels=[("DNa02", args.gain), ("DN", args.dn_gain)], leg_gain=0.0, tau=args.tau) if args.wheel == "DNa02+DN" else RunningBaselineSteering(gain=wgain, leg_gain=0.0, tau=args.tau, wheel=args.wheel))
 # ---- run
 ep = Episode(fps=fps, chunk=CH, eye=eye, room=drum, him=m, her=None, brains=(b, None), readouts=(RM, {}), registries=(REG, Registry()), front_end=fe.chunk, rest=rest, effectors=(steer, Still(), None, None), log_every=20)
