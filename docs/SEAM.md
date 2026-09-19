@@ -3203,6 +3203,14 @@ lesion in miniature (14:53 yesterday), on the two cells the whole loop turns on.
 gets, scoped: `--mirror PFL3,PFL2` (the pair's inputs normalised to their mean, `wiring.mirror_normalise` with a
 named-type scope), with the null point still calibrated after it. running, at the ordinary goal drive.
 
+**the comparator pair mirrored (14:51 PDT; `--mirror PFL3,PFL2`: each cell's inputs scaled to the pair's mean, factors
+0.94 / 1.07, none clipped; the wind arm, three seeds):** the bias is gone from the run, PFL3's raw left-minus-right
+averaging -0.001, +0.005 and +0.003 mV. and he still turns away in surges (closing in 3 of 11, 3 of 13, 2 of 12) and
+rotates at 45-55 deg/s, because the null point, measured at the start on a standing fly with the goal ahead, reported
+-0.26 mV, and the channel subtracted a bias that no longer existed. the calibration that was the crutch for the hole
+became a bias once the hole was mended. so with the pair normalised the null goes (`--goal-null off`); one fix per
+problem. running.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
