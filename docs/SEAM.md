@@ -2836,6 +2836,36 @@ marked in the code, both fixed by a hysteresis and a heading filter when our run
 round arena (5.6 sim m, a 0.47 m rim) is the next build; his runs go through the same scorer, decimated
 to 33 Hz, with the time-rescaling control for his slow gait.
 
+**the dish (18:25 PDT; `--world arena`: a 5.6 m circle, a 0.47 m rim, a uniform floor, the wall the only object;
+600 s, three seeds, the config of record without the feeding flags; `experiments/benchmark.py` against ten of the
+Roman lab's Canton-S males in the 8.4 cm dish, both decimated to 33 Hz):**
+
+| metric (published, source in `docs/BENCHMARKS.md`) | real flies, 10 | him, seeds 10 / 11 / 12 |
+|---|---|---|
+| within 6 mm of the wall (0.88-0.90) | 0.92 | 0.98, 0.98, 0.98 |
+| outer third of the radius (0.90) | 0.97 | 0.99, 0.98, 0.99 |
+| walking speed mode, mm/s (11-15) | 10.3 | 4.5 x3 |
+| fraction below 1 mm/s | 0.21 | **0.00 x3** |
+| turns under 30 / 45 / 60 deg per 40 ms (0.60 / 0.72 / 0.80) | ~0.9 / 0.95 / 0.96 | **1.00 / 1.00 / 1.00** |
+| inter-turn interval, ms (250 +/- 110) | 258 | **1,102, 1,351, 1,014** |
+| 99th percentile angular velocity, deg/s (< 450) | 2,500 (tracking noise) | 241, 234, 251 |
+| circling bias, signed (population 0) | -0.06 | **+1.00, +1.00, -1.00** |
+
+**he wall-follows like a fly, slightly more; his gait is the known third; and three misses are one
+thing:** in ten minutes he never stops (0 % below 1 mm/s against 21 %), never makes a sharp turn (every
+40 ms heading change under 30 degrees against 60 % in life; an inter-turn interval four to five times
+theirs), and never reverses along the wall (a circling bias of exactly one: he picks a direction at
+the rim and keeps it for the whole run). the flow wheel is smooth by construction, and the cord stops
+only when something makes it. what a fly has and he lacks is *structured* spontaneity: saccades, which
+are discrete events preceded by DNa02 bursts in walking flies (Rayshubskiy 2020), and bouts that end on
+their own through halting neurons firing without a cue. this morning's fly had noise and no structure;
+tonight's has neither. the next physiology is the saccade and the spontaneous stop, looked for first in
+the wiring (do the steering and halting pairs burst on the woken brain, and can a burst be read as an
+event rather than a rate) before any stand-in. two scorer notes stand: the real flies' bout and pause
+durations fragment at the 1 mm/s threshold and their angular-velocity tail is tracking noise; his
+tracks are exact, so on those rows only his side is trustworthy until the scorer gets its hysteresis
+and heading filter. the viewers do not yet draw the ring (they draw a square wall for the dish).
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,

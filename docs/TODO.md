@@ -133,6 +133,19 @@ loop is probably a bug (mechanosensation brief).
       so MDN reads as backward; the DNp09 right-bias (tracing) as a labelled correction or not.
       the leg model is NOT a wheel (drum 0/3 rectified, 1/3 signed): pace + diagnostic only.
 
+## 2e. what the dish said (09-18 18:25, `experiments/benchmark.py` vs the Roman lab's flies)
+
+- [ ] **the saccade.** he never turns sharply: every 40 ms heading change under 30 deg (life: 60 %); inter-turn
+      interval 1.0-1.4 s (life 0.25). look in the wiring first: do DNa02 / DNa01 / DNb06 / DNg13 burst on the
+      woken brain, and can a burst be read as an event (a fixed-size turn) on top of the smooth HS wheel
+      (Rayshubskiy 2020: DNa02 bursts precede spontaneous turns). a stand-in only after, labelled.
+- [ ] **the spontaneous stop.** he never stops in the dish (0 % vs 21 %); bouts end only when something halts the
+      cord. do the halting types (DNg105, the Sapkal 2024 set) fire on their own on the woken brain?
+- [ ] **reversing along the wall.** circling bias exactly +/-1; both of the above should fix it; score it.
+- [ ] the scorer: hysteresis on the walking threshold; a heading filter for tracked centroids; the 5.0 cm dish
+      as the second condition (`--arena-radius 1.67`).
+- [ ] the viewers: draw the ring for `world == "arena"`.
+
 ## 2c. what the fly asked for (09-18 01:02, `docs/SCENARIOS.md`; the unmet items, in his order)
 
 - [~] **persistent internal states** (09-18 14:15: the FIRST one is built: `FeedingState`, sugar latches feeding,
