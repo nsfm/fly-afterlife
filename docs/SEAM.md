@@ -2884,6 +2884,24 @@ persistence in darkness: the attractor's own physiology, its own item. nate's ot
 colour: colour is exactly this pathway; the ocelli, as far as this record knows, serve flight and gaze
 stabilisation rather than the ring, said with less confidence. the anterior visual pathway is the next build.
 
+**the UV eye (21:26 PDT; nate: "does our 3d world need to properly model UV sources?"; `--uv`, `garden.scene_uv`, a sun
+disc in `omma`, a second flyvis handing Mi15 to his Mi15 cells by column, `seam/columns_uv.py`).** in UV the sky is
+the source (Rayleigh), the ground dark (soil and leaves absorb it), water a mirror, the sun a clipped disc; the
+eye's five-degree acceptance angle is the bloom. built as a second retina from the same eye: on his UV retina
+the ground reads 0.05, the horizon band 0.43, the sky 0.70, the disc 1.0. flyvis computes Mi15 (not Dm2), so
+Mi15 crosses the seam as T4 / T5 do (1,043 cells placed by column): **Mi15 fires at 15 Hz mean, up to 106; MeTu3c
+answers at 7 Hz; nothing beyond.** each tubercle type wants a different MeTu and the ones it wants are fed by
+what the seam did not carry: TuBu01 / 06 want MeTu2a, whose inputs are Dm-DRA1 and R7d, the dorsal rim area,
+the *polarisation* compass; MeTu1 wants Dm2 (41 synapses per cell), which flyvis does not model; MeTu3c's own
+targets are TuBu09 / 10 (not logged in that run). **and the photoreceptors are in the build:** R7p 332, R7y 481,
+R7d 82 (the dorsal rim), R7_unclear 404, R8 the same, all silent. so the honest seam for this pathway is not
+flyvis: drive his own R7 cells by column from the UV retina and his R8 from the green one, as receptors, and let
+his medulla do Dm2, MeTu and the rest. `seam/columns_uv.py` places 570 R7, 1,273 R8 and 1,441 Dm2 cells by
+column from their wiring (photoreceptors by where they project). R7d stays at rest: we have no polarisation to
+give it, and that is the sky compass we cannot build with this eye. the receptor rows are next, behind the
+oracle. nate's other asks tonight: the UV in the human view as false colour (the viewer agent, in flight); an
+ocelli panel waits for ocelli.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
