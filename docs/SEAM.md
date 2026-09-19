@@ -2798,6 +2798,21 @@ when he reaches food and leaves when full; he does not seek it by sight from fou
 afar is the plume and the wind gate, and the anemotaxis result of 09:12 was measured on a fly that could
 not hold a heading: that is the experiment to re-run first on this one.
 
+**where the time goes (17:10 PDT; `docs/PERFORMANCE.md`, an opus agent that profiled it):** the LIF step is 81-88 %
+of the loop, the eye render 4-12 %, flyvis 5-7 % (the record's "largest single cost" of 09-17 is stale).
+inside the step: the membrane pass over every cell ~84 %, the Poisson draw for the 25,973 driven receptor
+cells ~22 % (the floor made it large), propagation 3 % (six million synapses, but ~100 cells fire per ms).
+the step scales 1.86x from one thread to six and nothing from two to six under contention, so the unit of
+parallelism is the job, and three jobs at four threads on eight cores, which is how every batch today
+ran, was oversubscribed. the one measured, bit-identical win: the Poisson draw folded into one nogil
+kernel, 1.216x on the step, 500 / 500 steps identical, prototyped, not yet adopted. two plausible ideas
+died on measurement (batching the ten frames of a chunk into one raytrace is slower than hoisting the
+ray rotation; slicing T4/T5 on the GPU before the transfer buys 3 %), and flyvis is non-deterministic call
+to call at 3e-7, which is what `--deterministic` suppresses. **and an incident:** the agent ran
+`pkill -f world/pair.py` to clean up its own runs; `run_many.py`'s command line carries that string, so it
+killed the settled walk batch and the oracle's fourth arm mid-run (16:28). both were re-run; the rule
+(no pattern kills, own PIDs only, scratchpad only) is in every brief from here. nate caught it.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,

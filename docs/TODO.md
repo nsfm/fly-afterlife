@@ -195,11 +195,22 @@ loop is probably a bug (mechanosensation brief).
 - [ ] `receptorType` coverage for ppk / Gr / Or / Ir cells in both builds.
 - [ ] right hemisphere more completely traced (known): quantify per class for the wheel.
 
-## 6. performance
+## 6. performance (`docs/PERFORMANCE.md`, 09-18 17:00: measured, an opus agent)
 
-- [ ] two brains in threads (numba nogil); then a profile.
-- [ ] per-ms drive without per-ms Python (vectorise transducers over cells).
-- [ ] deterministic mode only for oracles and regression; it is 40% slower.
+- [x] two brains in threads (numba nogil): done 09-17.
+- [ ] **the LIF step is 81-88 % of the loop; flyvis 5-7 %** (TODO §3's "largest single cost" is stale). inside the
+      step: the membrane pass over 162,517 cells ~84 %, the driven-cell Poisson draw ~22 % (25,973 receptor
+      cells since the floor), synaptic propagation 3 %.
+- [ ] **fold the Poisson draw into one nogil kernel** (prototyped in the agent's scratchpad; keeps the rng.random
+      call so the draw order holds): step 1.216x faster, 500/500 steps spike-for-spike identical. ~25 lines;
+      oracle-checked. the one measured, bit-identical win.
+- [ ] **thread budget:** the step scales 1.86x from 1 to 6 threads and nothing from 2 to 6 under contention;
+      run_many with 3 jobs x 4 threads oversubscribes 8 cores. jobs, not threads: 3-4 jobs at 2 threads.
+- [ ] the membrane pass is the ceiling on CPU; a GPU port of the step (CuPy / torch) is the only large gain
+      left, at the cost of bit-identity (opt-in, its own oracle).
+- [ ] hoist the redundant ray rotation in Eye.render (1.07x on the render; batching ten frames is slower).
+- [ ] per-ms drive without per-ms Python: Registry.apply is 1.2 %; not worth it now.
+- [ ] deterministic mode only for oracles and regression; flyvis is non-deterministic call to call (3e-7).
 
 ## 7. situations
 
