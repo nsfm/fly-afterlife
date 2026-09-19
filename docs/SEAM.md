@@ -2813,6 +2813,29 @@ to call at 3e-7, which is what `--deterministic` suppresses. **and an incident:*
 killed the settled walk batch and the oracle's fourth arm mid-run (16:28). both were re-run; the rule
 (no pattern kills, own PIDs only, scratchpad only) is in every brief from here. nate caught it.
 
+**the benchmark scorer, calibrated on real flies first (17:27 PDT; `experiments/benchmark.py`; `docs/BENCHMARKS.md`;
+the Roman lab's trajectories via `scripts/fetch_opynfield.sh`, ten flies per arena):** tracked centroids at 33 Hz
+jitter, so the tracks are smoothed over 0.15 s, heading is taken from displacement only while moving and
+held through stops, and the walking mode is the peak above the valley at 4 mm/s (the stop mode sits below it).
+with that, the 8.4 cm flies read where the papers put them, and the 5.0 cm flies read as a different animal,
+which is the spread a pass bar gets calibrated against:
+
+| metric (published) | 8.4 cm, 10 flies | 5.0 cm, 10 flies |
+|---|---|---|
+| fraction below 1 mm/s | 0.21 | 0.72 |
+| walking mode, mm/s (11-15) | 10.3 | 5.6 |
+| within 6 mm of the wall (0.88-0.90) | 0.92 | 0.96 |
+| outer third of the radius (0.90) | 0.97 | 0.96 |
+| inter-turn interval, ms (250 +/- 110) | 258 | 1,224 |
+| turn angle at 1 s, mode, deg (12.6 edge) | 15.5 | 20.2 |
+| circling bias (population 0) | -0.06 | +0.04 |
+
+two rows are the scorer's, not the flies': walking bouts and pauses fragment at the 1 mm/s threshold
+(0.35 s against Valente's 1.4-2.1) and the angular-velocity tail is displacement noise (2,500 deg/s); both
+marked in the code, both fixed by a hysteresis and a heading filter when our runs exist to compare. the
+round arena (5.6 sim m, a 0.47 m rim) is the next build; his runs go through the same scorer, decimated
+to 33 Hz, with the time-rescaling control for his slow gait.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
