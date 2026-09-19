@@ -2977,6 +2977,20 @@ afternoon: `--goal-wheel` reads PFL3 L-R as a third channel through the running 
 is. prediction, running: with the goal at 200 he turns to it and holds; with the goal at 35, where he starts, he
 stays. both stand-ins are tuned (ExR1 400, ring 30, goal 100) and say so.
 
+**menotaxis, not yet (23:55 PDT; `--goal-wheel`: PFL3 L-R as a wheel channel; three readings, seed 12, the garden).**
+(1) through the running baseline, gain 10: no holding (the running baseline subtracts a sustained error away: the
+wrong estimator for a goal). (2) a fixed baseline, gain 10: he turns toward the goal once (error 165 -> 30 in ten
+seconds) and the rest of the loop takes him away; |error| < 30 in 21 % of the run; with the goal where he starts,
+32 %, drifting off. (3) a fixed baseline, gain 20, five seconds of smoothing on the channel, 120 s: 16 % and 42 %,
+the error wandering through the whole circle in both; moments of closing, nothing held. the arithmetic: PFL3 fires
+3.7-5 spikes per chunk per side, so the Poisson noise on left minus right is ~2.7 spikes against a goal signal of
+0.5; at any smoothing short of the run itself the noise wins, and the flow wheel and the rim reflex are louder
+besides. **so the comparator computes the sign of the error and its spiking output is too sparse to steer with.** in
+life PFL3 is graded and has no shot noise. the goal loop, like the anterior pathway and the ring's persistence, is a
+graded build. what stands from the night: a ring that holds a heading from the sky, a goal that PFL3 reads with the
+right sign, and the exact place where spikes stop being enough. the stand-ins stay opt-in (`--ring`, `--goal`,
+`--goal-wheel`), tuned as labelled (ExR1 400, ring 30, goal 100).
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,

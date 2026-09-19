@@ -135,6 +135,13 @@ loop is probably a bug (mechanosensation brief).
 
 ## 2e. what the dish said (09-18 18:25, `experiments/benchmark.py` vs the Roman lab's flies)
 
+- [~] **the compass, stand-in built** (09-18 23:55): `--ring` forms a bump that tracks his heading from the sun (r 0.99;
+      `docs/figures/compass_bump.png`), sensory-driven (PEN silent); `--goal` makes PFL3 compare with the right sign
+      (r -0.68 with the error) and reach the LAL; `--goal-wheel` does NOT hold a heading (PFL3 3.6 Hz across 24 cells:
+      shot noise 5x the signal). all three stand-ins are opt-in and tuned. NEXT, graded: (a) a graded PFL3 / LAL readout
+      (rate from membrane, not spikes) or the goal drive raised until PFL3's L-R is above noise, labelled; (b) the
+      anterior visual pathway graded (the eye track) to replace the imposed ring fields with seen ones; (c) the ring's
+      persistence (EPG-PEN recurrence at 0.185 mV).
 - [ ] **the compass needs a graded build** (09-18 late): the UV retina, the sun disc and the columns exist (`--uv`), but the
       anterior visual pathway (R7 -> Dm2 -> MeTu -> TuBu -> ER) does not carry spikes at these constants (photoreceptors
       are histaminergic: light inhibits; Dm2's excitation is two synapses' worth; at gain 1,000 the ring neurons still

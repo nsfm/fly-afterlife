@@ -98,11 +98,12 @@ class MultiWheelSteering:
 
     def step(self, cnt: dict, touched_any: bool) -> float:
         yaw = 0.0
-        for w, g in self.wheels:
+        for entry in self.wheels:
+            w, g = entry[0], entry[1]; fixed = len(entry) > 2 and entry[2] == "fixed"; ema_n = entry[3] if len(entry) > 3 else self.ema_n   # a per-channel smoothing (the goal channel: sparse spikes, a sustained signal)   # "fixed": no running baseline (a sustained signal such as the goal error must not be subtracted away, 09-18 23:45)
             L, R = float(cnt[w + "_L"]), float(cnt[w + "_R"])
-            if w not in self.base: self.base[w] = [L, R]; self.ema[w] = 0.0
-            net_ = (R - self.base[w][1]) - (L - self.base[w][0]); self.ema[w] += (net_ - self.ema[w]) / self.ema_n; yaw += g * self.ema[w] * -1
-            self.base[w][0] += (L - self.base[w][0]) / self.tau; self.base[w][1] += (R - self.base[w][1]) / self.tau
+            if w not in self.base: self.base[w] = [0.0, 0.0] if fixed else [L, R]; self.ema[w] = 0.0
+            net_ = (R - self.base[w][1]) - (L - self.base[w][0]); self.ema[w] += (net_ - self.ema[w]) / ema_n; yaw += g * self.ema[w] * -1
+            if not fixed: self.base[w][0] += (L - self.base[w][0]) / self.tau; self.base[w][1] += (R - self.base[w][1]) / self.tau
         yaw = float(np.clip(yaw, -12, 12))
         asym = (cnt["legMN_R"] - cnt["legMN_L"]) / max(cnt["legMN_R"] + cnt["legMN_L"], 1)
         if touched_any: yaw = float(np.clip(self.leg_gain * (asym - self.leg_rest), -12, 12))
