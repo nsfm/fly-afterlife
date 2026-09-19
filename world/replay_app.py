@@ -405,7 +405,7 @@ class Episode:
             p = np.asarray(E["compass_pfl"], np.float64)
             if p.ndim == 2 and p.shape[1] >= 3 and len(p): self.cmp_pfl = p
         if "compass_goal" in E.files:
-            g = float(np.asarray(E["compass_goal"]).ravel()[0]); self.cmp_goal = g
+            _cg = np.asarray(E["compass_goal"], np.float32).ravel(); self.cmp_goal = float(_cg[0]) if _cg.size else float("nan"); self.cmp_goal_series = _cg if _cg.size > 1 else None   # per-chunk when the goal yields (09-19)
         if "compass_sun_az" in E.files:
             sa = float(np.asarray(E["compass_sun_az"]).ravel()[0])
             if np.isfinite(sa): self.sun_az = sa % 360.0          # the azimuth the ring neurons were actually fired at
@@ -1137,6 +1137,7 @@ def run(args):
         display.blit(f_small.render("h, ? or esc to close", True, FAINT), (r.x + U(18), r.bottom - U(22)))
 
     def draw_compass(i):
+        if getattr(ep, "cmp_goal_series", None) is not None: ep.cmp_goal = float(ep.cmp_goal_series[min(len(ep.cmp_goal_series) - 1, max(0, i // ep.cmp_chunk))])   # the goal per chunk, when it yields (09-19)
         """the compass: eight wedges lit by EPG, the bump's phase as one needle, his real heading as the other,
         the goal as a tick and the sun as a disc on the rim, then PFL3's comparator and PFL2's walking gain."""
         d = CMP_D; ck = ep.chunk_at(i)

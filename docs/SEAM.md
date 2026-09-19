@@ -3137,6 +3137,26 @@ of contact), labelled, which is also what turns "hold one heading" into "explore
 compass panel first, so this is visible rather than inferred (`compass_wedges`, `compass_pfl`, the goal and the sun
 are saved into garden episodes from this commit).
 
+**the goal that yields (13:45 PDT; `--goal-switch 3`: after three seconds of continuous contact, a new heading drawn
+uniformly; the compass, the goal and the comparator are saved into the file and the viewer draws them).** first attempt:
+zero switches in 107 s at the rim, because "contact" was a collision event and a fly standing still against a wall,
+which is what PFL2 makes him do there, is never pushed by it; contact is now his body within 2 cm of the boundary.
+then, 180 s, seed 12, against the fixed goal nate watched:
+
+| | fixed goal (120 s) | the goal yields (180 s) |
+|---|---|---|
+| in a corner | 54 % | **4 %** |
+| standing | 66 % | 13 % |
+| at the rim | 66 % | 59 % |
+| walked | 5.9 m | 32.2 m |
+| goal switches | 0 | 31 |
+
+the corner is gone and he walks again; the rim is not gone, because a heading drawn uniformly points back into the
+wall half the time and the wall-following holds him until the next switch, and 31 switches in three minutes is a
+fly changing its mind every six seconds where life holds a heading for minutes. so the next refinement is the one
+a fly makes: the new heading drawn from the half-circle facing away from the wall he is on, with five seconds of
+patience. labelled, as the goal state is.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
