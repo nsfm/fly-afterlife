@@ -114,6 +114,7 @@ COLS = [(226, 166, 59), (122, 184, 255), (155, 226, 155), (224, 122, 154), (201,
 # one muted palette, used everywhere
 BG     = (14, 17, 23)        # the window
 CARD   = (21, 25, 33)        # a panel's chrome (title strip, control bar)
+MM_PER_M = 15.0              # real millimetres per sim metre (docs/BENCHMARKS.md: his body 0.16 m = 2.4 mm)
 PANEL  = (8, 10, 14)         # inside a panel, where pixels live
 EDGE   = (40, 47, 60)        # hairlines
 EDGE2  = (30, 36, 46)
@@ -720,6 +721,9 @@ def make_map(pg, ep, S, cx, cy, size, font):
             pg.draw.circle(surf, (242, 239, 230) if o[3] > 0.5 else (58, 64, 78), w2(o[0], o[1]), max(2.0 * u, o[2] * S))
     pg.draw.rect(surf, (150, 142, 124), rect, max(1, int(u)))
     sun_marker(pg, ep, cx, cy, rect, u, surf, font)
+    # a scale bar in real units: 1 sim metre is 15 mm (his body 0.16 m = 2.4 mm), so the reader never has to convert (09-19)
+    bx, by = rect.right - int(10 * u), rect.bottom - int(10 * u); bw = int(MM_PER_M and (10.0 / MM_PER_M) * S)   # 10 mm
+    pg.draw.line(surf, (236, 240, 248), (bx - bw, by), (bx, by), max(1, int(2 * u))); lab = font.render("10 mm", True, (236, 240, 248)); surf.blit(lab, (bx - lab.get_width(), by - lab.get_height() - int(2 * u)))
     return surf
 
 
@@ -873,6 +877,9 @@ HELP = [("space", "play / pause"), ("left / right   or   , .", "step one frame")
 # ---------------------------------------------------------------- the app
 def run(args):
     if args.bench: os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
+    try:   # the raytrace is a numba parallel loop; uncapped it takes every core the machine has (09-19: 8.5 cores for one viewer)
+        import numba; numba.set_num_threads(max(1, min(args.threads, numba.config.NUMBA_NUM_THREADS)))
+    except Exception: pass
     import pygame as pg
 
     ep = Episode(args.npz, args.her)
@@ -1368,7 +1375,8 @@ def run(args):
     WRESIZED = getattr(pg, "WINDOWRESIZED", -1); WEXPOSED = getattr(pg, "WINDOWEXPOSED", -2)
     pend = [None]
     while running:
-        for e in pg.event.get():
+        evs = pg.event.get(); idle = not evs and not playing and not dragging and pend[0] is None   # paused, untouched: draw at 20 fps, not the cap (09-19: it drew at 120 and took a core)
+        for e in evs:
             if e.type == pg.QUIT: running = False
             elif e.type == pg.VIDEORESIZE: pend[0] = (e.w, e.h)
             elif e.type == WRESIZED: pend[0] = (e.x, e.y)
@@ -1418,7 +1426,7 @@ def run(args):
         i = int(pos)
         worker.ask(i, max(1, round(SPEEDS[spd] * ep.fps / max(1e-6, clock.get_fps() or 60))))
         frame(i)
-        clock.tick(args.cap)
+        clock.tick(20 if idle else args.cap)
     worker.close(); pg.quit()
 
 
@@ -1434,7 +1442,8 @@ def main():
     ap.add_argument("--no-smooth", action="store_true", help="open with the raw per-chunk heading (judders; `s` toggles)")
     ap.add_argument("--loop", action="store_true", help="loop at the end")
     ap.add_argument("--cache", type=int, default=256, help="human-view frames kept (LRU)")
-    ap.add_argument("--cap", type=int, default=120, help="display frame-rate cap")
+    ap.add_argument("--cap", type=int, default=60, help="display frame-rate cap while playing (paused it draws at 20)")
+    ap.add_argument("--threads", type=int, default=4, help="cores the human-view raytrace may use (numba threads; the sim needs the rest)")
     ap.add_argument("--scale", type=float, default=1.0, help="window scale for high-DPI screens (e.g. 1.5 or 2)")
     ap.add_argument("--her", default="auto", choices=("auto", "always", "never"), help="put her in his scene: auto believes the episode's dist / her pose moving")
     ap.add_argument("--bench", type=int, default=0, help="render N frames headless, print timings, no window")

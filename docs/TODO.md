@@ -1,10 +1,45 @@
 # TODO
 
-everything pending, in one place. 2026-09-16 23:30 PDT (nyx). the record (`docs/SEAM.md`)
+everything pending, in one place. 2026-09-16 23:30 PDT (nyx); §S added 09-19 16:14. the record (`docs/SEAM.md`)
 says what was done and why; this says what is not done yet. items reference the physiology
 briefs in `docs/physiology/` where a number came from there. rule for every behaviour change:
 one change per run, against the previous run, and a large effect from closing one afferent
 loop is probably a bug (mechanosensation brief).
+
+## S. the senses, the strict list (09-19 16:14 PDT, nate: "treat each un-implemented sense as our strictest to-do list for
+## the sake of behavioural measurement"; every sense on unless there is a stated reason; one sense per run, its own rest as the control)
+
+the cascade of 09-19 is the argument: the wind result was wrong until the compass existed, the compass useless until the goal
+did, the goal useless until the comparator pair was mended, and the fruit reachable only with all of it standing. so the
+un-implemented senses are the experiment list, in the order that unblocks a measurement soonest. `docs/SENSES.md` is the
+status table (cells, resting rates, sources); this is what is wrong with each and what to build next.
+
+| sense | today | what is wrong or missing | next build | it would let us measure |
+|---|---|---|---|---|
+| olfaction (2,635 ORNs) | fruit plume per antenna, Weber-Fechner per side; her odour exp(-d/0.8) | **antennae 4.5 mm apart (12x a fly's), straddling a 3.75 mm plume; one whiff coin shared by both antennae, so no between-antenna timing** (found 16:14); whiffs Bernoulli, not power-law; no running-mean normalisation per ORN | [x] `--antennae real` (16:44: asymmetry 0.2-0.4 -> 0.02-0.05, anemotaxis holds 3/3, control 0/3; exposed: the wind goal never releases at the source once he is full, next); then sub-chunk sensory time (Kadakia 2022's odour-motion sensing needs ~ms delays; our sensory frame is 10 ms, the whiff 100 ms); then power-law whiffs; her odour and a rival's through the same plume | bilateral vs temporal smell (Gaudry 2013 / Taisz 2023 vs Alvarez-Salvado 2018 / Demir 2020); whether anything lateralises at the steering readouts once the geometry is honest |
+| wind (JO-C/E) | on: windward JO fire more; the compass goal turns upwind while a whiff is on | the wind of his own walking (he moves through still air at 2-8 mm/s) is not on his aristae; no efference copy | self-motion wind on the JO rows, then the efference copy (Cheong 2024) | whether anemotaxis survives his own wind |
+| temperature (hot 7, cooling 7) | transducers built; **at rest in the garden** (parked: warmth does not steer at these constants, only drives the legs) | at rest without a reason that survives the new rule | `--thermo field` in the garden, its own run against this batch | thermokinesis (turning rate, pace under the sun patch), the shade stops he already makes |
+| humidity (66) | the puddle is a field; cells at the floor | VP1m / VP1l label audit (Marin 2020) before driving | the audit, then dry / moist non-adapting from the puddle | hygrotaxis with a state-dependent sign (needs thirst) |
+| taste (1,416) | sugar and water on the tarsi; feeding state | bitter, salt, pharyngeal absent | bitter as a field on the same surface (Gr32a/Gr33a), PER threshold under satiety | food choice; aversion |
+| touch (2,503 bristles) | adapting kernel, left / right by side | by body part (antenna, head, legs, wings are typed); no seconds-scale fatigue | bristles by body part; the head-on class for head bristles | the wall-following posture; grooming triggers |
+| proprioception (580 leg-nerve) | tonic load 15 Hz standing; opt-in tripod rule | campaniform dF/dt, FeCO gating under command (Dallmann 2025), gait from speed (Wosnitza 2013) | campaniform sensilla as a transducer; the FeCO gate at the drive | the reflex loop's gain; whether the cord's own rhythm appears |
+| vision, motion (T4/T5) | flyvis through his eye, both eyes | walking-state gain on the visual channels (Chiappe 2010); no saccade efference copy; no loom (DS fidelity) | the walking gain as a state on the seam; the loom detector on the eye track | the saccade as an event; the escape path |
+| vision, colour / UV (R7/R8) | UV retina and sun disc rendered (`--uv`); the pathway does not carry spikes (histaminergic photoreceptors) | the anterior visual pathway (R7 -> Dm2 -> MeTu -> TuBu -> ER) needs a graded model; the ring fields are imposed from the sun's azimuth | the graded anterior pathway (the eye track) to replace the imposed ring fields | a compass from his own eye; the sun as a seen thing |
+| ocelli (46 interneurons) | silent | **the photoreceptors are outside the imaged volume** (16:30: nothing entering by the ocellar nerve touches OCG / OCC; their input is all typed brain cells) | a labelled stand-in on OCG / OCC: tonic in the dark, silenced by sky light (the L-neuron sign); an afternoon, moved out of "research" | light-level and horizon reflexes; whether the ocellar descending path (DNx02? four cells in the ocellar nerve, near-zero input in the volume, 10,000 outputs each onto AN06B025 / GNG) does anything |
+| contact pheromone (ppk23 F/M) | 60 Hz burst on a tap with her | no rival to fire the M channel; Gr32a/Gr33a aversive channel absent | the rival, once, with controls (§7) | the P1 dial (Hoopfer 2015) |
+| hearing (JO-A/B) | silent | she never sings; his own song is out of reach | her song rows exist; needs a singer | the courtship sequence as a state |
+| gravity (JO, terrain) | silent | flat world | a heightfield tilting his pose (§2a) | geotaxis |
+| the delays | none (frame-level, 10 ms) | sensory 5-15 ms in, motor 20-40 ms out; without them he is more stable than a fly | delay lines at the drive and at the effectors | which successes were his and which were the missing delay |
+
+ranked by difficulty (16:23, nate asked). a flag flip or an afternoon: temperature in the garden; ocelli as a labelled stand-in on the interneurons (the receptors are out of volume); his own wind on the aristae;
+humidity (after the VP1 audit); bitter and salt. a day, and it moves the baselines: bristles by body part; the delays (a
+refreeze); plume timing (power-law whiffs cheap; per-antenna packet timing needs the drive resolved per ms, §1). needs another
+build first: proprioception (the leg model), gravity (terrain), hearing (a singer), the rival's channels (states first).
+research, not engineering: colour / UV (the graded anterior pathway), loom (DS fidelity).
+the walk: temperature, own wind, bitter, plume timing, then the delays.
+
+and the units: 1 sim m = 15 mm, and the antenna error hid in that conversion. `MM_PER_M` in the viewer (scale bar, 16:14); every
+number a human reads should be in mm; the world's own rescale to mm is an oracle-refreeze job (§5b).
 
 ## 0. in flight tonight
 
@@ -243,6 +278,8 @@ loop is probably a bug (mechanosensation brief).
 
 - [x] **exact integration** (`--integrate exact`, default): Shiu's `method='linear'`; PSP peak on the analytic curve; a third
       faster; the brain 1.5x hotter; KC sparsity 3.9 % at 0.185 (Euler 1.8 %); drum 3/3; he eats. oracle v2 frozen on it.
+- [ ] **the world in millimetres** (09-19, nate): rescale the sim unit to mm (today 1 m = 15 mm; every constant, the eye heights, the
+      plume widths, the arena sizes, the viewer) at the same time as the next oracle refreeze (v3), since the float changes break bit-identity.
 - [ ] **g frozen during the refractory period** (Shiu's "(unless refractory)" on dg/dt): the second difference from the
       paper; opt-in, measure, adopt with oracle v3 if it holds.
 - [ ] re-measure on the exact engine what the record measured on Euler: the floor's tonus by row, the DN L/R table, the

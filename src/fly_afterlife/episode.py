@@ -70,8 +70,7 @@ class Episode:
             t_f = (len(self.POSE) - CH + f) / fps
             st_ = {"a": a, "rest": self.rest, "f": f, "tm": touched_m[f], "kind": kind_m[f], "pace": float(np.clip(m.v / 0.45, 0, 1)), "t_chunk_end": len(self.POSE) / fps, "tf": touched_f[f], "singing": singing}
             if hasattr(self.room, "temperature"):
-                px, py, ph = self.POSE[len(self.POSE) - CH + f]; hr = np.radians(ph); fwd = np.array([np.cos(hr), np.sin(hr)]); left = np.array([-np.sin(hr), np.cos(hr)])
-                aL_ = np.array([px, py]) + 0.1 * fwd + 0.15 * left; aR_ = np.array([px, py]) + 0.1 * fwd - 0.15 * left
+                px, py, ph = self.POSE[len(self.POSE) - CH + f]; aL_, aR_ = m.antennae_at(px, py, ph)   # the body's antenna geometry (09-19)
                 st_["T_L"] = self.room.temperature(float(aL_[0]), float(aL_[1])); st_["T_R"] = self.room.temperature(float(aR_[0]), float(aR_[1]))
                 if hasattr(self.room, "odour"):
                     oL = self.room.odour(float(aL_[0]), float(aL_[1]), t_f); oR = self.room.odour(float(aR_[0]), float(aR_[1]), t_f)

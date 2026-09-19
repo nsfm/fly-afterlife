@@ -1,9 +1,20 @@
 # his senses: what he has, what we drive, what we could
 
-status as of 2026-09-17 evening (nyx). cell counts are from the MaleCNS build (`brain_whole.npz`);
+status as of 2026-09-17 evening (nyx); the antenna row and the units note added 09-19 16:15. cell counts are from the MaleCNS build (`brain_whole.npz`);
 "in life" is from the physiology briefs in `docs/physiology/`. "driven" means a registry row exists
 and fires in the room today. the floor (`receptors.FLOOR`) holds every typed sense at its resting
 rate by default; a sense is "active" when the world also modulates it.
+
+## the sample points, and the units
+
+1 sim m = 15 mm (`docs/BENCHMARKS.md`; his body 0.16 m = 2.4 mm). the antennae are the sample points for odour, warmth
+and humidity (`Body.antennae_at`). the original geometry put them 0.1 m ahead and 0.15 m to each side: 4.5 mm apart,
+twelve times a fly's ~0.35 mm (head ~0.7 mm wide), straddling the plume, which is 3.75 mm wide at the source. so his
+bilateral smell difference was far larger than any fly's, and the fruit plume's whiff state is one coin per source
+shared by both antennae, so the between-antenna delay that odour-motion sensing lives on (Kadakia 2022) is zero by
+construction. `pair.py --antennae real` puts them at the front of the head, 0.35 mm apart (09-19 16:15; a fly can
+lateralise at that spacing: Gaudry 2013, Taisz 2023; in a turbulent plume it mostly reads whiff timing and the wind:
+Alvarez-Salvado 2018, Demir 2020). the result of the re-run is in the record.
 
 ## driven by the world today
 
@@ -27,7 +38,7 @@ rate by default; a sense is "active" when the world also modulates it.
 | taste | 1,416 gustatory (sugar, bitter, water, salt, pharyngeal) | 2 Hz | a food spot (sugar ~65 Hz at 100 mM, adapting within 1 s), water, salt | a field + rows: half a day (forage mode in `loop.py` did sugar patches already) |
 | humidity | 66 (dry VP4, moist VP5; VP1d, VP1l) | 20 Hz | a humidity field; dry / moist non-adapting | easy; VP1 labels under audit |
 | Johnston's organ | 672 (JO-A/B sound, C/E gravity and wind) | 5 Hz (estimate) | her song (100-300 Hz) when she sings (never yet); wind from his own motion; gravity | song rows exist; wind needs an airflow field |
-| ocelli | OCG / OCC 46 interneurons (photoreceptors not typed) | 0 | ambient light level, horizon | needs the ocellar receptors identified |
+| ocelli | OCG / OCC 46 interneurons; **the photoreceptors are not in the volume** (09-19 16:30: the 39 cells entering by the ocellar nerve are vertex bristles, 25 untyped bristle-like cells and the four DNx02, and none of them touches an ocellar interneuron; the 23,320 synapses onto OCG / OCC all come from typed brain cells, so the retinal input, made in the plexus under the cuticle in life, was never imaged) | 0 | ambient light level, horizon | a labelled stand-in on the interneurons: in life the L-neurons are tonic in the dark and hyperpolarised by light (histaminergic receptors), so OCG rate ~ (1 - sky light); OCG01a/c/f glutamate, the rest acetylcholine, OCC unclear (consensus_nt). an afternoon, as a stand-in; there is nothing upstream to label |
 | colour | R7 / R8 (in the 4,107) | 0 (flyvis is monochrome) | a coloured world | needs the transplant with R7/R8: the eye track |
 
 ## silent, correctly

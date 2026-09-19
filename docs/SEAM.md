@@ -3359,3 +3359,62 @@ T4/T5 as the seam input and (b) training the transplant on the optic-flow task i
 - per-eye mirrored render for lateral stimuli; then left vs right loom -> DNa steering.
 - ensemble average over the 50 flyvis models.
 - write it up.
+
+## the ocelli are not in the table (16:30 PDT; nate asked how we would find the ocellar photoreceptors, and whether a label could go upstream)
+
+the method was going to be the sensory fingerprint: a cell that receives almost nothing, enters by the ocellar nerve, is predicted
+histaminergic, and synapses onto the typed ocellar interneurons (OCG / OCC, 46 cells). the table has an `entryNerve` column, and
+39 cells enter by `ON`: 8 typed vertex bristles (BM_Vt_PoOc), 25 untyped cells with the same targets (DNge132, ANXXX027,
+DNg48, AN09B023: bristle afferents by connectivity), 2 `cb_sensory_tbc`, and 4 DNx02 (sensory_descending, unknown_sensory:
+120-175 input synapses in the volume, 7,000-10,000 outputs, onto AN06B025 and GNG288 above all). **none of the 39 makes a
+single synapse onto an ocellar interneuron.** the 23,320 synapses onto OCG / OCC come from typed brain cells (PS053, aMe_TBD1,
+GNG311, other OCG). so the retinal input to the ocellar pathway, which in life is made in the ocellar plexus under the cuticle
+of the vertex, was never in the imaged volume, and there is no photoreceptor to find or label. (transmitters, consensus_nt:
+OCG01a/c/f glutamate, the other OCG acetylcholine, OCC02a/b unclear.)
+
+what that leaves: a labelled stand-in on the interneurons. in life the ocellar L-neurons sit depolarised in the dark and
+hyperpolarise to light, because the photoreceptors are histaminergic (the same wall the compound-eye R7/R8 hit on 09-18), so
+the stand-in is OCG rate proportional to one minus the sky light over him, labelled, an afternoon. moved from "research" to
+"an afternoon" in `docs/TODO.md` §S. the four DNx02 in the ocellar nerve are the one open question worth an upstream ask:
+what they are is not in the table either. and on nate's upstream question in general: a simulation response is not evidence
+of identity (it is the table read back); a connectivity fingerprint is, and that is the kind of proposal FlyWire took in the
+open. how the MaleCNS annotators take proposals is not yet known here.
+
+## his antennae were two body lengths apart (16:44 PDT; nate asked whether a millimetre between a fly's antennae is enough to read a plume gradient, and whether ours factors the geometry)
+
+**in life.** the antennae sit ~0.35 mm apart on a ~0.7 mm head. that is enough to lateralise: Gaudry 2013 (odour on one
+antenna turns the walking fly toward it; asymmetric PN release), Taisz 2023 (lateral-horn cells that subtract left from right
+ORNs), Kadakia 2022 (odour *motion* sensed from the delay of a packet between the two antennae). but a concentration gradient
+across 0.35 mm of turbulent plume is mostly noise, and the walking fly's strategy is whiff timing plus wind (Alvarez-Salvado
+2018, Demir 2020): the antennae answer "odour now?", the wind answers "which way".
+
+**ours.** `Body.antennae()` put the tips 0.1 m ahead and 0.15 m to each side: 0.30 sim m = 4.5 mm apart at 15 mm per m,
+twelve times a fly's, nearly two body lengths (2.4 mm), straddling a plume that is 3.75 mm wide at the source. so every
+bilateral smell number in this record was measured on a head that does not exist, and the 09-18 finding that smell
+lateralises nothing at the steering readouts was a finding about the wiring, not the geometry (the input asymmetry was
+huge and still steered nothing). the whiff state is one coin per source shared by both antennae, so the between-antenna
+delay is zero by construction: odour-motion sensing is impossible here at any spacing until sensory time is finer than the
+10 ms frame. the error hid in the units: 0.15 looks like nothing until it is multiplied by fifteen.
+
+**the change** (one): `--antennae real` (0.08 m ahead = the front of the head, 0.012 m to each side = 0.35 mm; `wide` is the
+old geometry, the default until the flip). the anemotaxis batch of 14:57 re-run on it, UV layer on for the viewer, three seeds,
+with its control (no wind goal):
+
+| run | walked | in plume | first on the fruit | feeding | bilateral asymmetry \|L-R\|/(L+R), mean |
+|---|---|---|---|---|---|
+| windn (wide) s10 / 11 / 12 | 17.2 / 22.2 / 13.7 m | 19 / 23 / 11 % | 6.4 / 5.9 / never | 7 / 7 / 0 % | 0.21 / 0.37 / 0.43 |
+| windr (real) s10 / 11 / 12 | 2.5 / 6.4 / 19.7 m | 98 / 22 / 40 % | 11.2 / 10.7 / 8.0 s | 7 / 7 / 7 % | 0.035 / 0.019 / 0.046 |
+| ctl (wide) | 13.6 / 15.4 / 12.0 m | 34 / 66 / 22 % | never | 0 | |
+| ctlr (real) | 12.2 / 12.7 / 14.4 m | 100 / 29 / 25 % | never | 0 | |
+
+the bilateral asymmetry falls ten-fold to a few percent, which is what a real head sees. **anemotaxis holds: 3/3 on the
+fruit (8-11 s; wide 2/3 at 6 s), each eats for 8 s, control 0/3.** the result did not lean on the fake gradient; if anything
+the honest head is better, because with both antennae in the plume the whiff is on him more of the time.
+
+**what the honest head exposed.** after eating, windr s10 walked 0.0 m in the remaining 90 s and s11 3.4 m (wide s10 walked
+13.5 m away). at the source the whiff never ends, so the wind goal never releases: he stands against the fruit, pushed upwind
+into it, the goal-switch firing every 5 s of contact (18 switches) and the wind goal overriding it on the next whiff. the wide
+head sat with one antenna half out of the plume and got released by chance. in life the sated fly ignores the food odour
+(satiety lowers ORN sensitivity through sNPF, Root 2011; the fed fly leaves). the FeedingState already has the `full` flag; the
+wind goal should read it. next change, its own run against this one.
+
