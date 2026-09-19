@@ -9,9 +9,10 @@ implementation: same primitives, same luminance, same clipping, a pinhole camera
     uv run python world/replay_app.py world/garden3/gated_s12.npz --fov 110 --eye pano
     uv run python world/replay_app.py world/room_v7.npz --bench 120          # headless timing, no window
 
-four panels under one header: the human view; his eye (either the per-ommatidium dots at their own az/el, or
-the nearest-column panorama the web player had - a Voronoi of his sampling on a cylinder); the map (the world,
-his path, her, touch rings); the traces (per-frame spike counts, each scaled to its own max, plus his pace).
+five panels under one header: the human view; his eye (either the per-ommatidium dots at their own az/el, or
+the nearest-column panorama the web player had - a Voronoi of his sampling on a cylinder); the compass (the
+ellipsoid body's eight wedges, the bump, his heading); the map (the world, his path, her, touch rings); the
+traces (per-frame spike counts, each scaled to its own max, plus his pace).
 
 keys   space play/pause          left/right step a frame       shift+left/right jump 1 s
        , . step a frame          home/end first/last           l loop
@@ -19,7 +20,38 @@ keys   space play/pause          left/right step a frame       shift+left/right 
        v cycle the eye panel (dots / panorama)                 s camera smoothing on/off
        u cycle the human view's UV layer (off / tint / hatch / both)      c cycle the eye's channel
        h or ? keyboard help      q or esc quit                 click or drag the bar to scrub
-       mouse wheel over the human view also changes its FOV
+       mouse wheel over the human view also changes its FOV      drag the window edge: the panels reflow
+
+THE COMPASS (09-19), for runs made with --ring. the panel next to his eye draws four things in ONE frame - the
+world frame, heading 0 = +x, counterclockwise positive, the same frame as the map:
+  - eight wedges of an annulus, wedge k at world angle k x 45 deg, each lit by `compass_wedges[chunk, k]`: the
+    EPG spikes in that ellipsoid-body wedge in that 100 ms chunk. the fill is sqrt(rate / the file's 99th
+    percentile), so a 3 Hz bump still reads next to a 20 Hz one; an unlit wedge stays visibly a wedge.
+  - the BUMP as a cyan needle with a dot at its tip: the angle of the population vector over those eight wedges,
+    after the same 5-chunk (0.5 s) box smoothing experiments/compass.py uses before it measures anything. the
+    dot grows with the vector length, so a smeared bump looks smeared. r is printed next to it.
+  - HIS HEADING as an amber arrow over it (pose[:, 2], the real pose, not the smoothed camera). drawn last: when
+    the compass works the two hands sit on top of each other and the amber one has to stay readable.
+  - the goal (`compass_goal`, FC2's heading) as a green tick on the rim, the sun (`compass_sun_az`, or the
+    azimuth of `sun_dir`) as a small disc on it.
+under the ring, `compass_pfl`: PFL3's mean membrane L-R in mV on a centred bar - the comparator, zero in the
+middle, full scale its own 98th percentile - and PFL2's walking gain 0..1. a file without the arrays gets the
+same panel saying so, with his pose on the ring and nothing claimed about a bump.
+
+THE MAP gained two garden layers (09-19). the fruit's odour plume is the field garden.odour computes and
+score_wind.py scores - C = exp(-c^2 / 2 sigma^2) / (1 + s) along the wind, sigma = 0.25 + 0.3 max(s, 0), nothing
+upwind of s = -0.2 - painted once as a translucent wedge wherever C > 0.02, alpha proportional to C and capped.
+the sun's azimuth (from `sun_dir`, in every garden file from 09-19) is a disc on the map's rim with a short ray
+the way its light travels, and a matching circle on the eye panel at the sun's own azimuth and elevation in HIS
+frame, which is a free check that the eye and the compass agree about where the sun is.
+
+RESIZING (09-19). the window is pg.RESIZABLE and every VIDEORESIZE relays the whole thing out. it used to not
+be: the layout and the background surface were computed once at open and each frame only repainted the rects
+the panels owned, so a window at any other size showed unpainted memory around them - the garbage behind the
+readouts. the render resolution of the human view and the panorama's nearest-column table are deliberately kept
+out of the relayout (they are scaled into their panels instead), so a drag never throws away a 150 ms table or
+a frame LRU. the panels reflow: three across the top when the window is wide, the compass dropping beside the
+map when it is not, and the traces taking a row of their own when it is taller than it is wide.
 
 the on-screen controls at the top do the same things; everything is clickable. --eye pano opens on the
 panorama, --no-smooth opens on the raw per-chunk heading, --loop loops, --cap sets the display frame cap,
@@ -94,6 +126,18 @@ BTN    = (28, 33, 43); BTN_HOT = (40, 47, 60); BTN_ON = (60, 47, 24); BTN_ON_HOT
 BLANK  = (16, 19, 26)        # the panorama beyond 5.5 deg of any column: he samples nothing there
 SPEEDS = [0.1, 0.25, 0.5, 1, 2, 3, 4, 6, 8, 12, 16, 24, 30]
 PANO_LIM = 5.5               # deg: the web player's acceptance radius for the nearest-column splat
+
+# ---- the compass and the two new map layers (09-19). one colour each, used in the panel, on the map and in the legend.
+CMP_LIT  = (104, 214, 232)   # an ellipsoid-body wedge at full EPG rate
+CMP_DARK = (27, 33, 43)      # ... and at none: dark, but still visibly a wedge
+_RING_GEO = {}               # the eight sectors traced once per ring size
+CMP_BUMP = (140, 236, 250)   # the bump: the phase of the population vector over the eight wedges
+CMP_GOAL = (150, 230, 160)   # the goal heading (FC2), a tick on the rim
+SUNC     = (255, 224, 138)   # the sun: its azimuth on the map's rim, on the compass rim, on the eye's panorama
+PLUME_C  = (230, 150, 120)   # the fruit's odour plume
+PLUME_A  = 112               # its alpha at (and above) PLUME_SAT concentration
+PLUME_SAT = 0.45
+PLUME_MIN = 0.02             # below this concentration nothing is drawn
 
 # ---- the UV false colour. one hue, used by every UV thing in the window so the eye learns it in one look.
 UVC    = (186, 118, 255)     # "this is ultraviolet": the tint, the hatch, the UV dots, the UV chips
@@ -325,6 +369,59 @@ class Episode:
         self._static = None if self.her else self.scene_at(0)     # nothing moves in his world when she is not in it
         self.K = self._chunk_frames()
         self.cam_h, self.cam_xy = self._camera()
+        self._compass()
+
+    # ---------------------------------------------------------- the compass (files made with --ring, 09-19)
+    def _compass(self):
+        """what the compass panel draws, precomputed once.
+
+        `compass_wedges` (T, 8) is EPG spikes per ellipsoid-body wedge per 100 ms chunk, wedge k centred on world
+        angle k x 45 deg. the bump is the population vector over those eight wedges - the same arithmetic
+        experiments/compass.py does, including its 5-chunk (0.5 s) box smoothing, which is what makes the phase a
+        line instead of a cloud. `compass_pfl` is (PFL3 mean membrane L, R, in mV x 100, and PFL2's walking gain).
+        `sun_dir` is the garden's sun; every garden file carries it from 09-19 on, older ones do not."""
+        E = self.E
+        self.sun_dir = np.asarray(E["sun_dir"], np.float64).ravel() if "sun_dir" in E.files else None
+        self.sun_az = self.sun_el = None
+        if self.sun_dir is not None and len(self.sun_dir) >= 3:
+            d = self.sun_dir / (np.linalg.norm(self.sun_dir) + 1e-12)
+            self.sun_az = float(np.degrees(np.arctan2(d[1], d[0]))) % 360.0
+            self.sun_el = float(np.degrees(np.arcsin(np.clip(d[2], -1.0, 1.0))))
+        self.cmp_w = self.cmp_phase = self.cmp_pvl = self.cmp_pfl = None
+        self.cmp_goal = np.nan; self.cmp_max = 1.0; self.cmp_chunk = max(1, self.K)
+        if "compass_wedges" not in E.files: return
+        w = np.asarray(E["compass_wedges"], np.float64)
+        if w.ndim != 2 or w.shape[1] != 8 or not len(w): return
+        k = np.ones(5) / 5.0                                       # 0.5 s, as experiments/compass.py smooths
+        ws = np.stack([np.convolve(w[:, j], k, mode="same") for j in range(8)], 1)
+        ang = np.radians(np.arange(8) * 45.0)
+        Z = (ws * np.exp(1j * ang)).sum(1); tot = ws.sum(1)
+        self.cmp_w = ws; self.cmp_tot = tot
+        self.cmp_phase = np.degrees(np.angle(Z)) % 360.0
+        self.cmp_pvl = np.abs(Z) / np.maximum(tot, 1e-9)
+        self.cmp_max = float(max(np.percentile(ws, 99.0), 1e-6))   # the ring's full scale, robust to one hot chunk
+        self.cmp_chunk = max(1, int(round(self.n / len(ws))))
+        if "compass_pfl" in E.files:
+            p = np.asarray(E["compass_pfl"], np.float64)
+            if p.ndim == 2 and p.shape[1] >= 3 and len(p): self.cmp_pfl = p
+        if "compass_goal" in E.files:
+            g = float(np.asarray(E["compass_goal"]).ravel()[0]); self.cmp_goal = g
+        if "compass_sun_az" in E.files:
+            sa = float(np.asarray(E["compass_sun_az"]).ravel()[0])
+            if np.isfinite(sa): self.sun_az = sa % 360.0          # the azimuth the ring neurons were actually fired at
+
+    @property
+    def has_compass(self): return self.cmp_w is not None
+
+    def chunk_at(self, i):
+        """which 100 ms chunk frame i falls in, clamped to what the compass arrays actually hold."""
+        return int(min(len(self.cmp_w) - 1, max(0, i // self.cmp_chunk))) if self.cmp_w is not None else 0
+
+    def pfl_scale(self):
+        """full scale for the PFL3 L-R bar, in mV: the comparator's own 98th percentile, never below 0.5 mV."""
+        if self.cmp_pfl is None: return 1.0
+        d = np.abs(self.cmp_pfl[:, 0] - self.cmp_pfl[:, 1]) / 100.0
+        return float(max(0.5, np.percentile(d, 98)))
 
     def _chunk_frames(self):
         """how many frames one control chunk lasts. steering is applied once per chunk, so pose heading is a
@@ -606,6 +703,7 @@ def make_map(pg, ep, S, cx, cy, size, font):
     ov = pg.Surface((size, size), pg.SRCALPHA)
     u = size / 420.0
     if ep.world == "garden":
+        plume_surf(pg, ep, S, cx, cy, size, surf)
         for lx, ly, lz, lr, _ in ep.leaves:
             pg.draw.circle(ov, (60, 120, 40, 90), w2(lx, ly), max(2.0 * u, lr * S))
         sx, sy, ss = ep.sunspot; pg.draw.circle(ov, (255, 208, 112, 64), w2(sx, sy), max(2.0 * u, ss * S))
@@ -621,14 +719,57 @@ def make_map(pg, ep, S, cx, cy, size, font):
         for o in ep.objects:
             pg.draw.circle(surf, (242, 239, 230) if o[3] > 0.5 else (58, 64, 78), w2(o[0], o[1]), max(2.0 * u, o[2] * S))
     pg.draw.rect(surf, (150, 142, 124), rect, max(1, int(u)))
+    sun_marker(pg, ep, cx, cy, rect, u, surf, font)
     return surf
+
+
+def plume_surf(pg, ep, S, cx, cy, size, surf):
+    """the fruit's odour plume, as garden.odour builds it and score_wind.py reads it: a Gaussian across the wind
+    whose sigma grows with the downwind distance s, divided by (1 + s), nothing upwind of s = -0.2 m. one alpha
+    ramp over the map's own pixels, painted once - the wind and the fruit never move."""
+    if getattr(ep, "wind", None) is None or getattr(ep, "fruit", None) is None: return
+    w = np.asarray(ep.wind, np.float64)[:2]; n = np.linalg.norm(w)
+    if n < 1e-9: return
+    w = w / n
+    X = ((np.arange(size) - cx) / S)[None, :] - float(ep.fruit[0])          # world x, y of every map pixel
+    Y = ((cy - np.arange(size)) / S)[:, None] - float(ep.fruit[1])
+    s = X * w[0] + Y * w[1]                                                 # downwind distance
+    c = np.abs(X * (-w[1]) + Y * w[0])                                      # crosswind distance
+    sp = np.maximum(s, 0.0); sig = 0.25 + 0.3 * sp
+    C = np.exp(-c * c / (2.0 * sig * sig)) / (1.0 + sp)
+    C[s < -0.2] = 0.0
+    a = np.clip(C / PLUME_SAT, 0.0, 1.0) * PLUME_A
+    a[C <= PLUME_MIN] = 0.0
+    m = np.abs(X + float(ep.fruit[0])) <= ep.half                           # only over the floor he can walk on
+    a *= m & (np.abs(Y + float(ep.fruit[1])) <= ep.half)
+    if not a.any(): return
+    img = np.empty((size, size, 4), np.uint8)
+    img[..., 0], img[..., 1], img[..., 2] = PLUME_C
+    img[..., 3] = a.astype(np.uint8)
+    surf.blit(pg.image.frombuffer(np.ascontiguousarray(img).tobytes(), (size, size), "RGBA"), (0, 0))
+
+
+def sun_marker(pg, ep, cx, cy, rect, u, surf, font):
+    """where the sun is, in world azimuth, as a disc on the map's rim with a short ray pointing the way its light
+    travels. only for files that carry sun_dir (every garden run from 09-19 on)."""
+    if getattr(ep, "sun_az", None) is None: return
+    a = np.radians(ep.sun_az); ca, sa = np.cos(a), np.sin(a)
+    t = min(rect.w / 2.0 / max(abs(ca), 1e-6), rect.h / 2.0 / max(abs(sa), 1e-6)) * 0.965
+    sx, sy = cx + t * ca, cy - t * sa
+    pg.draw.line(surf, SUNC, (sx - 9 * u * ca, sy + 9 * u * sa), (sx - 26 * u * ca, sy + 26 * u * sa), max(1, int(round(2 * u))))
+    pg.draw.circle(surf, SUNC, (sx, sy), max(3.0, 5 * u))
+    t_ = font.render("sun", True, SUNC)
+    lx = min(max(0.0, sx - 30 * u * ca - t_.get_width() / 2), surf.get_width() - t_.get_width())
+    ly = min(max(0.0, sy + 30 * u * sa - t_.get_height() / 2), surf.get_height() - t_.get_height())
+    surf.blit(t_, (lx, ly))
 
 
 def legend_rows(ep):
     if ep.world == "garden":
         rows = [((60, 120, 40), "leaf overhead"), ((255, 208, 112), "sun patch +6C"), ((42, 90, 26), "grass stalk"),
-                ((160, 154, 144), "stone"), ((154, 26, 26), "fruit (plume)"), ((51, 68, 102), "puddle"),
-                ((236, 240, 248), "wind arrow")]
+                ((160, 154, 144), "stone"), ((154, 26, 26), "fruit"), ((51, 68, 102), "puddle"),
+                ((236, 240, 248), "wind arrow"), (PLUME_C, "odour plume, C > %g" % PLUME_MIN)]
+        if ep.sun_az is not None: rows.append((SUNC, "sun azimuth %.0f deg" % ep.sun_az))
     else:
         rows = []
         if ep.arena: rows.append(((150, 142, 124), "dish rim, r = %.2g m" % ep.arena_r))
@@ -639,6 +780,74 @@ def legend_rows(ep):
     rows.append((DIM, "o touching wall / rim / stalk"))
     if ep.her: rows.append((HER, "o touching her"))
     return rows
+
+
+# ---------------------------------------------------------------- the compass panel
+def compass_ring(pg, ep, d, ck, S):
+    """the eight ellipsoid-body wedges as an annulus, each lit by its EPG spikes in this 100 ms chunk, with the
+    marks that never move on the rim: the goal's tick and the sun's disc.
+
+    drawn in the WORLD frame, the same frame as the map: 0 deg = +x = right, counterclockwise positive, so wedge k
+    sits where k x 45 deg points and the bump needle can be read straight against his heading needle. the fill is
+    sqrt(rate / full scale) rather than linear, so a 3 Hz bump still reads against a 20 Hz one.
+
+    one surface per chunk, not per frame - the wedges only change ten times a second."""
+    s = pg.Surface((d, d)); s.fill(PANEL)
+    cx = cy = d / 2.0; ro = d * 0.455; ri = d * 0.30
+    v = ep.cmp_w[ck] if ep.cmp_w is not None else None
+    lw = max(1, int(round(S)))
+    geo = _RING_GEO.get(d)
+    if geo is None:                                                        # the eight sectors, traced once per size
+        geo = []
+        for k in range(8):
+            a0 = np.radians(k * 45.0 - 22.5); aa = np.linspace(a0, np.radians(k * 45.0 + 22.5), 9)
+            geo.append(([(cx + ro * np.cos(a), cy - ro * np.sin(a)) for a in aa]
+                        + [(cx + ri * np.cos(a), cy - ri * np.sin(a)) for a in aa[::-1]],
+                        (cx + ri * np.cos(a0), cy - ri * np.sin(a0)), (cx + ro * np.cos(a0), cy - ro * np.sin(a0))))
+        _RING_GEO.clear(); _RING_GEO[d] = geo
+    for k, (pts, p0, p1) in enumerate(geo):
+        f = 0.0 if v is None else float(np.sqrt(np.clip(v[k] / ep.cmp_max, 0.0, 1.0)))
+        col = tuple(int(round(CMP_DARK[j] + (CMP_LIT[j] - CMP_DARK[j]) * f)) for j in range(3))
+        pg.draw.polygon(s, col, pts); pg.draw.line(s, EDGE2, p0, p1, lw)
+    pg.draw.circle(s, EDGE2, (cx, cy), ri, lw)
+    for a_, lab in ((0, "0"), (90, "90"), (180, "180"), (270, "270")):      # the world frame, spelled out once
+        a = np.radians(a_); pg.draw.line(s, EDGE, (cx + ro * np.cos(a), cy - ro * np.sin(a)),
+                                         (cx + (ro + d * 0.022) * np.cos(a), cy - (ro + d * 0.022) * np.sin(a)), lw)
+    if ep.sun_az is not None:
+        a = np.radians(ep.sun_az)
+        pg.draw.circle(s, SUNC, (cx + (ro + d * 0.032) * np.cos(a), cy - (ro + d * 0.032) * np.sin(a)), max(2.0, d * 0.026))
+    if np.isfinite(ep.cmp_goal):
+        a = np.radians(float(ep.cmp_goal))
+        pg.draw.line(s, CMP_GOAL, (cx + (ro - d * 0.02) * np.cos(a), cy - (ro - d * 0.02) * np.sin(a)),
+                     (cx + (ro + d * 0.055) * np.cos(a), cy - (ro + d * 0.055) * np.sin(a)), max(2, int(round(3 * S))))
+    return s
+
+
+def pick(font, room, opts):
+    """the longest of these strings that fits `room` pixels - a narrow panel loses the gloss, not the number."""
+    return next((o for o in opts if font.size(o)[0] <= room), opts[-1])
+
+
+def needle(pg, surf, cx, cy, deg, r, col, wid, head=0.0):
+    """one hand of the compass, in world degrees (0 = +x = right, ccw up), with an optional filled arrowhead."""
+    a = np.radians(deg); ca, sa = np.cos(a), np.sin(a); tx, ty = cx + r * ca, cy - r * sa
+    pg.draw.line(surf, col, (cx, cy), (tx, ty), wid)
+    if head > 0:
+        bx, by = cx + (r - head) * ca, cy - (r - head) * sa; px, py = head * 0.42 * sa, head * 0.42 * ca
+        pg.draw.polygon(surf, col, [(tx, ty), (bx - px, by - py), (bx + px, by + py)])
+
+
+def bar(pg, surf, rect, frac, col, centred=False):
+    """a small readout bar. centred = a signed value with zero in the middle (the PFL3 comparator)."""
+    pg.draw.rect(surf, (24, 29, 38), rect, border_radius=2)
+    if centred:
+        h = rect.w / 2.0; f = float(np.clip(frac, -1.0, 1.0)); w = abs(f) * h
+        if w >= 1: pg.draw.rect(surf, col, pg.Rect(int(rect.centerx if f > 0 else rect.centerx - w), rect.y, max(1, int(w)), rect.h), border_radius=2)
+        pg.draw.line(surf, FAINT, (rect.centerx, rect.y), (rect.centerx, rect.bottom - 1))
+    else:
+        w = float(np.clip(frac, 0.0, 1.0)) * rect.w
+        if w >= 1: pg.draw.rect(surf, col, pg.Rect(rect.x, rect.y, max(1, int(w)), rect.h), border_radius=2)
+    pg.draw.rect(surf, EDGE2, rect, 1, border_radius=2)
 
 
 # ---------------------------------------------------------------- tiny UI kit
@@ -657,7 +866,8 @@ HELP = [("space", "play / pause"), ("left / right   or   , .", "step one frame")
         ("-  =", "human FOV -/+ 5 deg  (shift: 15)"), ("0", "human FOV back to the default"),
         ("v", "eye panel: ommatidial dots / panorama"), ("s", "camera smoothing on / off (human view only)"),
         ("u", "human view UV layer: off / tint / hatch / both"), ("c", "eye channel: green / UV / both"),
-        ("click / drag the bar", "scrub"), ("h  or  ?", "this card"), ("q  or  esc", "quit")]
+        ("click / drag the bar", "scrub"), ("drag the window edge", "the panels reflow: wide, tall, either"),
+        ("h  or  ?", "this card"), ("q  or  esc", "quit")]
 
 
 # ---------------------------------------------------------------- the app
@@ -674,38 +884,11 @@ def run(args):
     def F(px): return pg.font.Font(None, max(11, int(round(px * S))))
     f_h1, f_ui, f_lab, f_leg, f_small, f_mono = F(23), F(20), F(19), F(17), F(16), F(21)
 
-    # ---- layout, in logical units; every rect below is already in device pixels
-    PAD, EW, EH, MAPS = 14, 560, 280, 420
-    HEAD = 100                                                # title row + control row + scrubber + ticks
-    TITLE_H = 20                                              # a panel's title strip
-    RULER = 15                                                # the azimuth ruler under the eye panel
-    LOGW = PAD + HVW + PAD + EW + PAD
-    rowA = HEAD + 6
-    rowA_h = TITLE_H + max(HVH, EH + RULER)
-    rowB = rowA + rowA_h + 12
-    rowB_h = TITLE_H + MAPS
-    LEG_Y = rowB + rowB_h + 14
-    TRW = LOGW - 3 * PAD - MAPS
-    W = U(LOGW)
-    # the legend flows: each chip is as wide as its own label, wrapping at the window edge
-    leg = legend_rows(ep); lx = U(PAD); ly = 0; leg_pos = []
-    for col, txt in leg:
-        w_ = f_leg.size(txt[2:] if txt.startswith("o ") else txt)[0] + U(26)
-        if lx > U(PAD) and lx + w_ > W - U(PAD): lx = U(PAD); ly += 1
-        leg_pos.append((lx, ly)); lx += w_ + U(10)
-    LEG_ROWS = ly + 1
-    FOOTd = U(LEG_Y) + LEG_ROWS * U(17) + U(7)
-    H = FOOTd + U(24)
-    R_HV  = pg.Rect(U(PAD), U(rowA) + U(TITLE_H), U(HVW), U(HVH))
-    R_EYE = pg.Rect(U(PAD + HVW + PAD), U(rowA) + U(TITLE_H), U(EW), U(EH))
-    R_RUL = pg.Rect(R_EYE.x, R_EYE.bottom, R_EYE.w, U(RULER))
-    R_MAP = pg.Rect(U(PAD), U(rowB) + U(TITLE_H), U(MAPS), U(MAPS))
-    R_TR  = pg.Rect(U(PAD + MAPS + PAD), U(rowB) + U(TITLE_H), U(TRW), U(MAPS))
-    R_BAR = pg.Rect(U(PAD), U(70), W - 2 * U(PAD), U(12))
-    R_HEAD = pg.Rect(0, 0, W, U(HEAD))
-    R_FOOT = pg.Rect(0, FOOTd, W, H - FOOTd)
-
-    display = pg.display.set_mode((W, H))
+    # ---- the pieces that do not depend on the window's size
+    PAD, TITLE_H, RULER, HEAD, GAP = 14, 20, 15, 100, 12
+    MIN_LOGW, MIN_LOGH = 1090, 745        # below this the control bar and the panels stop fitting
+    DEF_LOGW, DEF_LOGH = 1580, 980        # ~1.6:1. the old default was near square and had to be stretched by hand
+    leg = legend_rows(ep)
 
     uv_mode = args.uv if ep.can_uv else "off"
     chan = args.chan if ep.lum_uv is not None else "green"
@@ -714,84 +897,27 @@ def run(args):
     if ep.can_uv:                                             # compile the UV pass and the composite too, before timing
         hv.set_uv("both"); hv.render(0); hv.set_uv(uv_mode)
     worker = RenderThread(hv); worker.start()
-
-    RAD = max(1, int(round(1.2 * S)))
-    ridx, rsrc = retina_index(ep.az, ep.el, R_EYE.w, R_EYE.h, RAD)
-    EBUF = np.empty((R_EYE.h, R_EYE.w, 3), np.uint8); EBUF[:] = PANEL; EFLAT = EBUF.reshape(-1, 3)
-    PBUF = np.empty((R_EYE.h, R_EYE.w, 3), np.uint8); PFLAT = PBUF.reshape(-1, 3)
     HVBUF = np.empty((HVH, HVW, 3), np.uint8)
-    HVSCALED = [None]                                         # the upscaled human view, allocated once and reused
-    pano = Pano(ep.az, ep.el, R_EYE.w, R_EYE.h); pano.start()
-    _paint(ep.lum[0], ridx, rsrc, EFLAT); _gray_rgb(hv.get(0), HVBUF)      # compile the pixel kernels before timing
-    _splat(ep.lum[0], np.full(4, -1, np.int64), PFLAT[:4], *BLANK)
-    if ep.lum_uv is not None:
-        _paint2(ep.lum[0], ep.lum_uv[0], ridx, rsrc, EFLAT, 2)
-        _splat2(ep.lum[0], ep.lum_uv[0], np.full(4, -1, np.int64), PFLAT[:4], 2, *BLANK)
-    if ep.can_uv:
-        _u0 = hv.newest_at_or_before(0)[2]
-        if _u0 is not None: _uv_comp(hv.get(0), _u0, 3, HVBUF)
+    HVSCALED = [None]                                         # the upscaled human view, reallocated once per layout
 
-    MS = R_MAP.w / (2 * ep.half + 0.4); mcx = mcy = R_MAP.w / 2
-    base = make_map(pg, ep, MS, mcx, mcy, R_MAP.w, f_leg)
-    path = pg.Surface((R_MAP.w, R_MAP.w), pg.SRCALPHA)
-    PTS = [(mcx + p[0] * MS, mcy - p[1] * MS) for p in ep.pose]
-    PTS2 = [(mcx + p[0] * MS, mcy - p[1] * MS) for p in ep.pose2] if ep.her else None
-    path_to = 0
-    traces = make_traces(pg, ep, R_TR.w, R_TR.h, f_small)
+    # the panorama's nearest-column table costs ~150 ms to build, so it is built ONCE at its own 2:1 resolution and
+    # scaled into whatever the eye panel currently is. that is what keeps resizing the window cheap.
+    PANO_W, PANO_H = U(560), U(280)
+    pano = Pano(ep.az, ep.el, PANO_W, PANO_H); pano.start()
+    PBUF = np.empty((PANO_H, PANO_W, 3), np.uint8); PFLAT = PBUF.reshape(-1, 3)
+    PSCALED = [None]
 
-    # ---- the background: everything that never changes
-    chrome = pg.Surface((W, H)); chrome.fill(BG)
-    def card(rect, pad_top=0):
-        r = pg.Rect(rect.x, rect.y - pad_top, rect.w, rect.h + pad_top)
-        pg.draw.rect(chrome, CARD, r, border_radius=U(6)); pg.draw.rect(chrome, EDGE, r, max(1, int(S)), border_radius=U(6))
-    for r in (R_HV, R_MAP, R_TR): card(r, U(TITLE_H))
-    card(pg.Rect(R_EYE.x, R_EYE.y, R_EYE.w, R_EYE.h + R_RUL.h), U(TITLE_H))
-    def title(rect, txt, col=DIM): chrome.blit(f_lab.render(txt, True, col), (rect.x + U(4), rect.y - U(TITLE_H) + U(4)))
-    title(R_MAP, "map   the world from above, his path behind him")
-    title(R_TR, "traces   spikes per frame, each scaled to its own max")
-    for (col, txt), (lx, lrow) in zip(leg, leg_pos):
-        ly = U(LEG_Y) + lrow * U(17); rr = U(5)
-        if txt.startswith("o "): pg.draw.circle(chrome, col, (lx + rr, ly + U(8)), rr, max(1, int(round(1.6 * S)))); txt = txt[2:]
-        else: pg.draw.circle(chrome, col, (lx + rr, ly + U(8)), rr)
-        chrome.blit(f_leg.render(txt, True, DIM), (lx + U(14), ly + U(1)))
-    # the scrubber's groove, with a tick everywhere he touched something
-    pg.draw.rect(chrome, (24, 29, 38), R_BAR, border_radius=U(3))
-    if ep.touch is not None:
-        tt = np.flatnonzero(np.asarray(ep.touch) != 0)
-        if len(tt):
-            for i in tt[:: max(1, len(tt) // 900)]:
-                x = R_BAR.x + int(i / max(1, ep.n - 1) * (R_BAR.w - 1))
-                k = int(ep.touch_kind[i]) if ep.touch_kind is not None else 1
-                pg.draw.line(chrome, HER if k == 2 else (70, 78, 94), (x, R_BAR.bottom - U(3)), (x, R_BAR.bottom - U(1)))
-    for q in range(5):                                        # time ticks under the bar
-        x = R_BAR.x + int(q / 4 * (R_BAR.w - 1)); lab = clock_str(q / 4 * (ep.n - 1) / ep.fps)
-        s_ = f_small.render(lab, True, FAINT)
-        chrome.blit(s_, (min(max(R_BAR.x, x - s_.get_width() // 2), R_BAR.right - s_.get_width()), R_BAR.bottom + U(3)))
-        pg.draw.line(chrome, EDGE2, (x, R_BAR.bottom + U(1)), (x, R_BAR.bottom + U(2)))
-    meta = f"{os.path.basename(args.npz)}   {ep.world}   {ep.n} frames @ {ep.fps} fps   {ep.lum.shape[1]} ommatidia" + ("   + her" if ep.her else "")
-    chrome.blit(f_h1.render("fly replay", True, HIM), (U(PAD), U(9)))
-    chrome.blit(f_lab.render(meta, True, FAINT), (U(PAD) + f_h1.size("fly replay")[0] + U(12), U(12)))
-    pg.draw.line(chrome, EDGE, (0, U(HEAD) - 1), (W, U(HEAD) - 1), max(1, int(S)))
-    pg.draw.line(chrome, EDGE, (U(PAD), U(LEG_Y) - U(5)), (W - U(PAD), U(LEG_Y) - U(5)), max(1, int(S)))
-
-    # ---- the azimuth rulers, one per eye mode (baked; only one is blitted per frame)
-    def ruler(span, labels):
-        s = pg.Surface((R_RUL.w, R_RUL.h)); s.fill(CARD)
-        for a, lab in labels:
-            x = int(R_RUL.w / 2 - a / span * (R_RUL.w / 2))
-            pg.draw.line(s, EDGE, (x, 0), (x, U(4)))
-            t = f_small.render(lab, True, FAINT)
-            s.blit(t, (min(max(0, x - t.get_width() // 2), R_RUL.w - t.get_width()), U(4)))
-        return s
-    LABS = [(180, "180 left"), (90, "90 left"), (0, "ahead"), (-90, "90 right"), (-180, "180 right")]
-    RULERS = {"dots": ruler(190.0, LABS), "pano": ruler(180.0, LABS)}
     EYE_TITLE = {"dots": f"his eye   {ep.lum.shape[1]:,} ommatidia at their own azimuth / elevation",
                  "pano": "his eye   nearest-ommatidium panorama, blank past %.1f deg" % PANO_LIM}
     CHAN_TXT = {"green": "   green R1-R6", "uv": "   UV R7", "both": "   UV over green"}
     EYE_SURF = {(m, c): f_lab.render(EYE_TITLE[m] + (CHAN_TXT[c] if ep.lum_uv is not None else ""), True,
                                      DIM if c == "green" else UVC) for m in EYE_TITLE for c in CHANS}
+    LABS = [(180, "180 left"), (90, "90 left"), (0, "ahead"), (-90, "90 right"), (-180, "180 right")]
+    CMP_TITLE = (["compass   EB wedges, the bump, his heading", "compass   EB wedges + bump", "compass"]
+                 if ep.has_compass else ["compass   no compass arrays in this file", "compass   no arrays", "compass"])
+    PFL_FS = ep.pfl_scale()
 
-    # ---- the control bar
+    # ---- the control bar. its buttons depend on the scale, not on the window size, so it is built once.
     # the cycling buttons (uv, chan) are sized for their widest label so the bar does not twitch as they change
     UV_LAB = {"off": "uv off", "tint": "uv tint", "hatch": "uv hatch", "both": "uv tint+hatch"}
     CH_LAB = {"green": "eye green", "uv": "eye UV", "both": "eye UV+green"}
@@ -810,11 +936,177 @@ def run(args):
     if not ep.can_uv: btns["uv"].tip = "ro"; btns["uv"].label = "uv n/a"        # no UV world to raytrace
     if ep.lum_uv is None: btns["chan"].tip = "ro"; btns["chan"].label = "no lum_uv"
 
+    # ---- the layout. everything here is rebuilt by relayout() every time the window changes size.
+    W = H = 0
+    R_HV = R_HVC = R_EYE = R_EYEC = R_RUL = R_CMP = R_CMPB = R_MAP = R_TR = R_BAR = R_HEAD = R_FOOT = None
+    chrome = base = path = traces = None; PTS = PTS2 = None; MS = 1.0; mcx = mcy = 0.0; path_to = 0
+    ridx = rsrc = EBUF = EFLAT = None; RULERS = {}; RAD = 1; CMP_D = 0; CMP_BW = 0; CMP_XY = (0, 0)
+    cmp_ring = [None, -2]                                     # the wedge ring, rebuilt once per 100 ms chunk
+    last_px = [None]; full = [True]        # repaint the whole background: first frame, after the help card, after a resize
+
+    W0, H0 = U(DEF_LOGW), U(DEF_LOGH)
+    try:                                                      # never open bigger than the screen he actually has
+        dw, dh = pg.display.get_desktop_sizes()[0]
+        if dw > 400 and dh > 400 and pg.display.get_driver() != "dummy":
+            W0, H0 = min(W0, int(dw * 0.94)), min(H0, int(dh * 0.90))
+    except Exception: pass
+    W0, H0 = max(W0, U(MIN_LOGW)), max(H0, U(MIN_LOGH))
+    display = pg.display.set_mode((W0, H0), pg.RESIZABLE)
+
+    def fit(rect, aspect):
+        """the largest rect of this width:height ratio, centred inside rect. the human view is 2:1 and so is the
+        eye (az +-190 by el +-95), so a panel that is not 2:1 letterboxes instead of stretching the world."""
+        w_ = min(rect.w, int(rect.h * aspect)); h_ = max(1, int(round(w_ / aspect)))
+        return pg.Rect(rect.x + (rect.w - w_) // 2, rect.y + (rect.h - h_) // 2, max(1, w_), h_)
+
+    def relayout(Wd, Hd):
+        """place every panel for a window of THIS size, and rebuild everything that was baked at the old one.
+
+        the resize bug (09-19): the layout and the background surface were computed once, at open, and the window
+        was never cleared - each frame only repainted the rects the panels owned. grow the window and the new
+        pixels keep whatever the driver left in them, which is the garbage that showed up behind the readouts and
+        beside the views. everything size-dependent now lives in here, and full[0] repaints the whole background
+        afterwards. the human view's render resolution and the panorama's table are deliberately NOT in here:
+        they are scaled into their panels instead, so a drag does not throw away a 150 ms table or an LRU."""
+        nonlocal W, H, R_HV, R_HVC, R_EYE, R_EYEC, R_RUL, R_CMP, R_CMPB, R_MAP, R_TR, R_BAR, R_HEAD, R_FOOT
+        nonlocal chrome, base, path, traces, PTS, PTS2, MS, mcx, mcy, path_to, ridx, rsrc, EBUF, EFLAT
+        nonlocal RULERS, RAD, CMP_D, CMP_XY, CMP_BW
+        W, H = int(Wd), int(Hd)
+        pad, th, rul, head, gap = U(PAD), U(TITLE_H), U(RULER), U(HEAD), U(GAP)
+        avail = W - 2 * pad
+        # the legend flows first - how many rows it needs is what is left over for the panels
+        leg_pos = []; lx = pad; ly = 0
+        for col, txt in leg:
+            w_ = f_leg.size(txt[2:] if txt.startswith("o ") else txt)[0] + U(26)
+            if lx > pad and lx + w_ > W - pad: lx = pad; ly += 1
+            leg_pos.append((lx, ly)); lx += w_ + U(10)
+        foot_y = H - U(24); leg_y = foot_y - (ly + 1) * U(17) - U(7)
+        yA = head + U(6); body = max(U(300), leg_y - U(14) - yA)
+        # how the panels share the width and the height. three across the top only when the window is both wide
+        # enough and wider than it is tall; otherwise the compass drops into the map's row, and when the window is
+        # square or taller than it is wide the traces take a row of their own under both.
+        MIN_HV, MIN_EYE, MIN_CMP, MIN_MAP, MIN_TR = U(340), U(320), U(215), U(235), U(215)
+        asp = W / float(max(1, H))
+        wide = avail >= MIN_HV + MIN_EYE + MIN_CMP + 2 * pad and asp >= 1.30
+        rows3 = (not wide) and (asp < 1.15 or avail < MIN_MAP + MIN_CMP + MIN_TR + 2 * pad)
+        midB = not (wide or rows3)
+        cw = int(np.clip(avail * 0.22, MIN_CMP, U(360))) if wide else 0
+        rest = avail - cw - (2 if wide else 1) * pad
+        hvw = int(rest * 0.54); eyw = rest - hvw
+        # row A's height follows the eye panel: its content is 380 x 190 deg, so 2:1 wastes nothing. it never takes
+        # more than 55% of the body, or a short window leaves the map a sliver.
+        lo = U(210); hi = max(lo, min(int(body * 0.55), body - gap - U(215) - ((gap + U(150)) if rows3 else 0)))
+        hA = int(np.clip(th + rul + eyw // 2, lo, hi)); rem = body - hA - gap
+        if rows3:                     # row B is exactly as tall as the map is wide, so nothing is left dead under it
+            hB = min(int(avail * 0.45), int((rem - gap) * 0.62)) + th
+            hB = int(np.clip(hB, U(220), max(U(220), rem - gap - U(150)))); hC = rem - hB - gap
+        else: hB = rem; hC = 0
+        yB = yA + hA + gap; yC = yB + hB + gap
+        R_HV = pg.Rect(pad, yA + th, hvw, hA - th)
+        R_EYE = pg.Rect(R_HV.right + pad, yA + th, eyw, hA - th - rul)
+        R_HVC = fit(R_HV, HVW / float(HVH)); R_EYEC = fit(R_EYE, 2.0)
+        R_RUL = pg.Rect(R_EYEC.x, R_EYE.bottom, R_EYEC.w, rul)
+        if wide:
+            R_CMP = pg.Rect(R_EYE.right + pad, yA + th, cw, hA - th)
+            R_MAP = pg.Rect(pad, yB + th, min(hB - th, int(avail * 0.45)), 0)
+            R_MAP.h = R_MAP.w
+            R_TR = pg.Rect(R_MAP.right + pad, yB + th, W - pad - (R_MAP.right + pad), hB - th)
+        elif midB:
+            ms = min(hB - th, int(avail * 0.30)); cs = int(np.clip(avail * 0.26, MIN_CMP, U(360)))
+            R_MAP = pg.Rect(pad, yB + th, ms, ms)
+            R_CMP = pg.Rect(R_MAP.right + pad, yB + th, cs, hB - th)
+            R_TR = pg.Rect(R_CMP.right + pad, yB + th, W - pad - (R_CMP.right + pad), hB - th)
+        else:
+            ms = min(hB - th, int(avail * 0.45))
+            R_MAP = pg.Rect(pad, yB + th, ms, ms)
+            R_CMP = pg.Rect(R_MAP.right + pad, yB + th, W - pad - (R_MAP.right + pad), hB - th)
+            R_TR = pg.Rect(pad, yC + th, avail, hC - th)
+        # the compass: a square ring with the two comparator bars under it, both the same width
+        CMP_D = max(U(90), min(R_CMP.w, R_CMP.h - U(72)))
+        CMP_XY = (R_CMP.x + (R_CMP.w - CMP_D) // 2, R_CMP.y)
+        R_CMPB = pg.Rect(R_CMP.x + U(3), R_CMP.y + CMP_D + U(3), R_CMP.w - U(6),
+                         max(U(20), R_CMP.bottom - (R_CMP.y + CMP_D + U(3))))    # the text gets the panel's width
+        CMP_BW = max(U(150), min(R_CMPB.w, CMP_D))                               # the bars stay under the ring
+        R_BAR = pg.Rect(pad, U(70), avail, U(12))
+        R_HEAD = pg.Rect(0, 0, W, head); R_FOOT = pg.Rect(0, foot_y, W, H - foot_y)
+
+        # ---- the background: everything that never changes, at this size
+        chrome = pg.Surface((W, H)); chrome.fill(BG)
+        def card(rect, pad_top=0):
+            r = pg.Rect(rect.x, rect.y - pad_top, rect.w, rect.h + pad_top)
+            pg.draw.rect(chrome, CARD, r, border_radius=U(6)); pg.draw.rect(chrome, EDGE, r, max(1, int(S)), border_radius=U(6))
+        for r in (R_HV, R_MAP, R_TR, R_CMP): card(r, th)
+        card(pg.Rect(R_EYE.x, R_EYE.y, R_EYE.w, R_EYE.h + rul), th)
+        for r in (R_HV, R_EYE, R_CMP): pg.draw.rect(chrome, PANEL, r)     # the letterbox margins, painted once
+        def title(rect, opts, col=DIM):
+            room = rect.w - U(8)
+            chrome.blit(f_lab.render(pick(f_lab, room, opts), True, col), (rect.x + U(4), rect.y - th + U(4)), pg.Rect(0, 0, room, th))
+        title(R_MAP, ["map   the world from above, his path behind him", "map   the world from above", "map"])
+        title(R_TR, ["traces   spikes per frame, each scaled to its own max", "traces   spikes per frame", "traces"])
+        title(R_CMP, CMP_TITLE, DIM if ep.has_compass else FAINT)
+        for (col, txt), (lx_, lrow) in zip(leg, leg_pos):
+            ly_ = leg_y + lrow * U(17); rr = U(5)
+            if txt.startswith("o "): pg.draw.circle(chrome, col, (lx_ + rr, ly_ + U(8)), rr, max(1, int(round(1.6 * S)))); txt = txt[2:]
+            else: pg.draw.circle(chrome, col, (lx_ + rr, ly_ + U(8)), rr)
+            chrome.blit(f_leg.render(txt, True, DIM), (lx_ + U(14), ly_ + U(1)))
+        # the scrubber's groove, with a tick everywhere he touched something
+        pg.draw.rect(chrome, (24, 29, 38), R_BAR, border_radius=U(3))
+        if ep.touch is not None:
+            tt = np.flatnonzero(np.asarray(ep.touch) != 0)
+            if len(tt):
+                for i in tt[:: max(1, len(tt) // 900)]:
+                    x_ = R_BAR.x + int(i / max(1, ep.n - 1) * (R_BAR.w - 1))
+                    k = int(ep.touch_kind[i]) if ep.touch_kind is not None else 1
+                    pg.draw.line(chrome, HER if k == 2 else (70, 78, 94), (x_, R_BAR.bottom - U(3)), (x_, R_BAR.bottom - U(1)))
+        for q in range(5):                                        # time ticks under the bar
+            x_ = R_BAR.x + int(q / 4 * (R_BAR.w - 1)); lab = clock_str(q / 4 * (ep.n - 1) / ep.fps)
+            s_ = f_small.render(lab, True, FAINT)
+            chrome.blit(s_, (min(max(R_BAR.x, x_ - s_.get_width() // 2), R_BAR.right - s_.get_width()), R_BAR.bottom + U(3)))
+            pg.draw.line(chrome, EDGE2, (x_, R_BAR.bottom + U(1)), (x_, R_BAR.bottom + U(2)))
+        meta = f"{os.path.basename(args.npz)}   {ep.world}   {ep.n} frames @ {ep.fps} fps   {ep.lum.shape[1]} ommatidia" + ("   + her" if ep.her else "")
+        chrome.blit(f_h1.render("fly replay", True, HIM), (U(PAD), U(9)))
+        chrome.blit(f_lab.render(meta, True, FAINT), (U(PAD) + f_h1.size("fly replay")[0] + U(12), U(12)))
+        pg.draw.line(chrome, EDGE, (0, head - 1), (W, head - 1), max(1, int(S)))
+        pg.draw.line(chrome, EDGE, (U(PAD), leg_y - U(5)), (W - U(PAD), leg_y - U(5)), max(1, int(S)))
+
+        # ---- the azimuth rulers, one per eye mode (baked; only one is blitted per frame)
+        def ruler(span, labels):
+            s = pg.Surface((R_RUL.w, R_RUL.h)); s.fill(CARD)
+            for a, lab in labels:
+                x_ = int(R_RUL.w / 2 - a / span * (R_RUL.w / 2))
+                pg.draw.line(s, EDGE, (x_, 0), (x_, U(4)))
+                t_ = f_small.render(lab, True, FAINT)
+                s.blit(t_, (min(max(0, x_ - t_.get_width() // 2), R_RUL.w - t_.get_width()), U(4)))
+            return s
+        RULERS = {"dots": ruler(190.0, LABS), "pano": ruler(180.0, LABS)}
+
+        # ---- the panels that are drawn once: the map (and its path), the traces, the eye's scatter
+        MS = R_MAP.w / (2 * ep.half + 0.4); mcx = mcy = R_MAP.w / 2
+        base = make_map(pg, ep, MS, mcx, mcy, R_MAP.w, f_leg)
+        path = pg.Surface((R_MAP.w, R_MAP.w), pg.SRCALPHA); path_to = 0
+        PTS = [(mcx + p[0] * MS, mcy - p[1] * MS) for p in ep.pose]
+        PTS2 = [(mcx + p[0] * MS, mcy - p[1] * MS) for p in ep.pose2] if ep.her else None
+        traces = make_traces(pg, ep, R_TR.w, R_TR.h, f_small)
+        RAD = max(1, int(round(1.2 * S)))
+        ridx, rsrc = retina_index(ep.az, ep.el, R_EYEC.w, R_EYEC.h, RAD)
+        EBUF = np.empty((R_EYEC.h, R_EYEC.w, 3), np.uint8); EBUF[:] = PANEL; EFLAT = EBUF.reshape(-1, 3)
+        HVSCALED[0] = None; PSCALED[0] = None; cmp_ring[0] = None; cmp_ring[1] = -2
+        last_px[0] = None; full[0] = True
+
+    relayout(*display.get_size())
+    _paint(ep.lum[0], ridx, rsrc, EFLAT); _gray_rgb(hv.get(0), HVBUF)      # compile the pixel kernels before timing
+    _splat(ep.lum[0], np.full(4, -1, np.int64), PFLAT[:4], *BLANK)
+    if ep.lum_uv is not None:
+        _paint2(ep.lum[0], ep.lum_uv[0], ridx, rsrc, EFLAT, 2)
+        _splat2(ep.lum[0], ep.lum_uv[0], np.full(4, -1, np.int64), PFLAT[:4], 2, *BLANK)
+    if ep.can_uv:
+        _u0 = hv.newest_at_or_before(0)[2]
+        if _u0 is not None: _uv_comp(hv.get(0), _u0, 3, HVBUF)
+
     pos = 0.0; playing = False; spd = SPEEDS.index(1); dragging = False; looping = bool(args.loop)
     eye_mode = args.eye; show_help = False; fov = float(args.fov)
     clock = pg.time.Clock(); last = time.perf_counter()
     stats = collections.defaultdict(lambda: collections.deque(maxlen=4096))   # bounded: the live loop runs for hours
-    last_px = [None]; full = [True]        # repaint the whole background: first frame, and after the help card
 
     def draw_path(i):
         nonlocal path_to
@@ -834,7 +1126,7 @@ def run(args):
 
     def help_card():
         ov = pg.Surface((W, H), pg.SRCALPHA); ov.fill((8, 10, 14, 216)); display.blit(ov, (0, 0))
-        cw, ch = U(560), U(24) * (len(HELP) + 3)
+        cw, ch = U(580), U(24) * (len(HELP) + 3)
         r = pg.Rect((W - cw) // 2, (H - ch) // 2, cw, ch)
         pg.draw.rect(display, CARD, r, border_radius=U(8)); pg.draw.rect(display, EDGE, r, max(1, int(S)), border_radius=U(8))
         display.blit(f_h1.render("keys", True, HIM), (r.x + U(18), r.y + U(14)))
@@ -843,6 +1135,48 @@ def run(args):
             display.blit(f_ui.render(key, True, INK), (r.x + U(18), y))
             display.blit(f_ui.render(what, True, DIM), (r.x + U(230), y))
         display.blit(f_small.render("h, ? or esc to close", True, FAINT), (r.x + U(18), r.bottom - U(22)))
+
+    def draw_compass(i):
+        """the compass: eight wedges lit by EPG, the bump's phase as one needle, his real heading as the other,
+        the goal as a tick and the sun as a disc on the rim, then PFL3's comparator and PFL2's walking gain."""
+        d = CMP_D; ck = ep.chunk_at(i)
+        if cmp_ring[0] is None or cmp_ring[1] != ck:
+            cmp_ring[0] = compass_ring(pg, ep, d, ck, S); cmp_ring[1] = ck
+        display.blit(cmp_ring[0], CMP_XY)
+        cx = CMP_XY[0] + d / 2.0; cy = CMP_XY[1] + d / 2.0; ri = d * 0.30
+        head_deg = float(ep.pose[i][2])
+        pg.draw.rect(display, PANEL, R_CMPB)
+        y = R_CMPB.y; lh = f_small.get_height() + U(1)
+        if ep.has_compass:
+            # the bump first, his heading over it: when the two agree (a compass that works) the amber hand still
+            # has to be readable on top of the cyan one, and a fat dot whose size is the vector length marks the bump
+            ph = float(ep.cmp_phase[ck]); pv = float(ep.cmp_pvl[ck])
+            needle(pg, display, cx, cy, ph, ri * 0.66, CMP_BUMP, max(2, int(round(2.0 * S))))
+            pg.draw.circle(display, CMP_BUMP, (cx + ri * 0.66 * np.cos(np.radians(ph)), cy - ri * 0.66 * np.sin(np.radians(ph))),
+                           max(2.0, d * (0.016 + 0.034 * pv)))
+        needle(pg, display, cx, cy, head_deg, ri * 0.94, HIM, max(2, int(round(2.5 * S))), d * 0.055)   # him
+        pg.draw.circle(display, PANEL, (cx, cy), max(2.0, d * 0.014)); pg.draw.circle(display, EDGE, (cx, cy), max(2.0, d * 0.014), 1)
+        display.set_clip(R_CMPB)                          # the readout never spills into the panel next door
+        if ep.has_compass:
+            off = (ph - head_deg + 180.0) % 360.0 - 180.0
+            head_ = f"bump {ph:3.0f}  r {pv:.2f}"
+            gerr = "" if not np.isfinite(ep.cmp_goal) else f"{((head_deg - float(ep.cmp_goal) + 180.0) % 360.0 - 180.0):+.0f}"
+            txt = pick(f_small, R_CMPB.w - U(4), [f"{head_}  vs heading {off:+4.0f}" + (f"   goal err {gerr}" if gerr else ""),
+                                                  f"{head_}  hdg {off:+.0f}" + (f"  goal {gerr}" if gerr else ""), head_])
+            display.blit(f_small.render(txt, True, CMP_BUMP), (R_CMPB.x + U(2), y)); y += lh
+            if ep.cmp_pfl is not None:
+                p = ep.cmp_pfl[min(ck, len(ep.cmp_pfl) - 1)]
+                lr = (p[0] - p[1]) / 100.0; gainv = float(np.clip(p[2], 0.0, 1.0))
+                bx = R_CMPB.x + (R_CMPB.w - CMP_BW) // 2
+                display.blit(f_small.render(f"PFL3 L-R {lr:+.2f} mV  (+-{PFL_FS:.1f})", True, DIM), (R_CMPB.x + U(2), y)); y += lh - U(2)
+                bar(pg, display, pg.Rect(bx, y, CMP_BW, U(7)), lr / PFL_FS, HIM if lr > 0 else (122, 184, 255), True)
+                y += U(10)
+                display.blit(f_small.render(f"walk gain {gainv:.2f}   (PFL2)", True, DIM), (R_CMPB.x + U(2), y)); y += lh - U(2)
+                bar(pg, display, pg.Rect(bx, y, CMP_BW, U(7)), gainv, (155, 226, 155))
+        else:
+            display.blit(f_small.render("no compass arrays - run with --ring", True, FAINT), (R_CMPB.x + U(2), y)); y += lh
+            display.blit(f_small.render("(the needle is his pose, not a bump)", True, FAINT), (R_CMPB.x + U(2), y))
+        display.set_clip(None)
 
     def frame(i):
         t = time.perf_counter()
@@ -853,37 +1187,52 @@ def run(args):
             if uv_mode != "off" and ug is not None: _uv_comp(g, ug, UV_BITS[uv_mode], HVBUF)
             else: _gray_rgb(g, HVBUF)
             src = pg.image.frombuffer(HVBUF, (HVW, HVH), "RGB")
-            if R_HV.w == HVW and R_HV.h == HVH: display.blit(src, R_HV.topleft)
+            if R_HVC.w == HVW and R_HVC.h == HVH: display.blit(src, R_HVC.topleft)
             else:
-                if HVSCALED[0] is None: HVSCALED[0] = pg.transform.smoothscale(src, R_HV.size)
-                else: pg.transform.smoothscale(src, R_HV.size, HVSCALED[0])
-                display.blit(HVSCALED[0], R_HV.topleft)
+                if HVSCALED[0] is None: HVSCALED[0] = pg.transform.smoothscale(src, R_HVC.size)
+                else: pg.transform.smoothscale(src, R_HVC.size, HVSCALED[0])
+                display.blit(HVSCALED[0], R_HVC.topleft)
         else:
-            pg.draw.rect(display, PANEL, R_HV)
+            pg.draw.rect(display, PANEL, R_HVC)
         stats["hv"].append(time.perf_counter() - t); t = time.perf_counter()
-        # -- the eye: dots, or the nearest-column panorama
+        # -- the eye: dots, or the nearest-column panorama (its table is a fixed size, scaled into the panel)
         mode = eye_mode; ch = 0 if chan == "green" else (1 if chan == "uv" else 2)
         if mode == "pano" and pano.ready:
             if ch: _splat2(ep.lum[i], ep.lum_uv[i], pano.near, PFLAT, ch, *BLANK)
             else: _splat(ep.lum[i], pano.near, PFLAT, *BLANK)
-            display.blit(pg.image.frombuffer(PBUF, (R_EYE.w, R_EYE.h), "RGB"), R_EYE.topleft)
-            pg.draw.line(display, (226, 166, 59, 90), (R_EYE.centerx, R_EYE.y), (R_EYE.centerx, R_EYE.bottom), 1)
-            pg.draw.line(display, (70, 78, 94), (R_EYE.x, R_EYE.centery), (R_EYE.right, R_EYE.centery), 1)
+            psrc = pg.image.frombuffer(PBUF, (PANO_W, PANO_H), "RGB")
+            if (PANO_W, PANO_H) == R_EYEC.size: display.blit(psrc, R_EYEC.topleft)
+            else:
+                if PSCALED[0] is None: PSCALED[0] = pg.Surface(R_EYEC.size, 0, psrc)   # same format, or scale() refuses
+                pg.transform.scale(psrc, R_EYEC.size, PSCALED[0]); display.blit(PSCALED[0], R_EYEC.topleft)
+            pg.draw.line(display, (226, 166, 59, 90), (R_EYEC.centerx, R_EYEC.y), (R_EYEC.centerx, R_EYEC.bottom), 1)
+            pg.draw.line(display, (70, 78, 94), (R_EYEC.x, R_EYEC.centery), (R_EYEC.right, R_EYEC.centery), 1)
         else:
             mode = "dots"
             # the written pixels are the same set every frame, so no clear - but a channel switch changes what is
             # written into them, not which, so there is nothing stale to wipe either
             if ch: _paint2(ep.lum[i], ep.lum_uv[i], ridx, rsrc, EFLAT, ch)
             else: _paint(ep.lum[i], ridx, rsrc, EFLAT)
-            display.blit(pg.image.frombuffer(EBUF, (R_EYE.w, R_EYE.h), "RGB"), R_EYE.topleft)
+            display.blit(pg.image.frombuffer(EBUF, (R_EYEC.w, R_EYEC.h), "RGB"), R_EYEC.topleft)
+        if ep.sun_az is not None:                             # where the sun sits in HIS frame, on the eye's rim
+            span = 180.0 if mode == "pano" else 190.0; elsp = 90.0 if mode == "pano" else 95.0
+            rel = (ep.sun_az - ep.pose[i][2] + 180.0) % 360.0 - 180.0
+            if abs(rel) <= span:
+                sx_ = R_EYEC.centerx - rel / span * (R_EYEC.w / 2.0)
+                sy_ = min(max(R_EYEC.y + U(5), R_EYEC.centery - (ep.sun_el or 0.0) / elsp * (R_EYEC.h / 2.0)), R_EYEC.bottom - U(5))
+                pg.draw.circle(display, SUNC, (sx_, sy_), U(5), max(1, int(round(1.6 * S))))
         display.blit(RULERS[mode], R_RUL.topleft)
         display.blit(chrome, (R_EYE.x, R_EYE.y - U(TITLE_H)), pg.Rect(R_EYE.x, R_EYE.y - U(TITLE_H), R_EYE.w, U(TITLE_H)))
-        display.blit(EYE_SURF[(eye_mode if (eye_mode == "dots" or pano.ready) else "dots", chan)], (R_EYE.x + U(4), R_EYE.y - U(TITLE_H) + U(4)))
+        display.blit(EYE_SURF[(eye_mode if (eye_mode == "dots" or pano.ready) else "dots", chan)],
+                     (R_EYE.x + U(4), R_EYE.y - U(TITLE_H) + U(4)), pg.Rect(0, 0, R_EYE.w - U(8), U(TITLE_H)))
         if eye_mode == "pano" and not pano.ready:
             t_ = f_small.render("building the nearest-ommatidium table...", True, FAINT)
-            display.blit(t_, (R_EYE.centerx - t_.get_width() // 2, R_EYE.centery))
+            display.blit(t_, (R_EYEC.centerx - t_.get_width() // 2, R_EYEC.centery))
         # an ocelli panel would go here - but nothing identifies or drives the three ocelli yet, so there is no signal to draw.
         stats["eye"].append(time.perf_counter() - t); t = time.perf_counter()
+        # -- the compass, next to the eye
+        draw_compass(i)
+        stats["cmp"].append(time.perf_counter() - t); t = time.perf_counter()
         # -- map
         display.blit(base, R_MAP.topleft); draw_path(i); display.blit(path, R_MAP.topleft)
         hx, hy = PTS[i]; hx += R_MAP.x; hy += R_MAP.y
@@ -910,10 +1259,11 @@ def run(args):
         display.blit(chrome, (0, 0), R_HEAD)
         display.blit(chrome, (R_HV.x, R_HV.y - U(TITLE_H)), pg.Rect(R_HV.x, R_HV.y - U(TITLE_H), R_HV.w, U(TITLE_H)))
         hv_txt = f"human view   his raytracer, pinhole {fov:g} deg" + ("   camera smoothed" if hv.smooth else "   raw pose")
-        display.blit(f_lab.render(hv_txt, True, DIM), (R_HV.x + U(4), R_HV.y - U(TITLE_H) + U(4)))
+        display.blit(f_lab.render(hv_txt, True, DIM), (R_HV.x + U(4), R_HV.y - U(TITLE_H) + U(4)), pg.Rect(0, 0, R_HV.w - U(8), U(TITLE_H)))
         if uv_mode != "off":                                  # the mode belongs in the title, in the UV colour
+            ux = U(4) + f_lab.size(hv_txt)[0]
             display.blit(f_lab.render("   + UV " + UV_TITLE[uv_mode] + ("" if hv.ud == 1 else " (half res)"), True, UVC),
-                         (R_HV.x + U(4) + f_lab.size(hv_txt)[0], R_HV.y - U(TITLE_H) + U(4)))
+                         (R_HV.x + ux, R_HV.y - U(TITLE_H) + U(4)), pg.Rect(0, 0, max(0, R_HV.w - U(4) - ux), U(TITLE_H)))
         btns["play"].label = "pause" if playing else "play"
         btns["speed"].label = f"x{SPEEDS[spd]:g}"; btns["fov"].label = f"fov {fov:g}"
         btns["dots"].on = eye_mode == "dots"; btns["pano"].on = eye_mode == "pano"
@@ -962,8 +1312,8 @@ def run(args):
         print(f"  steering chunk {ep.K} frames: {zero * 100:.0f}% of frames have no heading change, largest step {mx:.1f} deg")
         print(f"  first render (numba compile) {t_compile * 1000:.0f} ms" + (f", pano table {pano.secs * 1000:.0f} ms" if pano.secs else ""))
         print(f"  shade {HVW}x{HVH} ({HVW * HVH} rays" + (f" + {hv.UW * hv.UH} UV rays" if uv_mode != "off" else "") + f")  ms: {ms(sync)}")
-        for k in ("hv", "eye", "map", "tr", "chrome"): print(f"  panel {k:7s} ms: {ms(stats[k])}")
-        tot = sum(float(np.median(stats[k])) for k in ("hv", "eye", "map", "tr", "chrome")) * 1000
+        for k in ("hv", "eye", "cmp", "map", "tr", "chrome"): print(f"  panel {k:7s} ms: {ms(stats[k])}")
+        tot = sum(float(np.median(stats[k])) for k in ("hv", "eye", "cmp", "map", "tr", "chrome")) * 1000
         print(f"  window without the raytracer (p50 sum): {tot:.2f} ms/frame  ->  {1000 / tot:.0f} fps")
         print(f"  {n} frames incl. synchronous render in {wall:.2f} s = {n / wall:.1f} fps")
         if args.shot:
@@ -1012,9 +1362,16 @@ def run(args):
             if not show_help: full[0] = True
 
     running = True
+    # a resize can arrive many times a second while the window is being dragged, and every one of them rebuilds the
+    # map, the traces and the background - so only the last size of each batch of events is ever laid out.
+    WRESIZED = getattr(pg, "WINDOWRESIZED", -1); WEXPOSED = getattr(pg, "WINDOWEXPOSED", -2)
+    pend = [None]
     while running:
         for e in pg.event.get():
             if e.type == pg.QUIT: running = False
+            elif e.type == pg.VIDEORESIZE: pend[0] = (e.w, e.h)
+            elif e.type == WRESIZED: pend[0] = (e.x, e.y)
+            elif e.type == WEXPOSED: full[0] = True           # the driver threw our pixels away; paint all of it again
             elif e.type == pg.KEYDOWN:
                 sh = e.mod & pg.KMOD_SHIFT
                 if e.key == pg.K_ESCAPE and show_help: show_help = False; full[0] = True
@@ -1048,6 +1405,10 @@ def run(args):
             elif e.type == pg.MOUSEWHEEL:
                 mxp = pg.mouse.get_pos()
                 if R_HV.collidepoint(mxp): set_fov(fov - 5 * e.y)
+        if pend[0] is not None:
+            nw = max(int(pend[0][0]), U(MIN_LOGW)); nh = max(int(pend[0][1]), U(MIN_LOGH)); pend[0] = None
+            if (nw, nh) != display.get_size(): display = pg.display.set_mode((nw, nh), pg.RESIZABLE)
+            relayout(*display.get_size())
         now = time.perf_counter(); dt = min(0.25, now - last); last = now
         if playing and not dragging:
             pos += SPEEDS[spd] * ep.fps * dt                # the episode's own clock; frames drop, time does not
