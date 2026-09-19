@@ -1407,9 +1407,8 @@ def run(args):
                 mxp = pg.mouse.get_pos()
                 if R_HV.collidepoint(mxp): set_fov(fov - 5 * e.y)
         if pend[0] is not None:
-            nw = max(int(pend[0][0]), U(MIN_LOGW)); nh = max(int(pend[0][1]), U(MIN_LOGH)); pend[0] = None
-            if (nw, nh) != display.get_size(): display = pg.display.set_mode((nw, nh), pg.RESIZABLE)
-            relayout(*display.get_size())
+            pend[0] = None; display = pg.display.get_surface()   # take the size the window manager gave; never set_mode back (a tiling WM shrinks it again and the two loop until a force-quit, 09-19)
+            nw, nh = display.get_size(); relayout(max(nw, U(MIN_LOGW)), max(nh, U(MIN_LOGH)))   # the layout keeps its minimum and clips inside a smaller window
         now = time.perf_counter(); dt = min(0.25, now - last); last = now
         if playing and not dragging:
             pos += SPEEDS[spd] * ep.fps * dt                # the episode's own clock; frames drop, time does not
