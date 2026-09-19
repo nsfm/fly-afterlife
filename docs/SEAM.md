@@ -3103,6 +3103,26 @@ is the honest statement of it. the next physiology for this is PFL2, the forward
 alignment (Westeinde 2024), which would let the goal survive a wall by stopping him at it instead of dragging him
 along it. the readout stand-ins stay as they are, tuned and labelled; the goal loop closes end to end.
 
+**PFL2 as the walking gain (12:22 PDT; `--pfl2-walk`: PFL2's mean membrane, its two ends measured in calibration with
+the goal ahead and behind, mapped to a gain on the walking command, 0.15 when fully off-goal, 1 when aligned;
+Westeinde 2024: PFL2 drives forward walking when heading matches the goal).** first, a sign the wiring gave and the
+paper did not: PFL2's membrane is -3.00 mV with the goal ahead and -2.29 behind, more depolarised when he points
+*away*; the stand-in maps the measured ends regardless, but the anatomy says PFL2's bridge inputs sit differently
+from PFL3's than my imposed goal map assumes (PFL2's PB and FB offsets differ by half a turn in life), which is a
+thing to read off its glomerulus labels next. the runs, 120 s, against the controls without it:
+
+| goal | with PFL2 gain: within 30 deg | standing | at the rim | control: within 30 deg | standing |
+|---|---|---|---|---|---|
+| 35 (where he starts) | **64 %** (quarters 48 / 62 / 94 / 54; error never past 56 deg) | 63 % | 69 % | 34 % (64 / 0 / 72 / 2) | 4 % |
+| 200 (165 deg off) | 38 % (51 / 3 / 59 / 41) | 14 % | 62 % | 41 % (53 / 32 / 34 / 47) | 4 % |
+
+**holding improves, acquiring does not.** with the goal already held, the gain turns the wall from a drag into a
+pause: he stands at it instead of following it, keeps his heading through the stop, and the goal survives the whole
+run (the control lost it for two quarters of four). with the goal far off he is no better, because off-goal he is
+*meant* to slow, and the flow wheel and the rim still own the turn. that is the shape Westeinde's flies have too:
+PFL2 is the gas, PFL3 the wheel. the next thing is not a gain but the geometry: PFL2's own bridge offset from its
+labels, so the stand-in stops assuming PFL3's.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,

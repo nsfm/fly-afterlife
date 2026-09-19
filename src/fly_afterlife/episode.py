@@ -16,11 +16,12 @@ import numpy as np
 
 
 class Episode:
-    def __init__(self, fps, chunk, eye, room, him, her, brains, readouts, registries, front_end, rest, effectors, lam=0.8, log_every=50, on_chunk=None, threads=True, state=None, front_end_uv=None, vread=None):
+    def __init__(self, fps, chunk, eye, room, him, her, brains, readouts, registries, front_end, rest, effectors, lam=0.8, log_every=50, on_chunk=None, threads=True, state=None, front_end_uv=None, vread=None, walkmod=None):
         """room: any world with scene(bodies) / step_frame(m, f, fps) / contacts (Room, Drum). her: a Body or None.
         effectors: (steer, pace, her_steer or None, song or None). on_chunk(ep, c, cntM): optional per-chunk hook."""
         self.on_chunk = on_chunk; self.threads = threads; self.state = state
         self.front_end_uv = front_end_uv; self.LUM_UV = []
+        self.walkmod = walkmod; self.walk_gain = 1.0   # walkmod(cntM) -> a gain on the walking command for the next chunk (PFL2, 09-19)
         self.vread = vread or {}   # {name: (cells L, cells R)}: populations read by mean membrane potential per chunk, graded, as cntM[name_L / name_R] in mV x 100 (09-19: PFL3's output is graded in life; its spikes here are too sparse to steer with)   # the UV retina through a second flyvis (Mi15), when the world has scene_uv (09-18)   # an internal state object with update(t, taste) and .feeding / .sat, or None (09-18)
         from concurrent.futures import ThreadPoolExecutor; self.pool = ThreadPoolExecutor(max_workers=1)
         self.fps, self.CH, self.SPF = fps, chunk, 1000 // fps
@@ -79,6 +80,7 @@ class Episode:
                 if hasattr(self.room, "wind"): st_["wind_rel"] = float((np.degrees(np.arctan2(-self.room.wind[1], -self.room.wind[0])) - ph + 180) % 360 - 180)   # where the wind comes FROM, relative to his heading (+ = from his left)
                 st_["taste"] = getattr(m, "taste", None); st_["heading"] = float(ph)
             st_["lum"] = self._lum_frames[f]; st_["lum_uv"] = (self._lum_uv[f] if getattr(self, "_lum_uv", None) is not None else None)   # the retinas of this frame, for receptor rows driven by column (R7 / R8, 09-18)
+            st_["walk_gain"] = self.walk_gain
             if self.state is not None: self.state.update(t_f, getattr(m, "taste", None)); st_["feeding"] = self.state.feeding; st_["sat"] = self.state.sat
             self.REG.apply(self.M, st_, t_f, 1.0 / fps)
             if self.female: self.REGF.apply(self.F, st_, t_f, 1.0 / fps)
@@ -111,6 +113,7 @@ class Episode:
             cntM, cntF = self.drive_and_step(a, touched_m, kind_m, touched_f, singing)
             touched_any = any(touched_m) and not (self.state is not None and self.state.feeding)   # feeding silences the withdrawal reflex (09-18)
             m.h += (self.steer.step(cntM, touched_any, self.last_accM) if getattr(self.steer, "needs_cells", False) else self.steer.step(cntM, touched_any))
+            if self.walkmod is not None: self.walk_gain = float(self.walkmod(cntM))
             m.v = self.pace.step(cntM)
             if self.female and self.hers is not None: her.h += self.hers.step(cntF, touched_f)
             song = self.songdet.step(cntM["pIP10"]) if (self.songdet is not None and "pIP10" in cntM) else False
