@@ -16,11 +16,12 @@ import numpy as np
 
 
 class Episode:
-    def __init__(self, fps, chunk, eye, room, him, her, brains, readouts, registries, front_end, rest, effectors, lam=0.8, log_every=50, on_chunk=None, threads=True, state=None, front_end_uv=None):
+    def __init__(self, fps, chunk, eye, room, him, her, brains, readouts, registries, front_end, rest, effectors, lam=0.8, log_every=50, on_chunk=None, threads=True, state=None, front_end_uv=None, vread=None):
         """room: any world with scene(bodies) / step_frame(m, f, fps) / contacts (Room, Drum). her: a Body or None.
         effectors: (steer, pace, her_steer or None, song or None). on_chunk(ep, c, cntM): optional per-chunk hook."""
         self.on_chunk = on_chunk; self.threads = threads; self.state = state
-        self.front_end_uv = front_end_uv; self.LUM_UV = []   # the UV retina through a second flyvis (Mi15), when the world has scene_uv (09-18)   # an internal state object with update(t, taste) and .feeding / .sat, or None (09-18)
+        self.front_end_uv = front_end_uv; self.LUM_UV = []
+        self.vread = vread or {}   # {name: (cells L, cells R)}: populations read by mean membrane potential per chunk, graded, as cntM[name_L / name_R] in mV x 100 (09-19: PFL3's output is graded in life; its spikes here are too sparse to steer with)   # the UV retina through a second flyvis (Mi15), when the world has scene_uv (09-18)   # an internal state object with update(t, taste) and .feeding / .sat, or None (09-18)
         from concurrent.futures import ThreadPoolExecutor; self.pool = ThreadPoolExecutor(max_workers=1)
         self.fps, self.CH, self.SPF = fps, chunk, 1000 // fps
         self.eye, self.room, self.m, self.her = eye, room, him, her
@@ -63,6 +64,7 @@ class Episode:
         """CH frames of receptor drive and SPF brain steps each; returns per-chunk readout counts (cntM, cntF)."""
         CH, fps, m = self.CH, self.fps, self.m
         accM = np.zeros(self.M.N, np.int32); accF = np.zeros(self.F.N, np.int32) if self.female else None
+        vacc = {nm_: [0.0, 0.0] for nm_ in self.vread} if self.vread else {}
         for f in range(CH):
             t_f = (len(self.POSE) - CH + f) / fps
             st_ = {"a": a, "rest": self.rest, "f": f, "tm": touched_m[f], "kind": kind_m[f], "pace": float(np.clip(m.v / 0.45, 0, 1)), "t_chunk_end": len(self.POSE) / fps, "tf": touched_f[f], "singing": singing}
@@ -88,8 +90,11 @@ class Episode:
                 for _ in range(self.SPF):
                     self.M.step(); accM[self.M.last_idx] += 1
                     if self.female: self.F.step(); accF[self.F.last_idx] += 1
+                    if self.vread:
+                        for nm_, (cl_, cr_) in self.vread.items(): vacc[nm_][0] += float(self.M.v[cl_].mean()); vacc[nm_][1] += float(self.M.v[cr_].mean())
         self.last_accM = accM   # per-cell counts for effectors that read motor patterns (legs.LegSteering)
         cntM = {k: int(accM[r].sum()) for k, r in self.RM.items()}
+        for nm_, (l_, r_) in vacc.items(): cntM[nm_ + "_L"] = 100.0 * l_ / (CH * self.SPF); cntM[nm_ + "_R"] = 100.0 * r_ / (CH * self.SPF)   # mean membrane over the chunk, mV x 100
         cntF = {k: int(accF[r].sum()) for k, r in self.RF.items()} if self.female else {}
         return cntM, cntF
 
@@ -113,6 +118,7 @@ class Episode:
             if self.on_chunk is not None: self.on_chunk(self, c, cntM)
             if self.state is not None: log.setdefault("feeding", []).append(int(self.state.feeding)); log.setdefault("sat100", []).append(int(round(100 * self.state.sat)))
             for k in self.RM: log[f"m_{k}"].append(cntM[k])
+            for nm_ in self.vread: log.setdefault(f"m_{nm_}_L", []).append(int(round(cntM[nm_ + "_L"]))); log.setdefault(f"m_{nm_}_R", []).append(int(round(cntM[nm_ + "_R"])))
             for k in self.RF: log[f"f_{k}"].append(cntF[k])
             if c % self.log_every == self.log_every - 1 and self.solo:
                 print(f"t={(c+1)/10:5.1f}s  heading {m.h:+7.1f}  pos ({m.x:+.2f},{m.y:+.2f})  ({time.time()-t0:.0f}s)", flush=True)
