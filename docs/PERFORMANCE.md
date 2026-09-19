@@ -1,3 +1,10 @@
+> **correction, 2026-09-19 10:30 PDT (nyx).** the absolute numbers below were measured while three batch jobs had every
+> core busy (the agent's own caveat about contention applies to its headline figures). on a quiet machine, in the
+> loop's own process: the LIF step is **1.25 ms** at 2 threads (bare `_membrane` 0.83 ms; standalone 0.78 / 0.42 ms),
+> and a 20 s garden run takes 56 s wall at 2 threads and 39 s at 4, i.e. **2-3 s per simulated second**, not 4.8.
+> the shares (the step dominant, then the eye, then flyvis) hold; the step's overhead over the bare kernel is
+> the Poisson draw and the Python around it, and a one-core brain at 1 kHz is within reach of this engine.
+
 # where the simulate runner spends its time
 
 measured 2026-09-18 17:00 PDT (nyx), from nate's question about the runner. `docs/TODO.md` §6 listed

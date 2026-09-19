@@ -2991,6 +2991,17 @@ graded build. what stands from the night: a ring that holds a heading from the s
 right sign, and the exact place where spikes stop being enough. the stand-ins stay opt-in (`--ring`, `--goal`,
 `--goal-wheel`), tuned as labelled (ExR1 400, ring 30, goal 100).
 
+**the profile, corrected (10:30 PDT; nate's question about flyproject.io's "one fly brain per CPU core").** the
+performance table of 17:00 yesterday was measured while my batches held every core; on a quiet machine, in the loop's
+own process, the LIF step is 1.25 ms at two threads (the bare membrane pass 0.83 ms there, 0.42 ms standalone, 0.12 at
+four threads: ten flops over eight arrays per cell, memory-bound), and the brain plus flyvis interleaved as the loop
+does it runs at 0.95 s per simulated second. a clean 20 s garden run: 56 s wall at two threads, 39 s at four, 2-3 s
+per simulated second including the eye. so a whole-fly LIF at 1 kHz on about one core is plausible, for them and
+nearly for us; what a tight Java loop would cut is our Python around the kernel and the Poisson draw over 26,000
+receptor cells. their claim is not the dubious part; what they cut from the wiring (3.1 M synapses of BANC's) and
+what they hand-tuned ("time constants, thresholds and a few gains are ours") is, and two agents are reading the
+decompiled jar and the two open-source siblings for exactly that.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
