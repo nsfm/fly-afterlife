@@ -54,6 +54,7 @@ def _membrane(v, g, refrac, ext, noise, v_th, free, dt, tau_syn, tau_m, v_floor,
     n = v.shape[0]
     for i in prange(n):
         g[i] -= g[i] * (dt / tau_syn)
+        if g[i] < 1e-20 and g[i] > -1e-20: g[i] = 0.0   # flush decayed conductances before they go subnormal (09-19: a quiet brain stepped 1.8x slower after 20 s; no float32 voltage can see 1e-20)
         syn = g[i] * (dt / tau_m)
         dv = (-v[i] / tau_m) * dt + syn + ext[i] * (dt / tau_m) + noise[i]
         if refrac[i] <= 0.0:
