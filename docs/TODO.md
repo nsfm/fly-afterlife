@@ -105,7 +105,9 @@ loop is probably a bug (mechanosensation brief).
       sugar), puddle (humidity), sun patch, rim; RGB reduced to fly luminance; both raytracers.
 - [x] first scores (09-18 00:24): the fruit is found by sight (0/3 when invisible), the plume changes
       nothing (smell does not reach the steering readout); puddle / sun / shade passed through.
-- [ ] **anemotaxis on the settled fly** (09-18 16:50): the wind-gated upwind turn was measured on a fly with
+- [x] **anemotaxis on the settled fly** (09-19 15:00: through the compass, the goal set by the wind while a whiff is on him;
+      2/3 walk up the plume onto the fruit in 6 s and eat, control 0/3; `docs/figures/anemotaxis.png`).
+- [ ] (was:) **anemotaxis on the settled fly** (09-18 16:50): the wind-gated upwind turn was measured on a fly with
       50 deg/s of heading noise; now 20-29. re-run the downwind start with `--wind on --wind-gate odour`
       (the wind rows need a steering channel: the population channel is out of the config as noise; a named
       six lateralised DN types (review) or the JO rows into the HS wheel's baseline is the design question).

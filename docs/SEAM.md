@@ -3211,6 +3211,27 @@ rotates at 45-55 deg/s, because the null point, measured at the start on a stand
 became a bias once the hole was mended. so with the pair normalised the null goes (`--goal-null off`); one fix per
 problem. running.
 
+**anemotaxis through the compass (14:58 PDT; the comparator pair mirrored, no null point, the goal set by the wind while a
+whiff is on his antennae and for four seconds after; the downwind start; three seeds; `docs/figures/anemotaxis.png`):**
+
+| seed | first surge: heading error | on the fruit at | fed | closest | net rotation |
+|---|---|---|---|---|---|
+| 10 | 98 deg -> (on the fruit before the surge ends) | **6.4 s** | 8.0 s | 0.38 m | +6 deg/s |
+| 11 | 98 -> 28 deg | **5.9 s** | 8.0 s | 0.38 m | +0.6 deg/s |
+| 12 | 105 -> 53 deg | never | | 0.48 m | +6 deg/s |
+
+the control, the wind ignored, the same start: 0 of 3, closest 0.68-0.90 m. this morning's wind on Johnston's organ
+through the noisy channel (09:12): 0 of 3, and he arced out of the plume. **two of three walk up the plume onto the
+fruit in six seconds and eat**, with every piece of the last two days used in one behaviour: the ring holding his
+heading from the sun, the goal set by a sense instead of a dice, PFL3 comparing them in its membrane, PFL2 gating
+the walk, the halt and the feeding state at the fruit. the path there went through three wrong readouts, each one
+recorded: a null point that drifted, a doubled drive that doubled the bias into a metronome, and a null that became
+a bias once the pair was mended; the fix that held was the physiological one, the comparator pair's traced input
+asymmetry (0.87x) normalised as the cord's was. so nate's question of 14:20, whether behaviours hold up or evolve with
+more complete input: they evolved. a fly who could not hold a heading arced out of the plume; a fly who can walks up
+it. the compass configuration of record for the garden, all opt-in and labelled: `--ring --goal <deg> --goal-switch
+5 --goal-wind 4 --goal-wheel-v 20 --goal-ema 5 --pfl2-walk --mirror PFL3,PFL2 --goal-null off`.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
