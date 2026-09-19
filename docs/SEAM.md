@@ -3068,6 +3068,16 @@ today's `pair.py` (`world/oracle/pair_oracle_v2.py`) on the exact engine with th
 four deterministic configs, and every change from here must reproduce it bit for bit or say why. the README's caveats
 gain a line: the Euler results are the record's past, not its present.
 
+**the comparator, read graded (11:11 PDT; `vread`: a population's mean membrane per chunk; `--goal-wheel-v`; the exact
+engine).** PFL3's membrane, left minus right, averaged over each 100 ms chunk, against the heading error: correlation
+-0.72 (goal 200) and -0.65 (goal 35), a spread of 0.26-0.28 mV per chunk, and no shot noise, because there are no
+spikes in it. the comparator's output is in the cell's voltage the way it is in life. on the wheel at 5 deg per mV with
+two seconds of smoothing: he turns to the goal (165 deg off to 11 in the first ten seconds) and overshoots to 121, and
+the error oscillates through the run (27 % within 30 deg overall, 68 % in the last quarter); the goal at his starting
+heading: 32 %, wandering. lag and gain, not noise: a smoothed signal smoothed again, against a flow wheel that turns
+him five degrees a chunk. the gain and the smoothing are being set (two runs), labelled as the readout's, since the
+signal itself is now the cell's.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
