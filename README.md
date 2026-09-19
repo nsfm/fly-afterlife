@@ -60,8 +60,8 @@ world; and the tonic floor that holds every typed sense at its resting rate), `b
 `legs.py` (a leg model with muscle weights, used as a diagnostic), `frontend.py` (flyvis),
 `wiring.py` (labelled corrections to the wiring, opt-in), `episode.py` (the loop). `seam/` is
 the eye and the seam into the optic lobe. `world/pair.py` is the setup script with every flag
-labelled; `world/fastlif.py` is the LIF step compiled with numba, spike-for-spike identical to
-the reference; `world/run_many.py` fans runs across cores; `experiments/` holds the drum and the
+labelled; `world/fastlif.py` is the LIF step compiled with numba (exact integration of the linear
+membrane by default; the Euler engine that matched the reference spike for spike is kept behind a flag); `world/run_many.py` fans runs across cores; `experiments/` holds the drum and the
 benchmark scorer. `docs/ARCHITECTURE.md` explains the layering.
 
 ## how it keeps itself honest
