@@ -68,11 +68,36 @@ def _membrane(v, g, refrac, ext, noise, v_th, free, dt, tau_syn, tau_m, v_floor,
             spk[i] = False
 
 
+@njit(cache=True, nogil=True)
+def _count_live(di, drive_hz):
+    c = 0
+    for k in range(di.shape[0]):
+        if drive_hz[di[k]] > 0.0: c += 1
+    return c
+
+
+@njit(cache=True, nogil=True)
+def _drive_gate(di, drive_hz, r, free, spk, dt32):
+    """the numpy block it replaces: for each driven cell with a positive rate, spk = (uniform < hz * dt / 1000) & free,
+    the uniforms drawn by the Generator in driven order; cells at rate 0 are silenced. arithmetic kept in float32 as
+    numpy did it (hz float32 times a weak python float, then divided by 1000 in float32) so the comparison is identical."""
+    j = 0; k1000 = np.float32(1000.0)
+    for k in range(di.shape[0]):
+        i = di[k]; hz = drive_hz[i]
+        if hz > 0.0:
+            thr = (hz * dt32) / k1000
+            spk[i] = (r[j] < thr) and free[i]
+            j += 1
+        else:
+            spk[i] = False
+
+
 class FastFlyBrain(FlyBrain):
     def __init__(self, *a, **k):
         super().__init__(*a, **k)
         self._free_buf = np.zeros(self.N, np.bool_); self._spk_buf = np.zeros(self.N, np.bool_)
         self._zero_noise = np.zeros(self.N, np.float32)
+        self._empty_f64 = np.zeros(0, np.float64)
 
     def _propagate(self, spikes, scale=None):
         if self.engine == "dense": return super()._propagate(spikes, scale)
@@ -108,14 +133,10 @@ class FastFlyBrain(FlyBrain):
         _membrane(self.v, self.g, self.refrac, ext, np.ascontiguousarray(noise, dtype=np.float32), self.v_th, free,
                   np.float32(dt), np.float32(p.tau_syn), np.float32(p.tau_m), np.float32(p.v_thresh), spk)
         di = self._driven_idx
-        if di.size:
-            hz = self.drive_hz[di]; live = hz > 0
-            if live.any():
-                sub = di[live]; pois = self.rng.random(sub.size) < (hz[live] * dt / 1000.0)
-                spk[sub] = pois & free[sub]
-                dead = di[~live]
-                if dead.size: spk[dead] = False
-            else: spk[di] = False
+        if di.size:   # the driven-cell Poisson draw in one kernel (09-18, docs/PERFORMANCE.md: 1.2x on the step; same rng call, same float32 arithmetic, spike-identical)
+            n_live = _count_live(di, self.drive_hz)
+            r = self.rng.random(n_live) if n_live else self._empty_f64
+            _drive_gate(di, self.drive_hz, r, free, spk, np.float32(dt))
         self.last_idx = np.flatnonzero(spk); _reset(self.last_idx, self.v, self.refrac, np.float32(p.v_reset), np.float32(p.refractory))
         self.last_spikes = spk.astype(np.float32)
         if getattr(self, "std_on", False):
