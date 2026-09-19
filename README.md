@@ -105,7 +105,9 @@ run outputs (`.npz` episodes) are not tracked; `results/` keeps the json and log
 
 ## the honest caveats
 
-he walks at about a third of a fly's speed by a scale choice made early; the benchmark carries a
+the engine integrates the linear membrane exactly, as Shiu's Brian2 model does, since 2026-09-19; before that it used
+forward Euler at 1 ms, which put every synaptic potential's peak 16% low, and the record's earlier numbers were
+measured on that engine (their orderings hold, their values do not). he walks at about a third of a fly's speed by a scale choice made early; the benchmark carries a
 time-rescaling control for it. the right side of his ventral cord is under-traced in the
 reconstruction (about 15% less input than the left), which a bistable pair of interneurons
 amplifies onto one steering neuron; the wheel now reads one synapse upstream of it. the optic

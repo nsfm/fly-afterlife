@@ -227,6 +227,17 @@ loop is probably a bug (mechanosensation brief).
 - [ ] `receptorType` coverage for ppk / Gr / Or / Ir cells in both builds.
 - [ ] right hemisphere more completely traced (known): quantify per class for the wheel.
 
+## 5b. the engine (09-19 10:47)
+
+- [x] **exact integration** (`--integrate exact`, default): Shiu's `method='linear'`; PSP peak on the analytic curve; a third
+      faster; the brain 1.5x hotter; KC sparsity 3.9 % at 0.185 (Euler 1.8 %); drum 3/3; he eats. oracle v2 frozen on it.
+- [ ] **g frozen during the refractory period** (Shiu's "(unless refractory)" on dg/dt): the second difference from the
+      paper; opt-in, measure, adopt with oracle v3 if it holds.
+- [ ] re-measure on the exact engine what the record measured on Euler: the floor's tonus by row, the DN L/R table, the
+      walking dose, the reflex gain, her at 0.275, the room baselines; then the dish benchmark.
+- [ ] the divide -> multiply in `_membrane` is moot (the exact kernel has none); interleave the state arrays (1.16x).
+- [ ] the sparse Poisson drive (count-then-scatter) from flyproject; a bitmap active set only if it stays contiguous.
+
 ## 6. performance (`docs/PERFORMANCE.md`, 09-18 17:00: measured, an opus agent)
 
 - [x] two brains in threads (numba nogil): done 09-17.

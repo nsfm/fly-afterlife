@@ -3056,6 +3056,18 @@ survive with their ordering; the wing motor triples, which stays in view. the dr
 engine are scored below; if they hold, the exact engine becomes the record's, with the oracle re-frozen on it and
 labelled, and the Euler engine kept behind `--integrate euler` with the old oracle for the port's history.
 
+**the exact engine adopted (10:47 PDT).** the drum under it follows both ways 3/3 (HS wheel, +13 to +15 / -31 to -35
+deg/s); beside the fruit he walks onto it at 1.8 s, eats 9.3 s, leaves; the standing tonus recalibrates to 99 per chunk
+and the state pace reads it; the cord's crossing inhibitor's right cell wakes to 2.4 against the left's 5.7 (Euler:
+0.3 / 3.0), and DNa02 R to 0.17. **`--integrate exact` is the default from here**, for the reason that it is what the
+paper's model does and the Euler engine was not; every number in the record before this line was measured on the
+Euler engine, and the sections that matter most (the constants, 09-17 08:58; the floor; the walking command; the state
+pace; the feeding state) keep their ordering under exact but not their values. **the oracle now has two versions:**
+v1 pins `--integrate euler` and keeps reproducing the pre-refactor script bit for bit (the port's history); v2 freezes
+today's `pair.py` (`world/oracle/pair_oracle_v2.py`) on the exact engine with the defaults of record and `--walk 100`,
+four deterministic configs, and every change from here must reproduce it bit for bit or say why. the README's caveats
+gain a line: the Euler results are the record's past, not its present.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
