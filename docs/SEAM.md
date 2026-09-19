@@ -2958,6 +2958,25 @@ nate asked the stand-in to find out; the eye work (a graded anterior pathway) wo
 seen ones; and the goal is the next stand-in, the one that makes PFL3 fire and a saccade happen. defaults set
 (`--ring-exr 200 --ring-er 20`).
 
+**the comparator fires (23:37 PDT; `--goal`: the goal in the fan-shaped body as a bump over the 92 FC2 cells by column,
+the column-to-wedge offset read from PFL3's own glomerulus / column labels: -1 degree, from 24 cells).** PFL3's inputs
+are the textbook (Delta7 -40 per cell: the heading, inverted; hDelta and FC2 +18 to +28: the goal) and its outputs go to
+the LAL (LAL121 +20) and AOTU019. with the quiet ring (ExR1 200, ring peak 20; EPG 3 Hz, Delta7 0.4) and the goal at
+40 Hz, PFL3 fires at 0.2 Hz and follows nothing: the heading side never arrives. with a louder, sharper ring (ExR1 400,
+ring peak 30: bump 0.81 against a shuffle of 0.25, phase correlation 0.98) and the goal at 100 Hz (FC2 26 Hz):
+
+| goal 200 deg, he starts at 35 | PFL3 Hz | PFL3 L-R, goal to his left / right / ahead | corr(L-R, sin error) | LAL121 | DNa02 |
+|---|---|---|---|---|---|
+| goal 40 Hz | 0.18 | +0.23 / +0.12 / -0.09 | -0.31 | flat | 29 L / 5 R, flat |
+| goal 100 Hz | **3.56** | **+0.50 / -0.39** / -0.93 | **-0.68** | follows (+0.54) | 29 L / 5 R, flat (+0.10) |
+
+**PFL3 left minus right flips with the side the goal is on, with the ipsiversive sign** (goal to his left -> PFL3 L
+up -> DNa02 L in the wiring -> a left turn), reaches LAL121, and dies at DNa02, which the cord's hole (14:53) holds
+one-sided at 29 / 5 whatever PFL3 says. so the goal loop is closed one cell upstream, as the wheel was this
+afternoon: `--goal-wheel` reads PFL3 L-R as a third channel through the running baseline, labelled as the readout it
+is. prediction, running: with the goal at 200 he turns to it and holds; with the goal at 35, where he starts, he
+stays. both stand-ins are tuned (ExR1 400, ring 30, goal 100) and say so.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
