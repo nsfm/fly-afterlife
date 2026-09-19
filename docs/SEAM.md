@@ -3106,7 +3106,7 @@ along it. the readout stand-ins stay as they are, tuned and labelled; the goal l
 **PFL2 as the walking gain (12:22 PDT; `--pfl2-walk`: PFL2's mean membrane, its two ends measured in calibration with
 the goal ahead and behind, mapped to a gain on the walking command, 0.15 when fully off-goal, 1 when aligned;
 Westeinde 2024: PFL2 drives forward walking when heading matches the goal).** first, a sign the wiring gave and the
-paper did not: PFL2's membrane is -3.00 mV with the goal ahead and -2.29 behind, more depolarised when he points
+paper did not [withdrawn 13:55: the paper says the same; see the bridge offsets]: PFL2's membrane is -3.00 mV with the goal ahead and -2.29 behind, more depolarised when he points
 *away*; the stand-in maps the measured ends regardless, but the anatomy says PFL2's bridge inputs sit differently
 from PFL3's than my imposed goal map assumes (PFL2's PB and FB offsets differ by half a turn in life), which is a
 thing to read off its glomerulus labels next. the runs, 120 s, against the controls without it:
@@ -3166,6 +3166,20 @@ is the paper's inverted, 13:07, and an idle fly at a wall with an inward goal is
 the corner is solved and the rim is not, and the next thing to look at is not another gain but PFL2's own bridge
 offset from its labels, because if its map is half a turn from PFL3's, the gas has been off when it should be on.
 `world/compass/yield3_g35.npz` is the run to watch with the compass panel.
+
+**the bridge offsets, from the labels (13:50 PDT; column minus wedge, per cell, from the instance names):** PFL3, 24
+cells: +66 deg on the left, -65 on the right (mean 359, concentration 0.40 because the sides cancel). PFL2, 12 cells:
+**182 deg**, concentration 0.84. PFL1: 2 deg, 0.77. **two corrections to this morning's record follow.** (1) PFL3's
+comparator is the +/-65: the same goal read from two vantage points a quarter-turn apart, so the difference between
+the sides is the sign of the error; my single goal-map offset of -1 deg was the average of the two, and the
+comparison worked because the anatomy carried the shift, not the map. (2) PFL2's bridge input is half a turn from
+its goal column, so PFL2 peaks when he faces *away* from the goal, which is what the calibration measured (-2.29 mV
+behind, -3.00 ahead), and which is what Westeinde 2024 report: PFL2 signals the size of the heading error and the fly
+slows and turns when it is large. i had the paper backwards at 13:07 ("inverted from the paper"): the cell was right,
+the stand-in's mapping of the measured ends was right, and the note was wrong. withdrawn. and the rim (57 % with a
+yielding goal) is not the gas either: it is the flow wheel winning at a wall, thigmotaxis, which real flies do in a
+dish 90 % of the time (`docs/BENCHMARKS.md`), and which is why menotaxis is measured in open arenas. the corner was
+the bug; the rim is the fly.
 
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),

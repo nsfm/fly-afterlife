@@ -135,7 +135,10 @@ loop is probably a bug (mechanosensation brief).
 
 ## 2e. what the dish said (09-18 18:25, `experiments/benchmark.py` vs the Roman lab's flies)
 
-- [ ] **the goal yields at a wall** (09-19, nate's observation): a fixed goal heading pins him into a corner, pointed outward,
+- [x] **the goal yields at a wall** (09-19 13:45: `--goal-switch`, contact = position at the boundary, new heading drawn
+      inward): corner 54 -> 4-11 %, standing 66 -> 13-18 %; the rim stays ~57 % and that is thigmotaxis, the fly.
+      PFL2's 182 deg bridge offset and PFL3's +/-65 read from the labels; the stand-in's mapping was right.
+- [ ] (was:) **the goal yields at a wall** (09-19, nate's observation): a fixed goal heading pins him into a corner, pointed outward,
       PFL2 idling him. the goal as a state: switch to a new heading after N s of contact (Green 2019: headings held for
       minutes, then switched); labelled. also the viewer's compass panel (in flight).
 - [~] **menotaxis, in stretches** (09-19 11:26): the graded PFL3 readout (`--goal-wheel-v 20 --goal-ema 5`, the null point with
