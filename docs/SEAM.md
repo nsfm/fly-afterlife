@@ -3028,6 +3028,34 @@ then the oracle re-frozen with a label if it holds. also learned from them: deca
 quiet brain and slow the step 1.8x (ours: 0.29 -> 0.52 ms after 20 s); a flush at 1e-20 is in the kernel, under the
 oracle now. the landscape doc gets these three as rows.
 
+**the exact integrator (10:45 PDT; `--integrate exact`; Shiu 2024's `method='linear'`, checked in his `model.py`).** the
+kernel steps the linear system exactly: v <- v e_m + ext (1 - e_m) + g A (e_s - e_m), g <- g e_s, A = tau_syn /
+(tau_syn - tau_m); three multiplies, no divides. on one cell with a unit synaptic jump the peak is 0.15744 against the
+analytic 0.15750; our Euler kernel at dt 1 ms gives 0.13228, 16 % low (the total charge is conserved, the peak is not,
+and spiking is a threshold on the peak). and it is faster: 0.51 ms a step against 0.75. under it the brain is a
+different operating point:
+
+| open loop, floor on, seed 1 | Euler (the record) | exact |
+|---|---|---|
+| leg MN spikes/s: no command / DNg100 100 / 200 | 559 / 821 / 1,121 | 927 / 1,269 / 1,510 |
+| DNg100 100 + DNg105 100 (the halt) | 469 | 848 (below standing: still a halt) |
+| other VNC motor (wing, neck, abdomen) | 1,160-1,360 | 3,300-3,500 |
+| undriven cells: mean Hz / cells firing | 0.23 / 2,120 | 0.42 / 4,004 |
+
+**Kenyon-cell sparsity** (five food-ORN types at 150 Hz for 1 s, the fraction of KCs that fire; life ~5-10 %,
+Turner 2008, Honegger 2011):
+
+| | 0.185 mV | 0.275 mV |
+|---|---|---|
+| Euler | 1.8 % (0.19 Hz) | 7.4 % (1.3 Hz) |
+| exact | **3.9 %** (0.59 Hz) | 12.6 % (3.0 Hz) |
+
+so with the paper's integration, 0.185 lands closest to the physiological band from below and 0.275 overshoots it,
+which is the same ordering the 09-17 argument gave and a slightly different place on the line. the dose and the halt
+survive with their ordering; the wing motor triples, which stays in view. the drum and a fruit run under the exact
+engine are scored below; if they hold, the exact engine becomes the record's, with the oracle re-frozen on it and
+labelled, and the Euler engine kept behind `--integrate euler` with the old oracle for the port's history.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
