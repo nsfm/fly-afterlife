@@ -3181,6 +3181,19 @@ yielding goal) is not the gas either: it is the flow wheel winning at a wall, th
 dish 90 % of the time (`docs/BENCHMARKS.md`), and which is why menotaxis is measured in open arenas. the corner was
 the bug; the rim is the fly.
 
+**anemotaxis through the compass, first attempt (14:40 PDT; `--goal-wind 4`: while a fruit whiff is on either antenna
+the goal heading is upwind, held four seconds after the last whiff; the downwind start of 09:12; three seeds each;
+nate: "do behaviours hold up or evolve with more complete sensory inputs?").** neither arm reaches the fruit. the
+control (wind ignored): closest 0.68-0.90 m, in the plume 22-66 % of the run. the wind arm: the goal is upwind 62 % of
+the run in 8-11 surges, closest 0.56-0.63 m, in the plume 16-24 %, and **during every surge his heading error grows**
+(95 deg off at a surge's start, 120-176 at its end): he turns away from upwind. the comparator's raw left-minus-right
+during surges is +0.16 mV where the geometry (d = c - a sin err, 11:20) predicts -0.03: the bias c is ~0.2 mV larger
+in this run than the null point measured at its start, and the goal's signal amplitude is 0.3 mV. a comparator whose
+offset drifts by most of its own signal steers by the drift; the residual bias noted at 11:26 is now the result. so
+the answer to nate's question so far is: the compass, the goal and the gas hold up; the readout's bias does not.
+the knob with physiology behind it is the goal drive (doubled, so the signal outgrows the bias) before any adaptive
+baseline, because an adapting null would also subtract a real sustained error. running.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
