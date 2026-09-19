@@ -69,6 +69,28 @@ def _membrane(v, g, refrac, ext, noise, v_th, free, dt, tau_syn, tau_m, v_floor,
             spk[i] = False
 
 
+@njit(cache=True, fastmath=False, parallel=True, nogil=True)
+def _membrane_exact(v, g, refrac, ext, noise, v_th, free, e_m, e_s, k_g, one_m_em, dt, v_floor, spk):
+    """the exact step of the linear system dv/dt = (-v + g + ext) / tau_m, dg/dt = -g / tau_syn over dt (Shiu 2024's
+    Brian2 method='linear'; 09-19): v <- v e_m + ext (1 - e_m) + g A (e_s - e_m) with A = tau_syn / (tau_syn - tau_m),
+    then g <- g e_s. forward Euler at dt = 1 ms puts the synaptic potential's peak 16 % low (docs/MINECRAFT_OPEN.md)."""
+    n = v.shape[0]
+    for i in prange(n):
+        gi = g[i]
+        if gi < 1e-20 and gi > -1e-20: gi = 0.0
+        if refrac[i] <= 0.0:
+            free[i] = True
+            v[i] = v[i] * e_m + ext[i] * one_m_em + gi * k_g + noise[i]
+            if v[i] < -v_floor: v[i] = -v_floor
+            spk[i] = v[i] >= v_th[i]
+        else:
+            free[i] = False
+            refrac[i] -= dt
+            if v[i] < -v_floor: v[i] = -v_floor
+            spk[i] = False
+        g[i] = gi * e_s
+
+
 @njit(cache=True, nogil=True)
 def _count_live(di, drive_hz):
     c = 0
@@ -99,6 +121,7 @@ class FastFlyBrain(FlyBrain):
         self._free_buf = np.zeros(self.N, np.bool_); self._spk_buf = np.zeros(self.N, np.bool_)
         self._zero_noise = np.zeros(self.N, np.float32)
         self._empty_f64 = np.zeros(0, np.float64)
+        self.integrate = "euler"   # "exact": the linear system stepped exactly (Shiu 2024, Brian2 method=linear); "euler": the reference engine (flysim), the record
 
     def _propagate(self, spikes, scale=None):
         if self.engine == "dense": return super()._propagate(spikes, scale)
@@ -131,7 +154,12 @@ class FastFlyBrain(FlyBrain):
             ext = self._ext.copy(); ext[self._kc] -= np.float32(p.apl_w * self._apl)
         else: ext = self._ext
         free = self._free_buf   # refrac <= 0 before the update, as in flysim: gates the Poisson receptors below
-        _membrane(self.v, self.g, self.refrac, ext, np.ascontiguousarray(noise, dtype=np.float32), self.v_th, free,
+        if getattr(self, "integrate", "euler") == "exact":
+            e_m = np.exp(-dt / p.tau_m); e_s = np.exp(-dt / p.tau_syn); A = p.tau_syn / (p.tau_syn - p.tau_m)
+            _membrane_exact(self.v, self.g, self.refrac, ext, np.ascontiguousarray(noise, dtype=np.float32), self.v_th, free,
+                            np.float32(e_m), np.float32(e_s), np.float32(A * (e_s - e_m)), np.float32(1.0 - e_m), np.float32(dt), np.float32(p.v_thresh), spk)
+        else:
+            _membrane(self.v, self.g, self.refrac, ext, np.ascontiguousarray(noise, dtype=np.float32), self.v_th, free,
                   np.float32(dt), np.float32(p.tau_syn), np.float32(p.tau_m), np.float32(p.v_thresh), spk)
         di = self._driven_idx
         if di.size:   # the driven-cell Poisson draw in one kernel (09-18, docs/PERFORMANCE.md: 1.2x on the step; same rng call, same float32 arithmetic, spike-identical)
