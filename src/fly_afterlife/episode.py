@@ -16,10 +16,11 @@ import numpy as np
 
 
 class Episode:
-    def __init__(self, fps, chunk, eye, room, him, her, brains, readouts, registries, front_end, rest, effectors, lam=0.8, log_every=50, on_chunk=None, threads=True, state=None):
+    def __init__(self, fps, chunk, eye, room, him, her, brains, readouts, registries, front_end, rest, effectors, lam=0.8, log_every=50, on_chunk=None, threads=True, state=None, front_end_uv=None):
         """room: any world with scene(bodies) / step_frame(m, f, fps) / contacts (Room, Drum). her: a Body or None.
         effectors: (steer, pace, her_steer or None, song or None). on_chunk(ep, c, cntM): optional per-chunk hook."""
-        self.on_chunk = on_chunk; self.threads = threads; self.state = state   # an internal state object with update(t, taste) and .feeding / .sat, or None (09-18)
+        self.on_chunk = on_chunk; self.threads = threads; self.state = state
+        self.front_end_uv = front_end_uv; self.LUM_UV = []   # the UV retina through a second flyvis (Mi15), when the world has scene_uv (09-18)   # an internal state object with update(t, taste) and .feeding / .sat, or None (09-18)
         from concurrent.futures import ThreadPoolExecutor; self.pool = ThreadPoolExecutor(max_workers=1)
         self.fps, self.CH, self.SPF = fps, chunk, 1000 // fps
         self.eye, self.room, self.m, self.her = eye, room, him, her
@@ -36,12 +37,15 @@ class Episode:
         """CH frames: render his eye, log poses, step the world. returns (lum, touched_m, kind_m, touched_f)."""
         CH, m, her = self.CH, self.m, self.her
         lum = np.zeros((CH, self.eye.n), np.float32); touched_m = [None] * CH; touched_f = [None] * CH; kind_m = [0] * CH
+        uv = self.front_end_uv is not None and hasattr(self.room, "scene_uv"); lum_uv = np.zeros((CH, self.eye.n), np.float32) if uv else None
         for f in range(CH):
             lum[f] = self.eye.render(self.room.scene([] if self.solo else [her]), pos=(m.x, m.y, 0.5), heading_deg=m.h); self.POSE.append((m.x, m.y, m.h))
+            if uv: lum_uv[f] = self.eye.render(self.room.scene_uv([] if self.solo else [her]), pos=(m.x, m.y, 0.5), heading_deg=m.h)
             if not self.solo: self.POSE2.append((her.x, her.y, her.h))
             self.room.step_frame(m, her, self.fps)
             touched_m[f] = m.touched; kind_m[f] = m.kind; touched_f[f] = None if self.solo else her.touched
             self.TOUCH.append(touched_m[f]); self.TKIND.append(kind_m[f])
+        if uv: self.LUM_UV.append(lum_uv); self._lum_uv = lum_uv
         return lum, touched_m, kind_m, touched_f
 
     def smells(self):
@@ -93,6 +97,7 @@ class Episode:
         for c in range(T // self.CH):
             lum, touched_m, kind_m, touched_f = self.render_and_move()
             a = self.front_end(lum)
+            if self.front_end_uv is not None and hasattr(self.room, "scene_uv"): a = dict(a); a.update(self.front_end_uv(self._lum_uv))
             dist = np.hypot(m.x - her.x, m.y - her.y) if self.female else np.inf
             self.smells()
             singing = (bool(self.songdet.hist) and len(self.songdet.hist) >= 5 and (log["song"] and log["song"][-1]) and dist < 0.4) if self.songdet is not None else False
@@ -126,6 +131,7 @@ class Episode:
         if walls is not None: out["walls"] = np.array([walls['half'], walls['height'], walls['albedo']], np.float32)
         if her_albedo is not None: out["her_albedo"] = her_albedo
         if her_r is not None: out["her_r"] = her_r
+        if self.LUM_UV: out["lum_uv"] = (np.clip(np.concatenate(self.LUM_UV), 0, 1) * 255).astype(np.uint8)
         if extra: out.update(extra)
         np.savez_compressed(path, **out)
         print("wrote", path, f"contacts {self.room.contacts}, song chunks {sum(log['song'])}, mean dist {np.mean(log['dist']):.2f}")

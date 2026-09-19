@@ -42,6 +42,7 @@ if _HAVE_NUMBA:
             if has_sun and dz > 0:
                 ca = dx * sun[0] + dy * sun[1] + dz * sun[2]
                 if ca > 0: l += sun[3] * ca ** sun[4]
+                if sun[5] > 0.0 and ca > sun[5]: l = sun[6]   # the disc: within cos(half-angle) of the sun, a clipped luminance (09-18)
             tmin = np.inf
             if has_floor and dz < -1e-9:
                 t = -oz / dz
@@ -120,8 +121,8 @@ class Scene:
             lum = np.empty(len(d), np.float32)
             fl = self.floor; ftex = np.ascontiguousarray(fl["tex"], np.float32) if fl is not None else np.zeros((1, 1), np.float32); fhalf = float(fl["half"]) if fl is not None else 1.0
             dsc = np.array([[x, y, z, r, a] for x, y, z, r, a in self.discs], np.float64).reshape(-1, 5)
-            sn = self.sun; sunv = np.zeros(5)
-            if sn is not None: sd = np.asarray(sn["dir"], float); sd = sd / np.linalg.norm(sd); sunv = np.array([sd[0], sd[1], sd[2], sn["boost"], sn["k"]], np.float64)
+            sn = self.sun; sunv = np.zeros(7)
+            if sn is not None: sd = np.asarray(sn["dir"], float); sd = sd / np.linalg.norm(sd); sunv = np.array([sd[0], sd[1], sd[2], sn["boost"], sn["k"], (np.cos(np.radians(sn["disc_deg"])) if sn.get("disc_deg", 0) > 0 else 0.0), sn.get("disc_lum", 1.0)], np.float64)
             _shade_kernel(np.asarray(origin, np.float64), np.ascontiguousarray(d, np.float64), float(self.sky), float(self.ground), float(self.soft), dr is not None, drum, wl is not None, walls, pil, sph, lum, fl is not None, ftex, fhalf, dsc, sn is not None, sunv, self.ring is not None, (np.array([self.ring["radius"], self.ring["height"], self.ring["albedo"]], np.float64) if self.ring is not None else np.zeros(3)))
             return np.clip(lum, 0, 1) if sn is not None else lum
         lum = np.where(d[:, 2] > 0, self.sky, self.ground).astype(np.float32)
@@ -133,6 +134,7 @@ class Scene:
         if self.sun is not None:
             sd = np.asarray(self.sun["dir"], float); sd /= np.linalg.norm(sd); cosang = np.clip(d @ sd, 0, 1)
             lum = np.where(d[:, 2] > 0, lum + self.sun["boost"] * cosang ** self.sun["k"], lum).astype(np.float32)
+            if self.sun.get("disc_deg", 0) > 0: lum = np.where((d[:, 2] > 0) & (cosang > np.cos(np.radians(self.sun["disc_deg"]))), np.float32(self.sun.get("disc_lum", 1.0)), lum).astype(np.float32)
         tmin = np.full(len(d), np.inf)
         if self.floor is not None:                     # the ground is a plane at z = 0 with a texture; the horizon gradient only above it
             fl = self.floor; down = d[:, 2] < -1e-9; t = np.where(down, -origin[2] / np.where(down, d[:, 2], -1.0), np.inf)

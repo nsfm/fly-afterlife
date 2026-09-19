@@ -84,6 +84,18 @@ class Garden(Room):
         return Scene(sky=self.sky, ground=self.ground, spheres=sph, pillars=list(self.grass), walls=dict(half=self.half, height=self.height, albedo=self.albedo),
                      floor=dict(tex=self.tex, half=self.half), discs=list(self.leaves) + [(px, py, pz, pr, pa)], sun=dict(dir=self.sun_dir, boost=0.3, k=10))
 
+    # ---- the UV eye's view (09-18): the sky is the source (Rayleigh), the ground dark (vegetation and soil absorb UV), water a mirror,
+    # the sun a clipped disc. albedos are estimates (E); the eye's acceptance angle supplies the bloom.
+    UV = dict(sky=1.0, ground=0.06, floor=0.05, grass=0.04, leaf=0.04, stone=0.30, fruit=0.05, puddle=0.90, rim=0.15, her=0.05, disc_deg=2.5)
+
+    def scene_uv(self, others):
+        u = self.UV; sph = [(np.array([b.x, b.y, 0.5]), b.r, u["her"]) for b in others if b.present]
+        sx, sy, sz, sr, _ = self.stone; fx, fy, fz, fr, _ = self.fruit; sph += [(np.array([sx, sy, sz]), sr, u["stone"]), (np.array([fx, fy, fz]), fr, u["fruit"])]
+        px, py, pz, pr, _ = self.puddle
+        if not hasattr(self, "_tex_uv"): tt = self.tex; self._tex_uv = (u["floor"] * (0.6 + 0.8 * (tt - tt.min()) / (tt.max() - tt.min() + 1e-9))).astype(np.float32)
+        return Scene(sky=u["sky"], ground=u["ground"], spheres=sph, pillars=[(x, y, r, u["grass"], h) for x, y, r, _, h in self.grass], walls=dict(half=self.half, height=self.height, albedo=u["rim"]),
+                     floor=dict(tex=self._tex_uv, half=self.half), discs=[(x, y, z, r, u["leaf"]) for x, y, z, r, _ in self.leaves] + [(px, py, pz, pr, u["puddle"])], sun=dict(dir=self.sun_dir, boost=0.4, k=6, disc_deg=u["disc_deg"], disc_lum=1.0))
+
     # ---- fields
     def _shade_at(self, x, y):
         s = 1.0
