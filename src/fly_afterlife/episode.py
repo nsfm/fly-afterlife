@@ -45,6 +45,7 @@ class Episode:
             self.room.step_frame(m, her, self.fps)
             touched_m[f] = m.touched; kind_m[f] = m.kind; touched_f[f] = None if self.solo else her.touched
             self.TOUCH.append(touched_m[f]); self.TKIND.append(kind_m[f])
+        self._lum_frames = lum
         if uv: self.LUM_UV.append(lum_uv); self._lum_uv = lum_uv
         return lum, touched_m, kind_m, touched_f
 
@@ -75,6 +76,7 @@ class Episode:
                 if hasattr(self.room, "humidity"): st_["humidity"] = self.room.humidity(float(px), float(py))
                 if hasattr(self.room, "wind"): st_["wind_rel"] = float((np.degrees(np.arctan2(-self.room.wind[1], -self.room.wind[0])) - ph + 180) % 360 - 180)   # where the wind comes FROM, relative to his heading (+ = from his left)
                 st_["taste"] = getattr(m, "taste", None)
+            st_["lum"] = self._lum_frames[f]; st_["lum_uv"] = (self._lum_uv[f] if getattr(self, "_lum_uv", None) is not None else None)   # the retinas of this frame, for receptor rows driven by column (R7 / R8, 09-18)
             if self.state is not None: self.state.update(t_f, getattr(m, "taste", None)); st_["feeding"] = self.state.feeding; st_["sat"] = self.state.sat
             self.REG.apply(self.M, st_, t_f, 1.0 / fps)
             if self.female: self.REGF.apply(self.F, st_, t_f, 1.0 / fps)

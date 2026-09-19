@@ -135,6 +135,13 @@ loop is probably a bug (mechanosensation brief).
 
 ## 2e. what the dish said (09-18 18:25, `experiments/benchmark.py` vs the Roman lab's flies)
 
+- [ ] **the compass needs a graded build** (09-18 late): the UV retina, the sun disc and the columns exist (`--uv`), but the
+      anterior visual pathway (R7 -> Dm2 -> MeTu -> TuBu -> ER) does not carry spikes at these constants (photoreceptors
+      are histaminergic: light inhibits; Dm2's excitation is two synapses' worth; at gain 1,000 the ring neurons still
+      sit at 0). and the ring's bump is tonic excitation shaped by inhibition, which silent LIF cells cannot do. options:
+      (a) a graded model of the anterior pathway + the ring (a flyvis-like extension: the eye track); (b) a labelled
+      stand-in: ring neurons driven by the sun's azimuth (their receptive fields tile azimuth in life), with the EPG
+      ring given a tonic floor (ExR1 / PEN at rest) so ER inhibition can shape it; test with `experiments/compass.py`.
 - [ ] **the compass is dark** (09-18 night): EPG / PEN / Delta7 / PFL all 0.00 Hz with vision on, and the ring does not
       hold a kicked bump. FIRST: the anterior visual pathway into the seam: flyvis Mi15 onto his Mi15 cells by column
       (Mi15 / Dm2 -> MeTu -> TuBu -> ER; the R7/R8 pathway, a luminance stand-in, labelled) + a sun disc in the sky

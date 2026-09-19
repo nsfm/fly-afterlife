@@ -2902,6 +2902,35 @@ give it, and that is the sky compass we cannot build with this eye. the receptor
 oracle. nate's other asks tonight: the UV in the human view as false colour (the viewer agent, in flight); an
 ocelli panel waits for ocelli.
 
+**the anterior visual pathway does not propagate as spikes (21:44 PDT).** three attempts, each one honest:
+(1) **his own photoreceptors driven by column** (`--uv-photo`: R7 from the UV retina, R8 from the green, Poisson
+stand-ins; R7 at 25 Hz mean, sky-facing cells at 100; R8 at 60): Dm2 silent, MeTu3c *quieter* (6.6 -> 3.9 Hz).
+the reason is the sign: every photoreceptor in him is histaminergic, so light makes them inhibit their targets
+(R7 -> Dm8 -6.4, -> MeTu3c -3.1 per cell), and the next cells signal in life by release from that inhibition, which
+a silent spiking cell cannot do. the receptor-level seam is wrong in principle here, as it was for the motion eye.
+(2) **the graded ON cells across the seam** (`--uv`: flyvis's Mi15, L5 and Mi1 onto his own, 1,043 + 1,551 + 1,543
+cells by column; Dm2's traced excitation is L5 +2.1 and Mi1 +1.7 per cell): L5 fires at 2 Hz, Mi1 at 8, Mi15 at
+15; **Dm2 stays silent** (two synapses' worth against a seven-millivolt threshold); MeTu3c 6 Hz; TuBu09 / 10 at 2
+and 0.7; every ring neuron and every compass cell 0.00. (3) **a gain on the pathway** (`--uv-gain 400 | 1000`):
+
+| gain (Hz per unit) | Mi15 | MeTu3c | TuBu09 | TuBu10 | Dm2 | MeTu1 | ER2_c | ER4d | EPG |
+|---|---|---|---|---|---|---|---|---|---|
+| 150 | 14.7 | 6.4 | 2.1 | 0.7 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 |
+| 400 | 30.3 | 20.9 | 16.4 | 9.8 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 |
+| 1,000 | 49.1 | 36.4 | 28.1 | 23.4 | 0.03 | 0.00 | 0.01 | 0.00 | 0.02 |
+
+at an absurd drive the chain reaches two tubercle types at 25 Hz and the ring neurons behind them do not
+answer; Dm2, MeTu1 and the other tubercle types never wake. **so the pathway is four graded stages deep (R7,
+Dm2, MeTu, TuBu) and does not carry spikes at these constants, which is monday's optic-lobe finding one neuropil
+over. and the ring itself needs more than input:** its bump is tonic recurrent excitation (EPG-PEN, ExR1)
+shaped by *inhibition* from the ring neurons (ER -> EPG is GABAergic), and a silent cell cannot be shaped by
+inhibition; the kick test (21:14) said the recurrence does not hold at 0.185 mV either. the compass in this
+fly is a graded-physiology build, like flyvis was for the motion eye: a graded model of the anterior pathway
+and of the ring, or a labelled stand-in at the ring neurons with the ring given a tonic floor. neither is
+tonight. what stands: the UV retina, the sun, the columns for R7 / R8 / Dm2, the per-type logging, and the
+measurement that says where the wall is. the viewer draws all of it (a UV false-colour layer as a second
+raytrace, the eye in green / UV / both, the dish as a ring).
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,

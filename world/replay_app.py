@@ -17,11 +17,29 @@ keys   space play/pause          left/right step a frame       shift+left/right 
        , . step a frame          home/end first/last           l loop
        [ ] slower/faster         - = human FOV -/+ 5 deg (shift: 15)      0 reset FOV
        v cycle the eye panel (dots / panorama)                 s camera smoothing on/off
+       u cycle the human view's UV layer (off / tint / hatch / both)      c cycle the eye's channel
        h or ? keyboard help      q or esc quit                 click or drag the bar to scrub
        mouse wheel over the human view also changes its FOV
 
 the on-screen controls at the top do the same things; everything is clickable. --eye pano opens on the
-panorama, --no-smooth opens on the raw per-chunk heading, --loop loops, --cap sets the display frame cap.
+panorama, --no-smooth opens on the raw per-chunk heading, --loop loops, --cap sets the display frame cap,
+--uv tint|hatch|both opens with the UV layer on, --chan uv|both opens the eye on the UV retina.
+
+UV (09-18). R7/R8 see a world we do not: the sky is the source, vegetation and soil are near-black, water is
+a mirror and the sun is a clipped disc. two things show it here, and neither is a recolouring of the green
+image - both come from the UV world itself.
+  - the human view's false-colour layer (`u`). a SECOND raytrace of the same pose through a UV Scene rebuilt
+    the way garden.scene_uv builds it (sky 1.0, ground 0.06, floor 0.05 x the saved texture's own contrast,
+    grass / leaves 0.04, stone 0.30, fruit 0.05, puddle 0.90, rim 0.15, sun disc 2.5 deg clipped to 1.0),
+    composited over the grayscale visible image as a violet tint proportional to UV luminance, a violet
+    crosshatch whose spacing tightens in five steps with it, or both. it is a second shade call per frame,
+    cached in its own LRU beside the first, rendered by the same worker thread and (at --uv-div 2) at half
+    resolution. only for `world == "garden"` - that is the only world with a UV description.
+  - the eye panel's channel (`c`), when the run was made with --uv and the file carries `lum_uv`: green
+    (the saved R1-R6 luminance, as before), uv (the saved R7 luminance, in violet), or both (UV over green
+    in one blend: green stays green, UV-bright goes violet, both-bright goes white). works in dots and pano.
+the ocelli would go next to the eye panel - but nothing drives them yet (no receptors identified), so there
+is no panel for them and there should not be one until there is a signal to draw.
 
 WHY THE HUMAN VIEW JUDDERED (and what `s` does about it). steering is applied once per 100 ms chunk, so
 pose[:, 2] is a staircase: 9 frames in 10 have exactly zero heading change and the tenth jumps by up to 12 deg.
@@ -77,6 +95,20 @@ BLANK  = (16, 19, 26)        # the panorama beyond 5.5 deg of any column: he sam
 SPEEDS = [0.1, 0.25, 0.5, 1, 2, 3, 4, 6, 8, 12, 16, 24, 30]
 PANO_LIM = 5.5               # deg: the web player's acceptance radius for the nearest-column splat
 
+# ---- the UV false colour. one hue, used by every UV thing in the window so the eye learns it in one look.
+UVC    = (186, 118, 255)     # "this is ultraviolet": the tint, the hatch, the UV dots, the UV chips
+UV_TR, UV_TG, UV_TB = 196.0, 74.0, 255.0        # what a UV luminance of 1.0 tints the visible image toward
+UV_HR, UV_HG, UV_HB = 208.0, 120.0, 255.0       # the crosshatch ink
+UV_TINT_MAX = 0.78           # tint weight at full UV: below 1 so the visible image is never fully erased
+UV_MODES = ("off", "tint", "hatch", "both")     # what `u` cycles
+UV_BITS = {"off": 0, "tint": 1, "hatch": 2, "both": 3}
+UV_TITLE = {"tint": "tint", "hatch": "crosshatch", "both": "tint + crosshatch"}
+CHANS = ("green", "uv", "both")                 # what `c` cycles (only when the file has lum_uv)
+# the UV world, as garden.Garden.UV writes it (src/fly_afterlife/garden.py). kept verbatim so the viewer's
+# second raytrace is the same world his R7s were shown, not a lookalike.
+UV_ALB = dict(sky=1.0, ground=0.06, floor=0.05, grass=0.04, leaf=0.04, stone=0.30, fruit=0.05,
+              puddle=0.90, rim=0.15, her=0.05, disc_deg=2.5)
+
 # ---- small kernels for the per-frame pixel work (numpy fallbacks if numba is missing, as omma does)
 try:
     from numba import njit, prange
@@ -108,6 +140,61 @@ try:
             else:
                 v = row[k]; flat[q, 0] = v; flat[q, 1] = v; flat[q, 2] = v
 
+    @njit(cache=True)
+    def _paint2(row, rowu, idx, src, flat, chan):    # the dots in UV (chan 1) or UV-over-green (chan 2)
+        for k in range(idx.shape[0]):
+            s = src[k]; j = idx[k]; w = float(rowu[s])
+            if chan == 1:
+                flat[j, 0] = np.uint8(w * 0.60); flat[j, 1] = np.uint8(w * 0.24); flat[j, 2] = np.uint8(w)
+            else:
+                v = float(row[s]); g = 0.88 * v + 0.12 * w
+                flat[j, 0] = np.uint8(w * 0.90); flat[j, 1] = np.uint8(g if g < 255.0 else 255.0); flat[j, 2] = np.uint8(w * 0.96)
+
+    @njit(cache=True, parallel=True)
+    def _splat2(row, rowu, near, flat, chan, br, bg_, bb):          # the same, for the panorama
+        for q in prange(near.shape[0]):
+            k = near[q]
+            if k < 0:
+                flat[q, 0] = br; flat[q, 1] = bg_; flat[q, 2] = bb
+            elif chan == 1:
+                w = float(rowu[k]); flat[q, 0] = np.uint8(w * 0.60); flat[q, 1] = np.uint8(w * 0.24); flat[q, 2] = np.uint8(w)
+            else:
+                v = float(row[k]); w = float(rowu[k]); g = 0.88 * v + 0.12 * w
+                flat[q, 0] = np.uint8(w * 0.90); flat[q, 1] = np.uint8(g if g < 255.0 else 255.0); flat[q, 2] = np.uint8(w * 0.96)
+
+    @njit(cache=True, parallel=True, fastmath=True)
+    def _uv_comp(g, u, mode, out):
+        """the human view's false-colour composite: gray visible (H,W) + UV (h,w, possibly smaller) -> (H,W,3).
+        mode is a bit field: 1 = violet tint proportional to UV, 2 = violet crosshatch whose spacing tightens
+        with UV in five steps (each coarse family is a subset of the finer one, so density grows smoothly and
+        the lines never jump around between frames)."""
+        H, W = g.shape; hu, wu = u.shape
+        xm = np.empty(W, np.int64); ym = np.empty(H, np.int64)      # the upscale, out of the inner loop
+        for x in range(W): xm[x] = x * wu // W
+        for y in range(H): ym[y] = y * hu // H
+        for y in prange(H):
+            yu = ym[y]
+            for x in range(W):
+                v = float(g[y, x]); w = float(u[yu, xm[x]]) / 255.0
+                r = v; gg = v; b = v
+                if mode & 1:
+                    t = UV_TINT_MAX * w
+                    r = v * (1.0 - t) + UV_TR * t; gg = v * (1.0 - t) + UV_TG * t; b = v * (1.0 - t) + UV_TB * t
+                if mode & 2:
+                    lv = int(w * 5.0 + 0.5)
+                    if lv > 0:
+                        s = x + y; d = x - y; on = False
+                        if lv == 1: on = (s % 16) == 0
+                        elif lv == 2: on = (s % 8) == 0
+                        elif lv == 3: on = (s % 8) == 0 or (d % 8) == 0
+                        elif lv == 4: on = (s % 4) == 0 or (d % 8) == 0
+                        else: on = (s % 4) == 0 or (d % 4) == 0
+                        if on:
+                            r = 0.30 * r + 0.70 * UV_HR; gg = 0.30 * gg + 0.70 * UV_HG; b = 0.30 * b + 0.70 * UV_HB
+                out[y, x, 0] = np.uint8(r if r < 255.0 else 255.0)
+                out[y, x, 1] = np.uint8(gg if gg < 255.0 else 255.0)
+                out[y, x, 2] = np.uint8(b if b < 255.0 else 255.0)
+
     @njit(cache=True, parallel=True)
     def _nearest(cx, cy, cz, cel, PW, PH, cos_lim, lim, out):
         """for each panorama pixel (azimuth across, elevation up), the nearest column within `lim` deg, else -1.
@@ -136,6 +223,28 @@ except ImportError:                                 # pragma: no cover
     def _splat(row, near, flat, br, bg_, bb):
         v = np.where(near >= 0, row[np.maximum(near, 0)], 0)
         flat[:] = v[:, None]; flat[near < 0] = (br, bg_, bb)
+    def _uv_rgb(v, w, chan):                                   # (N,) green, (N,) uv -> (N,3) uint8
+        v = v.astype(np.float32); w = w.astype(np.float32)
+        if chan == 1: out = np.stack([w * 0.60, w * 0.24, w], 1)
+        else: out = np.stack([w * 0.90, np.minimum(0.88 * v + 0.12 * w, 255), w * 0.96], 1)
+        return out.astype(np.uint8)
+    def _paint2(row, rowu, idx, src, flat, chan): flat[idx] = _uv_rgb(row[src], rowu[src], chan)
+    def _splat2(row, rowu, near, flat, chan, br, bg_, bb):
+        k = np.maximum(near, 0); flat[:] = _uv_rgb(row[k], rowu[k], chan); flat[near < 0] = (br, bg_, bb)
+    def _uv_comp(g, u, mode, out):
+        H, W = g.shape; hu, wu = u.shape
+        w = (u[(np.arange(H) * hu // H)[:, None], (np.arange(W) * wu // W)[None, :]].astype(np.float32) / 255.0)
+        v = g.astype(np.float32); rgb = np.repeat(v[:, :, None], 3, 2)
+        if mode & 1:
+            t = (UV_TINT_MAX * w)[:, :, None]
+            rgb = rgb * (1 - t) + t * np.array([UV_TR, UV_TG, UV_TB], np.float32)
+        if mode & 2:
+            lv = np.rint(w * 5.0).astype(np.int64); x = np.arange(W)[None, :]; y = np.arange(H)[:, None]
+            s = x + y; d = x - y; on = np.zeros((H, W), bool)
+            for L, sp, dp in ((1, 16, 0), (2, 8, 0), (3, 8, 8), (4, 4, 8), (5, 4, 4)):
+                m = lv == L; on |= m & ((s % sp == 0) | ((d % dp == 0) if dp else False))
+            rgb[on] = 0.30 * rgb[on] + 0.70 * np.array([UV_HR, UV_HG, UV_HB], np.float32)
+        out[:] = np.clip(rgb, 0, 255).astype(np.uint8)
     def _nearest(cx, cy, cz, cel, PW, PH, cos_lim, lim, out):
         for j in range(PH):
             eld = 90.0 - (j + 0.5) / PH * 180.0
@@ -167,6 +276,12 @@ class Episode:
         self.pose = np.asarray(E["pose"], np.float64); self.n = len(self.pose); self.fps = int(E["fps"])
         self.world = str(E["world"]) if "world" in E.files else "room"
         self.lum = E["lum"] if E["lum"].dtype == np.uint8 else (np.clip(E["lum"], 0, 1) * 255).astype(np.uint8)
+        # the second retina: runs made with --uv save R7's world in the same columns (09-18). absent in older files.
+        self.lum_uv = None
+        if "lum_uv" in E.files:
+            lu = E["lum_uv"]
+            self.lum_uv = lu if lu.dtype == np.uint8 else (np.clip(lu, 0, 1) * 255).astype(np.uint8)
+            if self.lum_uv.shape != self.lum.shape: self.lum_uv = None      # a mismatched retina is worse than none
         self.az = np.asarray(E["az"], np.float64); self.el = np.asarray(E["el"], np.float64)
         self.side = np.asarray(E["side"]) if "side" in E.files else None
         self.touch = np.asarray(E["touch"]) if "touch" in E.files else None
@@ -194,7 +309,15 @@ class Episode:
             self.half = float(self.walls[0]) if self.walls is not None else 2.5
             self.floor_rgb = None
             self.pillar_h = float(E["pillar_height"]) if "pillar_height" in E.files else 1.5
-        self._static = None
+        # the dish (world == "arena"): a circular wall, not the square one the walls array looks like. its height
+        # and albedo still come from walls (2.8, 0.47, 0.6 in the dish runs); the radius has its own key.
+        self.arena = self.world == "arena"
+        self.arena_r = float(E["arena_radius"]) if "arena_radius" in E.files else self.half
+        if self.arena:
+            self.w_h = float(self.walls[1]) if self.walls is not None else 0.47
+            self.w_a = float(self.walls[2]) if self.walls is not None else 0.6
+        self.can_uv = self.world == "garden"     # the only world with a UV description to raytrace (garden.scene_uv)
+        self._static = None; self._static_uv = None; self._tex_uv = None
         self.traces = collections.OrderedDict()
         for k in TRACE_KEYS:
             if "n_m_" + k in E.files: self.traces[k] = np.asarray(E["n_m_" + k], np.float64)
@@ -250,28 +373,62 @@ class Episode:
             return Scene(sky=0.85, ground=0.35, spheres=sph, pillars=[tuple(map(float, g)) for g in self.grass],
                          walls=dict(half=self.half, height=self.w_h, albedo=self.w_a), floor=dict(tex=self.tex, half=self.half),
                          discs=[tuple(map(float, l)) for l in self.leaves] + [tuple(map(float, pu))], sun=dict(dir=(0.6, 0.3, 0.74), boost=0.3, k=10))
+        if self.arena:      # the dish: one cylinder wall seen from inside, not four planes (the square was a lie)
+            return Scene(sky=float(E["sky"]), ground=float(E["ground"]), spheres=sph,
+                         pillars=[tuple(map(float, p)) for p in self.objects], walls=None,
+                         ring=dict(radius=self.arena_r, height=self.w_h, albedo=self.w_a), pillar_height=self.pillar_h)
         w = dict(half=float(self.walls[0]), height=float(self.walls[1]), albedo=float(self.walls[2])) if self.walls is not None else None
         return Scene(sky=float(E["sky"]), ground=float(E["ground"]), spheres=sph,
                      pillars=[tuple(map(float, p)) for p in self.objects], walls=w, pillar_height=self.pillar_h)
+
+    def scene_uv_at(self, i):
+        """the same frame in R7's world, built exactly as garden.scene_uv builds it from the same saved arrays:
+        a bright sky, a near-black floor keeping only the texture's own contrast, dark vegetation, a bright
+        stone, a mirror puddle and a clipped sun disc. garden only - no other world has a UV description."""
+        from omma import Scene
+        if self._static_uv is not None: return self._static_uv
+        if not self.can_uv: return None
+        u = UV_ALB
+        if self._tex_uv is None:
+            tt = self.tex; self._tex_uv = (u["floor"] * (0.6 + 0.8 * (tt - tt.min()) / (tt.max() - tt.min() + 1e-9))).astype(np.float32)
+        st, fr, pu = self.stone, self.fruit, self.puddle
+        sph = [(np.array([self.pose2[i][0], self.pose2[i][1], 0.5]), self.her_r, u["her"])] if self.her else []
+        sph += [(np.array([st[0], st[1], st[2]]), float(st[3]), u["stone"]), (np.array([fr[0], fr[1], fr[2]]), float(fr[3]), u["fruit"])]
+        s = Scene(sky=u["sky"], ground=u["ground"], spheres=sph,
+                  pillars=[(float(g[0]), float(g[1]), float(g[2]), u["grass"], float(g[4])) for g in self.grass],
+                  walls=dict(half=self.half, height=self.w_h, albedo=u["rim"]), floor=dict(tex=self._tex_uv, half=self.half),
+                  discs=[(float(l[0]), float(l[1]), float(l[2]), float(l[3]), u["leaf"]) for l in self.leaves]
+                        + [(float(pu[0]), float(pu[1]), float(pu[2]), float(pu[3]), u["puddle"])],
+                  sun=dict(dir=(0.6, 0.3, 0.74), boost=0.4, k=6, disc_deg=u["disc_deg"], disc_lum=1.0))
+        if not self.her: self._static_uv = s
+        return s
 
 
 # ---------------------------------------------------------------- the human view
 class HumanView:
     """pinhole camera at his eye, rays rotated by the camera heading, shaded by his kernel. LRU of gray frames."""
 
-    def __init__(self, ep, W, H, fov_deg, smooth=True, cap=256):
+    def __init__(self, ep, W, H, fov_deg, smooth=True, cap=256, uv="off", uv_div=1):
         self.ep, self.W, self.H = ep, W, H
         self.cache = collections.OrderedDict(); self.cap = cap; self.lock = threading.Lock()
         self.gen = 0; self.fov = None; self.smooth = smooth
+        # the UV layer: a second LRU of gray UV frames, same keys, optionally at 1/uv_div the resolution (a
+        # false-colour wash and a hatch density do not need the full grid, and half res is a quarter of the rays)
+        self.ucache = collections.OrderedDict(); self.uv = uv if ep.can_uv else "off"
+        self.ud = max(1, int(uv_div)); self.UW = max(8, W // self.ud); self.UH = max(8, H // self.ud)
         self._build(fov_deg)
 
-    def _build(self, fov_deg):
-        W, H = self.W, self.H
+    def _rays(self, W, H, fov_deg):
         fov = np.radians(fov_deg); fx = np.tan(fov / 2); fy = fx * H / W
         u = (np.arange(W) + 0.5) / W * 2 - 1; v = 1 - (np.arange(H) + 0.5) / H * 2; U, V = np.meshgrid(u, v)
         r0 = np.stack([np.ones_like(U), -U * fx, V * fy], -1).reshape(-1, 3)   # forward +x, left +y, up +z
-        self.r0 = np.ascontiguousarray(r0 / np.linalg.norm(r0, axis=1, keepdims=True))
+        return np.ascontiguousarray(r0 / np.linalg.norm(r0, axis=1, keepdims=True))
+
+    def _build(self, fov_deg):
+        self.r0 = self._rays(self.W, self.H, fov_deg)
         self.buf = np.empty_like(self.r0)                  # rotated rays, reused (the kernel wants C-contiguous f8)
+        self.r0u = self.r0 if self.ud == 1 else self._rays(self.UW, self.UH, fov_deg)   # the UV lens is the same lens
+        self.bufu = self.buf if self.ud == 1 else np.empty_like(self.r0u)
         self.fov = float(fov_deg)
 
     def configure(self, fov_deg=None, smooth=None):
@@ -279,23 +436,44 @@ class HumanView:
         with self.lock:
             if fov_deg is not None and abs(fov_deg - self.fov) > 1e-9: self._build(fov_deg)
             if smooth is not None: self.smooth = bool(smooth)
-            self.cache.clear(); self.gen += 1
+            self.cache.clear(); self.ucache.clear(); self.gen += 1
+
+    def set_uv(self, mode):
+        """turn the UV layer on or off. the visible frames stay valid - only the UV LRU is affected."""
+        with self.lock:
+            self.uv = mode if self.ep.can_uv else "off"
+            if self.uv == "off": self.ucache.clear()
 
     def pose_at(self, i):
         if self.smooth: return self.ep.cam_xy[i, 0], self.ep.cam_xy[i, 1], self.ep.cam_h[i]
         p = self.ep.pose[i]; return p[0], p[1], p[2]
 
     def render(self, i):
-        with self.lock: gen, r0, buf = self.gen, self.r0, self.buf
-        x, y, h = self.pose_at(i); hr = np.radians(h)
-        _rot(r0, np.cos(hr), np.sin(hr), buf)
-        img = self.ep.scene_at(i).shade(np.array([x, y, 0.5]), buf).reshape(self.H, self.W)
-        g = (np.clip(img, 0, 1) * 255).astype(np.uint8)
+        """shade whatever frame i is still missing - the visible pass, the UV pass, or both. one pose, two lenses."""
+        with self.lock:
+            gen, r0, buf, r0u, bufu, uv = self.gen, self.r0, self.buf, self.r0u, self.bufu, self.uv
+            need_g = i not in self.cache; need_u = uv != "off" and i not in self.ucache
+        if not (need_g or need_u): return self.get(i)
+        x, y, h = self.pose_at(i); hr = np.radians(h); c, s = np.cos(hr), np.sin(hr); o = np.array([x, y, 0.5])
+        g = uimg = None
+        if need_g:
+            _rot(r0, c, s, buf)
+            g = (np.clip(self.ep.scene_at(i).shade(o, buf), 0, 1) * 255).astype(np.uint8).reshape(self.H, self.W)
+        if need_u:
+            if self.ud != 1 or not need_g: _rot(r0u, c, s, bufu)
+            sc = self.ep.scene_uv_at(i)
+            if sc is not None:
+                uimg = (np.clip(sc.shade(o, bufu), 0, 1) * 255).astype(np.uint8).reshape(self.UH, self.UW)
         with self.lock:
             if gen != self.gen: return g                   # the lens changed while we were shading: drop it
-            self.cache[i] = g; self.cache.move_to_end(i)
-            while len(self.cache) > self.cap: self.cache.popitem(last=False)
-        return g
+            if g is not None:
+                self.cache[i] = g; self.cache.move_to_end(i)
+                while len(self.cache) > self.cap:
+                    k, _ = self.cache.popitem(last=False); self.ucache.pop(k, None)   # keep the two LRUs in step
+            if uimg is not None:
+                self.ucache[i] = uimg; self.ucache.move_to_end(i)
+                while len(self.ucache) > self.cap: self.ucache.popitem(last=False)
+            return g if g is not None else self.cache.get(i)
 
     def get(self, i):
         with self.lock:
@@ -304,17 +482,18 @@ class HumanView:
         return g
 
     def newest_at_or_before(self, i):
-        """the frame to actually show: never one AHEAD of the playhead, or the view stutters backwards."""
+        """the frame to actually show: never one AHEAD of the playhead, or the view stutters backwards.
+        returns (frame index, gray, uv gray or None) - the UV is always the same frame as the gray."""
         with self.lock:
             g = self.cache.get(i)
-            if g is not None: return i, g
-            if not self.cache: return i, None
+            if g is not None: return i, g, self.ucache.get(i)
+            if not self.cache: return i, None, None
             below = [k for k in self.cache if k <= i]
             j = max(below) if below else min(self.cache)
-            return j, self.cache[j]
+            return j, self.cache[j], self.ucache.get(j)
 
     def has(self, i):
-        with self.lock: return i in self.cache
+        with self.lock: return i in self.cache and (self.uv == "off" or i in self.ucache)
 
 
 class RenderThread(threading.Thread):
@@ -411,6 +590,12 @@ def make_map(pg, ep, S, cx, cy, size, font):
     surf = pg.Surface((size, size)); surf.fill(PANEL)
     def w2(x, y): return (cx + x * S, cy - y * S)
     a, b = w2(-ep.half, ep.half); c, d = w2(ep.half, -ep.half); rect = pg.Rect(int(a), int(b), int(c - a), int(d - b))
+    if ep.arena:                      # a dish, not a box: the floor and the rim are one circle of arena_radius
+        pg.draw.circle(surf, (23, 27, 35), (cx, cy), ep.arena_r * S)
+        for o in ep.objects:
+            pg.draw.circle(surf, (242, 239, 230) if o[3] > 0.5 else (58, 64, 78), w2(o[0], o[1]), max(2.0, o[2] * S))
+        pg.draw.circle(surf, (150, 142, 124), (cx, cy), ep.arena_r * S, max(1, int(size / 420.0)))
+        return surf
     if ep.floor_rgb is not None:
         # tex row 0 is y = -half (omma indexes iy from y), and the map's top is y = +half, so flip it
         img = np.ascontiguousarray(ep.floor_rgb[::-1].transpose(1, 0, 2))
@@ -446,6 +631,7 @@ def legend_rows(ep):
                 ((236, 240, 248), "wind arrow")]
     else:
         rows = []
+        if ep.arena: rows.append(((150, 142, 124), "dish rim, r = %.2g m" % ep.arena_r))
         if len(ep.objects) and (ep.objects[:, 3] > 0.5).any(): rows.append(((242, 239, 230), "pale pillar"))
         if len(ep.objects) and (ep.objects[:, 3] <= 0.5).any(): rows.append(((58, 64, 78), "dark pillar"))
     rows.append((HIM, "him (line = heading)"))
@@ -470,6 +656,7 @@ HELP = [("space", "play / pause"), ("left / right   or   , .", "step one frame")
         ("home / end", "first / last frame"), ("l", "loop at the end"), ("[  ]", "slower / faster"),
         ("-  =", "human FOV -/+ 5 deg  (shift: 15)"), ("0", "human FOV back to the default"),
         ("v", "eye panel: ommatidial dots / panorama"), ("s", "camera smoothing on / off (human view only)"),
+        ("u", "human view UV layer: off / tint / hatch / both"), ("c", "eye channel: green / UV / both"),
         ("click / drag the bar", "scrub"), ("h  or  ?", "this card"), ("q  or  esc", "quit")]
 
 
@@ -520,8 +707,12 @@ def run(args):
 
     display = pg.display.set_mode((W, H))
 
-    hv = HumanView(ep, HVW, HVH, args.fov, smooth=not args.no_smooth, cap=args.cache)
+    uv_mode = args.uv if ep.can_uv else "off"
+    chan = args.chan if ep.lum_uv is not None else "green"
+    hv = HumanView(ep, HVW, HVH, args.fov, smooth=not args.no_smooth, cap=args.cache, uv=uv_mode, uv_div=args.uv_div)
     t0 = time.perf_counter(); hv.render(0); t_compile = time.perf_counter() - t0
+    if ep.can_uv:                                             # compile the UV pass and the composite too, before timing
+        hv.set_uv("both"); hv.render(0); hv.set_uv(uv_mode)
     worker = RenderThread(hv); worker.start()
 
     RAD = max(1, int(round(1.2 * S)))
@@ -533,6 +724,12 @@ def run(args):
     pano = Pano(ep.az, ep.el, R_EYE.w, R_EYE.h); pano.start()
     _paint(ep.lum[0], ridx, rsrc, EFLAT); _gray_rgb(hv.get(0), HVBUF)      # compile the pixel kernels before timing
     _splat(ep.lum[0], np.full(4, -1, np.int64), PFLAT[:4], *BLANK)
+    if ep.lum_uv is not None:
+        _paint2(ep.lum[0], ep.lum_uv[0], ridx, rsrc, EFLAT, 2)
+        _splat2(ep.lum[0], ep.lum_uv[0], np.full(4, -1, np.int64), PFLAT[:4], 2, *BLANK)
+    if ep.can_uv:
+        _u0 = hv.newest_at_or_before(0)[2]
+        if _u0 is not None: _uv_comp(hv.get(0), _u0, 3, HVBUF)
 
     MS = R_MAP.w / (2 * ep.half + 0.4); mcx = mcy = R_MAP.w / 2
     base = make_map(pg, ep, MS, mcx, mcy, R_MAP.w, f_leg)
@@ -588,15 +785,21 @@ def run(args):
         return s
     LABS = [(180, "180 left"), (90, "90 left"), (0, "ahead"), (-90, "90 right"), (-180, "180 right")]
     RULERS = {"dots": ruler(190.0, LABS), "pano": ruler(180.0, LABS)}
-    EYE_TITLE = {"dots": "his eye   1,764 ommatidia at their own azimuth / elevation",
+    EYE_TITLE = {"dots": f"his eye   {ep.lum.shape[1]:,} ommatidia at their own azimuth / elevation",
                  "pano": "his eye   nearest-ommatidium panorama, blank past %.1f deg" % PANO_LIM}
-    EYE_SURF = {k: f_lab.render(v, True, DIM) for k, v in EYE_TITLE.items()}
+    CHAN_TXT = {"green": "   green R1-R6", "uv": "   UV R7", "both": "   UV over green"}
+    EYE_SURF = {(m, c): f_lab.render(EYE_TITLE[m] + (CHAN_TXT[c] if ep.lum_uv is not None else ""), True,
+                                     DIM if c == "green" else UVC) for m in EYE_TITLE for c in CHANS}
 
     # ---- the control bar
+    # the cycling buttons (uv, chan) are sized for their widest label so the bar does not twitch as they change
+    UV_LAB = {"off": "uv off", "tint": "uv tint", "hatch": "uv hatch", "both": "uv tint+hatch"}
+    CH_LAB = {"green": "eye green", "uv": "eye UV", "both": "eye UV+green"}
     order = [("home", "|<"), ("prev", "<"), ("play", "pause"), ("next", ">"), ("end", ">|"), None,
              ("slower", "-"), ("speed", "x30.00"), ("faster", "+"), None,
              ("fovdn", "-"), ("fov", "fov 150"), ("fovup", "+"), None,
-             ("dots", "dots"), ("pano", "panorama"), None, ("smooth", "smooth"), ("loop", "loop"), None, ("help", "?")]
+             ("dots", "dots"), ("pano", "panorama"), ("chan", max(CH_LAB.values(), key=len)), None,
+             ("uv", max(UV_LAB.values(), key=len)), ("smooth", "smooth"), ("loop", "loop"), None, ("help", "?")]
     btns = collections.OrderedDict(); x = U(PAD); BH = U(26); BY = U(36)
     for it in order:
         if it is None: x += U(12); continue
@@ -604,6 +807,8 @@ def run(args):
         w = max(U(26), f_ui.size(lab)[0] + U(16))
         b = Btn(bid, lab); b.rect = pg.Rect(x, BY, w, BH); btns[bid] = b; x += w + U(4)
     btns["speed"].tip = "ro"; btns["fov"].tip = "ro"
+    if not ep.can_uv: btns["uv"].tip = "ro"; btns["uv"].label = "uv n/a"        # no UV world to raytrace
+    if ep.lum_uv is None: btns["chan"].tip = "ro"; btns["chan"].label = "no lum_uv"
 
     pos = 0.0; playing = False; spd = SPEEDS.index(1); dragging = False; looping = bool(args.loop)
     eye_mode = args.eye; show_help = False; fov = float(args.fov)
@@ -642,10 +847,11 @@ def run(args):
     def frame(i):
         t = time.perf_counter()
         if full[0]: display.blit(chrome, (0, 0)); last_px[0] = None; full[0] = False
-        # -- human view (the newest finished frame at or before the playhead)
-        j, g = hv.newest_at_or_before(i)
+        # -- human view (the newest finished frame at or before the playhead), plus the UV false colour over it
+        j, g, ug = hv.newest_at_or_before(i)
         if g is not None:
-            _gray_rgb(g, HVBUF)
+            if uv_mode != "off" and ug is not None: _uv_comp(g, ug, UV_BITS[uv_mode], HVBUF)
+            else: _gray_rgb(g, HVBUF)
             src = pg.image.frombuffer(HVBUF, (HVW, HVH), "RGB")
             if R_HV.w == HVW and R_HV.h == HVH: display.blit(src, R_HV.topleft)
             else:
@@ -656,22 +862,27 @@ def run(args):
             pg.draw.rect(display, PANEL, R_HV)
         stats["hv"].append(time.perf_counter() - t); t = time.perf_counter()
         # -- the eye: dots, or the nearest-column panorama
-        mode = eye_mode
+        mode = eye_mode; ch = 0 if chan == "green" else (1 if chan == "uv" else 2)
         if mode == "pano" and pano.ready:
-            _splat(ep.lum[i], pano.near, PFLAT, *BLANK)
+            if ch: _splat2(ep.lum[i], ep.lum_uv[i], pano.near, PFLAT, ch, *BLANK)
+            else: _splat(ep.lum[i], pano.near, PFLAT, *BLANK)
             display.blit(pg.image.frombuffer(PBUF, (R_EYE.w, R_EYE.h), "RGB"), R_EYE.topleft)
             pg.draw.line(display, (226, 166, 59, 90), (R_EYE.centerx, R_EYE.y), (R_EYE.centerx, R_EYE.bottom), 1)
             pg.draw.line(display, (70, 78, 94), (R_EYE.x, R_EYE.centery), (R_EYE.right, R_EYE.centery), 1)
         else:
             mode = "dots"
-            _paint(ep.lum[i], ridx, rsrc, EFLAT)   # the written pixels are the same set every frame, so no clear
+            # the written pixels are the same set every frame, so no clear - but a channel switch changes what is
+            # written into them, not which, so there is nothing stale to wipe either
+            if ch: _paint2(ep.lum[i], ep.lum_uv[i], ridx, rsrc, EFLAT, ch)
+            else: _paint(ep.lum[i], ridx, rsrc, EFLAT)
             display.blit(pg.image.frombuffer(EBUF, (R_EYE.w, R_EYE.h), "RGB"), R_EYE.topleft)
         display.blit(RULERS[mode], R_RUL.topleft)
         display.blit(chrome, (R_EYE.x, R_EYE.y - U(TITLE_H)), pg.Rect(R_EYE.x, R_EYE.y - U(TITLE_H), R_EYE.w, U(TITLE_H)))
-        display.blit(EYE_SURF[eye_mode if (eye_mode == "dots" or pano.ready) else "dots"], (R_EYE.x + U(4), R_EYE.y - U(TITLE_H) + U(4)))
+        display.blit(EYE_SURF[(eye_mode if (eye_mode == "dots" or pano.ready) else "dots", chan)], (R_EYE.x + U(4), R_EYE.y - U(TITLE_H) + U(4)))
         if eye_mode == "pano" and not pano.ready:
             t_ = f_small.render("building the nearest-ommatidium table...", True, FAINT)
             display.blit(t_, (R_EYE.centerx - t_.get_width() // 2, R_EYE.centery))
+        # an ocelli panel would go here - but nothing identifies or drives the three ocelli yet, so there is no signal to draw.
         stats["eye"].append(time.perf_counter() - t); t = time.perf_counter()
         # -- map
         display.blit(base, R_MAP.topleft); draw_path(i); display.blit(path, R_MAP.topleft)
@@ -698,11 +909,16 @@ def run(args):
         # -- header: the panel title that carries state, the readout, the buttons, the bar
         display.blit(chrome, (0, 0), R_HEAD)
         display.blit(chrome, (R_HV.x, R_HV.y - U(TITLE_H)), pg.Rect(R_HV.x, R_HV.y - U(TITLE_H), R_HV.w, U(TITLE_H)))
-        display.blit(f_lab.render(f"human view   his raytracer, pinhole {fov:g} deg" + ("   camera smoothed" if hv.smooth else "   raw pose"), True, DIM),
-                     (R_HV.x + U(4), R_HV.y - U(TITLE_H) + U(4)))
+        hv_txt = f"human view   his raytracer, pinhole {fov:g} deg" + ("   camera smoothed" if hv.smooth else "   raw pose")
+        display.blit(f_lab.render(hv_txt, True, DIM), (R_HV.x + U(4), R_HV.y - U(TITLE_H) + U(4)))
+        if uv_mode != "off":                                  # the mode belongs in the title, in the UV colour
+            display.blit(f_lab.render("   + UV " + UV_TITLE[uv_mode] + ("" if hv.ud == 1 else " (half res)"), True, UVC),
+                         (R_HV.x + U(4) + f_lab.size(hv_txt)[0], R_HV.y - U(TITLE_H) + U(4)))
         btns["play"].label = "pause" if playing else "play"
         btns["speed"].label = f"x{SPEEDS[spd]:g}"; btns["fov"].label = f"fov {fov:g}"
         btns["dots"].on = eye_mode == "dots"; btns["pano"].on = eye_mode == "pano"
+        if ep.can_uv: btns["uv"].label = UV_LAB[uv_mode]; btns["uv"].on = uv_mode != "off"
+        if ep.lum_uv is not None: btns["chan"].label = CH_LAB[chan]; btns["chan"].on = chan != "green"
         btns["smooth"].on = hv.smooth; btns["loop"].on = looping; btns["help"].on = show_help
         for b in btns.values(): draw_btn(b)
         fill = pg.Rect(R_BAR.x, R_BAR.y, max(U(3), int(R_BAR.w * i / max(1, ep.n - 1))), R_BAR.h)
@@ -738,11 +954,14 @@ def run(args):
         wall = time.perf_counter() - t0
         def ms(a): a = np.array(a) * 1000; return f"mean {a.mean():6.2f}  p50 {np.median(a):6.2f}  p95 {np.percentile(a, 95):6.2f}"
         zero, mx = ep.heading_steps()
-        print(f"{args.npz}: {ep.n} frames, {ep.fps} fps, world={ep.world}, her in scene={ep.her}, retina {ep.lum.shape[1]} columns")
-        print(f"  window {W}x{H} (scale {S:g}), eye panel {eye_mode}, fov {fov:g}")
+        print(f"{args.npz}: {ep.n} frames, {ep.fps} fps, world={ep.world}, her in scene={ep.her}, retina {ep.lum.shape[1]} columns"
+              + ("  + lum_uv" if ep.lum_uv is not None else "  (no lum_uv)") + (f", dish r={ep.arena_r:g} m" if ep.arena else ""))
+        print(f"  window {W}x{H} (scale {S:g}), eye panel {eye_mode}/{chan}, fov {fov:g}, uv layer {uv_mode}"
+              + (f" at {hv.UW}x{hv.UH}" if uv_mode != "off" else "") + (" (this world has no UV description)" if not ep.can_uv else ""))
+        print(f"  control bar ends at x={max(b.rect.right for b in btns.values())} of {W}")
         print(f"  steering chunk {ep.K} frames: {zero * 100:.0f}% of frames have no heading change, largest step {mx:.1f} deg")
         print(f"  first render (numba compile) {t_compile * 1000:.0f} ms" + (f", pano table {pano.secs * 1000:.0f} ms" if pano.secs else ""))
-        print(f"  shade {HVW}x{HVH} ({HVW * HVH} rays)  ms: {ms(sync)}")
+        print(f"  shade {HVW}x{HVH} ({HVW * HVH} rays" + (f" + {hv.UW * hv.UH} UV rays" if uv_mode != "off" else "") + f")  ms: {ms(sync)}")
         for k in ("hv", "eye", "map", "tr", "chrome"): print(f"  panel {k:7s} ms: {ms(stats[k])}")
         tot = sum(float(np.median(stats[k])) for k in ("hv", "eye", "map", "tr", "chrome")) * 1000
         print(f"  window without the raytracer (p50 sum): {tot:.2f} ms/frame  ->  {1000 / tot:.0f} fps")
@@ -766,7 +985,7 @@ def run(args):
         return float(np.clip((mx_ - R_BAR.x) / max(1, R_BAR.w), 0, 1) * (ep.n - 1))
 
     def press(bid, shift=False):
-        nonlocal playing, pos, spd, eye_mode, show_help, looping
+        nonlocal playing, pos, spd, eye_mode, show_help, looping, uv_mode, chan
         if bid == "play": playing = not playing
         elif bid == "prev": pos = max(0, int(pos) - 1); playing = False
         elif bid == "next": pos = min(ep.n - 1, int(pos) + 1); playing = False
@@ -780,6 +999,12 @@ def run(args):
         elif bid in ("dots", "pano"):
             eye_mode = bid
             if bid == "pano": pano.start()
+        elif bid == "uv":
+            if ep.can_uv:
+                uv_mode = UV_MODES[(UV_MODES.index(uv_mode) + (-1 if shift else 1)) % len(UV_MODES)]
+                hv.set_uv(uv_mode); worker.poke()             # the UV LRU needs filling; the visible one is untouched
+        elif bid == "chan":
+            if ep.lum_uv is not None: chan = CHANS[(CHANS.index(chan) + (-1 if shift else 1)) % len(CHANS)]
         elif bid == "smooth": hv.configure(smooth=not hv.smooth); worker.poke()
         elif bid == "loop": looping = not looping
         elif bid == "help":
@@ -805,6 +1030,8 @@ def run(args):
                 elif e.key in (pg.K_EQUALS, pg.K_PLUS): press("fovup", sh)
                 elif e.key == pg.K_0: set_fov(args.fov)
                 elif e.key == pg.K_v: press("pano" if eye_mode == "dots" else "dots")
+                elif e.key == pg.K_u: press("uv", sh)
+                elif e.key == pg.K_c: press("chan", sh)
                 elif e.key == pg.K_s: press("smooth")
                 elif e.key == pg.K_l: press("loop")
                 elif e.key in (pg.K_h, pg.K_SLASH, pg.K_QUESTION): press("help")
@@ -840,6 +1067,9 @@ def main():
     ap.add_argument("--fov", type=float, default=100.0, help="human-view horizontal field of view in degrees (- and = change it live)")
     ap.add_argument("--size", default="640x320", help="the human view's render resolution (it is upscaled to the panel)")
     ap.add_argument("--eye", default="dots", choices=("dots", "pano"), help="which fly view to open with")
+    ap.add_argument("--uv", default="off", choices=UV_MODES, help="human-view UV false-colour layer to open with (garden only; `u` cycles)")
+    ap.add_argument("--chan", default="green", choices=CHANS, help="eye panel channel to open with (needs lum_uv in the file; `c` cycles)")
+    ap.add_argument("--uv-div", type=int, default=1, help="render the UV pass at 1/N the human view's resolution (2 = a quarter of the rays)")
     ap.add_argument("--no-smooth", action="store_true", help="open with the raw per-chunk heading (judders; `s` toggles)")
     ap.add_argument("--loop", action="store_true", help="loop at the end")
     ap.add_argument("--cache", type=int, default=256, help="human-view frames kept (LRU)")
