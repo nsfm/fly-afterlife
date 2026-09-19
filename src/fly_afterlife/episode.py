@@ -75,7 +75,7 @@ class Episode:
                     st_["odour_L"] = oL; st_["odour_R"] = oR
                 if hasattr(self.room, "humidity"): st_["humidity"] = self.room.humidity(float(px), float(py))
                 if hasattr(self.room, "wind"): st_["wind_rel"] = float((np.degrees(np.arctan2(-self.room.wind[1], -self.room.wind[0])) - ph + 180) % 360 - 180)   # where the wind comes FROM, relative to his heading (+ = from his left)
-                st_["taste"] = getattr(m, "taste", None)
+                st_["taste"] = getattr(m, "taste", None); st_["heading"] = float(ph)
             st_["lum"] = self._lum_frames[f]; st_["lum_uv"] = (self._lum_uv[f] if getattr(self, "_lum_uv", None) is not None else None)   # the retinas of this frame, for receptor rows driven by column (R7 / R8, 09-18)
             if self.state is not None: self.state.update(t_f, getattr(m, "taste", None)); st_["feeding"] = self.state.feeding; st_["sat"] = self.state.sat
             self.REG.apply(self.M, st_, t_f, 1.0 / fps)

@@ -2931,6 +2931,33 @@ tonight. what stands: the UV retina, the sun, the columns for R7 / R8 / Dm2, the
 measurement that says where the wall is. the viewer draws all of it (a UV false-colour layer as a second
 raytrace, the eye in green / UV / both, the dish as a ring).
 
+**the compass points (22:50 PDT; `--ring`: the stand-in, labelled; nate: "the stand-in will tell us if the work's worth it").**
+the stand-in, built on his cells and his wiring: ExR1 (4 cells, 1,107 synapses onto EPG) held tonic so the ring sits
+near threshold; the 215 ring neurons with real output onto EPG given field azimuths tiling the circle and fired by the
+sun at that azimuth relative to his heading (von Mises, kappa 2); their synapses onto the wedge that should hold the bump
+notched to a tenth (`wiring.ring_map`: the plastic map of Kim 2019 and Fisher 2019, which life learns and we impose);
+PEN, Delta7, PFL as wired. the ring is a *ring*: every ring neuron inhibits every wedge within a concentration of 0.1,
+so without the notch the sun lowers inhibition everywhere at once and nothing forms. at ExR1 100 Hz and a ring peak of
+60, over-inhibited, EPG 0.00. the sweep (40 s, seed 12, garden, the sun at 27 deg):
+
+| ExR1 Hz | ring peak Hz | EPG Hz | Delta7 | bump strength (shuffle) | phase vs heading | offset held | bump follows turns |
+|---|---|---|---|---|---|---|---|
+| 200 | 20 | 3.2 | 0.3 | **0.76** (0.25) | **+0.987** | **0.95** | **+0.70** |
+| 200 | 60 | 0.15 | 0.0 | 0.98 (0.30) on 0.7 spikes per chunk | +0.81 | 0.98 | +0.10 |
+| 400 | 20 | 8.3 | 2.4 | 0.67 (0.19) | +0.22 | 0.92 | +0.78 |
+| 400 | 60 | 1.2 | 0.0 | 0.88 (0.52) | +0.90 | 0.97 | |
+
+**at ExR1 200 and a ring peak of 20, a bump:** three times the shuffled vector length, a constant offset from his
+heading (concentration 0.95), a circular correlation of 0.987 with where he faces, and it moves with him when he turns
+(`docs/figures/compass_bump.png`). his heading, in world coordinates, in his own ring cells, from the sky. **the
+honest caveats:** it is sensory-driven; PEN are silent, so the bump is the sun through the ring neurons, not the
+attractor integrating his turns, and it will vanish when the sun does (the kick test said the recurrence does not
+hold). and PFL3 is silent, because the comparator's other input, the goal in the fan-shaped body (hDelta, FC2, PFN:
+its largest inputs), has no source. so: the ring can hold a bump when given tonic excitation and a map, which is what
+nate asked the stand-in to find out; the eye work (a graded anterior pathway) would replace the imposed fields with
+seen ones; and the goal is the next stand-in, the one that makes PFL3 fire and a saccade happen. defaults set
+(`--ring-exr 200 --ring-er 20`).
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
