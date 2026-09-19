@@ -75,7 +75,7 @@ class Episode:
                 st_["T_L"] = self.room.temperature(float(aL_[0]), float(aL_[1])); st_["T_R"] = self.room.temperature(float(aR_[0]), float(aR_[1]))
                 if hasattr(self.room, "odour"):
                     oL = self.room.odour(float(aL_[0]), float(aL_[1]), t_f); oR = self.room.odour(float(aR_[0]), float(aR_[1]), t_f)
-                    st_["odour_L"] = oL; st_["odour_R"] = oR
+                    st_["odour_L"] = oL; st_["odour_R"] = oR; self._last_odour = (oL, oR)   # the last frame's whiffs, for the goal state (09-19)
                 if hasattr(self.room, "humidity"): st_["humidity"] = self.room.humidity(float(px), float(py))
                 if hasattr(self.room, "wind"): st_["wind_rel"] = float((np.degrees(np.arctan2(-self.room.wind[1], -self.room.wind[0])) - ph + 180) % 360 - 180)   # where the wind comes FROM, relative to his heading (+ = from his left)
                 st_["taste"] = getattr(m, "taste", None); st_["heading"] = float(ph)
