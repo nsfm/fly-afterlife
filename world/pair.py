@@ -222,8 +222,8 @@ rest_net = dna02_rest_offset(M, RM, drive_frame, render_chunk, CH, SPF, tonic=TO
 leg_stand, dn_stand_f = standing_baselines(M, F if not args.no_female else None, RM, RF, drive_frame, render_chunk, CH, SPF, tonic=TONIC_STAND); print(f"pace baselines per chunk: his leg MN {leg_stand:.0f}, her DN {dn_stand_f:.0f}")
 leg_gain, asym_side = reflex_gain(M, RM, TACT_M, CH, SPF, kernel=(None if args.bristle == "hold" else Adapting()), fps=fps, tonic=TONIC); leg_gain *= args.reflex_sign; print(f"touch reflex: leg-MN asymmetry (R-L)/(R+L) with left bristles {asym_side['L']:+.3f}, right {asym_side['R']:+.3f} -> gain {leg_gain:.0f} deg per unit asymmetry")
 from fly_afterlife.legs import LegModel, LegSteering
-PFL3V_NULL = None
-if args.goal_wheel_v > 0 and GOAL is not None and args.goal_null != "off":
+PFL3V_NULL = None; PFL2_ENDS = None
+if GOAL is not None and (args.goal_wheel_v > 0 or args.pfl2_walk):
     # the comparator's null point (09-19 11:25): PFL3's mean membrane L-R with the goal placed at his current heading (error 0),
     # 20 chunks; subtracted as the channel's fixed baseline. PFL3 L rests ~0.25 mV above R (the left-heavy brain), which is the
     # size of the goal signal itself, so without this the channel steers to where L-R happens to cross zero, 60-100 deg off.
@@ -248,7 +248,9 @@ if args.goal_wheel_v > 0 and GOAL is not None and args.goal_null != "off":
                     for _ in range(SPF): M.step(); _v2 += float(M.v[_p2].mean()); _n2 += 1
             _ends.append(100.0 * _v2 / _n2)
         PFL2_ENDS = tuple(_ends); print(f"PFL2 membrane: goal ahead {PFL2_ENDS[0] / 100:+.2f} mV, behind {PFL2_ENDS[1] / 100:+.2f} mV")
-    GOAL["stim"] = _saved; PFL3V_NULL = (100.0 * _vl / _n, 100.0 * _vr / _n); print(f"PFL3 null point (goal ahead): L {PFL3V_NULL[0] / 100:+.2f} mV, R {PFL3V_NULL[1] / 100:+.2f} mV, L-R {(PFL3V_NULL[0] - PFL3V_NULL[1]) / 100:+.3f}")
+    GOAL["stim"] = _saved
+    if args.goal_null != "off": PFL3V_NULL = (100.0 * _vl / _n, 100.0 * _vr / _n); print(f"PFL3 null point (goal ahead): L {PFL3V_NULL[0] / 100:+.2f} mV, R {PFL3V_NULL[1] / 100:+.2f} mV, L-R {(PFL3V_NULL[0] - PFL3V_NULL[1]) / 100:+.3f}")
+    else: print("PFL3 null point: off (the pair is mirrored)")
 WGAIN = args.gain if args.wheel == "DNa02" else (args.wheel_gain if args.wheel_gain is not None else (0.5 if args.wheel == "HS" else -0.3))   # HS: +0.5 from the drum (15:12); legMN: -0.3 (10:17)
 steer = LegSteering(LegModel(M), wheel_gain=args.gain, leg_gain=leg_gain) if args.effector == "legs" else Steering(gain=args.gain, rest_net=rest_net, leg_gain=leg_gain) if args.steer == "fixed" else (RunningBaselineSteering(gain=WGAIN, leg_gain=leg_gain, wheel=args.wheel, ema_n=args.steer_ema) if (args.dn_gain == 0 and args.goal_wheel == 0 and args.goal_wheel_v == 0) else MultiWheelSteering(wheels=[(args.wheel, WGAIN)] + ([("DN", args.dn_gain)] if args.dn_gain > 0 else []) + ([("PFL3", args.goal_wheel, "fixed", args.goal_ema)] if args.goal_wheel > 0 else []) + ([("PFL3v", args.goal_wheel_v / 100.0, "fixed", args.goal_ema, PFL3V_NULL)] if args.goal_wheel_v > 0 else []), leg_gain=leg_gain, ema_n=args.steer_ema))
 pace = Pace(leg_stand=leg_stand, k=args.pace_k) if args.pace == "fixed" else (StatePace(leg_stand=leg_stand) if args.pace == "state" else RunningPace()); hers = HerSteering(rng); songdet = SongDetector()
