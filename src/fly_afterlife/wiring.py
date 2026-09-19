@@ -10,7 +10,8 @@ import numpy as np
 
 def mirror_normalise(M, clip: float = 2.0, scope: str = "all") -> dict:
     mty = M.type.astype(str); side = M.side.astype(str); tgt = M._out_tgt; w = M._out_w
-    if scope == "vnc": inscope = np.isin(M.sc.astype(str), ["vnc_motor"]) | np.char.startswith(mty, "IN") | np.char.startswith(mty, "AN") | np.char.startswith(mty, "SN")
+    if isinstance(scope, (list, tuple, set)): inscope = np.isin(mty, list(scope))   # named types only (09-19: the comparator pair, PFL3 / PFL2)
+    elif scope == "vnc": inscope = np.isin(M.sc.astype(str), ["vnc_motor"]) | np.char.startswith(mty, "IN") | np.char.startswith(mty, "AN") | np.char.startswith(mty, "SN")
     else: inscope = np.ones(M.N, bool)
     exc = np.zeros(M.N); np.add.at(exc, tgt, np.clip(w, 0, None)); inh = np.zeros(M.N); np.add.at(inh, tgt, np.clip(-w, 0, None))
     f_exc = np.ones(M.N, np.float32); f_inh = np.ones(M.N, np.float32); n_types = 0

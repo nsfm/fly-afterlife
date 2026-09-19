@@ -3194,6 +3194,15 @@ the answer to nate's question so far is: the compass, the goal and the gas hold 
 the knob with physiology behind it is the goal drive (doubled, so the signal outgrows the bias) before any adaptive
 baseline, because an adapting null would also subtract a real sustained error. running.
 
+**the goal drive doubled (14:46 PDT; `--goal-hz 200`, the wind arm, three seeds):** a circle. the goal stays upwind
+the whole run (one surge), he never leaves the plume envelope (100 %), never comes closer than 0.71 m, and rotates at
+117 deg/s, every seed, with PFL3's left cells 0.43 mV above the right. doubling the goal doubled the bias, because the
+bias *is* asymmetric goal input onto a mirror pair, and a comparator with a constant offset commands a constant turn.
+the wiring: PFL3 R carries 166 excitatory synapse-units per cell to PFL3 L's 191, 0.87x; PFL2 186 to 216. the cord's
+lesion in miniature (14:53 yesterday), on the two cells the whole loop turns on. so the fix is the one that category
+gets, scoped: `--mirror PFL3,PFL2` (the pair's inputs normalised to their mean, `wiring.mirror_normalise` with a
+named-type scope), with the null point still calibrated after it. running, at the ordinary goal drive.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
