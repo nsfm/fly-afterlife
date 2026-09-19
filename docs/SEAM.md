@@ -3123,6 +3123,20 @@ run (the control lost it for two quarters of four). with the goal far off he is 
 PFL2 is the gas, PFL3 the wheel. the next thing is not a gain but the geometry: PFL2's own bridge offset from its
 labels, so the stand-in stops assuming PFL3's.
 
+**what nate saw (13:07 PDT; the goal-35 run with the PFL2 gain, in the viewer):** "he slowly walks along, some pauses
+to look around and continue, hits the wall... and doesn't turn away from it like usual. he presses against it and gets
+caught in the corner of the garden, facing outward the whole time." that is the stand-in doing what it was told. the
+goal is a fixed compass heading, 35 degrees, and the garden has a rim: walk at 35 long enough and you reach the
+north-east corner, where the comparator says keep pointing at 35, which is into the wall; PFL2 says you are pointed
+right, so the walk gain is high and he keeps pushing; and the touch reflex, which owns the wheel only on contact
+frames, turns him sideways for a frame and the goal channel, at 20 deg per mV, turns him back. the pauses are PFL2
+idling him when the reflex has knocked him off the goal. so: not a broken navigator, an obedient one with a goal that
+knows nothing about walls. in life a fly holds a menotaxis heading for minutes and then switches (Green 2019), and a
+wall is a reason to switch; the next stand-in item is the goal as a state that yields (a new heading after N seconds
+of contact), labelled, which is also what turns "hold one heading" into "explore by headings". the viewer gets a
+compass panel first, so this is visible rather than inferred (`compass_wedges`, `compass_pfl`, the goal and the sun
+are saved into garden episodes from this commit).
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
