@@ -15,7 +15,7 @@ ap = argparse.ArgumentParser(); ap.add_argument("--jobs", type=int, default=4); 
 grid = {k: v.split(",") for k, v in (kv.split("=") for kv in a.values.split(";"))}
 combos = [dict(zip(grid, vals)) for vals in itertools.product(*grid.values())]
 env = dict(os.environ, FLYVIS_ROOT_DIR="/home/nate/code/fly-afterlife/flyvis_data", OMP_NUM_THREADS="1", MKL_NUM_THREADS="1", OPENBLAS_NUM_THREADS="1")
-_threads = args.threads if args.threads is not None else max(1, 8 // max(args.jobs, 1)); env["NUMBA_NUM_THREADS"] = str(_threads); print(f"{args.jobs} jobs x {_threads} numba threads")
+_threads = a.threads if a.threads is not None else max(1, 8 // max(a.jobs, 1)); env["NUMBA_NUM_THREADS"] = str(_threads); print(f"{a.jobs} jobs x {_threads} numba threads")
 def run(c):
     vary = a.vary.format(**c); out = re.search(r"--out (\S+)", vary); log = (out.group(1) if out else "run_" + "_".join(c.values())) + ".log"
     cmd = f"uv run python {a.script} {a.common} {vary}"; t0 = time.time()
