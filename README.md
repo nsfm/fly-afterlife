@@ -1,87 +1,121 @@
 # fly-afterlife
 
-a whole-fly connectome (MaleCNS v1.0, male, brain + nerve cord, 162,517 neurons) run as a
-spiking model, with a real optic lobe in front of it: a graded, connectome-constrained
-visual system (flyvis) driving the spiking brain's own T4/T5 cells, on the compound eye's
-actual geometry. a second fly (FlyWire, female) shares the room. the point is to give the
-spiking fly senses it can act on, one at a time, and record what the wiring does with them.
+a fruit fly's whole nervous system, run as a spiking network and given a body, senses and a world.
 
-the record is `docs/SEAM.md`. read its STATUS block first; several sections are superseded
-by later ones and it says which. everything in it is measured on this machine or labelled
-as a choice.
+the wiring is the male fly's connectome (MaleCNS v1.0, 2026: brain and ventral nerve cord, 162,517
+neurons, six million synapses), run as a leaky integrate-and-fire model with the constants of Shiu et
+al. 2024. in front of it sits a real eye: a compound eye raytraced on the measured geometry of the
+same fly, seen through flyvis (Lappalainen et al. 2024), a graded, connectome-constrained optic lobe,
+whose motion cells drive the spiking brain's own T4 and T5. behind it sits a body: his leg motor
+neurons set his pace, his descending neurons and his horizontal-system cells steer him, his bristles
+feel walls, his antennae smell, sense warmth, humidity and wind, his feet taste sugar. the world is a
+room, a striped drum, a round dish, or a garden with a fruit in it. a second fly (FlyWire, female)
+can share the room.
 
-## layout
+the point is to give the spiking fly senses it can act on, one at a time, and write down what the
+wiring does with them: what works, what does not, and what had to be assumed to make it work at all.
 
-- `docs/SEAM.md` - the record: every experiment, result, withdrawal and decision, timestamped.
-- `docs/ARCHITECTURE.md` - the refactor plan (body / world / receptors / effectors / brain / episode).
-- `docs/physiology/` - literature briefs per sensory system: rates, time constants, drive rules, citations.
-- `docs/figures/` - eye geometry and what the fly sees.
-- `seam/` - the eye and the seam: `eye_geom.py` (geometry from the wiring), `omma.py` (ommatidium
-  raytracer, compiled), `world_flyvis.py` (scene -> both eyes -> flyvis), `seam_v2.py` (flyvis ->
-  LIF), `transplant.py` (flyvis physiology on the real per-cell optic lobe), `distill.py`
-  (training the transplant against flyvis), `build_flywire.py` (the female brain). input tables
-  (`flyvis_*.json`, `calib.json`, `pair_counts.csv`) live here; outputs do not.
-- `world/` - the arena and the closed loops: `pair.py` (two brains in a walled room), `loop.py`
-  (one brain: drum, bar, walk, blind, spin, forage), `fastlif.py` (the LIF step compiled with
-  numba, spike-for-spike identical to `flysim.py`), `export_viewer.py` + `viewer_template.html`
-  (the single-file viewer: human view, top-down map, both retinas, traces), `run_many.py`
-  (fan configs across cores), the DN gain tables.
-- `results/` - run outputs that are worth keeping (json, logs). npz episodes are not tracked.
-- `scripts/ens/` - ensemble drivers.
-- `attic/` - superseded scripts, kept because the record cites them.
-- `ref/flybrain/` - the LIF engine (TheMrRaGe/flybrain, Shiu et al. 2024 constants), not tracked.
-- `data/`, `flyvis_data/`, `brain_*.npz` - the connectome tables, the flyvis models, the built
-  brains. not tracked; see "getting the data".
+## what he can do today (2026-09-18)
 
-## running the room
+- stand, and walk in bouts of several seconds, on a walking command (DNg100) that moves his cord
+  as a dose; his speed is read from his 373 leg motor neurons against the standing tonus of a
+  brain in which every sense sits at its resting rate.
+- steer by optic flow: the left-right difference of his horizontal-system cells turns him, with the
+  sign that follows a rotating drum three seeds of three; he follows a wall by sight without touching
+  it, and turns into the wind when it blows on his antennae.
+- feel: bristle afferents that burst and adapt on contact with walls, a rim, pillars, another fly.
+- halt: a descending halting neuron (DNg105) stops the cord against the walking command.
+- eat: sugar on his tarsi latches a feeding state that holds the halt and silences the withdrawal
+  reflex; satiety fills over seconds of feeding, releases him, and decays over minutes. beside a
+  fruit he walks onto it in two seconds, eats until full, and leaves, three seeds of three. it is
+  the first thing in him that outlasts its stimulus, and it is modelled as what it does, labelled.
+- in a lit room with a second fly he finds her five times in five minutes; his P1 cells fire to
+  touch; song is out of reach.
+
+what he cannot do yet is written down too: `docs/TODO.md` is the list, and `docs/SCENARIOS.md`
+is his own version of it, a day in the life of the fly as twenty test cases, written from his side.
+
+## watch him
 
 ```
 uv sync
-uv run python world/pair.py --seconds 60 --seed 3 --out world/room.npz
-uv run python world/export_viewer.py world/room.npz - world/viewer_room.html "the room" 1
+uv run python world/pair.py --world garden --seconds 120 --no-female --wsyn-m 0.185 --wsyn-f 0.275 \
+    --steer running --walk 100 --thermo rest --start 2.1,-1.2,180 --feeding 3 --satiety 8 --out world/meal.npz
+uv run python world/replay_app.py world/meal.npz --scale 2
 ```
 
-useful flags: `--proprio 100` (leg proprioceptors, tripod gait), `--her-albedo 0.5` (her
-invisible: the control), `--wsyn-m 0.185 --wsyn-f 0.275` (synapse strengths corrected for
-the EM volume, see the record), `--deterministic` (bit-identical reruns; flyvis on the GPU is
-otherwise nondeterministic at 1e-6, which is enough to diverge a run), `--numpy-engine`
-(the original step). the GPU needs `prime-run` on this laptop.
+the first command runs him for two minutes in the garden, starting a body length from the fruit;
+the second opens the viewer: his own raytraced view, his retina (dots per ommatidium, or a
+panorama), a map with his trail, and the neurons that matter, scrubbing at any speed. press `?`
+inside it. the same viewer plays the room, the drum and the dish. a run takes about four times its
+own length on a laptop; `docs/PERFORMANCE.md` says where the time goes and how to shorten it.
+
+## how it is built
+
+`src/fly_afterlife/` is the stack, one layer per file: `receptors.py` (a registry of receptor
+classes, each a set of cells, a transducer with its own time course, and a stimulus read from the
+world; and the tonic floor that holds every typed sense at its resting rate), `body.py`,
+`world.py` / `garden.py` / `arena.py` (the worlds: contacts, fields, what the eye sees),
+`effectors.py` (how populations of neurons become turning, pace, halting, a feeding state),
+`legs.py` (a leg model with muscle weights, used as a diagnostic), `frontend.py` (flyvis),
+`wiring.py` (labelled corrections to the wiring, opt-in), `episode.py` (the loop). `seam/` is
+the eye and the seam into the optic lobe. `world/pair.py` is the setup script with every flag
+labelled; `world/fastlif.py` is the LIF step compiled with numba, spike-for-spike identical to
+the reference; `world/run_many.py` fans runs across cores; `experiments/` holds the drum and the
+benchmark scorer. `docs/ARCHITECTURE.md` explains the layering.
+
+## how it keeps itself honest
+
+- **the record.** `docs/SEAM.md` is every experiment, result, withdrawal and decision, timestamped,
+  in the order they happened. wrong turns stay where they were made, marked; nothing is rewritten
+  to look cleaner than it was. read its STATUS block first.
+- **controls, always.** an invisible female for the approach test, the fruit toned like the floor
+  for the vision test, the plume off for the smell test, the same run with a sense at rest for
+  every sense that is live.
+- **one change per run.** every physiology change is one run against the previous one, and a
+  large effect from closing one small loop is treated as a bug until shown otherwise.
+- **the oracle.** the loop is ported and changed against a frozen script; `scripts/oracle_check.sh`
+  must reproduce four reference runs bit for bit after any change to the engine, the drive path
+  or the defaults, and the record says when it did.
+- **stand-ins are labelled.** where the physiology is a slow state this engine cannot hold (hunger,
+  satiety, the walking state), it is modelled as what it does, with a flag, a source, and a
+  sentence saying so. the same for corrections to the wiring.
+- **outside reads.** `docs/physiology/` are literature briefs per sense, with the numbers used.
+  `docs/MOTOR_REVIEW.md` is an independent review of the motor side that found the walking
+  command asleep; `docs/BENCHMARKS.md` is the published locomotion statistics and datasets he
+  is scored against (`experiments/benchmark.py`, calibrated on real flies first);
+  `docs/LANDSCAPE.md` is who else runs a 2026 connectome in a body, and what they do better.
 
 ## getting the data
 
-- MaleCNS v1.0 tables (Janelia, 2026): `data/body-annotations-*.feather`,
+- MaleCNS v1.0 tables (Janelia FlyEM / Google, 2026): `data/body-annotations-*.feather`,
   `data/body-neurotransmitters-*.feather`, `data/connectome-weights-*.feather`.
 - FlyWire v783: `data/flywire/neuron_annotations.tsv`, `proofread_connections_783.feather`.
-- flyvis (Lappalainen et al. 2024): `flyvis_data/` via the flyvis package's download; the
-  code sets `FLYVIS_ROOT_DIR` to it.
+- flyvis (Lappalainen et al. 2024): `flyvis_data/` via the flyvis package's download; the code
+  sets `FLYVIS_ROOT_DIR` to it.
 - the brains: `ref/flybrain/scripts/build_creature.py --whole` -> `brain_whole.npz`;
-  `seam/build_flywire.py` -> `brain_female2.npz`.
+  `seam/build_flywire.py` -> `brain_female2.npz`. `ref/flybrain/` is TheMrRaGe/flybrain, the LIF
+  engine, not tracked.
 - eye geometry: `seam/eye_geom.py` -> `seam/eye_geom.npz`; columns: `seam/columns_all.py`.
+- real flies for the benchmark: `scripts/fetch_opynfield.sh` (the Roman lab's open-field
+  trajectories; their data, their licence, not tracked).
 
-## status, in one paragraph
+run outputs (`.npz` episodes) are not tracked; `results/` keeps the json and logs worth keeping,
+`docs/figures/` the pictures, `attic/` the superseded scripts the record still cites.
 
-the eye's orientation is decided by anatomy alone. the spiking side of the seam is sound (an
-ideal direction-selective input makes LPLC2 detect expansion); the bottleneck is the direction
-selectivity any graded front end hands over. the male's synapse strengths are corrected for the
-EM volume (FIB-SEM detects ~1.5x more synapses than the ssTEM the LIF was fit on), which put
-his Kenyon cells at the sparsity they should have and made the drum follow 3 of 3 on model 000.
-every typed sense sits at its physiological resting rate (the tonic floor), which woke his
-central brain from 0.01 to 0.5 Hz and, it turned out, put the first walking command to sleep:
-he walks now because DNg100 (BDN2) walks his cord as a dose, and his pace is read from his 373
-real leg motor neurons against a standing tonus measured in that floor (the 699 "leg" set the
-record used before 2026-09-17 included abdominal, wing and haltere motor neurons); he steers by
-DNa02 through a running baseline, and the wind on his antennae turns him upwind; he feels walls
-and pillars through bristle afferents that burst and adapt; in a lit room with a warm corner
-and a second fly, he finds her five times in five minutes and spends 8% of the time on walls.
-thermotaxis by walking is not in this model: warmth reaches his wing motor neurons before his
-legs, though he turns more when warming. the garden (a textured floor, grass, leaves, a stone, a
-fruit with a plume and sugar, a puddle, a sun) is his world now; he finds the fruit by sight. his P1 cells fire to touch; song is out of reach. the architecture is a receptor registry,
-a body, a world, effectors and one episode loop, each ported bit-for-bit against a frozen
-oracle; every physiology change since has been one run against the previous one, in the record.
+## the honest caveats
+
+he walks at about a third of a fly's speed by a scale choice made early; the benchmark carries a
+time-rescaling control for it. the right side of his ventral cord is under-traced in the
+reconstruction (about 15% less input than the left), which a bistable pair of interneurons
+amplifies onto one steering neuron; the wheel now reads one synapse upstream of it. the optic
+lobe's direction selectivity is the seam's bottleneck, and he cannot yet see a loom. nothing in
+him persists but feeding. and every number in the record was measured on one laptop, with three
+seeds where it says three.
 
 ## credits and licence
 
 MIT (see `LICENSE`). built on: the MaleCNS v1.0 connectome (Janelia FlyEM / Google, 2026),
 FlyWire v783 (Dorkenwald et al. 2024; Schlegel et al. 2024), flyvis (Lappalainen et al. 2024,
-Nature), and the LIF engine from TheMrRaGe/flybrain with the constants of Shiu et al. 2024.
-written by nyx, with nate.
+Nature), the LIF engine from TheMrRaGe/flybrain with the constants of Shiu et al. 2024, and the
+physiology of a few hundred papers cited where they are used. written by nyx, with nate.
