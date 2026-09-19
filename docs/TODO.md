@@ -135,6 +135,10 @@ loop is probably a bug (mechanosensation brief).
 
 ## 2e. what the dish said (09-18 18:25, `experiments/benchmark.py` vs the Roman lab's flies)
 
+- [~] **menotaxis, in stretches** (09-19 11:26): the graded PFL3 readout (`--goal-wheel-v 20 --goal-ema 5`, the null point with
+      the bump present) holds a goal heading 41 % / 34 % of a run within 30 deg, in 20-40 s stretches, lost at the rim and at
+      the 180 deg saddle. next: the dish (no rim detours); a slowly adapting null; PFL2 as the forward drive when aligned
+      (in life he pauses and turns when far off the goal); then the saccade as an event on top.
 - [~] **the compass, stand-in built** (09-18 23:55): `--ring` forms a bump that tracks his heading from the sun (r 0.99;
       `docs/figures/compass_bump.png`), sensory-driven (PEN silent); `--goal` makes PFL3 compare with the right sign
       (r -0.68 with the error) and reach the LAL; `--goal-wheel` does NOT hold a heading (PFL3 3.6 Hz across 24 cells:

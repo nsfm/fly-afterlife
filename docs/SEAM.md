@@ -3078,6 +3078,21 @@ heading: 32 %, wandering. lag and gain, not noise: a smoothed signal smoothed ag
 him five degrees a chunk. the gain and the smoothing are being set (two runs), labelled as the readout's, since the
 signal itself is now the cell's.
 
+**menotaxis, in stretches (11:26 PDT; the null point measured with the bump present: +0.28 / +0.22 mV, the bias the
+fits had found; 20 deg per mV, half a second of smoothing; 120 s; `docs/figures/menotaxis.png`).** the goal at 200 with
+him facing 35: within 30 deg of it 41 % of the run (6-27 % on every earlier attempt); he turns from 165 deg off to
+-10 in twenty seconds, holds for thirty, is knocked off, and holds again from 80 to 100 s. the goal at 35, where he
+starts: 64 % of the first quarter and 72 % of the third within 30 deg, and 0-2 % of the quarters between. what takes
+it from him is the rim, where the touch reflex outranks every channel, and what makes him slow to return is the
+saddle at 180 deg, where the comparator's torque is zero. **so the loop from sky to body is closed, the way a fly does
+it, on stand-ins where the physiology is graded:** the ring holds his heading from the sun; a goal sits in the
+fan-shaped body; PFL3 compares them in its membrane; the difference turns him. every stand-in is labelled and tuned
+(ExR1 400, ring 30, goal 100, 20 deg per mV, a null point), and the honest measure of it is 41 % and 34 %, not a
+lock. the wrong null point (the bump absent during calibration, +0.52 mV) made it worse than none, which is worth
+a line: a calibration is only as good as the state it is taken in. the residual bias (+0.16 to +0.23 mV over the
+runs) says the null drifts with the walk; a slow adaptation of the baseline is the next readout item, and in the
+dish, without a rim to hit, the number should be cleaner.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
