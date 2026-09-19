@@ -21,7 +21,7 @@ except ImportError:  # pragma: no cover
 
 if _HAVE_NUMBA:
     @njit(cache=True, parallel=True)
-    def _shade_kernel(origin, d, sky, ground, soft, has_drum, drum, has_walls, walls, pillars, spheres, lum, has_floor, floor_tex, floor_half, discs, has_sun, sun):
+    def _shade_kernel(origin, d, sky, ground, soft, has_drum, drum, has_walls, walls, pillars, spheres, lum, has_floor, floor_tex, floor_half, discs, has_sun, sun, has_ring, ring):
         """same primitives as Scene.shade, one ray per iteration. drum = (period, phase, lo, hi, half_height); walls = (half, height, albedo);
         pillars (k, 5) = x, y, r, albedo, height (standing on z = 0); spheres (k, 5) = cx, cy, cz, r, albedo."""
         ox, oy, oz = origin[0], origin[1], origin[2]
@@ -70,6 +70,16 @@ if _HAVE_NUMBA:
                             hp = (oy + t * dy) if axis == 0 else (ox + t * dx); hz = oz + t * dz
                             if abs(hp) <= walls[0] + 1e-6 and hz >= 0 and hz <= walls[1]:
                                 tmin = t; l = walls[2]
+            if has_ring:   # a cylinder wall seen from inside: radius ring[0], height ring[1], albedo ring[2]; the far root of the quadratic
+                a_ = dx * dx + dy * dy
+                if a_ > 1e-12:
+                    b_ = 2.0 * (ox * dx + oy * dy); c_ = ox * ox + oy * oy - ring[0] * ring[0]; disc_ = b_ * b_ - 4.0 * a_ * c_
+                    if disc_ > 0:
+                        t = (-b_ + np.sqrt(disc_)) / (2.0 * a_)
+                        if t > 0 and t < tmin:
+                            hz = oz + t * dz
+                            if hz >= 0 and hz <= ring[1]:
+                                tmin = t; l = ring[2]
             for k in range(pillars.shape[0]):
                 px, py, r, alb, ph = pillars[k, 0], pillars[k, 1], pillars[k, 2], pillars[k, 3], pillars[k, 4]
                 cx = ox - px; cy = oy - py; a = dx * dx + dy * dy; bq = cx * dx + cy * dy; cq = cx * cx + cy * cy - r * r
@@ -90,11 +100,12 @@ if _HAVE_NUMBA:
             lum[i] = l
 
 class Scene:
-    def __init__(self, sky=0.85, ground=0.35, horizon_soft=0.15, spheres=(), drum=None, pillars=(), walls=None, pillar_height=1.5, floor=None, discs=(), sun=None):
+    def __init__(self, sky=0.85, ground=0.35, horizon_soft=0.15, spheres=(), drum=None, pillars=(), walls=None, pillar_height=1.5, floor=None, discs=(), sun=None, ring=None):
         self.sky, self.ground, self.soft = sky, ground, horizon_soft; self.pillar_height = pillar_height
         self.floor = floor                       # None = the sky/ground gradient by ray direction (the room); else dict(tex=(H,W) float32 luminance albedo, half=extent in m): a real plane at z = 0
         self.discs = list(discs)                 # (x, y, z, r, albedo): horizontal discs (leaves, a puddle), seen from below and above
         self.sun = sun                           # None or dict(dir=(dx, dy, dz) unit, boost, k): sky brightens toward the sun as boost * max(0, d.dir)^k
+        self.ring = ring                         # None or dict(radius, height, albedo): a circular wall seen from inside (the open-field arena, 09-18)
         self.walls = walls                       # None or dict(half, height, albedo): a square room |x|,|y| <= half, walls from the floor to `height`
         self.spheres = list(spheres)             # (centre xyz, radius, albedo)
         self.pillars = list(pillars)             # (x, y, radius, albedo): vertical cylinders, floor to sky
@@ -111,7 +122,7 @@ class Scene:
             dsc = np.array([[x, y, z, r, a] for x, y, z, r, a in self.discs], np.float64).reshape(-1, 5)
             sn = self.sun; sunv = np.zeros(5)
             if sn is not None: sd = np.asarray(sn["dir"], float); sd = sd / np.linalg.norm(sd); sunv = np.array([sd[0], sd[1], sd[2], sn["boost"], sn["k"]], np.float64)
-            _shade_kernel(np.asarray(origin, np.float64), np.ascontiguousarray(d, np.float64), float(self.sky), float(self.ground), float(self.soft), dr is not None, drum, wl is not None, walls, pil, sph, lum, fl is not None, ftex, fhalf, dsc, sn is not None, sunv)
+            _shade_kernel(np.asarray(origin, np.float64), np.ascontiguousarray(d, np.float64), float(self.sky), float(self.ground), float(self.soft), dr is not None, drum, wl is not None, walls, pil, sph, lum, fl is not None, ftex, fhalf, dsc, sn is not None, sunv, self.ring is not None, (np.array([self.ring["radius"], self.ring["height"], self.ring["albedo"]], np.float64) if self.ring is not None else np.zeros(3)))
             return np.clip(lum, 0, 1) if sn is not None else lum
         lum = np.where(d[:, 2] > 0, self.sky, self.ground).astype(np.float32)
         band = np.clip(0.5 + d[:, 2] / self.soft, 0, 1); lum = self.ground + (self.sky - self.ground) * band
@@ -137,6 +148,10 @@ class Scene:
                 dd = d[:, axis]; t = np.where(np.abs(dd) > 1e-9, (sgn * wl["half"] - origin[axis]) / np.where(np.abs(dd) > 1e-9, dd, 1.0), np.inf)
                 oth = 1 - axis; hp = origin[oth] + t * d[:, oth]; hz = origin[2] + t * d[:, 2]
                 ok = (t > 0) & (np.abs(hp) <= wl["half"] + 1e-6) & (hz >= 0) & (hz <= wl["height"]) & (t < tmin); tmin[ok] = t[ok]; lum[ok] = wl["albedo"]
+        if self.ring is not None:                      # a cylinder wall seen from inside: the far root
+            rg = self.ring; a_ = d[:, 0] ** 2 + d[:, 1] ** 2; b_ = 2 * (origin[0] * d[:, 0] + origin[1] * d[:, 1]); c_ = origin[0] ** 2 + origin[1] ** 2 - rg["radius"] ** 2
+            disc_ = b_ * b_ - 4 * a_ * c_; ok0 = (a_ > 1e-12) & (disc_ > 0); t = np.where(ok0, (-b_ + np.sqrt(np.where(ok0, disc_, 0.0))) / np.where(ok0, 2 * a_, 1.0), np.inf)
+            hz = origin[2] + t * d[:, 2]; ok = ok0 & (t > 0) & (hz >= 0) & (hz <= rg["height"]) & (t < tmin); tmin[ok] = t[ok]; lum[ok] = rg["albedo"]
         for pil in self.pillars:                       # ray-cylinder in the xy plane, standing on the floor (z = 0) up to `height` (default 1.5 m)
             px, py, r, alb = pil[:4]; ph = pil[4] if len(pil) > 4 else self.pillar_height
             ox, oy = origin[0] - px, origin[1] - py; a = d[:, 0] ** 2 + d[:, 1] ** 2; bq = ox * d[:, 0] + oy * d[:, 1]; cq = ox * ox + oy * oy - r * r
