@@ -3002,6 +3002,32 @@ receptor cells. their claim is not the dubious part; what they cut from the wiri
 what they hand-tuned ("time constants, thresholds and a few gains are ours") is, and two agents are reading the
 decompiled jar and the two open-source siblings for exactly that.
 
+**three flies in Minecraft, and what they said about ours (10:39 PDT; nate: "how did they get one core, and how accurate";
+`docs/MINECRAFT_FLYPROJECT.md`, `docs/MINECRAFT_OPEN.md`, two opus agents, claims spot-checked in the decompiled and
+compiled sources).** flyproject.io (closed, CC-BY-SA, BANC v888): one core is real, measured at 0.5-1.0 ms per step on
+one pinned core through their own loader, dense float32 loops, no tricks; **and the network is inert**: at the awake
+operating point the game injects ~295 suprathreshold kicks per ms and the brain emits 272 spikes, the network's own
+contribution near zero (all synaptic input together depolarises a cell by 0.65 % of threshold). the turn signal is the
+L-R imbalance of all 1,316 descending neurons, half of whose spikes are a uniform random kick (`SplittableRandom`,
+z-scored against its own mean; a permanent rightward bias from the 651 / 665 split); the male is forty scripted lines
+under a HUD label reading "MaleCNS courtship"; 9 % of BANC's synapses retained; no delay; an uncited adaptation term;
+gains of x2, x20, x25. blendi-remade/fly-brain-minecraft (open, MaleCNS): the best open Shiu implementation the agent
+had read: exact linear integration, the right constants, real cell types both ends, 1,769 measured columns, a
+validation doc that publishes its failures; its loom-escape claim does not reproduce and its odour readout is
+anticorrelated with the stimulus. AshtonLong/fruitfly-brain-mod (open, FlyWire): faithful graph, 25 ms of neural
+time per 500 ms of wall clock, neither readout works (odour left or right both turn left; looming escape 0 of 12);
+behaviour scripted with a neural jitter. **the two findings about our own engine:** (1) the membrane kernel divides
+by tau per cell; a multiply is 1.63x on the pass that is most of the step (not bit-identical, 1.9e-6). (2) **Shiu's
+model integrates the linear system exactly** (`method='linear'` in his `model.py`, checked) **and freezes g during the
+refractory period; the reference engine we matched spike for spike, and therefore we, use forward Euler at 1 ms,
+which puts the synaptic potential's peak 16 % low** (analytic 0.1575 per unit jump; Euler at dt 1.0: 0.1323; the
+total charge preserved, the peak not, and spiking is a threshold on the peak). so this fly is ~16 % less synaptically
+efficacious than the paper's at the same constant, which bears on the 0.275 / 0.185 argument of 09-17. staged as
+`--integrate exact` (opt-in), to be checked against the analytic PSP, then the sparsity, the drum and a garden run,
+then the oracle re-frozen with a label if it holds. also learned from them: decayed conductances go subnormal in a
+quiet brain and slow the step 1.8x (ours: 0.29 -> 0.52 ms after 20 s); a flush at 1e-20 is in the kernel, under the
+oracle now. the landscape doc gets these three as rows.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,

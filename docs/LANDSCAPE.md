@@ -165,6 +165,14 @@ is the only one that also runs a real ventral cord (MANC) as a second network, a
 that reached flyvis-T5-plus-olfaction navigation. **CHIMERA** (no licence, single day of
 commits 2026-03-21) is abandoned.
 
+## three more, read in the source (09-19; `docs/MINECRAFT_FLYPROJECT.md`, `docs/MINECRAFT_OPEN.md`)
+
+| project | brain | body / world | transduction | readout | closed | what the source says |
+|---|---|---|---|---|---|---|
+| **flyproject.io connectome-fly** (closed jar, CC-BY-SA) | BANC v888, 9 % of synapses, uncited constants + adaptation | Minecraft mob | 39 game channels as Poisson kicks | L-R of all DNs, half of it random | yes | one core is real and the network is inert: injected kicks ~= emitted spikes; the male is 40 scripted lines |
+| **blendi-remade/fly-brain-minecraft** (MIT) | MaleCNS, exact linear integration, Shiu's constants (dt 0.5 quantises refractory / delay to 2.0) | Minecraft mob | real cell types, 1,769 measured columns | named populations, ~150 hand-set numbers | yes | the best open Shiu implementation; publishes its failures; loom claim does not reproduce; odour readout anticorrelated |
+| **AshtonLong/fruitfly-brain-mod** (open) | FlyWire unpruned, 0.275, Euler, a 68.75 mV kick per input | Minecraft mob | game state | 2 neurons a side through tanh | yes | 25 ms of neural time per 500 ms wall; neither readout works; honest about it |
+
 ## tooling
 
 navis, `fafbseg-py`, `navis-flybrains`, `neuprint-python` and `CAVEclient` are the standard
