@@ -3093,6 +3093,16 @@ a line: a calibration is only as good as the state it is taken in. the residual 
 runs) says the null drifts with the walk; a slow adaptation of the baseline is the next readout item, and in the
 dish, without a rim to hit, the number should be cleaner.
 
+**the same loop in the dish (11:31 PDT; `--world arena`, the same stand-ins and gains):** 9 % and 18 % within 30 deg, at
+the wall 51 % and 75 % of the run. in a dish the rim is the whole perimeter, he is a wall-follower by sight and by
+touch, and the wall reflex outranks the comparator whenever he is on it, which in a dish is most of the time. this is
+not a contradiction of the garden result but its condition: menotaxis in life is measured on a ball or in an arena
+too large to reach the wall, and a fly that does reach one pauses rather than abandons its heading. so the goal loop
+holds where he is free and loses where the wall owns him, in both worlds; the picture in `docs/figures/menotaxis.png`
+is the honest statement of it. the next physiology for this is PFL2, the forward drive that in life gates walking on
+alignment (Westeinde 2024), which would let the goal survive a wall by stopping him at it instead of dragging him
+along it. the readout stand-ins stay as they are, tuned and labelled; the goal loop closes end to end.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
