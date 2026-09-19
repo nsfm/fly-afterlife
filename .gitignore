@@ -20,3 +20,4 @@ world/oracle/*.npz
 world/drum/
 world/**/*.log
 world/**/*.npz
+ref/flyproject/
