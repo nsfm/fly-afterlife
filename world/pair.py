@@ -255,6 +255,13 @@ pace = Pace(leg_stand=leg_stand, k=args.pace_k) if args.pace == "fixed" else (St
 m.v = 0.3; her.v = 0.15
 # ---- loop (src/fly_afterlife/episode.py)
 from fly_afterlife.episode import Episode
+_COMPASS = None
+if args.ring:
+    _epg_c = np.flatnonzero(mty == "EPG"); _wedge_idx = np.array([int(round(_wedge.get(int(i), -45.0) / 45.0)) % 8 if int(i) in _wedge else -1 for i in _epg_c])
+    _COMPASS = dict(cells=_epg_c[_wedge_idx >= 0], wedge=_wedge_idx[_wedge_idx >= 0], rows=[], pfl=[])
+    def _hook_compass(ep_, c_, cnt_):
+        acc_ = ep_.last_accM[_COMPASS["cells"]]; _COMPASS["rows"].append(np.bincount(_COMPASS["wedge"], weights=acc_, minlength=8).astype(np.float32))
+        _COMPASS["pfl"].append((float(cnt_.get("PFL3v_L", 0.0)), float(cnt_.get("PFL3v_R", 0.0)), float(getattr(ep_, "walk_gain", 1.0))))
 _CELLS = None
 if args.log_types:
     _lt = [x for x in args.log_types.split(",") if x]; _lc = np.flatnonzero(np.isin(mty, _lt)); _CELLS = dict(cells=_lc, counts=[])
@@ -269,12 +276,12 @@ if args.log_pre:
     _wL = np.zeros(M.N); _wL[_sel["L"][0]] = _sel["L"][1]; _wR = np.zeros(M.N); _wR[_sel["R"][0]] = _sel["R"][1]
     def _hook(ep_, c_, cnt_): _PRE["counts"].append(ep_.last_accM[_cells].copy())
     print(f"logging {len(_cells)} cells: the {args.log_pre_k} strongest inputs to {args.log_pre} L and R")
-ep = Episode(fps=fps, chunk=CH, eye=eye, room=room, him=m, her=her, brains=(M, F if not args.no_female else None), readouts=(RM, RF), registries=(REG, REGF), front_end=flyvis_chunk, front_end_uv=(fe_uv.chunk if fe_uv is not None else None), rest=rest, effectors=(steer, pace, hers, songdet), lam=LAM, vread=(({"PFL3v": (np.flatnonzero((mty == "PFL3") & (mns == "L")), np.flatnonzero((mty == "PFL3") & (mns == "R")))} | ({"PFL2v": (np.flatnonzero((mty == "PFL2") & (mns == "L")), np.flatnonzero((mty == "PFL2") & (mns == "R")))} if args.pfl2_walk else {})) if (args.goal is not None) else None), walkmod=((lambda cnt: float(np.clip(args.pfl2_floor + (1.0 - args.pfl2_floor) * ((cnt["PFL2v_L"] + cnt["PFL2v_R"]) / 2.0 - PFL2_ENDS[1]) / max(PFL2_ENDS[0] - PFL2_ENDS[1], 1.0), 0.0, 1.0))) if (args.pfl2_walk and GOAL is not None) else None), on_chunk=(_hook if _PRE else (_hook_cells if _CELLS else None)), state=(FeedingState(hold=args.feeding, t_full=args.satiety, tau_sat=args.satiety_tau) if args.feeding > 0 else None))
+ep = Episode(fps=fps, chunk=CH, eye=eye, room=room, him=m, her=her, brains=(M, F if not args.no_female else None), readouts=(RM, RF), registries=(REG, REGF), front_end=flyvis_chunk, front_end_uv=(fe_uv.chunk if fe_uv is not None else None), rest=rest, effectors=(steer, pace, hers, songdet), lam=LAM, vread=(({"PFL3v": (np.flatnonzero((mty == "PFL3") & (mns == "L")), np.flatnonzero((mty == "PFL3") & (mns == "R")))} | ({"PFL2v": (np.flatnonzero((mty == "PFL2") & (mns == "L")), np.flatnonzero((mty == "PFL2") & (mns == "R")))} if args.pfl2_walk else {})) if (args.goal is not None) else None), walkmod=((lambda cnt: float(np.clip(args.pfl2_floor + (1.0 - args.pfl2_floor) * ((cnt["PFL2v_L"] + cnt["PFL2v_R"]) / 2.0 - PFL2_ENDS[1]) / max(PFL2_ENDS[0] - PFL2_ENDS[1], 1.0), 0.0, 1.0))) if (args.pfl2_walk and GOAL is not None) else None), on_chunk=(_hook if _PRE else (_hook_cells if _CELLS else (_hook_compass if _COMPASS else None))), state=(FeedingState(hold=args.feeding, t_full=args.satiety, tau_sat=args.satiety_tau) if args.feeding > 0 else None))
 ep.run(args.seconds)
 if _CELLS: np.savez_compressed(args.out.replace(".npz", "") + ".cells.npz", cells=_CELLS["cells"], bodyId=M.bodyId[_CELLS["cells"]], type=mty[_CELLS["cells"]], side=mns.astype(str)[_CELLS["cells"]], counts=np.array(_CELLS["counts"], np.int32), pose_chunk=np.array(ep.POSE, np.float32)[::CH][:len(_CELLS["counts"])]); print("wrote", args.out.replace(".npz", "") + ".cells.npz")
 if _PRE: np.savez_compressed(args.out.replace(".npz", "") + ".pre.npz", cells=_PRE["cells"], type=mty[_PRE["cells"]], side=mns.astype(str)[_PRE["cells"]], w_to_L=_wL[_PRE["cells"]], w_to_R=_wR[_PRE["cells"]], counts=np.array(_PRE["counts"], np.int32)); print("wrote", args.out.replace(".npz", "") + ".pre.npz")
 if args.world == "garden":
     ep.save(args.out, posts=np.array([[gx, gy, gr, ga] for gx, gy, gr, ga, gh in room.grass], np.float32), walls=dict(half=room.half, height=room.height, albedo=room.albedo), her_albedo=HER_ALB, body_r=BODY, her_r=HER_R,
-            extra=dict(world="garden", floor_rgb=room.rgb, floor_half=room.half, grass=np.array(room.grass, np.float32), leaves=np.array(room.leaves, np.float32), stone=np.array(room.stone, np.float32), fruit=np.array(room.fruit, np.float32), puddle=np.array(room.puddle, np.float32), sunspot=np.array(room.sunspot, np.float32), wind=np.array(room.wind, np.float32)))
+            extra=dict(world="garden", floor_rgb=room.rgb, floor_half=room.half, grass=np.array(room.grass, np.float32), leaves=np.array(room.leaves, np.float32), stone=np.array(room.stone, np.float32), fruit=np.array(room.fruit, np.float32), puddle=np.array(room.puddle, np.float32), sunspot=np.array(room.sunspot, np.float32), wind=np.array(room.wind, np.float32), sun_dir=np.array(room.sun_dir, np.float32), **({"compass_wedges": np.array(_COMPASS["rows"], np.float32), "compass_pfl": np.array(_COMPASS["pfl"], np.float32), "compass_goal": np.float32(args.goal if args.goal is not None else np.nan), "compass_sun_az": np.float32(RING["sun_az"])} if _COMPASS else {})))
 elif args.world == "arena": ep.save(args.out, posts=np.zeros((0, 4), np.float32), walls=dict(half=room.radius, height=room.height, albedo=room.albedo), her_albedo=HER_ALB, body_r=BODY, her_r=HER_R, extra=dict(world="arena", arena_radius=room.radius))
 else: ep.save(args.out, posts=posts, walls=WALLS, her_albedo=HER_ALB, body_r=BODY, her_r=HER_R)
