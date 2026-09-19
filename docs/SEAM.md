@@ -3157,6 +3157,16 @@ fly changing its mind every six seconds where life holds a heading for minutes. 
 a fly makes: the new heading drawn from the half-circle facing away from the wall he is on, with five seconds of
 patience. labelled, as the goal state is.
 
+**the inward draw (13:50 PDT; `--goal-switch 5`, the new heading from the half-circle facing away from the wall):** 16
+switches (11 s per heading), corner 11 %, standing 18 %, walked 29 m, **at the rim 57 %**, within 30 deg of the current
+goal 21 %. no better than the uniform draw on the rim (59 %), worse on holding. so an inward goal does not get him
+off a wall: with the goal pointing into the garden he still spends 15-28 s runs on the rim, which means at the wall
+the goal channel loses to the flow wheel and the touch reflex, and possibly to PFL2 idling him (its sign in this map
+is the paper's inverted, 13:07, and an idle fly at a wall with an inward goal is what an inverted gas would produce).
+the corner is solved and the rim is not, and the next thing to look at is not another gain but PFL2's own bridge
+offset from its labels, because if its map is half a turn from PFL3's, the gas has been off when it should be on.
+`world/compass/yield3_g35.npz` is the run to watch with the compass panel.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,
