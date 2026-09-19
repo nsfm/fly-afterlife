@@ -2866,6 +2866,24 @@ durations fragment at the 1 mm/s threshold and their angular-velocity tail is tr
 tracks are exact, so on those rows only his side is trustworthy until the scorer gets its hysteresis
 and heading filter. the viewers do not yet draw the ring (they draw a square wall for the dish).
 
+**is the compass alive? (21:14 PDT; nate: "what triggers the spontaneous bursts in real flies?"; `--log-types`,
+`experiments/compass.py`; garden, 180 s, seed 12, the config of record):** **no.** EPG (46), EPGt, PEN (42), Delta7
+(42), PEG, PFL1 / 2 / 3 (50): every cell at 0.00 Hz for three minutes with vision on. no bump, so no heading, so
+nothing for a goal to be compared against, so no PFL3 drive onto DNa02, so no saccade: the saccade generator
+is not asleep, its instrument is unplugged. **where it is unplugged:** structurally the ring neurons (282 ER)
+are fed by the tubercle cells (156 TuBu), those by 1,009 MeTu cells in the medulla, and those by Mi15 and Dm2
+(15,816 and 10,612 synapses), the targets of R7 and R8: the anterior visual pathway, the colour / UV / polarisation
+channel, which is how a fly's compass sees the sun. the seam carries T4 and T5 only. **and the ring does not
+hold a bump when kicked:** two wedges (L3, L4) driven at 60 Hz for a second fire only while driven (64 Hz summed),
+PEN answers at 1.3, Delta7 at 25, and within a tenth of a second of release everything is 0.0, both seeds; the
+EPG-PEN recurrence (4,200 synapses) does not sustain itself at these constants. two problems, in order of
+tractability: (1) the input: flyvis computes Mi15 (not Dm2), so the seam can carry Mi15 onto his own Mi15 cells
+by column as T4 / T5 go today, a luminance stand-in for a UV pathway, labelled, with a sun disc in the sky to
+give the ring something to hold; a sensory-driven bump is still a compass while the sun is up. (2) the
+persistence in darkness: the attractor's own physiology, its own item. nate's other question, ocelli and
+colour: colour is exactly this pathway; the ocelli, as far as this record knows, serve flight and gaze
+stabilisation rather than the ring, said with less confidence. the anterior visual pathway is the next build.
+
 **the room with her at the corrected constants (12:14 PDT; seed 3, 300 s, 0.185 / 0.275,
 running steering and pace, adapting bristles, DNa02 wheel, thermo off):** pace 0.23 (sd 0.13),
 48.9 m walked; wall time 31% (13 visits, longest 21.5 s); five encounters within 0.5 m (at 5,

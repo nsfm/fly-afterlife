@@ -135,6 +135,11 @@ loop is probably a bug (mechanosensation brief).
 
 ## 2e. what the dish said (09-18 18:25, `experiments/benchmark.py` vs the Roman lab's flies)
 
+- [ ] **the compass is dark** (09-18 night): EPG / PEN / Delta7 / PFL all 0.00 Hz with vision on, and the ring does not
+      hold a kicked bump. FIRST: the anterior visual pathway into the seam: flyvis Mi15 onto his Mi15 cells by column
+      (Mi15 / Dm2 -> MeTu -> TuBu -> ER; the R7/R8 pathway, a luminance stand-in, labelled) + a sun disc in the sky
+      (a few degrees, clipped white; the eye's acceptance angle is the bloom). score: EPG rates, a bump vs shuffle,
+      phase vs heading (`experiments/compass.py`). THEN: bump persistence in darkness (the EPG-PEN loop at 0.185 mV).
 - [ ] **the saccade.** he never turns sharply: every 40 ms heading change under 30 deg (life: 60 %); inter-turn
       interval 1.0-1.4 s (life 0.25). look in the wiring first: do DNa02 / DNa01 / DNb06 / DNg13 burst on the
       woken brain, and can a burst be read as an event (a fixed-size turn) on top of the smooth HS wheel
