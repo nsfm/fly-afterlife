@@ -22,3 +22,4 @@ world/**/*.log
 world/**/*.npz
 ref/flyproject/
 world/**/*.json
+ref/flyproject_web/
