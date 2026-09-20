@@ -26,6 +26,7 @@ ap = argparse.ArgumentParser(); ap.add_argument("--out", required=True); ap.add_
 ap.add_argument("--antennae", default="real", choices=["wide", "real"], help="antenna tip geometry, the sample points for odour, warmth and humidity. wide: the original, 0.1 m ahead and 0.15 m to each side (4.5 mm apart at 15 mm per sim m, twelve times a fly's). real: at the front of the head and 0.35 mm apart (0.08 / 0.012 m; head ~0.7 mm wide, Gaudry 2013 / Taisz 2023 for what a fly can do with that spacing) (09-19)")
 ap.add_argument("--wind-sated", default="on", choices=["off", "on"], help="the plume does not set the wind goal while the feeding state is full (Root 2011; 09-19: without it he stands against the fruit after eating, pushed upwind into it)")
 ap.add_argument("--ocelli", default="on", choices=["off", "on"], help="the ocellar stand-in (garden; 09-19): OCG / OCC driven at --ocelli-hz x (1 - sky light) per side, the left cells from the left and median ocelli, the right from the right and median. the photoreceptors are not in the volume; the L-neuron sign is from life; graded in life")
+ap.add_argument("--taste-hold", default=None, choices=["sugar", "water"], help="TEST STIMULUS (09-19): hold this taste on his tarsi every frame regardless of where he stands, to ask what his wiring does with it; not a sense, never a default")
 ap.add_argument("--ocelli-hz", type=float, default=40.0, help="the ocellar interneurons' rate in the dark (a chosen number; 0 in full sun)")
 ap.add_argument("--model", default="flow/0000/000"); ap.add_argument("--no-female", action="store_true"); ap.add_argument("--gain", type=float, default=3.0); ap.add_argument("--drive-gain", type=float, default=150.0)
 args = ap.parse_args(); fps, CH = 100, 10; rng = np.random.default_rng(args.seed)
@@ -197,6 +198,10 @@ if args.world == "arena":
 if args.world == "garden":
     from fly_afterlife.garden import Garden
     room = Garden(seed=args.seed); m.x, m.y, m.h = (-0.5, -0.5, 35.0) if args.start is None else tuple(float(v) for v in args.start.split(",")); her.x, her.y, her.h = 1.2, 0.3, 180.0
+    if args.taste_hold:   # the test stimulus: taste imposed after the world's contacts each frame
+        _sf0 = room.step_frame
+        def _sf_hold(m_, f_, fps_): _sf0(m_, f_, fps_); m_.taste = args.taste_hold
+        room.step_frame = _sf_hold
     if args.no_plume: room.odour = lambda x, y, t, sources=None, rng=None: {"fruit": 0.0}
     if args.fruit_tone == "litter": fx_, fy_, fz_, fr_, _ = room.fruit; room.fruit = (fx_, fy_, fz_, fr_, float(room.tex.mean()))   # posts stay float32 rows: the oracle's arithmetic
 THERMO_FIELDS = {"field": [dict(base=25.0, x=1.5, y=1.5, dT=8.0, sigma=0.8)],                                                     # a warm corner, 33 C at the centre

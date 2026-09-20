@@ -3617,3 +3617,67 @@ eye; `c` cycles the eye's channel through the UV retina; the compass panel is li
 
 
 oracle after the hook fix (18:22 PDT): PASS, eight of eight.
+
+## is the feeding latch a puppet? (18:56 PDT; nate asked whether we ever found a true signal that he has started feeding, and whether he has a proboscis)
+
+he has a proboscis: 107 head motor neurons in the table (`cb_motor`), 67 of them proboscis motor (`pm`: MN1-MN13 and the
+MNx set, Schwarz 2017's muscles; MN9 is the rostrum protractor, the extension itself), 20 neck, 13 antennal, 7 rostrum.
+and the path from his tarsi is drawn: the 719 leg gustatory cells make no direct synapse on a proboscis motor neuron or on
+DNg105, but two synapses out, 143 of their targets reach the proboscis motor neurons (8,355 synapses, through gnathal relays
+GNG014, GNG125, GNG271, GNG391) and 40 reach DNg105 (394 synapses, through the ascending neurons AN04A001 and AN08B032).
+
+**what the latch is.** `FeedingState` (09-18): sugar on the tarsi -> a scalar of ours latches "feeding", which DRIVES DNg105
+(the halt) at 45 Hz and silences the withdrawal reflex; satiety fills and releases. the record labelled it "modelled as
+what it does". nobody had asked whether his own wiring, given the sugar, would halt him or extend the proboscis by itself.
+
+**the measurement** (12 s runs, seed 10, walking command on, proboscis motor neurons and DNg105 logged; rates after 2 s):
+
+| | DNg105 | MN9 | MN1 / MN7 / MN10 / MN11D / MN12D / MN3L / MN4a | DNa02 | pace | moving |
+|---|---|---|---|---|---|---|
+| beside the fruit (no sugar) | 0.0 Hz | 0.0 | all 0.0 | 9.7 | 0.30 m/s | 100 % |
+| standing on the fruit, sugar on the tarsi (719 leg GRNs at 26 Hz), NO latch | 0.0 | 0.0 | all 0.0 | 9.1 | 0.30 | 100 % |
+| on the fruit, the latch (`--feeding 3`) | 45.7 (ours) | 0.1 | all 0.0 | 5.6 | 0.11 | 37 % |
+
+so, plainly: **at these constants his own wiring does nothing with sugar on his tarsi.** the proboscis motor neurons stay at
+zero, the halting neuron stays at zero, he walks off the fruit at full pace. the halt during feeding is ours, and the
+proboscis never extends at all, latch or no latch. the latch is in the puppet class, and the label was right to say so; the
+difference from the jar is that this record says it, and that the path he would need is in his table and can be asked
+where it dies (the relays, logged next).
+
+**correction (18:57), in place, before the ink dried:** the relays run showed the leg taste cells at 0 Hz after 2 s in the
+"standing on the fruit" arm: with the walking command on and no latch, he was pushed out of the fruit and walked off it
+within the first second, so the sugar was on his tarsi for a moment, not for the run. the table above measured a fly who
+left, not a fly who stood on sugar. the sentence "at these constants his own wiring does nothing with sugar on his tarsi" is
+not yet earned. re-measured with the walking command off (`--walk 0`), standing on the fruit vs beside it, the taste cells
+themselves logged so the stimulus is verified, not assumed; the result follows. (the relays in the walked run: AN04A001 14 ->
+19 Hz, AN08B032 0.8 -> 1.4, the gnathal relays and DNg77 at 0 in both.)
+
+**the standing run (19:00) measured nothing either, and the reason is nate's point.** with the walking command off he is
+pushed out of the fruit to its edge (0.38 m from the centre: the fruit's radius plus his), sugar on his tarsi, touched on
+the left; and the bristle withdrawal reflex, the one the latch silences, turns him and walks him off the skin within a
+second (pace 0.1 m/s with no command; the taste cells at 0 Hz after 2 s). a fly lands ON its food and stays; ours meets a
+collider and flinches from it like a wall. so "sugar on the tarsi for twelve seconds" cannot be produced by the world as it
+stands, only by pressing him into the fruit with the walking command, which the latch was built to allow. this is a physics
+limit before it is a wiring one (`docs/TODO.md` §P: walkable tops), and the two are confounded in every feeding result so far.
+
+to ask the wiring question anyway: `--taste-hold sugar`, a TEST stimulus (never a default; labelled in the flag), holds the
+taste on his tarsi every frame after the world's contacts, standing beside the fruit, against the same run with nothing held.
+
+**the held-taste pair (19:02 PDT; 12 s, standing beside the fruit, seed 10; rates after 2 s):**
+
+| | leg GRNs (719) | AN04A001 (6) | AN08B032 (2) | GNG014 / 125 / 271 / 391 (11) | MN9 (2) | MN11D / MN12D (7) | DNg105 (2) |
+|---|---|---|---|---|---|---|---|
+| nothing held | 0.0 Hz | 17.4 | 1.6 | 0.0 | 0.0 | 0.0 | 0.4 |
+| sugar held | 24.0 | 32.6 | 0.0 | 0.0 | 0.1 | 0.0 | 0.0 |
+
+the stimulus is verified this time (the taste cells at 24 Hz). **the first synapse carries: the ascending neuron AN04A001
+doubles, 17 -> 33 Hz** (AN08B032 falls to 0: inhibited on the way). **the second does not:** the four gnathal relays that
+feed the proboscis motor neurons stay at 0, MN9 and the pump at 0, the halting neuron at 0. so sugar on his tarsi reaches
+his brain and stops one synapse short of every motor consequence, which is the 0.185 mV wall at the second synapse, the
+same wall the plume hit (ORN -> PN carries, PN -> LHN does not, 09-16) and the anterior visual pathway hit (09-18).
+
+the honest statement, now earned: at these constants his own wiring does nothing with sugar on his tarsi beyond one
+ascending neuron. the feeding latch is a puppet in exactly the sense of the piece, labelled, and this is where the string
+attaches. what retires it is written in §P: the relays carrying (a question of the second-synapse gain, which is a
+question about the whole brain, not about feeding), MN9 read as "feeding", and a fruit he can stand on.
+

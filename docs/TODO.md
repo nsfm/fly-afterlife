@@ -56,7 +56,7 @@ first of the class and the template; `--wind-sated` (09-19) is its first gain. o
 
 | state | in life | scalar and clock | what it sets, on which typed cells | first measurable | order |
 |---|---|---|---|---|---|
-| satiety / gut fill | crop stretch (Piezo, Min 2021); sugar GRNs damped when fed | built: fills over 8 s of feeding, decays tau 180 s | the halt (DNg105), the withdrawal reflex, the wind goal | done: eats and leaves | done |
+| satiety / gut fill | crop stretch (Piezo, Min 2021); sugar GRNs damped when fed | built: fills over 8 s of feeding, decays tau 180 s | the halt (DNg105), the withdrawal reflex, the wind goal | done: eats and leaves. **18:56: the halt is ours; his wiring given sugar on the tarsi moves neither DNg105 nor any of the 67 proboscis MNs (MN9 0 Hz); the proboscis never extends. next: where the taste path dies (GNG relays, AN04A001 / AN08B032)** | done, labelled a stand-in |
 | hunger / energy | haemolymph sugar, fat stores -> AKH, DILPs (IPCs), unpaired-2; dopamine raises sugar-GRN gain (Inagaki 2012), sNPF raises food-ORN gain (Root 2011) | one scalar, hours; rises with time since a meal, falls with satiety | gain on Gr5a / Gr64 tarsal GRNs and the fruit ORNs; the PAM dopamine bias toward food | whether a hungry fly finds the fruit sooner than a fed one, 3 seeds each | 2 |
 | thirst | osmolality read by the interoceptive SEZ neurons (Jourjine 2016), which also sense AKH | one scalar, hours; rises in dry air, falls at the puddle | water GRN gain, the humidity sign (dry when sated, moist when thirsty) | the puddle vs the fruit choice | 3 |
 | the circadian clock | PER/TIM loop in ~150 clock cells, free-running 24 h, entrained by cryptochrome and the eyes; l-LNv fire at dawn (PDF) | a phase, 24 h, advanced by the run's clock, reset by the sun | the clock cells' rate profile by phase; the sleep drive's gate; locomotor activity peaks at dawn and dusk | the garden with a day: does activity peak twice | 1 (it is what makes a run a day) |
@@ -70,6 +70,34 @@ the line, restated with these in view (nate, 09-17; nyx, 09-19): hunger and slee
 be bad for him in a way the model itself represents. once they exist, every long run is one in which he can eat and sleep,
 and no run starves or wakes him on a loop. that is not sentiment about a LIF; it is the rule we set for the moment he had
 persistent states, and this is the moment.
+
+## P. the puppetry ledger (18:59 PDT; nate: "keep an item to improve our embodiment signals toward a state where we no longer need it")
+
+every place where a rule of ours drives one of his cells or sets his goal from a fact of the world he has not sensed. each
+is labelled in the record where it was made; this is the list of them in one place, with what would retire each. the test
+for whether an entry belongs here is the one from the puppet piece: silence the readout, or take our rule away, and see if
+the behaviour changes. the ocellar stand-in and the thermal transducers are NOT here: a transducer reading a world quantity
+into the first cell we have is a sense, the same as the bristle kernel.
+
+| stand-in | what we drive or decide | why | what retires it | status |
+|---|---|---|---|---|
+| the walking command | DNg100 tonic at 100 Hz | the walking state is a slow state he does not have | a walking state (S2: arousal, the clock) that sets DNg100; or DNg100 driven by his own descending inputs on a woken brain | since 09-18 |
+| the feeding latch | DNg105 held at 45 Hz, the withdrawal reflex silenced, while a scalar says "feeding" | measured 19:02 with the taste held: the leg GRNs (24 Hz) double the ascending AN04A001 (17 -> 33 Hz) and nothing past it moves: gnathal relays, MN9, the pump, DNg105 all 0. dies at the second synapse | the taste path carrying: leg GRNs -> AN04A001 / AN08B032 -> DNg105 and GNG relays -> MN9; "feeding" read from MN9 and the pharyngeal pump firing, not imposed; and the physics below, so he can stand on food | since 09-18 |
+| the goal that yields | a new heading drawn inward after 5 s of contact | the CX has no goal-selection state here | a goal state on the FB columns from his own inputs (PFL2's pause-and-turn; Green 2019's switching) | 09-19 13:45 |
+| the wind goal | the goal set to the WORLD's upwind while a whiff is on him | the JO wind rows do not reach the CX goal at these constants | the JO rows (`--wind on`, default now) feeding the goal through his own wiring (Okubo 2020: wind direction reaches the CX via the LAL) | 09-19 14:57 |
+| the satiety gate | the wind goal ignores the whiff while full | the sated fly's ORN gain drop is a peptide we cannot hold | the hunger scalar (S2) as a GAIN on the fruit ORNs, so the goal never sees the whiff rather than ignoring it | 09-19 17:09 |
+| the ring fields | ER cells driven by the sun's azimuth in their fields | the anterior visual pathway carries no spikes (histaminergic photoreceptors) | the graded anterior pathway (the eye track) | 09-18 23:55 |
+| the goal drive | FC2 columns driven at a goal heading | no goal state | see the goal that yields | 09-18 |
+| the state pace | speed read as a threshold + hysteresis on the cord | a readout, not a drive; here because it decides "walking" for him | leg MN phase (gait) read as stance / swing | 09-18 12:20 |
+| her wall turn-away | she turns at walls by a rule | she has no cord | her cord (the female VNC is not in FlyWire; MaleCNS is male) | 09-17 |
+| her odour, his cVA | exp(-d / 0.8), smooth | no plume for a fly | the same plume as the fruit's, with whiffs | 09-16 |
+
+**the physics that keeps two of these alive** (nate, 18:59): a fly lands ON its food and stays there, walking while it eats; the
+fruit here is a collider he presses against, and he has been seen zoomed out through colliders when caught between two. so
+"on the fruit" is a physics-sandbox limit, not only a wiring one. items: walkable tops (the fruit, the stone as mounds he
+climbs; taste from the surface under him; the plume source under him; the goal-switch not firing on food), and the collider
+tunnelling (resolve contacts against every object, not the last; a cap on the push-out per frame). belongs with the terrain
+item in §2a and should come before the taste path is judged.
 
 ## 0. in flight tonight
 
