@@ -20,7 +20,7 @@ class Episode:
         """room: any world with scene(bodies) / step_frame(m, f, fps) / contacts (Room, Drum). her: a Body or None.
         effectors: (steer, pace, her_steer or None, song or None). on_chunk(ep, c, cntM): optional per-chunk hook."""
         self.on_chunk = on_chunk; self.threads = threads; self.state = state
-        self.front_end_uv = front_end_uv; self.LUM_UV = []
+        self.front_end_uv = front_end_uv; self.LUM_UV = []; self.OCELLI = []
         self.walkmod = walkmod; self.walk_gain = 1.0   # walkmod(cntM) -> a gain on the walking command for the next chunk (PFL2, 09-19)
         self.vread = vread or {}   # {name: (cells L, cells R)}: populations read by mean membrane potential per chunk, graded, as cntM[name_L / name_R] in mV x 100 (09-19: PFL3's output is graded in life; its spikes here are too sparse to steer with)   # the UV retina through a second flyvis (Mi15), when the world has scene_uv (09-18)   # an internal state object with update(t, taste) and .feeding / .sat, or None (09-18)
         from concurrent.futures import ThreadPoolExecutor; self.pool = ThreadPoolExecutor(max_workers=1)
@@ -76,6 +76,7 @@ class Episode:
                     oL = self.room.odour(float(aL_[0]), float(aL_[1]), t_f); oR = self.room.odour(float(aR_[0]), float(aR_[1]), t_f)
                     st_["odour_L"] = oL; st_["odour_R"] = oR; self._last_odour = (oL, oR)   # the last frame's whiffs, for the goal state (09-19)
                 if hasattr(self.room, "humidity"): st_["humidity"] = self.room.humidity(float(px), float(py))
+                if hasattr(self.room, "sky_light"): st_["ocelli"] = self.room.sky_light(float(px), float(py), float(ph)); self.OCELLI.append((st_["ocelli"]["median"], st_["ocelli"]["left"], st_["ocelli"]["right"]))   # the ocellar stand-in's stimulus (09-19)
                 if hasattr(self.room, "wind"): st_["wind_rel"] = float((np.degrees(np.arctan2(-self.room.wind[1], -self.room.wind[0])) - ph + 180) % 360 - 180)   # where the wind comes FROM, relative to his heading (+ = from his left)
                 st_["taste"] = getattr(m, "taste", None); st_["heading"] = float(ph)
             st_["lum"] = self._lum_frames[f]; st_["lum_uv"] = (self._lum_uv[f] if getattr(self, "_lum_uv", None) is not None else None)   # the retinas of this frame, for receptor rows driven by column (R7 / R8, 09-18)
@@ -142,6 +143,7 @@ class Episode:
         if her_albedo is not None: out["her_albedo"] = her_albedo
         if her_r is not None: out["her_r"] = her_r
         if self.LUM_UV: out["lum_uv"] = (np.clip(np.concatenate(self.LUM_UV), 0, 1) * 255).astype(np.uint8)
+        if self.OCELLI: out["ocelli"] = np.array(self.OCELLI, np.float32)   # per frame: median, left, right ocellus sky light 0..1
         if extra: out.update(extra)
         np.savez_compressed(path, **out)
         print("wrote", path, f"contacts {self.room.contacts}, song chunks {sum(log['song'])}, mean dist {np.mean(log['dist']):.2f}")

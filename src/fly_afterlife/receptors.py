@@ -184,6 +184,19 @@ class CoolingCells(Transducer):
 
 
 @dataclass
+class OcellarL(Transducer):
+    """the ocellar interneurons as a light-level channel: A STAND-IN (09-19). the ocellar photoreceptors are outside the imaged
+    volume (nothing entering by the ocellar nerve touches OCG / OCC; docs/SEAM.md 09-19), so the first cells we have are the
+    interneurons. in life the large ocellar L-neurons are depolarised in the dark and hyperpolarised by light, because the
+    receptors are histaminergic (Hardie 1989; Wilson 1978 for the locust L-neurons; Krapp 2009 review), and they are graded,
+    not spiking: a rate here stands in for a membrane level. rate = dark_hz x (1 - light), stim = sky light 0..1 for the
+    ocellus that feeds the cell. dark_hz is a chosen number, not a measured one."""
+    dark_hz: float = 40.0
+    source: str = "stand-in 2026-09-19: L-neuron sign from Hardie 1989 / Wilson 1978 / Krapp 2009; dark_hz chosen, graded in life"
+    def step(self, stim, t, dt): return self.dark_hz * float(np.clip(1.0 - float(stim), 0.0, 1.0))
+
+
+@dataclass
 class WeberFechner(Transducer):
     """an olfactory receptor neuron: rate = rest + gain x c / (c + c0 + running mean of c), the running mean over
     tau_s (Weber-Fechner: the gain scales with 1 / mean; Gorur-Shandilya 2017, Nagel & Wilson 2011). stim = concentration

@@ -12,7 +12,7 @@ for w in old new; do
     if [ "$1" = "--make-oracle" ] || [ ! -f "world/oracle/room_${w}_s$s.npz" ]; then
       uv run python world/oracle/pair_oracle.py --seconds 30 --seed $s --deterministic --wsyn-m $WM --wsyn-f $WF --out "world/oracle/room_${w}_s$s.npz" > "world/oracle/room_${w}_s$s.log" 2>&1 || echo "oracle $w s$s FAILED"
     fi
-    uv run python world/pair.py --seconds 30 --seed $s --deterministic --wsyn-m $WM --wsyn-f $WF --bristle hold --legmn all --no-floor --pace-k 4 --walk-dn DNp09 --pace fixed --wheel DNa02 --steer-ema 3 --integrate euler --out "world/oracle/port_${w}_s$s.npz" > "world/oracle/port_${w}_s$s.log" 2>&1 || echo "port $w s$s FAILED"
+    uv run python world/pair.py --seconds 30 --seed $s --deterministic --wsyn-m $WM --wsyn-f $WF --bristle hold --legmn all --no-floor --pace-k 4 --walk-dn DNp09 --pace fixed --wheel DNa02 --steer-ema 3 --integrate euler --antennae wide --wind off --thermo off --ocelli off --wind-sated off --out "world/oracle/port_${w}_s$s.npz" > "world/oracle/port_${w}_s$s.log" 2>&1 || echo "port $w s$s FAILED"
   done
 done
 # oracle v2 (09-19): the engine and the defaults of record from the exact integrator on: exact integration, the tonic floor,
@@ -26,7 +26,8 @@ for w in old new; do
     if [ "$1" = "--make-oracle" ] || [ ! -f "world/oracle/v2_${w}_s$s.npz" ]; then
       uv run python world/oracle/pair_oracle_v2.py --seconds 30 --seed $s --deterministic --wsyn-m $WM --wsyn-f $WF --walk 100 --out "world/oracle/v2_${w}_s$s.npz" > "world/oracle/v2_${w}_s$s.log" 2>&1 || echo "oracle v2 $w s$s FAILED"
     fi
-    uv run python world/pair.py --seconds 30 --seed $s --deterministic --wsyn-m $WM --wsyn-f $WF --walk 100 --out "world/oracle/v2port_${w}_s$s.npz" > "world/oracle/v2port_${w}_s$s.log" 2>&1 || echo "v2 port $w s$s FAILED"
+    # v2 pins the fly of 09-19 morning explicitly (as v1 pins its own), so the defaults can move with the fly and the oracle still tests the engine
+    uv run python world/pair.py --seconds 30 --seed $s --deterministic --wsyn-m $WM --wsyn-f $WF --walk 100 --antennae wide --wind off --thermo off --ocelli off --wind-sated off --out "world/oracle/v2port_${w}_s$s.npz" > "world/oracle/v2port_${w}_s$s.log" 2>&1 || echo "v2 port $w s$s FAILED"
   done
 done
 uv run python - <<'PY'

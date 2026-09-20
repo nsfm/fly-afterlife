@@ -383,6 +383,7 @@ class Episode:
         `sun_dir` is the garden's sun; every garden file carries it from 09-19 on, older ones do not."""
         E = self.E
         self.sun_dir = np.asarray(E["sun_dir"], np.float64).ravel() if "sun_dir" in E.files else None
+        self.ocelli = np.asarray(E["ocelli"], np.float32) if "ocelli" in E.files else None   # per frame: median, left, right ocellus sky light 0..1 (--ocelli on, 09-19)
         self.sun_az = self.sun_el = None
         if self.sun_dir is not None and len(self.sun_dir) >= 3:
             d = self.sun_dir / (np.linalg.norm(self.sun_dir) + 1e-12)
@@ -1236,7 +1237,11 @@ def run(args):
         if eye_mode == "pano" and not pano.ready:
             t_ = f_small.render("building the nearest-ommatidium table...", True, FAINT)
             display.blit(t_, (R_EYEC.centerx - t_.get_width() // 2, R_EYEC.centery))
-        # an ocelli panel would go here - but nothing identifies or drives the three ocelli yet, so there is no signal to draw.
+        if ep.ocelli is not None and i < len(ep.ocelli):   # the ocelli (09-19): three discs on the vertex, each lit by the sky it sees; left, median, right in his frame
+            om, ol, orr = (float(v) for v in ep.ocelli[i]); r_ = U(5); cx_, cy_ = R_EYEC.centerx, R_EYEC.y + U(12)
+            for k_, (v_, dx_, dy_) in enumerate(((ol, -U(14), U(4)), (om, 0, 0), (orr, U(14), U(4)))):
+                g_ = int(40 + 200 * max(0.0, min(1.0, v_))); pg.draw.circle(display, (g_, g_, int(g_ * 0.9)), (cx_ + dx_, cy_ + dy_), r_); pg.draw.circle(display, EDGE, (cx_ + dx_, cy_ + dy_), r_, 1)
+            t_ = f_small.render(f"ocelli  L {ol:.2f}  M {om:.2f}  R {orr:.2f}", True, FAINT); display.blit(t_, (cx_ - t_.get_width() // 2, cy_ + U(12)))
         stats["eye"].append(time.perf_counter() - t); t = time.perf_counter()
         # -- the compass, next to the eye
         draw_compass(i)

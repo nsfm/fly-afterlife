@@ -102,6 +102,19 @@ class Garden(Room):
         for lx, ly, lz, lr, _ in self.leaves: s *= 1 - 0.45 * float(np.clip(1 - (np.hypot(x - lx, y - ly) - lr) / 0.3, 0, 1))
         return s
 
+    OCELLI = dict(median=0.0, left=60.0, right=-60.0)   # where each ocellus looks, degrees of yaw from his heading; all three look up at the sky
+    def sky_light(self, x, y, h):
+        """the sky brightness each ocellus sees, 0..1 (09-19, the ocellar stand-in): the leaf shade sampled 0.3 m out along
+        the ocellus's line of sight (the leaves are 0.8-1.4 m up: what is over him, roughly), times the sky, plus the sun's disc
+        when it is in that ocellus's field (the sun is 27 deg azimuth, 48 deg up; boost 0.3 as the raytracer uses), over the
+        open-sky-with-sun value so 1 = open sky facing the sun, ~0.7 = open sky facing away, ~0.4 = under a leaf."""
+        az = float(np.degrees(np.arctan2(self.sun_dir[1], self.sun_dir[0]))); out = {}
+        for k, off in self.OCELLI.items():
+            a = np.radians(h + off); sh = self._shade_at(x + 0.3 * np.cos(a), y + 0.3 * np.sin(a)) / 1.0
+            sun = 0.3 * max(0.0, float(np.cos(np.radians(az - (h + off)))))
+            out[k] = float(np.clip(sh * (self.sky + sun) / (self.sky + 0.3), 0.0, 1.0))
+        return out
+
     def temperature(self, x, y):
         sx, sy, ss = self.sunspot; px, py, _, pr, _ = self.puddle
         T = 25.0 + 6.0 * float(np.exp(-((x - sx) ** 2 + (y - sy) ** 2) / (2 * ss ** 2)))       # the sun patch

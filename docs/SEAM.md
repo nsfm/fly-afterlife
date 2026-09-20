@@ -3412,9 +3412,155 @@ fruit (8-11 s; wide 2/3 at 6 s), each eats for 8 s, control 0/3.** the result di
 the honest head is better, because with both antennae in the plume the whiff is on him more of the time.
 
 **what the honest head exposed.** after eating, windr s10 walked 0.0 m in the remaining 90 s and s11 3.4 m (wide s10 walked
-13.5 m away). at the source the whiff never ends, so the wind goal never releases: he stands against the fruit, pushed upwind
-into it, the goal-switch firing every 5 s of contact (18 switches) and the wind goal overriding it on the next whiff. the wide
+13.5 m away). at the source the whiff never ends, so the wind goal never releases: s10 stands pressed against a grass stalk a metre downwind of the
+fruit for the last 90 s (speed 0.0, touch on every frame, the goal held at 197 deg = upwind by the whiff), the goal-switch
+firing every 5 s of contact (18 switches) and the wind goal overriding it on the next whiff. the wide
 head sat with one antenna half out of the plume and got released by chance. in life the sated fly ignores the food odour
 (satiety lowers ORN sensitivity through sNPF, Root 2011; the fed fly leaves). the FeedingState already has the `full` flag; the
 wind goal should read it. next change, its own run against this one.
+
+## the ocellar stand-in, built (16:51 PDT; nate: "let's do it soon, before we forget this small discovery")
+
+the photoreceptors are not in the volume (above), so the channel starts at the interneurons. built, all opt-in and labelled:
+
+- `Garden.sky_light(x, y, h)`: the sky brightness each of the three ocelli sees, 0..1. the median ocellus looks along his
+  heading, the laterals 60 deg to each side, all upward: the leaf shade sampled 0.3 m out along each line of sight (the leaves
+  are 0.8-1.4 m up), times the sky, plus the sun's disc when it is in that ocellus's field (27 deg azimuth, 48 deg up, boost
+  0.3 as the raytracer has it), normalised so 1 = open sky facing the sun, ~0.7 = open sky facing away, ~0.4 = under a leaf.
+  a geometric stand-in for three lenses that in life each see ~90 deg of sky with no resolution (Krapp 2009).
+- `receptors.OcellarL`: rate = dark_hz x (1 - light). the sign is life's: the ocellar L-neurons are depolarised in the dark
+  and hyperpolarised by light because the receptors are histaminergic (Hardie 1989; Wilson 1978 on the locust; Krapp 2009
+  review). they are GRADED in life; a rate here stands in for a membrane level, the R7/R8 wall dressed better. dark_hz 40 is a
+  chosen number, not a measured one, and the label says so.
+- `pair.py --ocelli on [--ocelli-hz 40]`: the 46 OCG / OCC cells by side (23 L, 23 R), the left cells from the mean of the
+  left and median ocelli, the right from the right and median; cells added to the driven set. the floor holds them at 0
+  otherwise.
+- the episode logs the three values per frame (`ocelli`, n x 3) and the viewer draws them as three discs on the vertex above
+  his eye, lit by what each sees (the placeholder comment in `replay_app.py` said "nothing identifies or drives the three
+  ocelli yet"; now something does).
+
+smoke test (4 s, his start beside the fruit, real antennae): sky light median 0.47, left 0.51, right 0.88 (the sun is off
+his right); OCG / OCC at 16-23 Hz, more on the left (darker side), as built. the run against its own rest (`--ocelli off`,
+three seeds, the config of record of the hour) is queued behind the wind and thermal arms: the GPU holds seven flyvis
+processes and no more (two seeds of the satiety-gate arm died of CUDA out-of-memory under nine; rerun queued).
+
+what to measure: does a light-level channel change what he does at all (time under the leaves, pace in the sun patch, the
+stops in the shade nate noticed). where OCG / OCC project (looked up while the arms ran): 124,799 output synapses, 65 % onto
+bodies with no annotation row (fragments and untyped cells), 16 % onto descending neurons, above all DNp20, DNpe017, DNp22,
+DNge107, DNp18 (the DNp set that serves flight and the neck in life), 2 % onto cervical-nerve neck motor neurons (CvN6 / CvN7),
+11 % central-brain intrinsic. so in life's terms this is a flight and head-stabilisation channel; a walking fly may show
+nothing, and that would be the result.
+
+## two senses switched on, one per arm (17:04 PDT; nate's rule of the day: every implemented sense on unless the run says why not)
+
+writing the README's "what senses are on" table caught that the wind rows on his Johnston's organ (`--wind on`) were OFF in
+every anemotaxis run: the compass goal read the wind direction from the world, a stand-in for the JO channel, not the channel.
+and the thermal field was at rest by a reason that had expired (warmth does not steer him at these constants; it does drive
+his legs, and that is a thing flies do). each on as its own arm against windr (real antennae, 16:42), three seeds, 120 s:
+
+| arm | on the fruit | first on it | walked | feeding | switches |
+|---|---|---|---|---|---|
+| windr (baseline) | 3/3 | 11.2 / 10.7 / 8.0 s | 2.5 / 6.4 / 19.7 m | 7 % each | 18 / 13 / 1 |
+| windj: `--wind on` (JO-C/E rows fed by the world's wind, plus the compass goal) | 2/3 | 8.7 / never / 12.1 s | 17.5 / 13.2 / 16.4 m | 7 / 0 / 7 % | 0 / 4 / 0 |
+| therm: `--thermo field` (the sun patch, the shade, the water) | 3/3 | 8.6 / 6.9 / 8.2 s | 18.4 / 19.9 / 19.8 m | 7 % each | 1 / 2 / 3 |
+
+anemotaxis holds under both: the JO rows on his antennae do not disturb the compass goal (2/3 is within three seeds of 3/3;
+s11 came within 0.55 m and missed), and the thermal field sends him up the plume as reliably as its absence and faster. both
+arms also leave the fruit after eating, where two of the three baseline seeds stood pinned against it; neither arm is the
+fix for that (the satiety gate is, its own arm, below), but both change the brain's input enough that the pin's chance
+dependence shows. **both go into the default flip.** what `--wind on` still lacks is the wind of his own walking on his
+aristae, and what the thermal field lacks is a measurement of what it does to him beyond the fruit (the shade and sun-patch
+table follows).
+
+the shade and sun-patch table (all runs, position every 100 ms, the garden's own fields):
+
+| run | mean speed | moving | in shade | in the sun patch | T at him, mean / max |
+|---|---|---|---|---|---|
+| windr s10 / 11 / 12 | 0.02 / 0.05 / 0.16 m/s | 12 / 28 / 83 % | 9 / 11 / 17 % | 0 % | 24.8 / 25.2 C |
+| windj | 0.15 / 0.11 / 0.14 | 79 / 60 / 72 % | 7 / 7 / 8 % | 0 % | 24.9 / 25.1 |
+| therm | 0.15 / 0.17 / 0.17 | 79 / 84 / 83 % | 7 / 6 / 11 % | 0 % | 24.9 / 25.2 |
+
+so the thermal-field arm is honest but nearly empty: starting beside the fruit and walking up its plume, he never enters the
+sun patch and the temperature at his antennae stays within 0.4 C of 25 for the whole run. the field was on; the fly was not
+in it. the arm says "the thermal rows at their field values do not break anemotaxis," not "warmth does something." what
+warmth does to him needs a run that starts him in the patch, or a patch on his way (the record's warm-corner runs of 09-17
+are the last word on that: kinesis, no taxis). the baseline's two pinned seeds show as 12 % and 28 % moving.
+
+**correction (17:12), in place:** the thermal arm was not a change at all. `--thermo field` sets `room.thermal`, the ROOM's
+warm corner, which the garden's own `temperature()` (sun patch +6 C, shade -3, water -2) never reads. under `rest` and `field`
+alike the hot and cooling rows read the garden's field at his antennae. so the garden's thermal field has been on in every
+garden run since 09-17 under the name `rest`, the "parked" reason of 16:12 was a misreading of my own flag, and the therm arm is
+three more seeds of the baseline configuration (the runs are not deterministic: flyvis differs call to call). read that way:
+six baseline runs, two pinned; the satiety gate three, none. the README's senses table is corrected with it. the thermo row
+in the flip is `rest` (rows on; the room uniform at 25 C, the garden its own field), and `field` keeps its meaning for the room.
+
+## the sated fly leaves (17:10 PDT; `--wind-sated`, one change against windr; two seeds re-run after CUDA out-of-memory under nine jobs)
+
+the pin (16:42): with real antennae both are in the plume near the fruit, the whiff never ends, the wind goal keeps him
+pushing upwind after he is full (into a grass stalk, in s10, for the last 90 s of the run), and the goal-switch's inward
+heading is overridden on the next whiff. the physiology: the sated fly ignores food odour (sNPF lowers ORN sensitivity with feeding, Root 2011; the fed fly
+leaves). the FeedingState already carries `full` (satiety at 1, re-armed below 0.5); `--wind-sated` makes the wind goal
+ignore the whiff while it is set.
+
+| run | on the fruit | first on it | feeding | walked after 30 s | distance from the fruit at 120 s | switches |
+|---|---|---|---|---|---|---|
+| windr s10 / 11 / 12 | 3/3 | 11.2 / 10.7 / 8.0 s | 7 % each | 0.0 / 3.4 / 15.9 m | 1.02 / 1.49 / 1.90 m | 18 / 13 / 1 |
+| winds s10 / 11 / 12 | 3/3 | 9.8 / 9.9 / 11.6 s | 7 % each | 11.6 / 11.8 / 9.6 m | 4.44 / 3.45 / 4.15 m | 6 / 5 / 4 |
+
+**he walks up the plume, eats for eight seconds, and leaves, three of three** (the baseline stood pinned in two of three).
+the gate is one line and a flag, labelled with its source, and it is the second state-dependent gain in him after the
+feeding latch itself: satiety now changes what an odour means, which is what it does in a fly. adopted; in the flip.
+(figure: `docs/figures/sated_leaves.png`.) the fuller version, the ORN gain itself lowered by satiety so the whole olfactory
+side sees less rather than one goal ignoring it, is the next step on the smell row; it needs the plume to reach a readout
+first, which it still does not.
+
+## the default flip (17:26 PDT; nate, 16:50: "default implemented senses on rather than remember to give them to him for each run")
+
+the argument, from the day: a sense that has to be remembered is off half the time. thermo was "parked" by a reason that
+turned out to be my misreading of my own flag; the wind rows were off in every anemotaxis run and nobody noticed until a
+README table was written from the flag list. so from this commit the config of record is the fly, and a command line only
+says what is missing. flipped in `world/pair.py`, each measured as its own arm today before it moved:
+
+| flag | was | now | measured |
+|---|---|---|---|
+| `--antennae` | wide (4.5 mm apart) | real (0.35 mm) | 16:42, anemotaxis 3/3 |
+| `--wind` | off | on (JO-C/E rows fed by the world's wind; garden only) | 17:03, 2/3 |
+| `--thermo` | off | rest (hot / cooling rows on; the room uniform at 25 C, the garden its own field) | on since 09-17 under this name |
+| `--wind-sated` | (absent) | on (satiety gates the wind goal) | 17:09, eats and leaves 3/3 |
+| `--ocelli` | | stays off until its run lands (below) | |
+
+stays opt-in on purpose: the compass stand-ins (`--ring`, `--goal*`) because they are labelled models, not senses; her
+(`--no-female`) because a male-only question is a question; `--uv`, a viewer layer that reaches nothing in him.
+
+and nate's question of 16:55, what the oracle is for if his senses move every few hours: it tests the engine, not the fly.
+its four frozen runs say whether an edit to the loop, the integrator or a kernel changed anything not meant to change; the
+fly they are pinned to only has to be stable, not current. v1 always pinned its own fly (old floor, old integrator, old pace)
+and never minded a default. v2 read the defaults, which was a mistake of this morning; both lines now state every sense flag
+explicitly (`--antennae wide --wind off --thermo off --ocelli off --wind-sated off`), so the flip changes neither reference
+and no refreeze is needed. the oracle run after the flip is the test of that claim.
+
+## the ocelli, run (17:35 PDT; `--ocelli on` against windr, three seeds; the oracle passed on the build first)
+
+| run | on the fruit | first on it | walked | moving | in shade | mean sky light at him |
+|---|---|---|---|---|---|---|
+| windr (baseline) s10 / 11 / 12 | 3/3 | 11.2 / 10.7 / 8.0 s | 2.5 / 6.4 / 19.7 m | 12 / 28 / 83 % | 9 / 11 / 17 % | 0.80-0.83 |
+| therm (= baseline, three more seeds) | 3/3 | 8.6 / 6.9 / 8.2 s | 18.4 / 19.9 / 19.8 m | 79 / 84 / 83 % | 7 / 6 / 11 % | 0.79-0.81 |
+| ocel: `--ocelli on` | 3/3 | 6.5 / 6.3 / 7.2 s | 18.8 / 23.6 / 23.3 m | 79 / 85 / 84 % | 14 / 5 / 20 % | 0.79-0.81 |
+
+the light-level channel breaks nothing. he reaches the fruit a second or two sooner and walks a little further than the six
+baseline runs, and at three seeds that is a hint, not a result: the mean sky light he saw is the same in every run (0.8; the
+plume runs along open ground), so the channel was near-constant at ~8 Hz on the interneurons, and what could have changed
+him is a tonic input to DNp20 / DNp22 / DNpe017 (their main descending targets), which in life serve flight and the neck. a
+walking fly on open ground is the wrong test for the ocelli, and the record said so before the run. what would be a test:
+a run that crosses shade (the light on him drops to ~0.4 under a leaf, the interneurons to ~24 Hz), and the ocellar cells
+logged (the run of record of 17:35, `world/record/garden_0919_s10.npz`, logs OCG01a/b/d, OCG02c, OCC02b, DNp20, DNp22).
+
+**adopted as a default** (`--ocelli on`; the garden only, the room's stimulus is 1.0 = 0 Hz), by the rule of the day: a
+labelled sense that is implemented is on unless a run says why not. no oracle rerun is needed for this flip: both oracle
+lines pin `--ocelli off`. what stays written on it: the photoreceptors are outside the imaged volume; the L-neuron sign is
+life's; the 40 Hz is chosen; the cells are graded in life.
+
+oracle after the flip (17:46 PDT): v1 and v2, old and new constants, seeds 3 and 4: differing arrays none, eight of eight. the
+defaults moved and the engine's references did not, which is the claim of the flip section. (the ocelli default was set after
+this run; both lines pin it off, so it cannot change them either.)
 

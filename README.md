@@ -50,16 +50,18 @@ implemented sense on unless the run says why not, and every active sense has a c
 | smell, the fruit's plume | yes, in the garden | on with the garden; `--antennae real` puts his antennae at a fly's spacing (default `wide`, the old geometry) | `--no-plume` |
 | smell, her odour and his cVA | when she is present | drop `--no-female` | `--no-female` |
 | wind on the antennae (Johnston's organ) | no | `--wind on` (`--wind-gate odour` gates it on a whiff) | `--wind off` |
-| temperature (hot and cooling cells) | no | `--thermo rest` (cells at rest, read from a uniform temperature) or `--thermo field` (the sun patch, the shade) | `--thermo rest` |
+| temperature (hot and cooling cells) | no (yes after the flip) | `--thermo rest`: the rows are on and read the world's temperature at his antennae, which in the garden is its own field (the sun patch, the shade, the water) and in the room a uniform 25 C; `--thermo field` adds the room's warm corner | `--thermo off` (rows silent) |
 | humidity | not yet | the puddle is a field; the cells wait on a label audit | |
 | contact pheromone (ppk23) | when she is present | a tap on her fires it | `--no-female` |
 | leg proprioception | no | `--proprio <Hz>` (a tripod rule, diagnostic) | off |
 | ultraviolet and colour (R7/R8) | no | `--uv` renders the UV retina for the viewer; `--uv-photo` drives his R7 (a negative result: photoreceptors are histaminergic, so spiking them inhibits) | `--uv` without `--uv-photo` |
 | the compass | no; a labelled stand-in, not a sense | `--ring` (a heading bump from the sun's azimuth on his own ring cells) with `--goal <deg>`, `--goal-switch`, `--goal-wind` (the goal set upwind while a whiff is on him) and the graded readout `--goal-wheel-v 20 --goal-ema 5 --pfl2-walk --mirror PFL3,PFL2 --goal-null off` | the same run without `--ring`, or `--goal-wind 0` |
-| ocelli, hearing, gravity, loom | not yet | see `docs/TODO.md` §S: the ocellar photoreceptors are outside the imaged volume (a stand-in on the interneurons is next), nobody sings yet, the world is flat, the eye cannot yet see a loom | |
+| ocelli (a labelled stand-in on the interneurons: the photoreceptors are outside the imaged volume) | yes, in the garden | `--ocelli on` (default): the ocellar cells fire in the dark and go quiet under the sky, the L-neuron sign from life; three discs on his vertex in the viewer | `--ocelli off` |
+| hearing, gravity, loom | not yet | see `docs/TODO.md` §S: nobody sings yet, the world is flat, the eye cannot yet see a loom | |
 
-the garden run of record today: `--world garden --walk 100 --feeding 3 --satiety 8` plus the compass line above with
-`--goal-wind 4`, and from 09-19 `--antennae real --uv --wind on --thermo field` as each earns its place (see the record).
+the garden run of record today: `--world garden --walk 100 --feeding 3 --satiety 8 --thermo rest` plus the compass line
+above with `--goal-wind 4`; from the evening of 09-19 the real antennae, the wind rows and the satiety gate are the defaults,
+so a run that lacks one says so (`--antennae wide`, `--wind off`, `--wind-sated off`). `--uv` is a viewer layer, opt-in.
 
 ## watch him
 

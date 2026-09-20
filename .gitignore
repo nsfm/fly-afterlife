@@ -21,3 +21,4 @@ world/drum/
 world/**/*.log
 world/**/*.npz
 ref/flyproject/
+world/**/*.json
