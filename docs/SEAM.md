@@ -3564,3 +3564,56 @@ oracle after the flip (17:46 PDT): v1 and v2, old and new constants, seeds 3 and
 defaults moved and the engine's references did not, which is the claim of the flip section. (the ocelli default was set after
 this run; both lines pin it off, so it cannot change them either.)
 
+**where the ocellar channel goes, measured (17:50 PDT; 15 s garden runs, seed 10, defaults, the descending targets logged):**
+
+| | DNp20 | DNp22 | DNpe017 | OCG01a |
+|---|---|---|---|---|
+| ocelli off, wind rows off | 150 Hz | 4.4 | 21 | 0 |
+| ocelli off | 156 | 9.3 | 12.5 | 0 |
+| ocelli on (sky light ~0.8: the interneurons at ~8 Hz) | 160 | 24 | 58 | 17 |
+
+so the stand-in reaches its descending targets: DNpe017 x4.6 and DNp22 x2.6 from 46 cells at 8 Hz, which is the wiring
+(124,799 output synapses) doing what the table says. DNp20 is at 150 Hz with everything off: that is not the ocelli, it is
+the walking fly's floor or the command (DNg100 -> ?), and it is a number to look at another day (a descending neuron at
+150 Hz is a hot cell by any physiology). in the 180 s run of record the ocellar cells sat at 8.7 Hz and followed the sky
+light he saw with r = -0.9 (OCC02b) to -0.5 (the OCG01s), as built: he crossed shade (light 0.41 at the darkest).
+
+## a bug in the per-chunk hook (17:50 PDT; found because the run of record wandered)
+
+the 180 s run of record (everything on, the ocellar cells logged) never surged, never yielded, never reached the fruit, and
+the viewer said "no compass arrays". the cause: `pair.py` gave the episode ONE per-chunk hook, chosen by precedence,
+`--log-pre` over `--log-types` over the compass, so any run that logged cells had no compass hook at all: no EPG wedge log,
+no goal yield at walls, no wind goal, no PFL2 walk gain. fixed: all hooks that apply run, in that order.
+
+what it touches in the record: every run made with `--log-types` AND `--goal-switch` or `--goal-wind`. the anemotaxis
+batches (anemo4-8) logged no cells, so their numbers stand. the morning's goal and compass analyses (`experiments/goal.py`,
+`experiments/compass.py`) ran on logged cells with a fixed goal and no switch, so the goal drive (registry rows) and the
+graded readout (`vread`, in the episode) were live and the hook's only lost job was the wedge log, which those scripts do
+not use. the 17:52 run of record is moved out of the way (`garden_0919_s10_nohook`), and the run of record is being made
+again on the fixed script. the oracle runs after it (its runs have no hooks; the edit is still an edit).
+
+**oracle FAIL (17:59 PDT), and why:** the hook fix of 18:05 named the three hook functions in one list, and each is defined only
+under its own flag, so every `pair.py` run without `--log-pre` died on a NameError at setup: the oracle's four port arms
+included, hence FAIL, and the remade run of record with them. fixed (the list looks the names up and keeps what exists),
+smoke-tested both ways, the run of record launched a third time, the oracle again behind it. an oracle FAIL from a crash is
+still a FAIL and it goes in the record as one.
+
+## the run of record, evening of 09-19 (18:14 PDT; `world/record/garden_0919_s10.npz`, 180 s, seed 10)
+
+everything on, by default now: real antennae, the JO wind rows, the thermal rows on the garden's field, the satiety gate,
+the ocellar stand-in; plus the compass configuration (`--ring --ring-exr 400 --ring-er 30 --goal 90 --goal-hz 100 --mirror
+PFL3,PFL2 --goal-null off --goal-wheel-v 20 --goal-ema 5 --pfl2-walk --goal-switch 5 --goal-wind 4`), feeding and satiety,
+the UV layer for the viewer, and the ocellar cells and their descending targets logged. from the anemotaxis start, downwind of
+the fruit:
+
+- on the fruit at 8.1 s, eats for 8 s, leaves; ends 4.1 m from it. 1 surge, 7 goal switches, 16.7 m walked, moving 51 % of
+  the three minutes; the darkest sky he saw 0.41 (under a leaf).
+- the ocellar cells at 8.3-8.5 Hz, following the sky light with r = -0.80 (OCC02b, 16 cells) and -0.4 to -0.5 (the OCG
+  pairs), as built. their targets: DNpe017 at 48 Hz, DNp22 at 11, both correlated with the light at -0.3 to -0.4 through
+  the interneurons; DNp20 at 131 Hz regardless (the hot descending neuron noted at 17:58, not the ocelli's doing).
+
+the viewer: `uv run python world/replay_app.py world/record/garden_0919_s10.npz --scale 2` (the three ocelli sit over his
+eye; `c` cycles the eye's channel through the UV retina; the compass panel is live; the map has its 10 mm bar).
+
+
+oracle after the hook fix (18:22 PDT): PASS, eight of eight.
