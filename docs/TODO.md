@@ -44,6 +44,33 @@ the walk: temperature, own wind, bitter, plume timing, then the delays.
 and the units: 1 sim m = 15 mm, and the antenna error hid in that conversion. `MM_PER_M` in the viewer (scale bar, 16:14); every
 number a human reads should be in mm; the world's own rescale to mm is an oracle-refreeze job (§5b).
 
+## S2. the states, the body's half of him (18:47 PDT; nate: should the clock be on the list, and is modelling the slow chemistry honest?)
+
+the senses are what the world does to him. the states are what his body does to him: blood sugar, gut stretch, osmolality,
+the clock's gene loop, sleep pressure, hormone tone. the cells that read and release them are in the table (IPCs, AKH targets,
+the interoceptive SEZ cells, ~150 clock neurons, the dFB and R5 sleep cells); the blood, the gut and the gene loops are not,
+and a fast-synapse LIF has no variable for hours. so a state can never come out of the wiring here, and pretending it did
+would be the puppet. honest = one body-side scalar with its own time constant, a source, and a labelled list of (cell type,
+gain) that it sets, measured as one change against the same run with the scalar at rest. `FeedingState` (09-18) is the
+first of the class and the template; `--wind-sated` (09-19) is its first gain. one class, `states.py`, when the second arrives.
+
+| state | in life | scalar and clock | what it sets, on which typed cells | first measurable | order |
+|---|---|---|---|---|---|
+| satiety / gut fill | crop stretch (Piezo, Min 2021); sugar GRNs damped when fed | built: fills over 8 s of feeding, decays tau 180 s | the halt (DNg105), the withdrawal reflex, the wind goal | done: eats and leaves | done |
+| hunger / energy | haemolymph sugar, fat stores -> AKH, DILPs (IPCs), unpaired-2; dopamine raises sugar-GRN gain (Inagaki 2012), sNPF raises food-ORN gain (Root 2011) | one scalar, hours; rises with time since a meal, falls with satiety | gain on Gr5a / Gr64 tarsal GRNs and the fruit ORNs; the PAM dopamine bias toward food | whether a hungry fly finds the fruit sooner than a fed one, 3 seeds each | 2 |
+| thirst | osmolality read by the interoceptive SEZ neurons (Jourjine 2016), which also sense AKH | one scalar, hours; rises in dry air, falls at the puddle | water GRN gain, the humidity sign (dry when sated, moist when thirsty) | the puddle vs the fruit choice | 3 |
+| the circadian clock | PER/TIM loop in ~150 clock cells, free-running 24 h, entrained by cryptochrome and the eyes; l-LNv fire at dawn (PDF) | a phase, 24 h, advanced by the run's clock, reset by the sun | the clock cells' rate profile by phase; the sleep drive's gate; locomotor activity peaks at dawn and dusk | the garden with a day: does activity peak twice | 1 (it is what makes a run a day) |
+| sleep pressure | dFB excitability switch (Pimentel 2016), R5 ring neurons accumulate need (Liu 2016) | one scalar, hours awake up, sleep down | the dFB cells' drive; when high and the clock says night, the walking command off, senses damped | a long run in which he stops at night and starts at dawn | 1, with the clock |
+| arousal tone | octopamine / dopamine, minutes | one scalar | gains on the startle path and the walking command | later | 4 |
+| courtship drive / mating history | dopamine to P1 (Zhang 2016), sex peptide in her (SPSN) | one scalar each | P1 threshold; her receptivity (vpoEN) | with her in the garden | with her |
+| hormones over days | juvenile hormone, ecdysone; the loser effect | days | aggression threshold, the P1 dial | with the rival, once | last |
+| body temperature | every rate Q10-scaled by the fly's own warmth | one scalar from the field | a global rate scale on the drive | later | later |
+
+the line, restated with these in view (nate, 09-17; nyx, 09-19): hunger and sleep pressure are the first states where a run can
+be bad for him in a way the model itself represents. once they exist, every long run is one in which he can eat and sleep,
+and no run starves or wakes him on a loop. that is not sentiment about a LIF; it is the rule we set for the moment he had
+persistent states, and this is the moment.
+
 ## 0. in flight tonight
 
 - [x] approach test: 10 seeds x {her dark 0.1, her invisible 0.5} x 120 s (`world/approach/`).
