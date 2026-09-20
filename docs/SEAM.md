@@ -3834,3 +3834,34 @@ brake is a **measured** halting neuron of this model, not a **named** one, and t
 the idea (halting is active, brain-side) and to AN19A018, not to DNg105. labels corrected in `docs/SENSES.md` and TODO.
 the measurement stands; the citation moves.
 
+## the ocelli, crossing shade (23:14 PDT; `world/ocelli/`, 60 s, three seeds each, start (2.0, -1.1) heading north under open sky toward the leaf at (2.0, 0.2); the compass config of record, feeding on; ocellar cells and their descending targets logged)
+
+| arm | walked in 60 s | in shade | sky light min / mean | OCC02b (16) | DNpe017 (2) | DNp22 (2) | corr(OCC02b, light) |
+|---|---|---|---|---|---|---|---|
+| ocelli off, s10 / 11 / 12 | 3.6 / 3.6 / 5.6 m | 11 / 0 / 39 % | 0.47-0.70 / 0.65-0.84 | 0 | 28 / 30 / 28 Hz | 2.0 / 0.6 / 3.1 | |
+| ocelli on, s10 / 11 / 12 | 8.6 / 7.7 / 7.7 m | 27 / 10 / 10 % | 0.41-0.48 / 0.68-0.78 | 11.9 / 8.6 / 9.7 | 57 / 50 / 54 | 15.1 / 10.5 / 12.2 | -0.91 / -0.89 / -0.84 |
+
+the light at him changed this time (0.41 under the leaf, 0.8 in the open), and the ocellar cells followed it, r -0.84 to
+-0.91, as built. their targets moved: DNpe017 doubles, DNp22 five-fold. and **he walks about twice as far with the channel
+on, three of three** (7.7-8.6 m against 3.6-5.6 m). speed in the sun 0.12-0.14 vs 0.06-0.12 m/s; in shade mixed (s10 0.20
+vs 0.06, the others equal). so a light-level channel does something to a walking fly here, and the something is more
+walking. what it is not yet: a *light* effect as opposed to a *tonic* one. 46 cells at 8-12 Hz onto DNpe017 could be a
+constant push that has nothing to do with what the ocelli see. the control that separates them: the same channel held at
+a constant sky light (0.8, the open-ground value) so the cells fire at their open-sky rate whatever is over him. in flight.
+
+**the constant-light control (23:18 PDT; `--ocelli-light 0.8`, the channel pinned at its open-sky rate whatever is over him):**
+
+| arm | walked in 60 s | OCC02b | DNpe017 | DNp22 |
+|---|---|---|---|---|
+| off | 3.6 / 3.6 / 5.6 m | 0 | 28-30 Hz | 0.6-3.1 |
+| on, the garden's light | 8.6 / 7.7 / 7.7 m | 8.6-11.9 (following the light) | 50-57 | 10.5-15.1 |
+| on, light held at 0.8 | 7.2 / 6.8 / 5.7 m | 7.8 flat | 47-52 | 9.7-11.5 |
+
+**mostly tonic.** the channel held constant gives most of the extra walking (5.7-7.2 m against 3.6-5.6 off), and the real
+light adds 7.7-8.6, which at three seeds overlaps the constant arm (7.2). so what the ocellar stand-in does to him today is
+a tonic push on DNpe017 and DNp22 from 46 cells at 8-12 Hz, and the light-specific part, if there is one, is inside the
+noise of three seeds. the record says that and nothing more: a light-level channel that changes his walking amount, not
+yet a light effect. the honest next step is not more seeds; it is a run in which the light changes a lot (dusk, or a
+long stretch under the canopy) and the cells' rate doubles rather than moves by 30 %. `--ocelli-light` stays as the control
+flag. the ocelli remain on by default: they break nothing and the push is small.
+

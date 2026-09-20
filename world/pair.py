@@ -30,6 +30,7 @@ ap.add_argument("--taste-hold", default=None, choices=["sugar", "water"], help="
 ap.add_argument("--sugar-cells", default="legacy", choices=["legacy", "tarsal", "labellar"], help="which cells the sugar row drives (09-19 taste brief): legacy = the 719 LgLG* + claw_tpGRN of the record (the wrong key: local leg cells and labellar pegs); tarsal = LgLG4 + LgAG2 (54, labelled sugar, Tastekin 2026); labellar = LB3c (23)")
 ap.add_argument("--sugar-hz", type=float, default=26.0, help="the sugar row's rate while sugar is on him (26 = the record; Shiu 2024's MN9 needs 30+, ~80%% of max at 100)")
 ap.add_argument("--ocelli-hz", type=float, default=40.0, help="the ocellar interneurons' rate in the dark (a chosen number; 0 in full sun)")
+ap.add_argument("--ocelli-light", type=float, default=None, help="TEST CONTROL (09-19): hold the sky light every ocellus sees at this value instead of the garden's, so the channel fires at a constant rate; separates a tonic push from a light effect")
 ap.add_argument("--model", default="flow/0000/000"); ap.add_argument("--no-female", action="store_true"); ap.add_argument("--gain", type=float, default=3.0); ap.add_argument("--drive-gain", type=float, default=150.0)
 args = ap.parse_args(); fps, CH = 100, 10; rng = np.random.default_rng(args.seed)
 g = np.load("seam/eye_geom.npz"); eye = Eye("seam/eye_geom.npz")
@@ -152,7 +153,7 @@ if args.ocelli == "on":   # the ocellar stand-in (09-19): light level per ocellu
     from fly_afterlife.receptors import OcellarL
     OCE = {s_: np.flatnonzero((np.char.startswith(mty, "OCG") | np.char.startswith(mty, "OCC")) & (mns == s_)) for s_ in "LR"}
     for s_, k_ in (("L", "left"), ("R", "right")):
-        REG.add(ReceptorClass(f"ocelli_{s_}", OCE[s_], OcellarL(dark_hz=args.ocelli_hz), (lambda st, k_=k_: 0.5 * (st["ocelli"]["median"] + st["ocelli"][k_]) if "ocelli" in st else 1.0)))
+        REG.add(ReceptorClass(f"ocelli_{s_}", OCE[s_], OcellarL(dark_hz=args.ocelli_hz), (lambda st, k_=k_: (args.ocelli_light if args.ocelli_light is not None else (0.5 * (st["ocelli"]["median"] + st["ocelli"][k_]) if "ocelli" in st else 1.0)))))
     print(f"ocelli: OCG / OCC L {len(OCE['L'])} R {len(OCE['R'])} cells at {args.ocelli_hz:.0f} Hz in the dark")
 if args.floor:
     from fly_afterlife.receptors import tonic_floor
