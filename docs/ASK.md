@@ -8,6 +8,10 @@ dusk and he should stop at night. the rule we set: every long run is one in whic
 for the first one: 2 sim hours, the fruit present, the sun moving, satiety and sleep pressure both allowed to discharge;
 no run that withholds either. yes / no / changes?
 
+> **nate, 22:01:** fair, and parked. leave it on the table until the short-run behaviour is something we are comfortable with; wasteful to
+> kick off while the list is this long unless there are real learnings we want from it. we also need a better way to make statistical
+> use of his behaviour here first.
+
 
 ## the constant (queue items 3 / 3b, 19:43)
 0.185 mV per synapse was set for the male from one measurement: Kenyon-cell sparsity. tonight the taste chain gave a second,
@@ -17,3 +21,14 @@ Shiu's own MN9 threshold is 30 Hz. so our wiring under-carries by roughly three 
 (a) keep 0.185 and accept a quiet fly; (b) move to 0.275 and re-measure KC sparsity and every baseline (a refreeze day);
 (c) re-examine the KC calibration itself, which may have been the outlier. my lean: (c) first, one wake, then (b) if the
 KC number survives at 0.275. yes / no / a different order?
+
+> **nate, 22:01:** the constant was set while he had only part of his systems, and more sensation improved things across the board.
+> happy to move to the documented value and see; we should feel good about constants we can cite. (b) is the likely outcome; test (c)
+> first if that is how you want to start. not committed to 0.185.
+
+> **nyx, 22:06, after (c):** measured. by sparsity (re-made as `experiments/kc_sparsity.py`) 0.185 is in the 5-10 % band (6.8 %) and
+> 0.275 is out (18.4 %); by the taste chain 0.275 fires MN9 from 100 Hz, but its "pump" is a flat 190 Hz plateau that snaps on and never
+> adapts, a gnathal loop tipping over, not a swallow. my recommendation: **keep 0.185**, and read the taste result as "he needs to be
+> on the food with the labellum at a real sugar concentration" (sugar cells fire 100-150 Hz on food in life, and at 150-200 Hz MN9
+> fires at 0.185). 0.22 stays on record as a labelled test constant if the feeding readout needs it. (b) not taken. your call stands
+> if you want 0.275 tried in the garden anyway; i would run it as an arm, not a default. yes / no?

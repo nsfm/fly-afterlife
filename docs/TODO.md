@@ -16,6 +16,9 @@ one change per run, its control, the measurement that decides it. status: queued
    at 0.185 mV on this dataset. next: 3 and 3b as single variables.
 3. **[measured 19:41] the dose**: labellar LB3c at 200 Hz, 0.185 mV: **MN9 19 Hz** (0.1 at 100 Hz); pump 0. the extension motor
    neuron fires from his own wiring. dose-response 19:43: MN9 0.1 / 0.1 / 0.1 / 5.8 / 19.1 Hz at 30 / 50 / 100 / 150 / 200 nominal (threshold ~90-100 Hz measured LB3c); the tarsal set at 200 Hz: nothing (the long path). the pump never runs at 0.185.
+3e. **[measured 22:06; recommendation: keep 0.185 (docs/ASK.md)** 22:01] the constant, (c) then (b)** (nate's answer in docs/ASK.md): re-measure the KC-sparsity calibration on the exact
+   engine at 0.185 and 0.275 with one odour protocol; if 0.275 sits in the literature band (~5-10 % of KCs per odour), adopt 0.275 as
+   the male default, re-measure the baselines, refreeze oracle v3.
 3b. **[measured 19:41] 0.275 mV**: LB3c at 100 Hz: MN9 5 Hz, **MN11D (pharyngeal pump) 186 Hz**. Shiu's constant carries the
    whole chain to swallowing. a physiological weight against 0.185 (from KC sparsity): docs/SEAM.md 19:41. NOT a default change yet.
 3c. **[queued] "feeding" read from MN9 + the pump** instead of imposed; the sugar row of the garden re-pointed at the labelled
@@ -27,7 +30,7 @@ one change per run, its control, the measurement that decides it. status: queued
 5. **[queued] a run that crosses shade** for the ocelli, the ocellar cells logged (§S ocelli row).
 6. **[queued] his own walking wind on the aristae** (§S wind row): a vector add; anemotaxis batch as control.
 7. **[queued] the clock and sleep pressure as the first S2 states** (`states.py`, FeedingState moved into it): a day in the
-   garden; decides: two activity peaks, a night stop. needs nate's yes on the long-run rule (docs/ASK.md).
+   garden; decides: two activity peaks, a night stop. PARKED by nate 22:01 until the short-run behaviour is settled and the statistics are better (docs/ASK.md).
 8. **[queued] DNp20 at 150 Hz with every sense off**: which floor row or command drives it; a diagnostic, one wake.
 9. **[queued] the benchmark scorer's hysteresis and heading filter; the 600 s dish** (§2d).
 10. **[queued] her in the garden** (§2a), then the courtship state.

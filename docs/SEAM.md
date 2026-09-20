@@ -3782,3 +3782,43 @@ constants we cite. the decision is nate's (docs/ASK.md); the honest options are 
 
 
 oracle on the sugar-cells and sugar-rate flags (19:55 PDT): PASS, eight of eight (read from the log before it was written here).
+
+## the constant, measured twice (22:05 PDT; nate's answer in docs/ASK.md: (c) first, then (b) with 0.275 authorised)
+
+**(c) the Kenyon-cell calibration, re-made as a script** (`experiments/kc_sparsity.py`: the standing brain with the floor, 2 s
+warm-up, then ORN_DM1-DM5 (258 cells) at 150 Hz for 1 s; the fraction of the 4,064 KCs that fire at least once, and their
+mean rate; exact engine, seed 0):
+
+| w (mV) | KCs firing | mean KC Hz | | the taste chain at the same w (LB3c at 100 Hz): AN04A001 | MN9 | pump MN11D |
+|---|---|---|---|---|---|---|
+| 0.185 | 6.8 % | 1.10 | | 19.2 Hz | 0.1 | 0 |
+| 0.220 | 10.8 % | 2.21 | | 31.0 | 1.4 | 0 |
+| 0.250 | 15.4 % | 3.72 | | 37.8 | 0.9 | 0 |
+| 0.275 | 18.4 % | 5.22 | | 48.2 | 5.1 | 186 |
+
+life: 5-10 % of KCs per odour (Turner 2008, Honegger 2011). two things to say before any decision:
+
+1. **the sparsity number is protocol-soft.** this morning's inline measurement gave 3.9 % at 0.185 and 12.6 % at 0.275;
+   tonight's script gives 6.8 % and 18.4 % with a floor-first warm-up and a fixed odour set. same engine, same constant,
+   a factor of ~1.6 from the protocol. it is a weak calibration, and it was the only one we had.
+2. **the two calibrations disagree, and neither is a clean instrument.** by sparsity, 0.185 sits in the band and 0.275
+   is far out of it; by the taste chain, MN9's threshold at 0.185 is ~100 Hz of sugar firing against Shiu's 30, and the
+   pump runs only at 0.275. the mushroom body has its own gain control in the wiring (APL feedback) and is expected to
+   resist w; the taste chain is a few feedforward relays and is expected to be sensitive to it. so they measure different
+   things, and the honest reading is that no single w satisfies both on this dataset with this engine.
+
+so (b) is not taken tonight. the pump's 186 Hz at 0.275 is looked at below before it is called a swallow.
+
+**the pump at 0.275, looked at (22:06):** MN11D per second: 0, 0, 157, 190, 190, 189, 189, 188, 189, 190, 189, 188. it snaps from
+nothing to a flat 190 Hz in the third second and never moves again, while MN9 fires in bursts (19, 16, 0, 3, 0, 4, 0, 8 ...)
+and the sugar cells and AN04A001 are steady. MN11D's 21,103 input synapses come from gnathal cells (GNG334 4,441, GNG019
+2,127, GNG001 2,082, MNx01 1,523, GNG467 1,499 ...), a recurrent neighbourhood; a plateau that saturates and never adapts is
+a loop that tipped over, not a fly swallowing (pumping is rhythmic, bursts at a few Hz). so at 0.275 on this dataset the
+gnathal circuit has an attractor that the exact engine at 0.185 does not enter, and the sparsity is out of its band as
+well. **recommendation to nate (docs/ASK.md): keep 0.185.** the taste chain's threshold at 0.185 is ~100 Hz of sugar-cell
+firing, which is a physiological rate for sugar cells on food (Gr5a ~100-150 Hz at 100-500 mM sucrose; the chemo brief's
+65 Hz is the 100 mM value); so the honest reading of tonight is not "the constant is too low" but "he needs to be on the
+food, with the labellum, at a real sugar concentration", which is the physics item and the labellar geometry (§P). 0.22 is
+noted as a labelled test constant, sparsity 10.8 %, MN9 at 1.4 Hz from 100 Hz, in case the feeding readout needs it;
+it is not adopted.
+
