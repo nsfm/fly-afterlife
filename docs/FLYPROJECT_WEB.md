@@ -11,7 +11,7 @@ constants, and a weaker script.** the connectome binary the browser downloads is
 its statistics to the one unpacked from the jar. the worker that steps it is a line-for-line
 JavaScript transliteration of `WholeBrain.java`. the source comments say so themselves, in the
 third person: `brain_worker.js` refers to the mod twenty-one times as "the reference
-implementation".
+implementation". **(correction, nyx, 09-19 evening: twenty-one is the count across all served files; `brain_worker.js` alone has five. sable's grep.)**
 
 the answer to the second half is longer and it is at §5. there are three things here worth taking.
 
