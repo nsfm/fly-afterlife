@@ -27,7 +27,7 @@ Alvarez-Salvado 2018, Demir 2020). the result of the re-run is in the record.
 | cVA (hers) | her Or67d | male pheromone | exp(-d / 0.8) from him at her antennae | as above | |
 | temperature | hot 7, cooling 7 | absolute T (hot, exponential, Q10 4.4); rate of cooling (cooling, phasic, 95 Hz rest) | `HotCells`, `CoolingCells` from the temperature at each antenna tip; warm / cold corners | rates and time course from Budelli 2019 | chemo brief s.4 |
 | the walking command | DNp09 (2) | forward walking (state-dependent) | tonic 100 Hz (`--walk`) | a constant standing in for a state | leg motor brief; Bidaye 2020 |
-| the brake | AN19A018 (12) | halting by co-contraction | opt-in on contact (`--stop-at-her`): did nothing, contact too brief | needs a persistent state to hold it | Sapkal 2024 |
+| the brake | AN19A018 (12); since 09-18 DNg105 (2), a MEASURED halting DN of this model (heaviest onto leg MNs by synapse count, halts the woken cord), not a named one (not in Sapkal 2024's set; no published function; audit 23:10) | halting by co-contraction | opt-in on contact (`--stop-at-her`): did nothing, contact too brief | needs a persistent state to hold it | Sapkal 2024 |
 | leg proprioception | 580 leg-nerve cells | joint angle, load, stance / swing per leg | opt-in tripod gait rule (`--proprio`), phasic per leg by segment and side; floor 15 Hz standing | tonic load term is the wrong shape (campaniforms encode dF/dt); hook FeCO gating not applied | mechanosensation brief; Dallmann 2025 |
 
 ## held at rest by the floor, not yet modulated by the world

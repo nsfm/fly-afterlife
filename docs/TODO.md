@@ -23,7 +23,7 @@ one change per run, its control, the measurement that decides it. status: queued
    whole chain to swallowing. a physiological weight against 0.185 (from KC sparsity): docs/SEAM.md 19:41. NOT a default change yet.
 3c. **[queued] "feeding" read from MN9 + the pump** instead of imposed; the sugar row of the garden re-pointed at the labelled
    cells (LgLG4 + LgAG2 for the tarsi, LB3c when the labellum touches, which needs the proboscis geometry).
-3d. **[queued] DNg105's source audit**: the brief says it is not a Sapkal 2024 halting neuron; find where the record picked it.
+3d. **[done 23:10] DNg105's source audit**: chosen by synapse count onto leg MNs (motor review) and by measurement (it halts the woken cord); not a Sapkal 2024 named halting neuron; a measured brake, labelled so.
 4. **[queued] walkable tops + collider tunnelling** (§P physics): the fruit and the stone as mounds he stands on; taste from the
    surface under him; contacts resolved against every object with a per-frame push-out cap. decides: can "on the fruit" be a
    state of the world at all. control: the record run of 09-19 evening on the new physics.

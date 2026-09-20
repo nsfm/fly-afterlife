@@ -3822,3 +3822,15 @@ food, with the labellum, at a real sugar concentration", which is the physics it
 noted as a labelled test constant, sparsity 10.8 %, MN9 at 1.4 Hz from 100 Hz, in case the feeding readout needs it;
 it is not adopted.
 
+## the DNg105 audit (23:10 PDT; queue item 3d, from the taste brief's note)
+
+where the record picked it: the motor review (09-18) listed the descending neurons heaviest onto leg motor neurons by synapse
+count (DNg105 8,736 leg / 304 wing); the 09-18 dose runs found DNg74_a and DNg105 turn the legs *down* against the walking
+command (0.8x and 0.57x the floor), and DNg105 became the brake because it was measured to halt the woken cord, in both
+seeds, below the standing tonus. the record wrote at the time: "which of Sapkal 2024's halting types these are by name is
+an audit item." the brief answers it: DNg105 is not one of Sapkal 2024's named halting neurons (Foxglove, Bluebell, BRK),
+has no published function, is GABAergic in the table, with a courtship-side input profile and zero taste input. so the
+brake is a **measured** halting neuron of this model, not a **named** one, and the attribution "Sapkal 2024" attaches to
+the idea (halting is active, brain-side) and to AN19A018, not to DNg105. labels corrected in `docs/SENSES.md` and TODO.
+the measurement stands; the citation moves.
+
