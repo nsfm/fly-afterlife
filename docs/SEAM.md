@@ -3865,3 +3865,5 @@ yet a light effect. the honest next step is not more seeds; it is a run in which
 long stretch under the canopy) and the cells' rate doubles rather than moves by 30 %. `--ocelli-light` stays as the control
 flag. the ocelli remain on by default: they break nothing and the push is small.
 
+
+oracle on the `--ocelli-light` control flag (23:32 PDT): PASS, eight of eight, read from the log first.

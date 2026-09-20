@@ -57,3 +57,6 @@
 - L3621: is the feeding latch a puppet? (18:56 PDT; nate asked whether we ever found a true signal that he has started feeding, and whether he has a proboscis)
 - L3687: the taste brief reframes the wall (19:37 PDT; `docs/physiology/taste_per.md`, an opus agent; its three claims verified against the tables here)
 - L3743: HIS OWN WIRING EXTENDS THE PROBOSCIS (19:41 PDT; the single-variable arms on the labellar sugar cells, 12 s standing beside the fruit, seed 10, rates after 2 s)
+- L3786: the constant, measured twice (22:05 PDT; nate's answer in docs/ASK.md: (c) first, then (b) with 0.275 authorised)
+- L3825: the DNg105 audit (23:10 PDT; queue item 3d, from the taste brief's note)
+- L3837: the ocelli, crossing shade (23:14 PDT; `world/ocelli/`, 60 s, three seeds each, start (2.0, -1.1) heading north under open sky toward the leaf at (2.0, 0.2); th
