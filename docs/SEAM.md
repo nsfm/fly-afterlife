@@ -3681,3 +3681,5 @@ ascending neuron. the feeding latch is a puppet in exactly the sense of the piec
 attaches. what retires it is written in §P: the relays carrying (a question of the second-synapse gain, which is a
 question about the whole brain, not about feeding), MN9 read as "feeding", and a fruit he can stand on.
 
+
+oracle on the `--taste-hold` flag (19:20 PDT): PASS, eight of eight.
