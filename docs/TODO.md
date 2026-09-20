@@ -6,6 +6,30 @@ briefs in `docs/physiology/` where a number came from there. rule for every beha
 one change per run, against the previous run, and a large effect from closing one afferent
 loop is probably a bug (mechanosensation brief).
 
+## Q. the queue (19:14 PDT; what a wake picks from, in order; see docs/AUTONOMY.md)
+
+one change per run, its control, the measurement that decides it. status: queued / in flight / measured / adopted / withdrawn.
+
+1. **[in flight] the taste-to-proboscis brief** (opus agent, docs/physiology/taste_per.md): decides items 2-3.
+2. **[queued] the sugar subset**: if a transferable sugar label exists for the leg GRNs, drive only those (`--taste-hold sugar`
+   with the subset) vs all 719; decides: does AN04A001 -> gnathal relays -> MN9 carry with the right key pressed.
+3. **[queued] the second-synapse gain, as a labelled test**: `--wsyn-m 0.275` (Shiu's female value) on the held-taste pair;
+   decides whether the wall is the constant. NOT a default change; a measurement.
+4. **[queued] walkable tops + collider tunnelling** (§P physics): the fruit and the stone as mounds he stands on; taste from the
+   surface under him; contacts resolved against every object with a per-frame push-out cap. decides: can "on the fruit" be a
+   state of the world at all. control: the record run of 09-19 evening on the new physics.
+5. **[queued] a run that crosses shade** for the ocelli, the ocellar cells logged (§S ocelli row).
+6. **[queued] his own walking wind on the aristae** (§S wind row): a vector add; anemotaxis batch as control.
+7. **[queued] the clock and sleep pressure as the first S2 states** (`states.py`, FeedingState moved into it): a day in the
+   garden; decides: two activity peaks, a night stop. needs nate's yes on the long-run rule (docs/ASK.md).
+8. **[queued] DNp20 at 150 Hz with every sense off**: which floor row or command drives it; a diagnostic, one wake.
+9. **[queued] the benchmark scorer's hysteresis and heading filter; the 600 s dish** (§2d).
+10. **[queued] her in the garden** (§2a), then the courtship state.
+
+settled (not to be relitigated by a wake without a new reason): the DN population channel is heading noise (09-18); the
+null point was a crutch (09-19); the thermal field is on under `rest` (09-19); the ocellar photoreceptors are out of volume
+(09-19); exact integration is the engine (09-19); three seeds is the floor for a claim; the antennae are 0.35 mm apart.
+
 ## S. the senses, the strict list (09-19 16:14 PDT, nate: "treat each un-implemented sense as our strictest to-do list for
 ## the sake of behavioural measurement"; every sense on unless there is a stated reason; one sense per run, its own rest as the control)
 
