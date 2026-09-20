@@ -55,3 +55,5 @@
 - L3581: a bug in the per-chunk hook (17:50 PDT; found because the run of record wandered)
 - L3601: the run of record, evening of 09-19 (18:14 PDT; `world/record/garden_0919_s10.npz`, 180 s, seed 10)
 - L3621: is the feeding latch a puppet? (18:56 PDT; nate asked whether we ever found a true signal that he has started feeding, and whether he has a proboscis)
+- L3687: the taste brief reframes the wall (19:37 PDT; `docs/physiology/taste_per.md`, an opus agent; its three claims verified against the tables here)
+- L3743: HIS OWN WIRING EXTENDS THE PROBOSCIS (19:41 PDT; the single-variable arms on the labellar sugar cells, 12 s standing beside the fruit, seed 10, rates after 2 s)

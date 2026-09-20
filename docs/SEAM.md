@@ -3683,3 +3683,102 @@ question about the whole brain, not about feeding), MN9 read as "feeding", and a
 
 
 oracle on the `--taste-hold` flag (19:20 PDT): PASS, eight of eight.
+
+## the taste brief reframes the wall (19:37 PDT; `docs/physiology/taste_per.md`, an opus agent; its three claims verified against the tables here)
+
+1. **i was driving the wrong cells.** the "sugar on the tarsi" row (`pair.py`, since 09-17) drives `LgLG*` + `claw_tpGRN`,
+   719 cells. verified: the 669 `LgLG*` are `vnc_sensory`, local to the leg neuropils, and the 50 `claw_tpGRN` are labellar
+   taste pegs (`cb_sensory`, entering by the maxillary-labial nerve), not leg cells at all. the tarsal cells that reach the
+   brain are `LgAG1..9`, 76 cells, `sensory_ascending` (MANC SAch01/02), and they were never in the drive set. the 212 direct
+   synapses from the 719 onto the gnathal relays all come from the 50 pegs; the 669 leg cells make **zero** onto GNG014 /
+   125 / 271 / 391, MN9, the pump or DNg105.
+2. **the sugar label exists, in our own `type` column.** Tastekin et al. 2026 (Cell, the pan-CNS gustatory connectome on
+   this dataset): `LgLG4` (43 cells) = Gr64f + Ir56b, the tarsal sugar GRN; `LgAG2` (11) = Gr61a ascending appetitive;
+   `LgAG1` (25) = Gr33a ascending bitter; labellar `LB3c` (23) = Gr64f sugar, `LB3a` (17) = ppk28 water, `LB3b` (11) = Ir56b
+   low salt. `LgLG3` (162, the largest class in our row) has no molecular identity anywhere. (the `receptorType` column is
+   pheromone-only.)
+3. **MN9's silence was anatomy before it was the constant.** two hops onto MN9: from the labelled tarsal sugar set 5
+   synapses via 2 relays; from labellar `LB3c` 313 via 26 relays; Tastekin reports the tarsal sugar path to the feeding
+   motor neurons is ~7 hops. and Shiu 2024's extension result used 21 **labellar** GRNs; MN9 first fires at 30 Hz of GRN
+   drive in his model, ~80 % of max at 100 Hz; w = 0.275 was set with that in view. our held taste was 24 Hz: below his
+   threshold with the right cells, on the wrong cells.
+
+the arithmetic, from the brief (v_th 7 mV above rest, tau_m 20, tau_syn 5, 0.185 mV): one volley needs ~240 coincident
+synapses, and AN04A001's best cell receives 336 leg synapses, so at 24 Hz it sits at ~107 % of threshold: exactly the one
+cell that doubled. everything else on the path sits at 0-30 %.
+
+also from the brief, to check against the record: **DNg105 is not one of Sapkal 2024's halting neurons** (those are
+Foxglove, Bluebell, BRK); it has no published function, is GABAergic here, with a courtship-side input profile and zero
+taste input. our measurement that driving it halts the cord (09-18, 821 -> 469 /s) stands as a measurement; the source
+attached to it does not. the brake row in `docs/SENSES.md` and TODO §2 gets a "source under audit" mark.
+
+so the puppet verdict of 19:02 stands, and the wall moves: not "the second synapse cannot carry at 0.185 mV" but "we
+pressed every key but the sugar key, below the rate the model needs". the arms the brief asks for run tonight: labellar
+`LB3c` (23) vs tarsal `LgLG4 + LgAG2` (54) vs the legacy 719, each held at 100 Hz standing beside the fruit, MN9 and the pump
+logged; then a 10-200 Hz dose-response on MN9 with the right cells (the Shiu replication); then 0.275 mV as the single
+variable; then "feeding" read from MN9.
+
+**the right key, pressed (19:39 PDT; `--sugar-cells labellar|tarsal|legacy --sugar-hz 100 --taste-hold sugar`, 12 s standing beside the fruit, seed 10, rates after 2 s):**
+
+| arm | the driven cells (measured) | AN04A001 (6) | AN08B032 | GNG014/125/271/391 | MN9 (2) | MN11D / MN12D | DNg105 |
+|---|---|---|---|---|---|---|---|
+| legacy 719 at 100 Hz | LgLG4 75 Hz (inside the set) | 57.8 | 0.0 | 0.0 | 0.4 | 0.0 | 0.0 |
+| tarsal: LgLG4 + LgAG2 (54) | 75 / 77 Hz | 20.0 | 1.8 | 0.0 | 0.0 | 0.0 | 0.2 |
+| labellar: LB3c (23) | 77 Hz | 19.2 | 3.4 | 0.0 | 0.1 | 0.0 | 0.2 |
+
+**MN9 does not fire for the labelled sugar cells at 100 Hz either**, labellar or tarsal, and the pump stays at zero. (the
+four gnathal relays logged here are the ones the taste pegs reach; LB3c's own 26 relays onto MN9 are other cells, being
+looked up now.) so the input is right and the rate is Shiu's, and the extension still does not happen: the remaining
+variables are the constant (0.185 here, Shiu's 0.275), the dataset (MaleCNS vs FlyWire), and the dose. queue items 3 and 3b
+run next as single variables: 0.275 mV on the labellar arm; 200 Hz on the labellar arm at 0.185. the legacy arm's AN04A001
+at 58 Hz is the 669 local leg cells' 336-synapse convergence, as the brief computed; it goes nowhere.
+
+the labellar path, looked up: LB3c's 23 cells make 29,780 synapses onto 11,522 cells; first hop by type: LB3c itself
+(1,737), GNG038 (1,149), GNG042 (890), GNG215 (766), GNG232 (519). the cells that drive MN9 and the pump hardest are four
+GNG467 (430-480 synapses each onto MN9 / the pump; together with a few untyped bodies they are 72 % of MN9's 6,991 input
+synapses), and each of them receives only 7-20 synapses from LB3c directly. so sugar-to-extension here is three hops or more
+(LB3c -> GNG038 / 042 / 215 -> ... -> GNG467 -> MN9), and what Shiu's model did at 0.275 mV was carry a chain, not a synapse.
+the 0.275 arm and the 200 Hz arm are the test of whether this dataset carries the same chain at either constant.
+
+## HIS OWN WIRING EXTENDS THE PROBOSCIS (19:41 PDT; the single-variable arms on the labellar sugar cells, 12 s standing beside the fruit, seed 10, rates after 2 s)
+
+| arm | LB3c (23, measured) | AN04A001 | MN9 (extension, 2) | MN11D (pharyngeal pump, 3) | MN12D (4) | DNg105 |
+|---|---|---|---|---|---|---|
+| 100 Hz at 0.185 mV (19:39) | 77 Hz | 19.2 | 0.1 | 0.0 | 0.0 | 0.2 |
+| **200 Hz at 0.185 mV** | 125 | 15.5 | **19.1** | 0.0 | 0.0 | 0.1 |
+| **100 Hz at 0.275 mV (Shiu's constant)** | 76 | 48.2 | **5.1** | **185.9** | 0.0 | 0.0 |
+
+**MN9 fires.** at our constant it needs a 200 Hz drive on the labellar sugar cells (the Poisson gate gives 125 Hz measured);
+at Shiu's it fires at 100 Hz and the pharyngeal pump motor neurons run at 186 Hz, which is a fly swallowing. so the chain
+(LB3c -> GNG038 / 042 / 215 -> ... -> GNG467 -> MN9 / the pump) carries in the male dataset, through his own wiring, with the
+key pressed hard enough. three hours ago the record said "the proboscis never extends"; it never had the right input.
+
+what this is and is not: it is the first motor consequence of a taste that came from him and not from a scalar of ours.
+it is not yet feeding in the garden: the garden's sugar row still drives the legacy cells at 26 Hz; the tarsal set at 100 Hz
+did not fire MN9 (its path is ~7 hops, Tastekin 2026), and in life it is the labellum that touches the food, which he has
+no geometry for. and DNg105 stays at zero in every arm: the halt during feeding is still ours, and the brief says its
+source is wrong anyway. the constant question is now live and sharp: 0.185 was set from KC sparsity; the pump at 0.275
+and its silence at 0.185 is a physiological fact to weigh it against (a fed fly pumps). in flight: the dose-response at
+0.185 (30, 50, 150 Hz) and the tarsal set at 200 Hz.
+
+**the dose-response (19:43 PDT; LB3c held, 0.185 mV, 12 s, seed 10; the drive is nominal, the rate measured):**
+
+| nominal drive | LB3c measured | MN9 | the pump (MN11D / MN12D) | DNg105 |
+|---|---|---|---|---|
+| 30 Hz | 28 Hz | 0.1 | 0 | 0.1 |
+| 50 | 43 | 0.1 | 0 | 0.2 |
+| 100 | 77 | 0.1 | 0 | 0.2 |
+| 150 | 103 | **5.8** | 0 | 0.0 |
+| 200 | 125 | **19.1** | 0 | 0.1 |
+| tarsal LgLG4 + LgAG2 at 200 | 122 (LgLG4) | 0.1 | 0 | 0.1 |
+
+so at 0.185 mV the extension motor neuron has a threshold near 90-100 Hz of labellar sugar firing and rises steeply above
+it; Shiu's model at 0.275 has its threshold at 30 Hz of GRN drive. the shape is his, the threshold three times higher, and
+the pump never runs at our constant. the tarsal set does nothing at 200 Hz: its path is the long one. what this says about
+0.185: it was set from the mushroom body's sparsity, one measurement; the taste chain is a second, independent measurement
+of the same constant, and it says the wiring under-carries by about a factor of three relative to the model whose
+constants we cite. the decision is nate's (docs/ASK.md); the honest options are (a) keep 0.185 and let the fly be quiet, (b)
+0.275 with the KC sparsity re-measured, (c) the KC calibration re-examined, since it may have been the outlier.
+
+
+oracle on the sugar-cells and sugar-rate flags (19:55 PDT): PASS, eight of eight (read from the log before it was written here).

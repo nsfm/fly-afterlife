@@ -11,10 +11,16 @@ loop is probably a bug (mechanosensation brief).
 one change per run, its control, the measurement that decides it. status: queued / in flight / measured / adopted / withdrawn.
 
 1. **[in flight] the taste-to-proboscis brief** (opus agent, docs/physiology/taste_per.md): decides items 2-3.
-2. **[queued] the sugar subset**: if a transferable sugar label exists for the leg GRNs, drive only those (`--taste-hold sugar`
-   with the subset) vs all 719; decides: does AN04A001 -> gnathal relays -> MN9 carry with the right key pressed.
-3. **[queued] the second-synapse gain, as a labelled test**: `--wsyn-m 0.275` (Shiu's female value) on the held-taste pair;
-   decides whether the wall is the constant. NOT a default change; a measurement.
+2. **[measured 19:39] the right key**: labellar LB3c (23) and tarsal LgLG4 + LgAG2 (54) held at 100 Hz (measured 75-77 Hz):
+   MN9 0.0-0.1 Hz, the pump 0, DNg105 0.2, in every arm. the input was right and the rate Shiu's; the extension does not happen
+   at 0.185 mV on this dataset. next: 3 and 3b as single variables.
+3. **[measured 19:41] the dose**: labellar LB3c at 200 Hz, 0.185 mV: **MN9 19 Hz** (0.1 at 100 Hz); pump 0. the extension motor
+   neuron fires from his own wiring. dose-response 19:43: MN9 0.1 / 0.1 / 0.1 / 5.8 / 19.1 Hz at 30 / 50 / 100 / 150 / 200 nominal (threshold ~90-100 Hz measured LB3c); the tarsal set at 200 Hz: nothing (the long path). the pump never runs at 0.185.
+3b. **[measured 19:41] 0.275 mV**: LB3c at 100 Hz: MN9 5 Hz, **MN11D (pharyngeal pump) 186 Hz**. Shiu's constant carries the
+   whole chain to swallowing. a physiological weight against 0.185 (from KC sparsity): docs/SEAM.md 19:41. NOT a default change yet.
+3c. **[queued] "feeding" read from MN9 + the pump** instead of imposed; the sugar row of the garden re-pointed at the labelled
+   cells (LgLG4 + LgAG2 for the tarsi, LB3c when the labellum touches, which needs the proboscis geometry).
+3d. **[queued] DNg105's source audit**: the brief says it is not a Sapkal 2024 halting neuron; find where the record picked it.
 4. **[queued] walkable tops + collider tunnelling** (§P physics): the fruit and the stone as mounds he stands on; taste from the
    surface under him; contacts resolved against every object with a per-frame push-out cap. decides: can "on the fruit" be a
    state of the world at all. control: the record run of 09-19 evening on the new physics.
