@@ -4158,3 +4158,5 @@ scales with it, which the pace readout is calibrated against, so the floor's 15 
 standing signal is real, it is in the wiring, and it is worth a fifth; the other four fifths are the gate, which in life is a
 state. not worth more arms now; the gate decision stays with nate (docs/ASK.md).
 
+
+oracle on the leg-load flag (15:12 PDT): PASS, eight of eight, read from the log first.
