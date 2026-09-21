@@ -4087,3 +4087,13 @@ same class as the mirror normalisation, and the same risk); (c) leave it, since 
 the world here and the record now knows the number. (c) is where it sits tonight; (a) is my lean, because the flight
 state is a real thing he will need for take-off anyway.
 
+**the tarsal reflex, looked for (14:14 PDT; nate: are there signals in life that damp the flight motor while walking, that we should be driving rather than gating?)**
+in life, yes: feet on the ground suppress flight (Fraenkel 1932 and after); lift the fly and the wings start. so the question was whether that path is
+visible in his table. the hub's sensory inputs, first: 1,964 synapses from mechanosensory-proprioceptive cells, and they are all WING campaniform
+sensilla (SNpp16 / 07 / 37 / 28, SApp10; ADMN, the wing nerve; cholinergic), the wing's own feedback, silent here because his wings do not move, correctly;
+no leg afferent reaches the hub directly. the hub's inhibition, second: a third of its input is GABA (34,375 of 104,320 synapses; IN06B047 with 17 cells
+the largest, IN11B004, IN11B024, IN06B036) and 9 % glutamate, so the brake exists in the wiring; but those inhibitory cells receive essentially no leg
+sensory input either (0-1 % from leg-nerve afferents). so the tarsal reflex is not a two-hop motif here; if it lives in this table it is deeper, through
+whatever drives IN06B047 in a standing fly, which is the question to ask when the flight gate is built. the leg-load floor (`floor_leg_proprio`, 15 Hz
+on the leg-nerve proprioceptors) is on in every run and does not reach the hub. left there; tilt next, which needs the same leg-load thinking.
+
