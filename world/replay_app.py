@@ -368,7 +368,7 @@ class Episode:
             if "n_m_" + k in E.files: self.traces[k] = np.asarray(E["n_m_" + k], np.float64)
         if "v_m" in E.files: self.traces["v_m (pace)"] = np.asarray(E["v_m"], np.float64)
         if "n_sat100" in E.files: self.traces["satiety (0-100; full at 100, hungry again below 50)"] = np.asarray(E["n_sat100"], np.float64)   # the feeding state (09-19, nate asked): a body-side scalar, not a cell
-        if "n_feeding" in E.files: self.traces["feeding (the latch: sugar on his tarsi holds the halt)"] = np.asarray(E["n_feeding"], np.float64)
+        if "n_feeding" in E.files: self.traces["feeding (read from MN9 since 09-21; before that, the latch)"] = np.asarray(E["n_feeding"], np.float64)
         self._static = None if self.her else self.scene_at(0)     # nothing moves in his world when she is not in it
         self.K = self._chunk_frames()
         self.cam_h, self.cam_xy = self._camera()
