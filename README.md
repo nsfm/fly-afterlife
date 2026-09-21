@@ -56,6 +56,7 @@ implemented sense on unless the run says why not, and every active sense has a c
 | leg proprioception | no | `--proprio <Hz>` (a tripod rule, diagnostic) | off |
 | ultraviolet and colour (R7/R8) | no | `--uv` renders the UV retina for the viewer; `--uv-photo` drives his R7 (a negative result: photoreceptors are histaminergic, so spiking them inhibits) | `--uv` without `--uv-photo` |
 | the compass | no; a labelled stand-in, not a sense | `--ring` (a heading bump from the sun's azimuth on his own ring cells) with `--goal <deg>`, `--goal-switch`, `--goal-wind` (the goal set upwind while a whiff is on him) and the graded readout `--goal-wheel-v 20 --goal-ema 5 --pfl2-walk --mirror PFL3,PFL2 --goal-null off` | the same run without `--ring`, or `--goal-wind 0` |
+| gravity and slope (Johnston's organ, the leg load, the eye's horizon) | yes, in the garden | `--tilt on` (default since 09-21): on the fruit or the stone his body pitches and rolls with the surface, his eye sees the horizon move, gravity deflects his antennae onto the wind rows, and his weight shifts to the downhill legs | `--tilt off` |
 | ocelli (a labelled stand-in on the interneurons: the photoreceptors are outside the imaged volume) | yes, in the garden | `--ocelli on` (default): the ocellar cells fire in the dark and go quiet under the sky, the L-neuron sign from life; three discs on his vertex in the viewer | `--ocelli off` |
 | hearing, gravity, loom | not yet | see `docs/TODO.md` §S: nobody sings yet, the world is flat, the eye cannot yet see a loom | |
 

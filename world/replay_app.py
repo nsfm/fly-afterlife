@@ -387,6 +387,7 @@ class Episode:
         self.sun_dir = np.asarray(E["sun_dir"], np.float64).ravel() if "sun_dir" in E.files else None
         self.ocelli = np.asarray(E["ocelli"], np.float32) if "ocelli" in E.files else None
         self.pose_z = np.asarray(E["pose_z"], np.float32) if "pose_z" in E.files else None   # his feet's height per frame (--climb on, 09-21)   # per frame: median, left, right ocellus sky light 0..1 (--ocelli on, 09-19)
+        self.pose_tilt = np.asarray(E["pose_tilt"], np.float32) if "pose_tilt" in E.files else None   # pitch, roll per frame (--tilt on, 09-21)
         self.sun_az = self.sun_el = None
         if self.sun_dir is not None and len(self.sun_dir) >= 3:
             d = self.sun_dir / (np.linalg.norm(self.sun_dir) + 1e-12)
@@ -558,6 +559,12 @@ class HumanView:
         if not (need_g or need_u): return self.get(i)
         x, y, h = self.pose_at(i); hr = np.radians(h); c, s = np.cos(hr), np.sin(hr); o = np.array([x, y, 0.5 + (float(self.ep.pose_z[min(int(i), len(self.ep.pose_z) - 1)]) if getattr(self.ep, "pose_z", None) is not None else 0.0)])
         g = uimg = None
+        tl = getattr(self.ep, "pose_tilt", None)
+        if tl is not None:   # the head pitches and rolls with the body (09-21): rotate the body-frame rays before the yaw
+            pt, rl = np.radians(tl[min(int(i), len(tl) - 1)])
+            if abs(pt) > 1e-6 or abs(rl) > 1e-6:
+                Rp = np.array([[np.cos(pt), 0, -np.sin(pt)], [0, 1, 0], [np.sin(pt), 0, np.cos(pt)]], np.float32); Rr = np.array([[1, 0, 0], [0, np.cos(rl), -np.sin(rl)], [0, np.sin(rl), np.cos(rl)]], np.float32)
+                M_ = (Rp @ Rr).T; r0 = np.ascontiguousarray(r0 @ M_); r0u = np.ascontiguousarray(r0u @ M_) if r0u is not None else r0u
         if need_g:
             _rot(r0, c, s, buf)
             g = (np.clip(self.ep.scene_at(i).shade(o, buf), 0, 1) * 255).astype(np.uint8).reshape(self.H, self.W)

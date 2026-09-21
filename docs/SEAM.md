@@ -4097,3 +4097,42 @@ sensory input either (0-1 % from leg-nerve afferents). so the tarsal reflex is n
 whatever drives IN06B047 in a standing fly, which is the question to ask when the flight gate is built. the leg-load floor (`floor_leg_proprio`, 15 Hz
 on the leg-nerve proprioceptors) is on in every run and does not reach the hub. left there; tilt next, which needs the same leg-load thinking.
 
+## tilt, built (2026-09-21 14:19 PDT; nate: "should we actually tilt him properly as he traverses the angled surfaces, taking heading into account to map gravity across his senses?"; TODO §Q 4b)
+
+- `Garden.slope(x, y)`: the gradient of the walkable surface (for a sphere on the floor, -(x - ox) / sqrt(r^2 - d^2)); with `--tilt on`
+  (needs the climb) his body takes **pitch** = atan(slope along his heading), nose up positive, and **roll** = atan(slope across it),
+  left side up positive. a fly stands parallel to the surface, so this is the geometry, not a model.
+- the eye: `Eye.render` gains `pitch_deg` and `roll_deg`; body-frame rays are rolled about x, pitched about y, then yawed. both
+  zero is the old arithmetic exactly (the oracle's path). **the pitch sign was wrong on the first build**: nose-up showed him the
+  ground; a numerical check (forward ommatidia at +60 deg should see the sky: 0.89 against 0.50 level and 0.37 nose-down) caught
+  it before any result was taken, and the batch that had started on the wrong sign was stopped and remade.
+- gravity on his Johnston's organ: the wind rows (JO-C/E) gain a term from the tilt: roll deflects the downhill antenna as a side wind
+  would, pitch both as a head or tail wind (`--tilt-jo`, 1.0 = the weight of a full wind; Kamikouchi 2009 for the cells, the rate an
+  estimate). this is the "gravity" row of the senses table, on for the first time.
+- the leg load: the floor's 15 Hz on the leg-nerve proprioceptors becomes six rows by leg segment and side, shifting toward the
+  downhill legs (`--tilt-load` 0.5: 15 Hz on the flat, 0-30 on a slope; nose up loads the hind legs, left side up loads the right). an
+  estimate, labelled; the hair plates and campaniforms under load are the next physiology on that row.
+- `pose_tilt` saved per frame; the viewer rotates the human view with his head.
+- not done: the ocelli's sky sampling along the tilted head (small; noted).
+
+smoke (6 s walking east over the fruit): pitch +47 deg climbing on, 0 at the top, -55 coming off; roll swinging -18 to +7 as he
+veers. in flight: the config of record with `--tilt on`, three seeds, against the feeding-read batch (tilt off); the oracle.
+
+**tilt, measured (14:29 PDT; the config of record with `--tilt on`, three seeds, 120 s, against the feeding-read batch of 09:30):**
+
+| arm | first on the fruit | time on it | feeding (read from MN9) | MN9 on the fruit | mean / max pitch on the fruit | walked / after 30 s | ends from the fruit |
+|---|---|---|---|---|---|---|---|
+| tilt off (09:30) | 9.6 / 7.6 / 14.4 s | 10.1 / 1.6 / 9.5 s | 8 / 9 / 8 s | 16.0 / 14.7 / 13.4 Hz | 0 | 11.3 / 21.8 / 16.6 m; 7.8 / 17.6 / 13.4 | 1.3 / 1.5 / 3.8 m |
+| tilt on | 8.1 / 5.9 / 9.1 s | 6.1 / 7.0 / 9.5 s | 8 / 9 / 8 s | 18.6 / 11.9 / 15.0 Hz | 28 / 31 / 20 deg mean; 85-87 max | 19.3 / 23.1 / 13.9 m; 13.6 / 17.7 / 9.5 | 4.4 / 2.8 / 4.3 m |
+
+three of three, as before: he walks up the plume with his head pitching to the slope, gravity on his aristae and his weight on
+his downhill legs, climbs the fruit (pitching to nearly vertical at its edge, 20-30 deg on average while on it), feeds by his own
+motor neuron, and leaves. nothing broke; nothing obviously changed at three seeds (arrival a little sooner, a little further
+walked, inside the spread). the point of tilt is not this batch: it is that the eye now sees a horizon that moves, the JO
+gravity cells have a stimulus for the first time, and the leg-load rows have a slope to read. **`--tilt on` becomes the
+default** (garden only, with the climb). what it opens: a run scored on the head's pitch against his steering (does a tilted
+horizon change the HS wheel? the optic-flow cells were trained level), the JO gravity rows against the wind rows (they share
+cells; a fly on a slope in a wind feels both), and the terrain item of §2a, now a heightfield away.
+
+
+oracle on the tilt edits (14:36 PDT; the eye gained pitch and roll, zero = the old path): PASS, eight of eight, read from the log first.

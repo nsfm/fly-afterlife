@@ -26,6 +26,8 @@ class Body:
     touched: str | None = None   # "L" / "R" / "B" / None: side of this frame's contact, relative to heading
     kind: int = 0                # 0 none, 1 wall or pillar, 2 the other fly
     labellum: str | None = None  # what the labellum touches: "sugar" when he stands still on the fruit (a geometry stand-in for extension, 09-21)
+    pitch: float = 0.0           # degrees, nose up positive: the slope under his feet along his heading (09-21, tilt)
+    roll: float = 0.0            # degrees, left side up positive: the slope across his heading
     z: float = 0.0               # height of his feet above the ground (m): 0 on the floor, up the dome of a fruit or a stone when the world lets him climb (09-21)
     ant_ahead: float = 0.1       # antenna tips: this far ahead of the body centre (m) ...
     ant_half: float = 0.15       # ... and this far to each side. the defaults are the original wide geometry (09-19: 4.5 mm apart at

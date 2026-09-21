@@ -32,6 +32,9 @@ ap.add_argument("--sugar-hz", type=float, default=26.0, help="the sugar row's ra
 ap.add_argument("--ocelli-hz", type=float, default=40.0, help="the ocellar interneurons' rate in the dark (a chosen number; 0 in full sun)")
 ap.add_argument("--ocelli-light", type=float, default=None, help="TEST CONTROL (09-19): hold the sky light every ocellus sees at this value instead of the garden's, so the channel fires at a constant rate; separates a tonic push from a light effect")
 ap.add_argument("--climb", default="on", choices=["off", "on"], help="garden (09-21): on = the fruit and the stone are domes he walks up (feet follow the surface, the eye rises, tarsi on the fruit taste sugar, no push-out, no touch); off = colliders he is pushed off (the record before 09-21)")
+ap.add_argument("--tilt", default="on", choices=["off", "on"], help="garden (09-21): his body pitches and rolls with the slope under his feet; the eye rotates with the head; gravity deflects the antennae onto JO-C/E (--tilt-jo); the leg load splits front / back and side to side (--tilt-load)")
+ap.add_argument("--tilt-jo", type=float, default=1.0, help="gravity's weight on the JO wind rows relative to a full wind (Kamikouchi 2009: JO-C/E carry gravity; rate estimate E)")
+ap.add_argument("--tilt-load", type=float, default=0.5, help="fraction by which the standing leg load shifts to the downhill legs at 90 deg of slope (E)")
 ap.add_argument("--noise", type=float, default=0.15, help="membrane noise, mV per step (the flybrain engine's default 0.15, the record; 0 = the noiseless network: a diagnostic for self-igniting loops, 09-21)")
 ap.add_argument("--cool-rest", type=float, default=95.0, help="the cooling cells' resting rate, Hz (Budelli 2019: ~95, temperature-independent; the record). a dose flag (09-21): the wing motor artefact is fed by it")
 ap.add_argument("--hot-r25", type=float, default=37.0, help="the hot cells' rate at 25 C, Hz (Budelli 2019: 37; the record). a dose flag (09-21)")
@@ -150,6 +153,9 @@ if args.world == "garden":   # the garden's senses: the fruit's plume on the fru
         JOW = {s_: np.sort(_r0.choice(_joce[s_], _nmin, replace=False)) for s_ in "LR"}
         def _wind_stim(st, s_):
             rel = st.get("wind_rel", 0.0); lat = max(0.0, np.sin(np.radians(rel))) if s_ == "L" else max(0.0, -np.sin(np.radians(rel))); head = 0.5 * max(0.0, np.cos(np.radians(rel)))
+            if args.tilt == "on":   # gravity on the aristae (09-21): roll deflects the downhill antenna as a side wind would, pitch both as a head or tail wind
+                rl_, pt_ = np.radians(st.get("roll", 0.0)), np.radians(st.get("pitch", 0.0))
+                lat += args.tilt_jo * (max(0.0, -np.sin(rl_)) if s_ == "L" else max(0.0, np.sin(rl_))); head += args.tilt_jo * 0.5 * abs(np.sin(pt_)); lat = min(lat, 1.0); head = min(head, 0.5)
             gate = 1.0 if args.wind_gate == "none" else (1.0 if (st.get("odour_L", {}).get("fruit", 0.0) > 0.02 or st.get("odour_R", {}).get("fruit", 0.0) > 0.02) else 0.0)
             return (0.25 + 0.75 * (lat + head)) * gate    # -> Scaled(20): 5 Hz floor-ish in still air is the floor row; wind adds up to 20 Hz on the windward side
         for s_ in "LR": REG.add(ReceptorClass(f"wind_JO_{s_}", JOW[s_], Scaled(20.0), (lambda st, s_=s_: _wind_stim(st, s_)), source="Yorozu 2009 (JO C/E wind); rate estimate (E); equalised populations (09-18)"))
@@ -171,6 +177,21 @@ if args.floor:
     from fly_afterlife.receptors import tonic_floor
     _fl = tonic_floor(M, REG)
     if args.floor_drop: _drop = set(args.floor_drop.split(",")); REG.classes = [rc for rc in REG.classes if rc.name not in _drop]; _fl = [rc for rc in _fl if rc.name not in _drop]; print(f"floor rows dropped: {sorted(_drop)}")
+    if args.tilt == "on":   # the leg load on a slope (09-21): the floor's 15 Hz on the leg proprioceptors shifts toward the downhill legs
+        _legp = [rc for rc in _fl if rc.name == "floor_leg_proprio"]
+        if _legp:
+            from fly_afterlife.receptors import select as _select
+            _lp = _legp[0]
+            for seg_, nv_ in (("fl", "ProLN"), ("ml", "MesoLN"), ("hl", "MetaLN")):
+                for s_ in "LR":
+                    cells_ = np.intersect1d(_lp.cells, _select(M, cls="mechanosensory_proprioceptive", entry_nerve=[nv_], side=s_))
+                    if cells_.size == 0: continue
+                    def _load(st, seg_=seg_, s_=s_):
+                        pt_, rl_ = np.radians(st.get("pitch", 0.0)), np.radians(st.get("roll", 0.0))
+                        fb_ = {"fl": -1.0, "ml": 0.0, "hl": 1.0}[seg_] * np.sin(pt_)          # nose up: the hind legs bear more
+                        lr_ = (-1.0 if s_ == "L" else 1.0) * np.sin(rl_)                       # left side up: the right legs bear more
+                        return 0.5 * max(0.0, 1.0 + args.tilt_load * (fb_ + lr_))   # x Scaled(30): 15 Hz on the flat, up to 30 on the downhill legs, 0 on the uphill
+                    REG.add(ReceptorClass(f"load_{seg_}_{s_}", cells_, Scaled(30.0), _load, source="standing load shifted by the slope (E; hair plates / campaniforms under load, mechano brief s.2)"))
     for rc in _fl:
         if rc.name == "floor_cool": rc.transducer.hz = args.cool_rest   # the dose flag reaches the floor's row too (09-21)
         if rc.name == "floor_hot": rc.transducer.hz = args.hot_r25
@@ -219,7 +240,7 @@ if args.world == "arena":
 if args.world == "garden":
     from fly_afterlife.garden import Garden
     room = Garden(seed=args.seed); m.x, m.y, m.h = (-0.5, -0.5, 35.0) if args.start is None else tuple(float(v) for v in args.start.split(",")); her.x, her.y, her.h = 1.2, 0.3, 180.0
-    room.climb = args.climb == "on"
+    room.climb = args.climb == "on"; room.tilt = args.tilt == "on" and room.climb
     if args.taste_hold:   # the test stimulus: taste imposed after the world's contacts each frame
         _sf0 = room.step_frame
         def _sf_hold(m_, f_, fps_): _sf0(m_, f_, fps_); m_.taste = args.taste_hold

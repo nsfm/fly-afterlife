@@ -64,3 +64,6 @@
 - L3899: the climb, built (2026-09-21 08:58 PDT; nate: "flies land on their food and spend quite some time there"; TODO §P physics, §Q 4)
 - L3935: feeding, read from him (2026-09-21 09:23 PDT; TODO §Q 3c, the latch's exit in §P; built on the climb)
 - L3974: the run of record, 09-21 (10:02 PDT; `world/record/garden_0921_s11.npz`, 180 s, seed 11, the defaults: real antennae, the wind rows, the thermal rows, the satie
+- L3985: the motor census (13:21 PDT; nate: "what other motor neurons do we have access to and is he firing them?"; 20 s, seed 11, the defaults, from the fruit's edge so
+- L4010: the wing artefact, traced (13:32 PDT; queue 8b; twelve 12 s arms, seed 11, the 56 wing and 16 haltere motor neurons logged, rates after 2 s)
+- L4100: tilt, built (2026-09-21 14:19 PDT; nate: "should we actually tilt him properly as he traverses the angled surfaces, taking heading into account to map gravity a

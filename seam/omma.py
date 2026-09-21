@@ -176,8 +176,16 @@ class Eye:
         u /= np.linalg.norm(u, axis=1, keepdims=True); v = np.cross(self.dir0, u)
         self.rays0 = (self.dir0[:, None, :] + self.jit[:, :, 0, None] * u[:, None, :] + self.jit[:, :, 1, None] * v[:, None, :])
         self.rays0 /= np.linalg.norm(self.rays0, axis=2, keepdims=True)
-    def render(self, scene, pos=(0, 0, 0.5), heading_deg=0.0):
+    def render(self, scene, pos=(0, 0, 0.5), heading_deg=0.0, pitch_deg=0.0, roll_deg=0.0):
+        """rays in the body frame (x forward, y left, z up) rotated into the world: roll about x (left side up +), then pitch
+        about y (nose up +), then yaw. pitch and roll default to 0 and then the arithmetic is the old yaw-only path, bit for bit
+        (09-21, tilt)."""
         h = np.radians(heading_deg); R = np.array([[np.cos(h), -np.sin(h), 0], [np.sin(h), np.cos(h), 0], [0, 0, 1]])
+        if pitch_deg != 0.0 or roll_deg != 0.0:
+            pt, rl = np.radians(pitch_deg), np.radians(roll_deg)
+            Rp = np.array([[np.cos(pt), 0, -np.sin(pt)], [0, 1, 0], [np.sin(pt), 0, np.cos(pt)]])   # nose up lifts +x toward +z (sign checked 09-21: forward ommatidia see sky at +60)
+            Rr = np.array([[1, 0, 0], [0, np.cos(rl), -np.sin(rl)], [0, np.sin(rl), np.cos(rl)]])   # about x by +roll: the left axis tilts up
+            R = R @ Rp @ Rr
         rays = self.rays0.reshape(-1, 3) @ R.T
         lum = scene.shade(np.asarray(pos, float), rays).reshape(self.n, N_RAYS)
         return lum.mean(1)

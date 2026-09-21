@@ -33,7 +33,7 @@ one change per run, its control, the measurement that decides it. status: queued
 4. **[measured 09-21 09:14; DEFAULT ON] walkable tops** (`--climb`: the fruit and the stone are domes; he climbs, eats standing on it, leaves, 3/3; the collider jumps were not reproducible in any current run, so no tunnelling fix was needed) (§P physics): the fruit and the stone as mounds he stands on; taste from the
    surface under him; contacts resolved against every object with a per-frame push-out cap. decides: can "on the fruit" be a
    state of the world at all. control: the record run of 09-19 evening on the new physics.
-4b. **[queued] tilt** (nate, 09-21): pitch and roll from the dome's surface normal and his heading; the eye rotates with the head (a seam
+4b. **[measured 09-21 14:29; DEFAULT ON] tilt**: pitch and roll from the dome's slope; the eye rotates with the head (pitch sign checked); gravity on the JO rows; the leg load split by segment and side; 3/3 climbs, feeds, leaves. next on the row: the horizon vs the HS wheel; JO gravity vs wind on a slope; the heightfield.
    change: `Eye.render` gains pitch / roll, zero stays bit-exact); JO gravity cells (JO-C/E, the gravity component along the
    antennae, Kamikouchi 2009) from the tilt; leg load split front / back on a slope into the proprioceptive rows; the ocelli
    sample the sky along the tilted head. this is the "gravity" row of §S and the terrain item of §2a together. a day.

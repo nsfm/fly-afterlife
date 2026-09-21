@@ -20,7 +20,7 @@ class Episode:
         """room: any world with scene(bodies) / step_frame(m, f, fps) / contacts (Room, Drum). her: a Body or None.
         effectors: (steer, pace, her_steer or None, song or None). on_chunk(ep, c, cntM): optional per-chunk hook."""
         self.on_chunk = on_chunk; self.threads = threads; self.state = state
-        self.front_end_uv = front_end_uv; self.LUM_UV = []; self.OCELLI = []; self.Z = []
+        self.front_end_uv = front_end_uv; self.LUM_UV = []; self.OCELLI = []; self.Z = []; self.TILT = []
         self.walkmod = walkmod; self.walk_gain = 1.0   # walkmod(cntM) -> a gain on the walking command for the next chunk (PFL2, 09-19)
         self.vread = vread or {}   # {name: (cells L, cells R)}: populations read by mean membrane potential per chunk, graded, as cntM[name_L / name_R] in mV x 100 (09-19: PFL3's output is graded in life; its spikes here are too sparse to steer with)   # the UV retina through a second flyvis (Mi15), when the world has scene_uv (09-18)   # an internal state object with update(t, taste) and .feeding / .sat, or None (09-18)
         from concurrent.futures import ThreadPoolExecutor; self.pool = ThreadPoolExecutor(max_workers=1)
@@ -41,8 +41,8 @@ class Episode:
         lum = np.zeros((CH, self.eye.n), np.float32); touched_m = [None] * CH; touched_f = [None] * CH; kind_m = [0] * CH
         uv = self.front_end_uv is not None and hasattr(self.room, "scene_uv"); lum_uv = np.zeros((CH, self.eye.n), np.float32) if uv else None
         for f in range(CH):
-            lum[f] = self.eye.render(self.room.scene([] if self.solo else [her]), pos=(m.x, m.y, 0.5 + m.z), heading_deg=m.h); self.POSE.append((m.x, m.y, m.h)); self.Z.append(m.z)
-            if uv: lum_uv[f] = self.eye.render(self.room.scene_uv([] if self.solo else [her]), pos=(m.x, m.y, 0.5 + m.z), heading_deg=m.h)
+            lum[f] = self.eye.render(self.room.scene([] if self.solo else [her]), pos=(m.x, m.y, 0.5 + m.z), heading_deg=m.h, pitch_deg=m.pitch, roll_deg=m.roll); self.POSE.append((m.x, m.y, m.h)); self.Z.append(m.z); self.TILT.append((m.pitch, m.roll))
+            if uv: lum_uv[f] = self.eye.render(self.room.scene_uv([] if self.solo else [her]), pos=(m.x, m.y, 0.5 + m.z), heading_deg=m.h, pitch_deg=m.pitch, roll_deg=m.roll)
             if not self.solo: self.POSE2.append((her.x, her.y, her.h))
             self.room.step_frame(m, her, self.fps)
             touched_m[f] = m.touched; kind_m[f] = m.kind; touched_f[f] = None if self.solo else her.touched
@@ -79,6 +79,7 @@ class Episode:
                 if hasattr(self.room, "sky_light"): st_["ocelli"] = self.room.sky_light(float(px), float(py), float(ph)); self.OCELLI.append((st_["ocelli"]["median"], st_["ocelli"]["left"], st_["ocelli"]["right"]))   # the ocellar stand-in's stimulus (09-19)
                 if hasattr(self.room, "wind"): st_["wind_rel"] = float((np.degrees(np.arctan2(-self.room.wind[1], -self.room.wind[0])) - ph + 180) % 360 - 180)   # where the wind comes FROM, relative to his heading (+ = from his left)
                 st_["taste"] = getattr(m, "taste", None); st_["labellum"] = getattr(m, "labellum", None); st_["heading"] = float(ph)
+                st_["pitch"] = float(getattr(m, "pitch", 0.0)); st_["roll"] = float(getattr(m, "roll", 0.0))
             st_["lum"] = self._lum_frames[f]; st_["lum_uv"] = (self._lum_uv[f] if getattr(self, "_lum_uv", None) is not None else None)   # the retinas of this frame, for receptor rows driven by column (R7 / R8, 09-18)
             st_["walk_gain"] = self.walk_gain
             if self.state is not None: self.state.update(t_f, getattr(m, "taste", None), float(getattr(self, "mn9_hz", 0.0))); st_["feeding"] = self.state.feeding; st_["sat"] = self.state.sat
@@ -144,6 +145,7 @@ class Episode:
         if her_r is not None: out["her_r"] = her_r
         if self.LUM_UV: out["lum_uv"] = (np.clip(np.concatenate(self.LUM_UV), 0, 1) * 255).astype(np.uint8)
         if self.OCELLI: out["ocelli"] = np.array(self.OCELLI, np.float32)   # per frame: median, left, right ocellus sky light 0..1
+        if self.TILT: out["pose_tilt"] = np.array(self.TILT, np.float32)   # per frame: pitch, roll in degrees (09-21)
         if self.Z: out["pose_z"] = np.array(self.Z, np.float32)   # per frame: the height of his feet (09-21; 0 unless the world lets him climb)
         if extra: out.update(extra)
         np.savez_compressed(path, **out)

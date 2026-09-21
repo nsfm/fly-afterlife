@@ -143,6 +143,7 @@ class Garden(Room):
         return out
 
     # ---- contacts
+    tilt: bool = False    # 09-21: when True (and climb) his body pitches and rolls with the slope under his feet
     climb: bool = False   # 09-21: when True the fruit and the stone are domes he walks up (a fly lands ON its food); when False they are colliders he is pushed off (the record before 09-21)
     def surface(self, x, y):
         """the walkable surface under (x, y): (height, what he stands on). the fruit and the stone are spheres resting on the
@@ -151,6 +152,15 @@ class Garden(Room):
             d = float(np.hypot(x - ox, y - oy))
             if d < r_: return max(0.0, oz + float(np.sqrt(max(r_ * r_ - d * d, 0.0)))), name
         return 0.0, None
+
+    def slope(self, x, y):
+        """the gradient of the walkable surface under (x, y): (dz/dx, dz/dy); zero on the floor. for a sphere resting on the floor,
+        dz/dx = -(x - ox) / sqrt(r^2 - d^2)."""
+        for ox, oy, oz, r_, _ in (self.fruit, self.stone):
+            d = float(np.hypot(x - ox, y - oy))
+            if d < r_:
+                den = max(float(np.sqrt(max(r_ * r_ - d * d, 0.0))), 0.02); return -(x - ox) / den, -(y - oy) / den
+        return 0.0, 0.0
 
     def step_frame(self, m: Body, f, fps: int) -> None:
         m.clear_contact()
@@ -166,6 +176,10 @@ class Garden(Room):
                 if dd < gr + b.r: b.x, b.y = gx + (b.x - gx) / max(dd, 1e-6) * (gr + b.r), gy + (b.y - gy) / max(dd, 1e-6) * (gr + b.r); b.touched = "L" if b.bearing_to(gx, gy) >= 0 else "R"; b.kind = 1
             if self.climb:   # 09-21: the fruit and the stone are walkable domes; his feet follow the surface, no push-out, no touch; on the fruit his tarsi are on the skin
                 z_, on_ = self.surface(b.x, b.y); b.z = z_
+                if self.tilt:   # 09-21: pitch and roll from the slope under his feet and his heading (a fly stands parallel to the surface)
+                    gx_, gy_ = self.slope(b.x, b.y); hr_ = np.radians(b.h); fwd_ = (np.cos(hr_), np.sin(hr_)); left_ = (-np.sin(hr_), np.cos(hr_))
+                    b.pitch = float(np.degrees(np.arctan(gx_ * fwd_[0] + gy_ * fwd_[1]))); b.roll = float(np.degrees(np.arctan(gx_ * left_[0] + gy_ * left_[1])))
+                else: b.pitch = b.roll = 0.0
                 if on_ == "fruit" and b is m: m.taste = "sugar"; m.labellum = "sugar"   # on the food, the labellum is on the skin (a fly walking over fruit dabs it; a stand-in for the extension, which his tarsal path does not drive; docs/SEAM.md 09-21)
             else:
               b.z = 0.0
