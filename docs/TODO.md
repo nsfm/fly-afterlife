@@ -30,7 +30,7 @@ one change per run, its control, the measurement that decides it. status: queued
 3c. **[queued] "feeding" read from MN9 + the pump** instead of imposed; the sugar row of the garden re-pointed at the labelled
    cells (LgLG4 + LgAG2 for the tarsi, LB3c when the labellum touches, which needs the proboscis geometry).
 3d. **[done 23:10] DNg105's source audit**: chosen by synapse count onto leg MNs (motor review) and by measurement (it halts the woken cord); not a Sapkal 2024 named halting neuron; a measured brake, labelled so.
-4. **[queued] walkable tops + collider tunnelling** (§P physics): the fruit and the stone as mounds he stands on; taste from the
+4. **[measured 09-21 09:14; DEFAULT ON] walkable tops** (`--climb`: the fruit and the stone are domes; he climbs, eats standing on it, leaves, 3/3; the collider jumps were not reproducible in any current run, so no tunnelling fix was needed) (§P physics): the fruit and the stone as mounds he stands on; taste from the
    surface under him; contacts resolved against every object with a per-frame push-out cap. decides: can "on the fruit" be a
    state of the world at all. control: the record run of 09-19 evening on the new physics.
 5. **[queued] a run that crosses shade** for the ocelli, the ocellar cells logged (§S ocelli row).

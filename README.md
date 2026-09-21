@@ -46,7 +46,7 @@ implemented sense on unless the run says why not, and every active sense has a c
 |---|---|---|---|
 | vision, motion (T4/T5 through flyvis) | yes, every world | always on | her painted invisible, the fruit toned like the floor |
 | touch, bristles | yes | `--bristle adapting` (default; `hold` is the old kernel) | `--bristle hold`, or a run with nothing to touch |
-| taste, sugar and water on the tarsi | yes, in the garden | the garden has a fruit and a puddle; `--feeding 3 --satiety 8` lets taste latch the feeding state | a run without the feeding state |
+| taste, sugar and water on the tarsi | yes, in the garden | the fruit and the stone are domes he climbs (`--climb on`, default since 09-21): standing on the fruit is tasting it; the puddle is water; `--feeding 3 --satiety 8` lets taste latch the feeding state | a run without the feeding state |
 | smell, the fruit's plume | yes, in the garden | on with the garden; `--antennae real` puts his antennae at a fly's spacing (default `wide`, the old geometry) | `--no-plume` |
 | smell, her odour and his cVA | when she is present | drop `--no-female` | `--no-female` |
 | wind on the antennae (Johnston's organ) | no | `--wind on` (`--wind-gate odour` gates it on a whiff) | `--wind off` |

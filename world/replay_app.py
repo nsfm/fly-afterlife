@@ -385,7 +385,8 @@ class Episode:
         `sun_dir` is the garden's sun; every garden file carries it from 09-19 on, older ones do not."""
         E = self.E
         self.sun_dir = np.asarray(E["sun_dir"], np.float64).ravel() if "sun_dir" in E.files else None
-        self.ocelli = np.asarray(E["ocelli"], np.float32) if "ocelli" in E.files else None   # per frame: median, left, right ocellus sky light 0..1 (--ocelli on, 09-19)
+        self.ocelli = np.asarray(E["ocelli"], np.float32) if "ocelli" in E.files else None
+        self.pose_z = np.asarray(E["pose_z"], np.float32) if "pose_z" in E.files else None   # his feet's height per frame (--climb on, 09-21)   # per frame: median, left, right ocellus sky light 0..1 (--ocelli on, 09-19)
         self.sun_az = self.sun_el = None
         if self.sun_dir is not None and len(self.sun_dir) >= 3:
             d = self.sun_dir / (np.linalg.norm(self.sun_dir) + 1e-12)
@@ -555,7 +556,7 @@ class HumanView:
             gen, r0, buf, r0u, bufu, uv = self.gen, self.r0, self.buf, self.r0u, self.bufu, self.uv
             need_g = i not in self.cache; need_u = uv != "off" and i not in self.ucache
         if not (need_g or need_u): return self.get(i)
-        x, y, h = self.pose_at(i); hr = np.radians(h); c, s = np.cos(hr), np.sin(hr); o = np.array([x, y, 0.5])
+        x, y, h = self.pose_at(i); hr = np.radians(h); c, s = np.cos(hr), np.sin(hr); o = np.array([x, y, 0.5 + (float(self.ep.pose_z[min(int(i), len(self.ep.pose_z) - 1)]) if getattr(self.ep, "pose_z", None) is not None else 0.0)])
         g = uimg = None
         if need_g:
             _rot(r0, c, s, buf)

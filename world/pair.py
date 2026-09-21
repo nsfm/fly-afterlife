@@ -31,6 +31,7 @@ ap.add_argument("--sugar-cells", default="legacy", choices=["legacy", "tarsal", 
 ap.add_argument("--sugar-hz", type=float, default=26.0, help="the sugar row's rate while sugar is on him (26 = the record; Shiu 2024's MN9 needs 30+, ~80%% of max at 100)")
 ap.add_argument("--ocelli-hz", type=float, default=40.0, help="the ocellar interneurons' rate in the dark (a chosen number; 0 in full sun)")
 ap.add_argument("--ocelli-light", type=float, default=None, help="TEST CONTROL (09-19): hold the sky light every ocellus sees at this value instead of the garden's, so the channel fires at a constant rate; separates a tonic push from a light effect")
+ap.add_argument("--climb", default="on", choices=["off", "on"], help="garden (09-21): on = the fruit and the stone are domes he walks up (feet follow the surface, the eye rises, tarsi on the fruit taste sugar, no push-out, no touch); off = colliders he is pushed off (the record before 09-21)")
 ap.add_argument("--model", default="flow/0000/000"); ap.add_argument("--no-female", action="store_true"); ap.add_argument("--gain", type=float, default=3.0); ap.add_argument("--drive-gain", type=float, default=150.0)
 args = ap.parse_args(); fps, CH = 100, 10; rng = np.random.default_rng(args.seed)
 g = np.load("seam/eye_geom.npz"); eye = Eye("seam/eye_geom.npz")
@@ -204,6 +205,7 @@ if args.world == "arena":
 if args.world == "garden":
     from fly_afterlife.garden import Garden
     room = Garden(seed=args.seed); m.x, m.y, m.h = (-0.5, -0.5, 35.0) if args.start is None else tuple(float(v) for v in args.start.split(",")); her.x, her.y, her.h = 1.2, 0.3, 180.0
+    room.climb = args.climb == "on"
     if args.taste_hold:   # the test stimulus: taste imposed after the world's contacts each frame
         _sf0 = room.step_frame
         def _sf_hold(m_, f_, fps_): _sf0(m_, f_, fps_); m_.taste = args.taste_hold

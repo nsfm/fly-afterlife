@@ -3896,3 +3896,39 @@ network with the floor on, and it lands where we already were. the question is s
 and it goes into the settled list. if the physics puts him on food and the chain still needs more, the sweep says where
 the room is: up to 0.22, and no further.
 
+## the climb, built (2026-09-21 08:58 PDT; nate: "flies land on their food and spend quite some time there"; TODO §P physics, §Q 4)
+
+first, the collider jumps nate remembered: not in any current run. the largest frame-to-frame move in the run of record,
+the anemotaxis batches, the HS runs and the oracle's room runs is his own step (0.003-0.005 m); the zooming was older
+code. so the contact fix is a guard, not the change. the change is height:
+
+- `Body.z`, the height of his feet. `Garden.surface(x, y)`: the fruit and the stone are spheres resting on the floor,
+  walkable domes with z = zc + sqrt(r^2 - d^2); a fly walks up any slope, so there is no slope limit.
+- `--climb on` (opt-in until measured): inside a dome's footprint his feet follow the surface, there is no push-out and
+  no touch (a surface underfoot is not a wall to his bristles), and on the fruit his tarsi are on the skin, so taste is
+  sugar wherever he stands on it, not only while pressing into its side. `off` keeps the record's colliders.
+- his eye rises with him: the raytracer's viewpoint is 0.5 + z (the top of the fruit is 0.52 m up, so from there he sees
+  over the grass). pitch along the slope is not done (the eye's rotation is yaw only; a pitch would be a seam change).
+- `pose_z` saved per frame; the viewer raises his viewpoint from it.
+
+smoke (4 s, starting at the fruit's edge facing it, feeding on): he walks up to the top (z 0.52), stands at its centre, and
+the latch holds for every frame. in flight: the anemotaxis config of record with `--climb on`, three seeds, against the
+09-19 winds arm; and the oracle (the default path adds 0.0 to the eye height, which is bit-exact).
+
+**the climb, measured (09:14 PDT; the anemotaxis config of record, three seeds, 120 s, `--climb on` vs the 09-19 winds arm):**
+
+| arm | first on the fruit | height reached | feeding | walked / after 30 s | ends from the fruit | goal switches | frames touching |
+|---|---|---|---|---|---|---|---|
+| winds (colliders) s10 / 11 / 12 | 9.8 / 9.9 / 11.6 s | 0 | 8 s each | 15.0 / 14.7 / 12.6 m; 11.6 / 11.8 / 9.6 | 4.4 / 3.5 / 4.2 m | 6 / 5 / 4 | 12 / 21 / 9 % |
+| climb (domes) s10 / 11 / 12 | 21.5 / 6.4 / 7.1 s | 0.44 / 0.51 / 0.52 m | 8 / 10 / 8 s | 20.6 / 21.6 / 19.2 m; 15.4 / 16.1 / 14.2 | 4.6 / 1.3 / 3.7 m | 4 / 0 / 2 | 11 / 7 / 3 % |
+
+**he walks up the plume, climbs onto the fruit, eats standing on it, and leaves, three of three.** the top of the fruit is
+0.52 m up and two seeds reached it; the goal-switch fires less because food is no longer a wall; he touches less and
+walks further afterwards. one seed took 21 s to arrive (a detour), within what three seeds do. anemotaxis holds through
+the physics change, and "on the fruit" is now a state of the world rather than a collision. **`--climb on` becomes the
+default** (garden only; the oracle's room runs cannot see it). oracle on the edits: PASS, eight of eight.
+
+what this unblocks, in order: the labellum as geometry (standing on food and stopped, the labellum is on the skin, the
+labellar sugar cells fire at the food's concentration), feeding *read* from MN9 and the pump rather than imposed (the
+latch's exit, §P), and the withdrawal reflex no longer needing to be silenced on food because food no longer touches him.
+

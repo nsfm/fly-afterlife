@@ -25,6 +25,7 @@ class Body:
     present: bool = True         # False = the body exists (pose is logged) but is not in the world
     touched: str | None = None   # "L" / "R" / "B" / None: side of this frame's contact, relative to heading
     kind: int = 0                # 0 none, 1 wall or pillar, 2 the other fly
+    z: float = 0.0               # height of his feet above the ground (m): 0 on the floor, up the dome of a fruit or a stone when the world lets him climb (09-21)
     ant_ahead: float = 0.1       # antenna tips: this far ahead of the body centre (m) ...
     ant_half: float = 0.15       # ... and this far to each side. the defaults are the original wide geometry (09-19: 4.5 mm apart at
                                  # 15 mm per m, twelve times a fly's ~0.35 mm; `pair.py --antennae real` sets 0.08 / 0.012)

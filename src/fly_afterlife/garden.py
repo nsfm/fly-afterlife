@@ -143,6 +143,15 @@ class Garden(Room):
         return out
 
     # ---- contacts
+    climb: bool = False   # 09-21: when True the fruit and the stone are domes he walks up (a fly lands ON its food); when False they are colliders he is pushed off (the record before 09-21)
+    def surface(self, x, y):
+        """the walkable surface under (x, y): (height, what he stands on). the fruit and the stone are spheres resting on the
+        floor; their upper surface is z = zc + sqrt(r^2 - d^2). a fly walks up any slope, so there is no slope limit."""
+        for name, (ox, oy, oz, r_, _) in (("fruit", self.fruit), ("stone", self.stone)):
+            d = float(np.hypot(x - ox, y - oy))
+            if d < r_: return max(0.0, oz + float(np.sqrt(max(r_ * r_ - d * d, 0.0)))), name
+        return 0.0, None
+
     def step_frame(self, m: Body, f, fps: int) -> None:
         m.clear_contact()
         if f is not None: f.clear_contact()
@@ -155,7 +164,12 @@ class Garden(Room):
             for gx, gy, gr, _, _ in self.grass:
                 dd = np.hypot(b.x - gx, b.y - gy)
                 if dd < gr + b.r: b.x, b.y = gx + (b.x - gx) / max(dd, 1e-6) * (gr + b.r), gy + (b.y - gy) / max(dd, 1e-6) * (gr + b.r); b.touched = "L" if b.bearing_to(gx, gy) >= 0 else "R"; b.kind = 1
-            for ox, oy, _, r_, _ in (self.stone, self.fruit):
+            if self.climb:   # 09-21: the fruit and the stone are walkable domes; his feet follow the surface, no push-out, no touch; on the fruit his tarsi are on the skin
+                z_, on_ = self.surface(b.x, b.y); b.z = z_
+                if on_ == "fruit" and b is m: m.taste = "sugar"
+            else:
+              b.z = 0.0
+              for ox, oy, _, r_, _ in (self.stone, self.fruit):
                 dd = np.hypot(b.x - ox, b.y - oy)
                 if dd < r_ + b.r:
                     b.x, b.y = ox + (b.x - ox) / max(dd, 1e-6) * (r_ + b.r), oy + (b.y - oy) / max(dd, 1e-6) * (r_ + b.r); b.touched = "L" if b.bearing_to(ox, oy) >= 0 else "R"; b.kind = 1
