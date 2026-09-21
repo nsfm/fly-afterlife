@@ -32,7 +32,7 @@ ap.add_argument("--sugar-hz", type=float, default=26.0, help="the sugar row's ra
 ap.add_argument("--ocelli-hz", type=float, default=40.0, help="the ocellar interneurons' rate in the dark (a chosen number; 0 in full sun)")
 ap.add_argument("--ocelli-light", type=float, default=None, help="TEST CONTROL (09-19): hold the sky light every ocellus sees at this value instead of the garden's, so the channel fires at a constant rate; separates a tonic push from a light effect")
 ap.add_argument("--climb", default="on", choices=["off", "on"], help="garden (09-21): on = the fruit and the stone are domes he walks up (feet follow the surface, the eye rises, tarsi on the fruit taste sugar, no push-out, no touch); off = colliders he is pushed off (the record before 09-21)")
-ap.add_argument("--labellum-hz", type=float, default=150.0, help="the labellar sugar cells' rate while the labellum is on the food (09-21; a ripe fruit: ~100-150 Hz)")
+ap.add_argument("--labellum-hz", type=float, default=200.0, help="the labellar sugar cells' rate while the labellum is on the food (09-21; a ripe fruit: ~100-150 Hz)")
 ap.add_argument("--feed-read", default="mn9", choices=["latch", "mn9"], help="how feeding is decided (09-21): latch = sugar on the tarsi latches it (the record, a stand-in); mn9 = read from his proboscis motor neurons firing (MN9 above --mn9-thr), i.e. his own wiring")
 ap.add_argument("--mn9-thr", type=float, default=3.0, help="Hz per MN9 cell over the last chunk that counts as feeding")
 ap.add_argument("--model", default="flow/0000/000"); ap.add_argument("--no-female", action="store_true"); ap.add_argument("--gain", type=float, default=3.0); ap.add_argument("--drive-gain", type=float, default=150.0)

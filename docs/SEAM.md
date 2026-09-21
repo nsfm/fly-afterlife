@@ -3966,3 +3966,5 @@ the first: a halting path from taste that carries, which the tarsal path does no
 MN9 fires (the pause is a state in life, Bidaye 2020). what would take the second: the extension driven by the tarsal path,
 which needs the long path to carry, which the sweep says the constant cannot give. both stay written.
 
+
+**a slipped default (09:47 PDT):** the first remade run of record reached the fruit at 7.5 s, climbed it, and never fed: MN9 at 0 Hz on the fruit. the read was the default but the labellar rate was still 150 Hz nominal, at which MN9 does not fire on a walking cord (the smoke of 09:20 said so). `--labellum-hz` default is now 200, the value the batch was measured at; the run of record is being remade again. caught by the rule that the run of record is made on the defaults, not on the batch flags.
