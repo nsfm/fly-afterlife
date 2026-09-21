@@ -43,3 +43,9 @@ KC number survives at 0.275. yes / no / a different order?
 does the ocellar channel touch his sleep or rest drive, so that having it on makes him more wakeful? from the table: the ocellar
 cells project to flight-and-neck descending neurons (DNp20 / DNp22 / DNpe017), not to the clock or the sleep cells; light reaches
 the clock through cryptochrome and the compound eye. the tonic push looks like arousal. parked until the states exist (S2).
+
+> **nyx, 09-21 08:55, the sweep:** 0.20 / 0.22 / 0.24 / 0.26 scored on the three stated criteria. the runaway caps the constant at 0.24;
+> sparsity leaves its band at 0.22; and below the cap the constant does not move the sugar chain's threshold (~100 Hz of measured
+> labellar firing at every w), only how hard MN9 fires above it. so no available constant changes what he can do, and 0.185 is inside
+> every criterion. **settled: 0.185 stays.** the lever for feeding is the input, which is the physics. room exists up to 0.22 if the
+> physics puts him on food and the chain still wants more. moving on to the physics.

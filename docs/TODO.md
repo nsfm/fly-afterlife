@@ -19,7 +19,7 @@ one change per run, its control, the measurement that decides it. status: queued
 3e. **[measured 22:06; recommendation: keep 0.185 (docs/ASK.md)** 22:01] the constant, (c) then (b)** (nate's answer in docs/ASK.md): re-measure the KC-sparsity calibration on the exact
    engine at 0.185 and 0.275 with one odour protocol; if 0.275 sits in the literature band (~5-10 % of KCs per odour), adopt 0.275 as
    the male default, re-measure the baselines, refreeze oracle v3.
-3f. **[queued, FIRST next wake] the constant sweep** (nate 09-21): one uniform w at 0.20 / 0.22 / 0.24 / 0.26, each scored on (i) KC sparsity
+3f. **[measured 09-21 08:55; SETTLED: 0.185 stays] the constant sweep** (nate 09-21): one uniform w at 0.20 / 0.22 / 0.24 / 0.26, each scored on (i) KC sparsity
    (`experiments/kc_sparsity.py`, band 5-10 %), (ii) the sugar-to-MN9 threshold (LB3c held, MN9 vs drive; Shiu's 30 Hz is the model's
    own number, ours will sit above it), (iii) the gnathal runaway (MN11D plateau; a hard ceiling, somewhere in 0.25-0.275); then the
    drum and one anemotaxis batch at the winner. the criteria are stated here before the sweep, and the winner is "the constant of this
@@ -41,7 +41,7 @@ one change per run, its control, the measurement that decides it. status: queued
 9. **[queued] the benchmark scorer's hysteresis and heading filter; the 600 s dish** (§2d).
 10. **[queued] her in the garden** (§2a), then the courtship state.
 
-settled (not to be relitigated by a wake without a new reason): the DN population channel is heading noise (09-18); the
+settled (not to be relitigated by a wake without a new reason): the synapse constant is 0.185 mV (the sweep of 09-21: the gnathal runaway caps w at 0.24, sparsity leaves its band at 0.22, and below that w does not move the taste chain's threshold; the lever is the input, i.e. the physics); the DN population channel is heading noise (09-18); the
 null point was a crutch (09-19); the thermal field is on under `rest` (09-19); the ocellar photoreceptors are out of volume
 (09-19); exact integration is the engine (09-19); three seeds is the floor for a claim; the antennae are 0.35 mm apart.
 

@@ -3867,3 +3867,32 @@ flag. the ocelli remain on by default: they break nothing and the push is small.
 
 
 oracle on the `--ocelli-light` control flag (23:32 PDT): PASS, eight of eight, read from the log first.
+
+## the constant sweep (2026-09-21 08:55 PDT; TODO §Q 3f, criteria stated before the run: KC sparsity in 5-10 %, the sugar-to-MN9 threshold, no gnathal runaway; `experiments/kc_sparsity.py` and `world/wsweep/`, LB3c held at 100 and 150 Hz nominal, 12 s, seed 10)
+
+| w (mV) | KCs firing | MN9 at 100 Hz (LB3c 77 measured) | MN9 at 150 Hz (LB3c 103) | MN11D pump |
+|---|---|---|---|---|
+| 0.185 (09-19) | 6.8 % | 0.1 | 5.8 | 0 |
+| 0.200 | 8.4 % | 0.2 | 8.4 | 0 |
+| 0.220 | 10.8 % | 1.0 | 12.5 | 0 |
+| 0.240 | 13.7 % | 2.2 | 13.5 | **plateau 186 Hz at 150 Hz drive** |
+| 0.260 | 16.4 % | 10.8 | 60.2 | **plateau 188 Hz at both** |
+| 0.275 (09-19) | 18.4 % | 5.1 | | plateau 186 |
+
+what the sweep says, plainly:
+
+1. **the runaway is the ceiling, and it is 0.24.** the gnathal loop that feeds the pharyngeal pump tips into a flat ~188 Hz
+   plateau at 0.26 for any drive and at 0.24 for a strong one. above that the constant is not available to us at all.
+2. **below the ceiling the constant is not the lever for the taste chain.** MN9's threshold sits near 100 Hz of measured
+   labellar sugar firing at every w from 0.185 to 0.22; what w changes is how hard MN9 fires above it (5.8 -> 12.5 Hz at
+   150 Hz nominal), not whether. the lever is the input: a fly standing on food, with the labellum, at a real sugar
+   concentration, drives those cells at 100-150 Hz in life. that is the physics item, not the constant.
+3. **sparsity crosses the band's edge at 0.22.** 0.185 and 0.20 sit inside it; 0.22 is at the top; above that, out.
+
+so by the three stated criteria, every constant from 0.185 to 0.20 passes and 0.22 is marginal, and none of them changes
+what he can do. **the constant of this build stays 0.185:** it is inside every criterion, it is what the whole record was
+measured on, and moving it to 0.20 would buy MN9 three hertz at the cost of a refreeze day. this is Shiu's method on our
+network with the floor on, and it lands where we already were. the question is settled by the sweep, not by preference,
+and it goes into the settled list. if the physics puts him on food and the chain still needs more, the sweep says where
+the room is: up to 0.22, and no further.
+
