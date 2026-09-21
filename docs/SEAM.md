@@ -4136,3 +4136,25 @@ cells; a fly on a slope in a wind feels both), and the terrain item of §2a, now
 
 
 oracle on the tilt edits (14:36 PDT; the eye gained pitch and roll, zero = the old path): PASS, eight of eight, read from the log first.
+
+**the standing signal, dosed (14:55 PDT; nate: "how deeply did we dig into whether we're failing to send a proper standing signal which might be leaving the wing reflex enabled?"; `--leg-load-hz`, the floor's 15 Hz on the 645 leg-nerve proprioceptors set to 0 / 30 / 60 / 120, the defaults otherwise, 12 s, seed 11)**
+
+first the table: the leg proprioceptors DO reach the hub in two hops, 8,811 synapses through 230 relay cells, 44 % of them GABAergic
+(IN06B036, IN13B008, IN06B043) and the rest cholinergic (the ascending neurons AN04A001, AN19B001); and 4,856 synapses reach the
+hub's own inhibitors in two hops. so a standing signal can touch the flight hub here. then the dose:
+
+| standing load on the leg proprioceptors | wing MNs | haltere | IN06B013 (the hub) | dMS2 | vMS12_a | IN06B047 (the hub's GABA input) | leg MNs, Hz per cell |
+|---|---|---|---|---|---|---|---|
+| 0 | 35.2 | 9.0 | 57.5 | 22.5 | 64.0 | 0.4 | 36.8 |
+| 15 (the floor, the record) | ~31 | ~7.8 | ~58 | ~23 | ~65 | ~1 | |
+| 30 | 30.5 | 7.4 | 63.9 | 23.1 | 67.8 | 1.0 | 46.4 |
+| 60 | 28.0 | 5.7 | 60.1 | 22.7 | 67.3 | 1.0 | 49.9 |
+| 120 | 28.3 | 6.1 | 67.2 | 24.6 | 72.4 | 1.0 | 63.0 |
+
+so a proper standing signal damps the wings by about a fifth (35 -> 28 Hz) and saturates by 60 Hz; the hub itself does not
+move (57-67 Hz), and the GABA class that could hold it down is not recruited (1 Hz). the damping arrives below the hub, on the
+motor neurons or their other drivers. and the leg load feeds the leg motor neurons hard (37 -> 63 Hz per cell): the standing tonus
+scales with it, which the pace readout is calibrated against, so the floor's 15 is not a free knob. answer to nate: the
+standing signal is real, it is in the wiring, and it is worth a fifth; the other four fifths are the gate, which in life is a
+state. not worth more arms now; the gate decision stays with nate (docs/ASK.md).
+

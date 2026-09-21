@@ -37,6 +37,7 @@ ap.add_argument("--tilt-jo", type=float, default=1.0, help="gravity's weight on 
 ap.add_argument("--tilt-load", type=float, default=0.5, help="fraction by which the standing leg load shifts to the downhill legs at 90 deg of slope (E)")
 ap.add_argument("--noise", type=float, default=0.15, help="membrane noise, mV per step (the flybrain engine's default 0.15, the record; 0 = the noiseless network: a diagnostic for self-igniting loops, 09-21)")
 ap.add_argument("--cool-rest", type=float, default=95.0, help="the cooling cells' resting rate, Hz (Budelli 2019: ~95, temperature-independent; the record). a dose flag (09-21): the wing motor artefact is fed by it")
+ap.add_argument("--leg-load-hz", type=float, default=15.0, help="the standing load on the leg-nerve proprioceptors, Hz (the floor's 15 is an estimate; a dose flag, 09-21: does a proper standing signal quiet the wings?)")
 ap.add_argument("--hot-r25", type=float, default=37.0, help="the hot cells' rate at 25 C, Hz (Budelli 2019: 37; the record). a dose flag (09-21)")
 ap.add_argument("--reset-before-run", action="store_true", help="DIAGNOSTIC (09-21): reset the LIF state to rest after the setup calibrations (which drive bristles and command cells) and before the run, to ask whether a loop was lit by the setup")
 ap.add_argument("--labellum-hz", type=float, default=200.0, help="the labellar sugar cells' rate while the labellum is on the food (09-21; a ripe fruit: ~100-150 Hz)")
@@ -190,11 +191,12 @@ if args.floor:
                         pt_, rl_ = np.radians(st.get("pitch", 0.0)), np.radians(st.get("roll", 0.0))
                         fb_ = {"fl": -1.0, "ml": 0.0, "hl": 1.0}[seg_] * np.sin(pt_)          # nose up: the hind legs bear more
                         lr_ = (-1.0 if s_ == "L" else 1.0) * np.sin(rl_)                       # left side up: the right legs bear more
-                        return 0.5 * max(0.0, 1.0 + args.tilt_load * (fb_ + lr_))   # x Scaled(30): 15 Hz on the flat, up to 30 on the downhill legs, 0 on the uphill
-                    REG.add(ReceptorClass(f"load_{seg_}_{s_}", cells_, Scaled(30.0), _load, source="standing load shifted by the slope (E; hair plates / campaniforms under load, mechano brief s.2)"))
+                        return 0.5 * max(0.0, 1.0 + args.tilt_load * (fb_ + lr_))   # x Scaled(2 x the standing load): the flat rate on the flat, up to double on the downhill legs, 0 on the uphill
+                    REG.add(ReceptorClass(f"load_{seg_}_{s_}", cells_, Scaled(2.0 * args.leg_load_hz), _load, source="standing load shifted by the slope (E; hair plates / campaniforms under load, mechano brief s.2)"))
     for rc in _fl:
         if rc.name == "floor_cool": rc.transducer.hz = args.cool_rest   # the dose flag reaches the floor's row too (09-21)
         if rc.name == "floor_hot": rc.transducer.hz = args.hot_r25
+        if rc.name == "floor_leg_proprio": rc.transducer.hz = args.leg_load_hz
     _flc = np.unique(np.concatenate([rc.cells for rc in _fl])); M.driven[_flc] = True; M._driven_idx = np.flatnonzero(M.driven); print(f"tonic floor: {len(_fl)} rows, {len(_flc)} cells")
 print(REG.table()); REGF = Registry()   # a tap is a burst: ~60 Hz cap (Weiss 2011 GRN ceiling), ~300 ms, not a 150 Hz hold (docs/physiology/chemo_thermo_hygro.md)
 RM["ppkF"] = PPK_F; RM["DNp09"] = np.flatnonzero(np.char.startswith(mty, "DNp09")); RM["MDN"] = np.flatnonzero(np.char.startswith(mty, "MDN")); RM["legMN"] = np.flatnonzero(LEGMN_SEL)
