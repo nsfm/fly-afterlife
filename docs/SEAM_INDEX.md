@@ -60,3 +60,7 @@
 - L3786: the constant, measured twice (22:05 PDT; nate's answer in docs/ASK.md: (c) first, then (b) with 0.275 authorised)
 - L3825: the DNg105 audit (23:10 PDT; queue item 3d, from the taste brief's note)
 - L3837: the ocelli, crossing shade (23:14 PDT; `world/ocelli/`, 60 s, three seeds each, start (2.0, -1.1) heading north under open sky toward the leaf at (2.0, 0.2); th
+- L3871: the constant sweep (2026-09-21 08:55 PDT; TODO §Q 3f, criteria stated before the run: KC sparsity in 5-10 %, the sugar-to-MN9 threshold, no gnathal runaway; `ex
+- L3899: the climb, built (2026-09-21 08:58 PDT; nate: "flies land on their food and spend quite some time there"; TODO §P physics, §Q 4)
+- L3935: feeding, read from him (2026-09-21 09:23 PDT; TODO §Q 3c, the latch's exit in §P; built on the climb)
+- L3974: the run of record, 09-21 (10:02 PDT; `world/record/garden_0921_s11.npz`, 180 s, seed 11, the defaults: real antennae, the wind rows, the thermal rows, the satie

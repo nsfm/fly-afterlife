@@ -3968,3 +3968,17 @@ which needs the long path to carry, which the sweep says the constant cannot giv
 
 
 **a slipped default (09:47 PDT):** the first remade run of record reached the fruit at 7.5 s, climbed it, and never fed: MN9 at 0 Hz on the fruit. the read was the default but the labellar rate was still 150 Hz nominal, at which MN9 does not fire on a walking cord (the smoke of 09:20 said so). `--labellum-hz` default is now 200, the value the batch was measured at; the run of record is being remade again. caught by the rule that the run of record is made on the defaults, not on the batch flags.
+
+**seed 10 on the defaults, remade (09:55 PDT): a miss, recorded.** he reached the fruit at 7.7 s, spent 1.8 s within 10 cm of its edge and 0.5 s on the dome (z 0.28 at most), and walked on; the labellar cells fired for that half second and MN9 did not reach the read's threshold. no feeding in 180 s; ends 4.3 m away. the batch of 09:30 (three of three, seeds 10-12) stands as the evidence; this is one more seed on the same configuration and it grazed instead of climbing. the run of record is remade on seed 11 (the batch's 7.6 s feeder), and this file is kept beside it as the miss it was.
+
+## the run of record, 09-21 (10:02 PDT; `world/record/garden_0921_s11.npz`, 180 s, seed 11, the defaults: real antennae, the wind rows, the thermal rows, the satiety gate, the ocelli, the climb, feeding read from MN9; plus the compass configuration, feeding and satiety, the UV layer, and the taste and ocellar cells logged)
+
+- on the fruit at 7.0 s, 11.7 s on it in all, up to the top; MN9 at 13.5 Hz while on it and 0.0 off it; feeding read from
+  that for 8 s; satiety fills; he leaves and ends 3.9 m away. 1 surge, 5 goal switches, 22.9 m walked, moving 67 %.
+- he also climbed the stone at some point (height 0.83 m, the stone's dome), which the climb allows and nobody asked for.
+- viewer: `uv run python world/replay_app.py world/record/garden_0921_s11.npz --scale 2`.
+
+the day's ledger for him, the 21st: the constant settled by a sweep (0.185, with the runaway ceiling at 0.24 and the lever
+shown to be the input), the climb (he stands on food), and feeding read from his own motor neuron. two stand-ins retired
+from the feeding row of §P, two remain written there.
+
