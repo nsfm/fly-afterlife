@@ -78,10 +78,10 @@ class Episode:
                 if hasattr(self.room, "humidity"): st_["humidity"] = self.room.humidity(float(px), float(py))
                 if hasattr(self.room, "sky_light"): st_["ocelli"] = self.room.sky_light(float(px), float(py), float(ph)); self.OCELLI.append((st_["ocelli"]["median"], st_["ocelli"]["left"], st_["ocelli"]["right"]))   # the ocellar stand-in's stimulus (09-19)
                 if hasattr(self.room, "wind"): st_["wind_rel"] = float((np.degrees(np.arctan2(-self.room.wind[1], -self.room.wind[0])) - ph + 180) % 360 - 180)   # where the wind comes FROM, relative to his heading (+ = from his left)
-                st_["taste"] = getattr(m, "taste", None); st_["heading"] = float(ph)
+                st_["taste"] = getattr(m, "taste", None); st_["labellum"] = getattr(m, "labellum", None); st_["heading"] = float(ph)
             st_["lum"] = self._lum_frames[f]; st_["lum_uv"] = (self._lum_uv[f] if getattr(self, "_lum_uv", None) is not None else None)   # the retinas of this frame, for receptor rows driven by column (R7 / R8, 09-18)
             st_["walk_gain"] = self.walk_gain
-            if self.state is not None: self.state.update(t_f, getattr(m, "taste", None)); st_["feeding"] = self.state.feeding; st_["sat"] = self.state.sat
+            if self.state is not None: self.state.update(t_f, getattr(m, "taste", None), float(getattr(self, "mn9_hz", 0.0))); st_["feeding"] = self.state.feeding; st_["sat"] = self.state.sat
             self.REG.apply(self.M, st_, t_f, 1.0 / fps)
             if self.female: self.REGF.apply(self.F, st_, t_f, 1.0 / fps)
             if self.female and self.threads:   # the two brains are independent within a chunk: step them in parallel (numba kernels release the GIL)

@@ -129,14 +129,18 @@ class FeedingState:
     until: float = -1.0
     t_last: float | None = None
     source: str = "a state as what it does, labelled (09-18)"
+    read: str = "latch"          # 09-21: "latch" = sugar on the tarsi latches feeding (the record); "mn9" = feeding is READ from his proboscis motor neurons (MN9 + the pump) firing above mn9_thr, i.e. from his own wiring given the labellar sugar cells
+    mn9_thr: float = 3.0         # Hz per MN9 cell over the last chunk
 
-    def update(self, t: float, taste) -> None:
+    def update(self, t: float, taste, mn9_hz: float = 0.0) -> None:
         dt = 0.0 if self.t_last is None else max(t - self.t_last, 0.0); self.t_last = t
         if self.feeding and self.t_full > 0: self.sat = min(self.sat + dt / self.t_full, 1.0)
         elif self.tau_sat > 0: self.sat = max(self.sat - dt * self.sat / self.tau_sat, 0.0)
         if self.sat >= 1.0: self.full = True
         elif self.sat < self.rearm: self.full = False
-        if taste == "sugar" and not self.full: self.until = t + self.hold
+        if self.read == "mn9":
+            if mn9_hz > self.mn9_thr and not self.full: self.until = t + self.hold   # the extension motor neuron is firing: he is feeding; held for `hold` s across chunks
+        elif taste == "sugar" and not self.full: self.until = t + self.hold
         self.feeding = (t < self.until) and not self.full
 
 

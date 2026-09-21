@@ -3932,3 +3932,37 @@ what this unblocks, in order: the labellum as geometry (standing on food and sto
 labellar sugar cells fire at the food's concentration), feeding *read* from MN9 and the pump rather than imposed (the
 latch's exit, §P), and the withdrawal reflex no longer needing to be silenced on food because food no longer touches him.
 
+## feeding, read from him (2026-09-21 09:23 PDT; TODO §Q 3c, the latch's exit in §P; built on the climb)
+
+the pieces, each labelled:
+- **the labellum, as geometry.** on the fruit his labellum is on the skin (a fly walking over fruit dabs it), so the labellar
+  sugar cells (`LB3c`, 23, Gr64f) fire at the food's rate: `--labellum-hz`, 200 Hz nominal, which the Poisson gate makes
+  ~125 Hz measured, the top of what sugar cells do on strong sucrose in life. this is a stand-in for the extension itself,
+  which his tarsal taste path does not drive (the long path, 09-19); it is in §P with that exit.
+- **feeding, read.** `FeedingState(read="mn9")`: feeding is true while MN9, his proboscis extension motor neuron, fires above
+  `--mn9-thr` (2 Hz per cell, smoothed over a second: single stray spikes latched it at first, six in 120 chunks, and one
+  spike in 100 ms is not a meal). the halt while feeding is still the DNg105 drive (ours, §P) and satiety still fills and
+  releases. so the causal order is now his: sugar cells -> three gnathal hops -> MN9 -> "feeding" -> the halt.
+
+smoke (20 s, starting at the fruit's edge, the walking command on): at 150 Hz nominal (104 measured) MN9 fires 0-1 Hz on
+the fruit with the cord walking, the read never latches, and he walks off in two seconds; at 200 nominal (125 measured)
+MN9 runs at 8-26 Hz, feeding latches from it, he stands on the fruit at its top, satiety fills over eight seconds, and he
+leaves when full. the pump (MN11D) stays at 0 at this constant, as the sweep said it would. the walking command matters:
+in the standing sweep MN9 fired at 104 measured; on a walking cord it needs 125. the batch at the anemotaxis config
+against the climb arm (latch) runs now, with the oracle.
+
+**feeding read from him, measured (09:40 PDT; the anemotaxis config of record with the climb, three seeds, 120 s; `--feed-read mn9` vs the climb arm's latch):**
+
+| arm | first on the fruit | MN9 on the fruit / off it | feeding | walked / after 30 s | ends from the fruit |
+|---|---|---|---|---|---|
+| climb, the latch (09-21 09:05) | 21.5 / 6.4 / 7.1 s | | 8 / 10 / 8 s | 20.6 / 21.6 / 19.2 m; 15.4 / 16.1 / 14.2 | 4.6 / 1.3 / 3.7 m |
+| climb, feeding READ from MN9 | 9.6 / 7.6 / 14.4 s | 16.0 / 14.7 / 13.4 Hz on; 0.0 / 0.1 / 0.1 off | 8 / 9 / 8 s | 11.3 / 21.8 / 16.6 m; 7.8 / 17.6 / 13.4 | 1.3 / 1.5 / 3.8 m |
+
+**three of three: he walks up the plume, climbs the fruit, his extension motor neuron fires at 13-16 Hz while he is on it
+and not at all off it, the record reads that as feeding, satiety fills, he leaves.** the same behaviour as the latch, with
+the first sentence of it his. oracle on the edits: PASS, eight of eight. **`--feed-read mn9` becomes the default.** what is
+still ours, in §P: the halt while feeding (DNg105 driven by the state), and the labellum-on-food condition. what would take
+the first: a halting path from taste that carries, which the tarsal path does not; or a stop read from the cord itself when
+MN9 fires (the pause is a state in life, Bidaye 2020). what would take the second: the extension driven by the tarsal path,
+which needs the long path to carry, which the sweep says the constant cannot give. both stay written.
+

@@ -159,14 +159,14 @@ class Garden(Room):
         if f is not None and f.present: f.advance(fps)
         self.wall(m)
         if f is not None: self.wall(f)
-        m.taste = None
+        m.taste = None; m.labellum = None
         for b in ([m] + ([f] if f is not None and f.present else [])):
             for gx, gy, gr, _, _ in self.grass:
                 dd = np.hypot(b.x - gx, b.y - gy)
                 if dd < gr + b.r: b.x, b.y = gx + (b.x - gx) / max(dd, 1e-6) * (gr + b.r), gy + (b.y - gy) / max(dd, 1e-6) * (gr + b.r); b.touched = "L" if b.bearing_to(gx, gy) >= 0 else "R"; b.kind = 1
             if self.climb:   # 09-21: the fruit and the stone are walkable domes; his feet follow the surface, no push-out, no touch; on the fruit his tarsi are on the skin
                 z_, on_ = self.surface(b.x, b.y); b.z = z_
-                if on_ == "fruit" and b is m: m.taste = "sugar"
+                if on_ == "fruit" and b is m: m.taste = "sugar"; m.labellum = "sugar"   # on the food, the labellum is on the skin (a fly walking over fruit dabs it; a stand-in for the extension, which his tarsal path does not drive; docs/SEAM.md 09-21)
             else:
               b.z = 0.0
               for ox, oy, _, r_, _ in (self.stone, self.fruit):
