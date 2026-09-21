@@ -4064,3 +4064,26 @@ no row of the run overwrites (a leak; measured, not yet fixed; it did not change
 the 97 MBONs at 85 % of threshold by a tonic current of its own (`mbon_hold_frac`, a flybrain design decision, not Shiu's);
 it did not change the wing result either, but it has been in every run and the record did not know it. both go to the queue.
 
+
+**the cooling dose (13:46 PDT):** cooling rest at 0 / 25 / 50 / 75 / 95 Hz nominal (0 / 28 / 52 / 52 / 74 measured): the wing MNs at 30.4 / 29.1 / 30.4 / 30.0 / 31.0 Hz, IN06B013 51-68, flat. **the cooling cells are innocent**; the paragraph above named the wrong half of the thermal rows. what `--thermo off` also removes is the hot cells (VP2, 14 cells at 37 Hz nominal at 25 C, 27-32 measured), and they are the remaining suspect: arms with the hot cells at 0, at 18, and both classes at 0 are running.
+
+**the hot cells, dosed (13:48 PDT):** hot at 18 / 0 nominal, and hot and cooling both at 0, on the defaults: the wing MNs at 32.8 / 31.7 / 31.5, IN06B013 58 / 60 / 48. **neither thermal class is the driver either.** what the arms actually say, laid side by side: everything off but the thermal rows -> 31.7; everything on but the thermal rows at 0 Hz -> 31.5; everything off including the thermal rows -> 0.9. so the loop is lit by any sufficient tonic input, whichever it is, and runs at the same 31 Hz once lit. a bare-engine test follows: the thermal cells driven for 3 s, then silence, to see whether it keeps going on its own.
+
+**the bare-engine test (13:49 PDT; the engine alone, zero state, no noise; the 28 thermal cells driven at 60 Hz for 3 s, then
+silence for 5 s, then driven again):** driven, IN06B013 runs at 49 Hz and the whole network at 26,000 spikes/s; drive off, it
+falls to 0.2 Hz and the network to 112 spikes/s within the window; drive on again, 49 Hz again. **not bistable. driven.**
+(the wing motor neurons themselves stayed at 0 in this test: with only the thermal cells driven the hub lights but the
+wing motor needs the rest of the premotor network, dMS2 and vMS12, which the full input set supplies.)
+
+**so, the wing artefact, settled as far as today goes:** IN06B013 is a four-cell hub in the cord's flight / song premotor
+network that any broad tonic input lights, the thermal cells, the floor, vision, each on its own; and with the full input
+set of a standing fly the hub sits near 50-70 Hz, the song premotor cells with it, and the 56 wing motor neurons at 31 Hz.
+it is not a loop, not one sense's fault, and not a fly wanting to fly: it is the cord's premotor network at 0.185 mV
+being too excitable to tonic input as a whole, the mirror image of the plume not carrying. in life the flight motor is
+gated: a walking fly's wing motor neurons are silent whatever its senses are doing. the options, for the queue and for
+nate: (a) the gate as a state (S2): "not flying" holds the flight premotor network below threshold, labelled, like the
+walking command in reverse; (b) a labelled wiring correction on the hub's input gain, with the reason written (it is the
+same class as the mirror normalisation, and the same risk); (c) leave it, since the wing motor neurons drive nothing in
+the world here and the record now knows the number. (c) is where it sits tonight; (a) is my lean, because the flight
+state is a real thing he will need for take-off anyway.
+

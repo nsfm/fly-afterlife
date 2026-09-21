@@ -33,6 +33,8 @@ ap.add_argument("--ocelli-hz", type=float, default=40.0, help="the ocellar inter
 ap.add_argument("--ocelli-light", type=float, default=None, help="TEST CONTROL (09-19): hold the sky light every ocellus sees at this value instead of the garden's, so the channel fires at a constant rate; separates a tonic push from a light effect")
 ap.add_argument("--climb", default="on", choices=["off", "on"], help="garden (09-21): on = the fruit and the stone are domes he walks up (feet follow the surface, the eye rises, tarsi on the fruit taste sugar, no push-out, no touch); off = colliders he is pushed off (the record before 09-21)")
 ap.add_argument("--noise", type=float, default=0.15, help="membrane noise, mV per step (the flybrain engine's default 0.15, the record; 0 = the noiseless network: a diagnostic for self-igniting loops, 09-21)")
+ap.add_argument("--cool-rest", type=float, default=95.0, help="the cooling cells' resting rate, Hz (Budelli 2019: ~95, temperature-independent; the record). a dose flag (09-21): the wing motor artefact is fed by it")
+ap.add_argument("--hot-r25", type=float, default=37.0, help="the hot cells' rate at 25 C, Hz (Budelli 2019: 37; the record). a dose flag (09-21)")
 ap.add_argument("--reset-before-run", action="store_true", help="DIAGNOSTIC (09-21): reset the LIF state to rest after the setup calibrations (which drive bristles and command cells) and before the run, to ask whether a loop was lit by the setup")
 ap.add_argument("--labellum-hz", type=float, default=200.0, help="the labellar sugar cells' rate while the labellum is on the food (09-21; a ripe fruit: ~100-150 Hz)")
 ap.add_argument("--feed-read", default="mn9", choices=["latch", "mn9"], help="how feeding is decided (09-21): latch = sugar on the tarsi latches it (the record, a stand-in); mn9 = read from his proboscis motor neurons firing (MN9 above --mn9-thr), i.e. his own wiring")
@@ -155,8 +157,8 @@ if args.world == "garden":   # the garden's senses: the fruit's plume on the fru
 if args.thermo != "off":   # his arista thermosensors, sampled at each antenna tip (VP1m / VP1l left out: labels under audit, Marin 2020)
     HOT = {s_: np.flatnonzero((mty == "TRN_VP2") & (mns == s_)) for s_ in "LR"}; COOL = {s_: np.flatnonzero(np.isin(mty, ["TRN_VP3a", "TRN_VP3b"]) & (mns == s_)) for s_ in "LR"}
     for s_ in "LR":
-        REG.add(ReceptorClass(f"hot_{s_}", HOT[s_], HotCells(), (lambda st, s_=s_: st["T_" + s_])))
-        REG.add(ReceptorClass(f"cool_{s_}", COOL[s_], CoolingCells(), (lambda st, s_=s_: st["T_" + s_])))
+        REG.add(ReceptorClass(f"hot_{s_}", HOT[s_], HotCells(r25=args.hot_r25), (lambda st, s_=s_: st["T_" + s_])))
+        REG.add(ReceptorClass(f"cool_{s_}", COOL[s_], CoolingCells(rest_hz=args.cool_rest), (lambda st, s_=s_: st["T_" + s_])))
     print(f"thermo cells: hot L {len(HOT['L'])} R {len(HOT['R'])}, cooling L {len(COOL['L'])} R {len(COOL['R'])}; mode {args.thermo}")
 OCE = None
 if args.ocelli == "on":   # the ocellar stand-in (09-19): light level per ocellus into the interneurons, with the sign of life
@@ -169,6 +171,9 @@ if args.floor:
     from fly_afterlife.receptors import tonic_floor
     _fl = tonic_floor(M, REG)
     if args.floor_drop: _drop = set(args.floor_drop.split(",")); REG.classes = [rc for rc in REG.classes if rc.name not in _drop]; _fl = [rc for rc in _fl if rc.name not in _drop]; print(f"floor rows dropped: {sorted(_drop)}")
+    for rc in _fl:
+        if rc.name == "floor_cool": rc.transducer.hz = args.cool_rest   # the dose flag reaches the floor's row too (09-21)
+        if rc.name == "floor_hot": rc.transducer.hz = args.hot_r25
     _flc = np.unique(np.concatenate([rc.cells for rc in _fl])); M.driven[_flc] = True; M._driven_idx = np.flatnonzero(M.driven); print(f"tonic floor: {len(_fl)} rows, {len(_flc)} cells")
 print(REG.table()); REGF = Registry()   # a tap is a burst: ~60 Hz cap (Weiss 2011 GRN ceiling), ~300 ms, not a 150 Hz hold (docs/physiology/chemo_thermo_hygro.md)
 RM["ppkF"] = PPK_F; RM["DNp09"] = np.flatnonzero(np.char.startswith(mty, "DNp09")); RM["MDN"] = np.flatnonzero(np.char.startswith(mty, "MDN")); RM["legMN"] = np.flatnonzero(LEGMN_SEL)
