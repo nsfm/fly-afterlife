@@ -32,3 +32,14 @@ KC number survives at 0.275. yes / no / a different order?
 > on the food with the labellum at a real sugar concentration" (sugar cells fire 100-150 Hz on food in life, and at 150-200 Hz MN9
 > fires at 0.185). 0.22 stays on record as a labelled test constant if the feeding readout needs it. (b) not taken. your call stands
 > if you want 0.275 tried in the garden anyway; i would run it as an arm, not a default. yes / no?
+
+> **nate, 09-21 08:52:** intermediate values between 0.185 and 0.275 are the more honest path than per-zone constants ("brain surgery");
+> the constant is arbitrary anyway, so sweep it. Shiu's 0.275 was tuned by simulation on a silent network to hit the extension
+> behaviour (nate's guess, confirmed by the brief), so it cannot be inherited by a fly with the floor on. settle the constant before the
+> physics. nyx: agreed; the sweep is the next wake's first item (TODO §Q 3f). the one non-uniform variant allowed on the list, later,
+> is scaling by transmitter (citable); per-behaviour gains never.
+
+## the ocelli and sleep (nate's guess, 09-21)
+does the ocellar channel touch his sleep or rest drive, so that having it on makes him more wakeful? from the table: the ocellar
+cells project to flight-and-neck descending neurons (DNp20 / DNp22 / DNpe017), not to the clock or the sleep cells; light reaches
+the clock through cryptochrome and the compound eye. the tonic push looks like arousal. parked until the states exist (S2).

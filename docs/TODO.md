@@ -19,6 +19,12 @@ one change per run, its control, the measurement that decides it. status: queued
 3e. **[measured 22:06; recommendation: keep 0.185 (docs/ASK.md)** 22:01] the constant, (c) then (b)** (nate's answer in docs/ASK.md): re-measure the KC-sparsity calibration on the exact
    engine at 0.185 and 0.275 with one odour protocol; if 0.275 sits in the literature band (~5-10 % of KCs per odour), adopt 0.275 as
    the male default, re-measure the baselines, refreeze oracle v3.
+3f. **[queued, FIRST next wake] the constant sweep** (nate 09-21): one uniform w at 0.20 / 0.22 / 0.24 / 0.26, each scored on (i) KC sparsity
+   (`experiments/kc_sparsity.py`, band 5-10 %), (ii) the sugar-to-MN9 threshold (LB3c held, MN9 vs drive; Shiu's 30 Hz is the model's
+   own number, ours will sit above it), (iii) the gnathal runaway (MN11D plateau; a hard ceiling, somewhere in 0.25-0.275); then the
+   drum and one anemotaxis batch at the winner. the criteria are stated here before the sweep, and the winner is "the constant of this
+   build, chosen by these three measurements", Shiu's method on our network with the floor on, not his number. per-zone gains never;
+   scaling by transmitter is the one citable non-uniform variant, later.
 3b. **[measured 19:41] 0.275 mV**: LB3c at 100 Hz: MN9 5 Hz, **MN11D (pharyngeal pump) 186 Hz**. Shiu's constant carries the
    whole chain to swallowing. a physiological weight against 0.185 (from KC sparsity): docs/SEAM.md 19:41. NOT a default change yet.
 3c. **[queued] "feeding" read from MN9 + the pump** instead of imposed; the sugar row of the garden re-pointed at the labelled
