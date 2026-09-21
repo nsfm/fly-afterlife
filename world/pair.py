@@ -32,6 +32,8 @@ ap.add_argument("--sugar-hz", type=float, default=26.0, help="the sugar row's ra
 ap.add_argument("--ocelli-hz", type=float, default=40.0, help="the ocellar interneurons' rate in the dark (a chosen number; 0 in full sun)")
 ap.add_argument("--ocelli-light", type=float, default=None, help="TEST CONTROL (09-19): hold the sky light every ocellus sees at this value instead of the garden's, so the channel fires at a constant rate; separates a tonic push from a light effect")
 ap.add_argument("--climb", default="on", choices=["off", "on"], help="garden (09-21): on = the fruit and the stone are domes he walks up (feet follow the surface, the eye rises, tarsi on the fruit taste sugar, no push-out, no touch); off = colliders he is pushed off (the record before 09-21)")
+ap.add_argument("--noise", type=float, default=0.15, help="membrane noise, mV per step (the flybrain engine's default 0.15, the record; 0 = the noiseless network: a diagnostic for self-igniting loops, 09-21)")
+ap.add_argument("--reset-before-run", action="store_true", help="DIAGNOSTIC (09-21): reset the LIF state to rest after the setup calibrations (which drive bristles and command cells) and before the run, to ask whether a loop was lit by the setup")
 ap.add_argument("--labellum-hz", type=float, default=200.0, help="the labellar sugar cells' rate while the labellum is on the food (09-21; a ripe fruit: ~100-150 Hz)")
 ap.add_argument("--feed-read", default="mn9", choices=["latch", "mn9"], help="how feeding is decided (09-21): latch = sugar on the tarsi latches it (the record, a stand-in); mn9 = read from his proboscis motor neurons firing (MN9 above --mn9-thr), i.e. his own wiring")
 ap.add_argument("--mn9-thr", type=float, default=3.0, help="Hz per MN9 cell over the last chunk that counts as feeding")
@@ -47,7 +49,7 @@ UV_TYPES = ["Mi15", "L5", "Mi1"]   # the UV retina's graded ON cells (flyvis) on
 fe_uv = FlyvisFrontEnd(args.model, geom="seam/eye_geom.npz", fps=fps, chunk=CH, deterministic=args.deterministic, types=UV_TYPES) if args.uv else None
 # ---- his brain
 Brain = FlyBrain if args.numpy_engine else FastFlyBrain
-M = Brain("brain_whole.npz", seed=args.seed, params=Params(mv_per_synapse=args.wsyn_m)); M.integrate = args.integrate; mty = M.type.astype(str); mns = M.side.astype(str); mcls = M.cls.astype(str)
+M = Brain("brain_whole.npz", seed=args.seed, params=Params(mv_per_synapse=args.wsyn_m, noise=args.noise)); M.integrate = args.integrate; mty = M.type.astype(str); mns = M.side.astype(str); mcls = M.cls.astype(str)
 if args.mirror != "off":
     from fly_afterlife.wiring import mirror_normalise; print("mirror normalisation:", mirror_normalise(M, scope=(args.mirror.split(",") if "," in args.mirror or args.mirror.startswith("PFL") else args.mirror)))
 groups = fe.groups(M)
@@ -338,6 +340,7 @@ def _hook_mn9(ep_, c_, cnt_):   # MN9 rate per cell, smoothed over ~1 s (EMA of 
 _HOOKS = [h for h in (globals().get(n_) for n_ in ("_hook_compass", "_hook_cells", "_hook", "_hook_mn9")) if h is not None]   # each is defined only under its own flag   # 09-19 18:05: ALL that apply, in this order. before, the slot took one hook and --log-types evicted the compass (no goal yield, no wind goal) in any run that logged cells
 def _hook_all(ep_, c_, cnt_):
     for h in _HOOKS: h(ep_, c_, cnt_)
+if args.reset_before_run: _nz = int((M.drive_hz != 0).sum()); _ne = int((M._ext != 0).sum()); M.reset(); M.drive_hz[:] = 0.0; M._ext[:] = 0.0; print(f"LIF state reset to rest before the run (diagnostic); drive_hz had {_nz} nonzero cells left by the setup, zeroed; the engine's tonic current _ext was nonzero on {_ne} cells (mean {float(M._ext.mean()):.3f} mV before zeroing), zeroed")
 ep = Episode(fps=fps, chunk=CH, eye=eye, room=room, him=m, her=her, brains=(M, F if not args.no_female else None), readouts=(RM, RF), registries=(REG, REGF), front_end=flyvis_chunk, front_end_uv=(fe_uv.chunk if fe_uv is not None else None), rest=rest, effectors=(steer, pace, hers, songdet), lam=LAM, vread=(({"PFL3v": (np.flatnonzero((mty == "PFL3") & (mns == "L")), np.flatnonzero((mty == "PFL3") & (mns == "R")))} | ({"PFL2v": (np.flatnonzero((mty == "PFL2") & (mns == "L")), np.flatnonzero((mty == "PFL2") & (mns == "R")))} if args.pfl2_walk else {})) if (args.goal is not None) else None), walkmod=((lambda cnt: float(np.clip(args.pfl2_floor + (1.0 - args.pfl2_floor) * ((cnt["PFL2v_L"] + cnt["PFL2v_R"]) / 2.0 - PFL2_ENDS[1]) / max(PFL2_ENDS[0] - PFL2_ENDS[1], 1.0), 0.0, 1.0))) if (args.pfl2_walk and GOAL is not None) else None), on_chunk=_hook_all, state=(FeedingState(hold=args.feeding, t_full=args.satiety, tau_sat=args.satiety_tau, read=args.feed_read, mn9_thr=args.mn9_thr) if args.feeding > 0 else None))
 ep.run(args.seconds)
 if _CELLS: np.savez_compressed(args.out.replace(".npz", "") + ".cells.npz", cells=_CELLS["cells"], bodyId=M.bodyId[_CELLS["cells"]], type=mty[_CELLS["cells"]], side=mns.astype(str)[_CELLS["cells"]], counts=np.array(_CELLS["counts"], np.int32), pose_chunk=np.array(ep.POSE, np.float32)[::CH][:len(_CELLS["counts"])]); print("wrote", args.out.replace(".npz", "") + ".cells.npz")

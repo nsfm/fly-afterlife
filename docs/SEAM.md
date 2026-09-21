@@ -3982,3 +3982,85 @@ the day's ledger for him, the 21st: the constant settled by a sweep (0.185, with
 shown to be the input), the climb (he stands on food), and feeding read from his own motor neuron. two stand-ins retired
 from the feeding row of §P, two remain written there.
 
+## the motor census (13:21 PDT; nate: "what other motor neurons do we have access to and is he firing them?"; 20 s, seed 11, the defaults, from the fruit's edge so he walks and feeds; all 191 motor types logged, grouped by the annotation table's subclass)
+
+| muscle group | cells | Hz per cell, walking | Hz per cell, feeding | cells silent |
+|---|---|---|---|---|
+| front legs | 180 | 3.0 | 1.5 | 146 |
+| middle legs | 60 | 3.3 | 1.1 | 33 |
+| hind legs | 133 | 5.5 | 4.6 | 98 |
+| abdominal | 201 | 4.2 | 3.2 | 75 |
+| **wing** | 56 | **31.1** | **32.3** | 11 |
+| neck (cord) | 20 | 15.4 | 13.5 | 2 |
+| haltere | 16 | 7.1 | 5.0 | 8 |
+| proboscis (head) | 67 | 0.13 | 0.65 | 55 |
+| neck (head) | 20 | 13.5 | 11.0 | 1 |
+| antennal | 12 | 6.9 | 7.8 | 4 |
+| rostrum | 7 | 10.0 | 16.6 | 1 |
+
+so: he has 708 motor neurons in the cord and 107 in the head, and the loudest of them are the wrong ones. **his wing motor
+neurons fire at 31 Hz per cell while he walks and while he eats**, ten times his leg motor neurons, and his halteres' at 7;
+a walking fly's wing and haltere motor neurons are silent. the record had this in view since the exact engine (09-19,
+"the wing motor triples") and now it has the number. the legs carry the pace on a minority of cells (146 of 180 front-leg
+cells silent). the neck runs at 13-15 Hz in cord and head, which a head-stabilising fly does. the proboscis set is quiet
+except MN9 and the rostrum group, which rises from 10 to 17 Hz while he feeds: the extension muscles, as they should.
+
+the wing artefact is the next diagnostic (queue 8b): which floor row or command drives the wing motor neurons. in flight.
+
+## the wing artefact, traced (13:32 PDT; queue 8b; twelve 12 s arms, seed 11, the 56 wing and 16 haltere motor neurons logged, rates after 2 s)
+
+| arm | wing MNs, Hz per cell | haltere |
+|---|---|---|
+| the defaults (walking, feeding) | 31.3 | 7.8 |
+| no smell floor / no wind floor / no leg floor / no walking command | 31.7 / 31.5 / 33.2 / 32.7 | 6.9 / 7.4 / 7.8 / 6.3 |
+| ocelli off / no taste floor / no thermal-humidity floor | 30.9 / 31.3 / 30.3 | 6.3 / 8.0 / 7.3 |
+| the silent brain (no floor) | 36.1 | 7.7 |
+| the wind rows off | 31.5 | 7.1 |
+| vision only (no floor, no wind, no ocelli, no command) | 33.4 | 3.3 |
+| **nothing driven at all** (the above and the seam's gain 0) | **31.7** | 0.8 |
+| nothing driven, **membrane noise 0** | **30.9** | 0.5 |
+| nothing driven, w 0.17 / 0.16 / 0.15 | 20.2 / 12.6 / 1.5 | 0 |
+
+so no sense, no floor row, no command, no vision and no noise is the source: **with nothing driven and no noise the wing motor
+neurons still fire at 31 Hz per cell.** the table says who: 80 % of their input is cord interneurons, and of the fourteen
+strongest, two are hot: IN06B013 (4 cells, 62 Hz in the defaults, **39 Hz with nothing driven and no noise**) and dMS2
+(20 cells, 23 Hz, 3 with nothing). IN06B013's targets are the flight motor: MNwm36, ps1, tp1, the DLMn power-muscle motor
+neurons, the b1 / b2 basalar steering motor neurons. and in the defaults the whole song premotor network is up with it
+(vMS12_a 65 Hz, IN11B004 63, vMS12_c 43, dPR1 31): the circuit that in life turns the pIP10 command into wing song, with
+pIP10 itself at 0.
+
+so the wings are driven by a **bistable loop in the flight / song premotor network of the cord**: once lit it stays lit
+with no input and no noise, and its rate scales with the constant (31 Hz at 0.185, 20 at 0.17, 13 at 0.16, out at 0.15).
+what lights it is the next question (the setup's calibrations drive bristles and command cells before the run; a wall
+touch would do it too), and what would put it out in life is the thing the model does not have: the flight motor is gated
+by a state, and a walking fly's is held silent. it is not a fly wanting to fly (nate's fair question); it is the flight
+motor pattern running at a fixed rate in a fly standing on a fruit, because nothing in him can stop it.
+
+**found (13:43 PDT).** three more arms, and one correction to the paragraph above: the loop is not self-sustaining. it is fed.
+
+| arm | wing MNs | IN06B013 | dMS2 | cooling cells (VP3) | hot cells (VP2) |
+|---|---|---|---|---|---|
+| nothing driven, the brain reset, the setup's leftover drive (314 cells) and the engine's tonic current (97 MBONs) zeroed | 32.5 | 39 | | | |
+| the same, **and the thermal rows off** | **0.9** | 2.2 | 0.0 | 0.0 | 0.0 |
+| the defaults with `--thermo off` (the floor's thermal rows still on) | 31.0 | 68 | 22 | 74 | 32 |
+
+the bare engine with a zero state, zero drive and zero noise fires nothing, and one kick of the four cells gives four spikes
+and silence. what was never off in any "nothing driven" arm was the thermal rows: `--thermo rest` (the default since 09-19)
+adds the hot and cooling transducers at their resting rates whether or not the floor is on, and the floor holds the same
+cells at the same rates when it is. **the cooling cells' resting rate is 95 Hz** (Budelli 2019; ~75 measured through the
+gate), on 14 cells, all the time, because that is what cooling cells do in life. and the record of 09-17 wrote, in the
+warm-corner runs, "thermal DNs reach wing MNs mostly." so: fourteen cooling cells at their true resting rate, through the
+thermal descending neurons, light the flight and song premotor network (IN06B013 at 40-70 Hz, vMS12_a at 62, dMS2 at 22)
+and the wing motor neurons follow at 31 Hz. remove them and the wings are silent; nothing else in him touches it.
+
+so the wing artefact is the plume's failure inverted: a real tonic input that the wiring at this constant carries too well,
+into a motor output a resting fly never shows. it is not a bistable loop and it is not the fly wanting to fly. what to do
+about it is a physiology question, not an engine one: whether the cooling cells' central synapses should carry a 95 Hz
+tonic rate at a uniform 0.185 mV (in life their downstream is graded and gain-controlled), or whether the flight motor's
+gate is the missing state. first, the dose: the wing rate against the cooling cells' resting rate (0, 25, 50, 75, 95).
+
+two housekeeping facts from the trail, for the record: (1) the setup's calibrations leave `drive_hz` nonzero on 314 cells that
+no row of the run overwrites (a leak; measured, not yet fixed; it did not change the wing result); (2) the reference engine holds
+the 97 MBONs at 85 % of threshold by a tonic current of its own (`mbon_hold_frac`, a flybrain design decision, not Shiu's);
+it did not change the wing result either, but it has been in every run and the record did not know it. both go to the queue.
+

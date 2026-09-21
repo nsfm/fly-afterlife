@@ -33,10 +33,18 @@ one change per run, its control, the measurement that decides it. status: queued
 4. **[measured 09-21 09:14; DEFAULT ON] walkable tops** (`--climb`: the fruit and the stone are domes; he climbs, eats standing on it, leaves, 3/3; the collider jumps were not reproducible in any current run, so no tunnelling fix was needed) (§P physics): the fruit and the stone as mounds he stands on; taste from the
    surface under him; contacts resolved against every object with a per-frame push-out cap. decides: can "on the fruit" be a
    state of the world at all. control: the record run of 09-19 evening on the new physics.
+4b. **[queued] tilt** (nate, 09-21): pitch and roll from the dome's surface normal and his heading; the eye rotates with the head (a seam
+   change: `Eye.render` gains pitch / roll, zero stays bit-exact); JO gravity cells (JO-C/E, the gravity component along the
+   antennae, Kamikouchi 2009) from the tilt; leg load split front / back on a slope into the proprioceptive rows; the ocelli
+   sample the sky along the tilted head. this is the "gravity" row of §S and the terrain item of §2a together. a day.
+4c. **[noted 09-21] the loops**: the goal-switch's random inward heading plus the comparator with its null off make pirouettes at
+   stalks; on the menotaxis row; left for now (nate).
 5. **[queued] a run that crosses shade** for the ocelli, the ocellar cells logged (§S ocelli row).
 6. **[queued] his own walking wind on the aristae** (§S wind row): a vector add; anemotaxis batch as control.
 7. **[queued] the clock and sleep pressure as the first S2 states** (`states.py`, FeedingState moved into it): a day in the
    garden; decides: two activity peaks, a night stop. PARKED by nate 22:01 until the short-run behaviour is settled and the statistics are better (docs/ASK.md).
+8b. **[traced 09-21 13:43] the wing motor artefact**: FED by the thermal rows: the cooling cells at their 95 Hz resting rate, through the thermal DNs, light the flight / song premotor network (IN06B013, vMS12, dMS2) and the wing MNs at 31 Hz; with the thermal rows off, 0.9 Hz. next: the dose (wing vs cooling rest rate), then the physiology (the cooling cells' central gain, or the flight gate as a state).
+8c. **[queued 09-21] two leaks found on the way**: the setup's calibrations leave drive_hz nonzero on 314 cells no run row overwrites (zero drive_hz after the calibrations); the reference engine holds the 97 MBONs at 85 % of threshold (`mbon_hold_frac`, flybrain's, not Shiu's): measure what it does, decide, label. neither moved the wing result.
 8. **[queued] DNp20 at 150 Hz with every sense off**: which floor row or command drives it; a diagnostic, one wake.
 9. **[queued] the benchmark scorer's hysteresis and heading filter; the 600 s dish** (§2d).
 10. **[queued] her in the garden** (§2a), then the courtship state.
