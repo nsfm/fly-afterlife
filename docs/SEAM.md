@@ -4160,3 +4160,123 @@ state. not worth more arms now; the gate decision stays with nate (docs/ASK.md).
 
 
 oracle on the leg-load flag (15:12 PDT): PASS, eight of eight, read from the log first.
+
+## the wings, systematically (2026-09-21 16:49 PDT; nate: "you feel confident on our wings answer? ... what would it take to be systematic about this?"; TODO 8d)
+
+the honest answer to the first question was no: the arms of the afternoon were one seed, 12 s, one dose per knob, the hub picked by eye,
+and "the cord is too excitable to tonic input" was a description. the protocol is in TODO 8d; its parts land here as they finish.
+
+**(1) is it song? no. (2) which muscles? the power muscles.** the standing brain in the bare engine (the floor's tonic rows, 20 s, spike
+times at 1 ms, the 66 wing motor neurons by muscle type):
+
+| motor neurons | cells | Hz per cell |
+|---|---|---|
+| DLMn a, b (dorsal longitudinal, the power muscles) | 2 | 119 |
+| DVMn 1a-c (dorsoventral, power) | 6 | 116 |
+| DLMn c-f | 8 | 93 |
+| DVMn 3a, b / DVMn 2a, b | 4 / 4 | 86 / 85 |
+| i2, hg1, i1 (steering) | 2 / 2 / 2 | 66 / 51 / 46 |
+
+the busiest cells fire every 8 ms with a coefficient of variation of 0.11-0.13: a clock, not a song. the population's autocorrelation
+is flat at every lag from 5 to 100 ms and the spectrum has no power at 28 Hz (pulse song's rate in life) and its peaks at 100-125 Hz
+are the cells' own firing. so what runs in a standing fly here is the **flight power motor**, the DLM and DVM motor neurons at
+~100 Hz, regular, with the steering motor neurons behind them, and the song premotor cells up beside it because they share the
+network. in life the power muscles are silent on the ground and fire at a few tens of Hz in flight; 119 Hz standing is neither
+state. the picture is a flight motor with nothing gating it, which is what the afternoon guessed, now with the muscles named
+and the rhythm ruled out.
+
+**the power motor neurons' own inputs (16:50 PDT):** the 24 DLMn / DVMn cells receive 148,421 synapses, 63 % cholinergic, 30 % GABA,
+80 % from cord interneurons. the excitation is concentrated: IN19B043 (14,719 synapses onto them) and IN19B067 (12,086), cholinergic,
+which the presynaptic arm of 13:3x found firing at 8.5 and 4.7 Hz, a few hertz on a cell with fourteen thousand synapses onto the
+motor neurons, which at a uniform 0.185 mV is a lot. and the inhibition is concentrated too: IN03B089 (7,417), IN06B066 (6,645),
+IN11B013 (5,980), GABAergic, which the same arm found at **0.0, 0.1 and 0.0 Hz**. so the brake on the flight power motor exists in
+the wiring, a third of the motor neurons' input, and in ours it is silent. what would drive those three classes in a standing fly
+is the next lookup; the sensitivity map will say whether any input we have moves them.
+
+**what drives the silent brakes (16:51 PDT):** IN03B089 (18 cells; 51 % excitatory input, 12 % descending: DNae009 410 syn; 9 % sensory), IN06B066
+(25; 63 % excitatory; 12 % sensory, of which SNpp16 the wing campaniforms 1,135; 9 % descending: DNp31 720), IN11B013 (10; 67 % excitatory; 9 %
+descending: DNg27 502; 4 % sensory). so the three classes that could hold the power motor down are driven mostly by cord interneurons and by a few
+descending neurons we do not drive (DNae009, DNp31, DNg27), and the largest sensory input to one of them is the wing's own feedback, silent
+because the wings do not move. two readings, to be separated by the map and the paths: (a) the brakes are the flight pattern generator's own
+antagonist-phase inhibition (DLM and DVM alternate in flight; here both fire tonically at ~100 Hz, a pattern generator saturated rather than
+oscillating), or (b) the brakes are the "not flying" gate, driven from the brain through those descending neurons in a standing fly. the
+sensitivity map says which inputs move any of this; the linear paths say what the wiring predicts each should do.
+
+**(5) the constant with the full input set (17:13 PDT; the defaults, three seeds x 30 s, mean ± sd over seeds; the trace's first and last 10 s):**
+
+| w (mV) | wing MNs, Hz per cell | first / last 10 s | power MNs (DLMn + DVMn) | the hub | leg MNs |
+|---|---|---|---|---|---|
+| 0.15 | 14.3 ± 0.8 | 11.8 / 16.2 | 24 | 29 | 25 |
+| 0.16 | 20.4 ± 0.9 | 18.2 / 22.4 | 44 | 32 | 30 |
+| 0.17 | 26.2 ± 0.5 | 23.2 / 28.3 | 63 | 35 | 34 |
+| 0.185 (the record) | 31.6 ± 0.8 | 30.7 / 31.9 | 78 | 36 | 39 |
+| 0.20 | 38.6 ± 0.9 | 37.3 / 39.2 | 100 | 39 | 44 |
+| 0.22 | 46.4 ± 0.3 | 45.7 / 46.6 | 126 | 42 | 49 |
+
+**graded, monotonic, stable in time, no threshold.** the wing rate is a smooth function of the constant from 0.15 up, and the
+power motor neurons go from 24 to 126 Hz across the sweep; the seeds agree to a hertz; the first and last ten seconds agree.
+so with the full input set there is no constant below the runaway ceiling at which the wings are silent (at 0.15, where the
+sparsity would already be below its band, they still run at 14), and the "nothing driven" sweep of the afternoon, which
+found them out at 0.15, was measuring the thermal rows' drive alone. the wings are a graded, driven output of the whole
+input set at every constant: the constant scales them and does not gate them. what gates them in life is a state, or the
+silent brakes; the map (running) says which inputs, if any, reach those brakes.
+
+**(4) the path on paper (17:41 PDT; `wing_paths.py`: each input class propagated one, two and three hops through the wiring, edge weight = the
+target's signed input fraction from that source (GABA and glutamate negative), summed at the wing motor neurons, the hub and the leg
+motor neurons, per source cell):** every sensory class gives +0.000 at the wings and the hub at every hop; the only concentrated path in
+the table is the walking command's, DNg100 -> leg motor neurons, +0.324 direct. so the wiring, read linearly, predicts NO input class has
+a concentrated route to the wing motor within three hops. and the engine, measured, lights the wings at 31 Hz from any of them. the gap
+between those two is the mechanism: **the wing drive is a network amplification, not a path.** the bare-engine test of 13:5x is the number
+for it: 28 thermal cells at 60 Hz, 1,700 input spikes per second, and the whole network answers with 26,000 spikes per second, a gain of
+about fifteen through cord interneurons whose 80 % share of the power motor neurons' input is the amplifier's last stage. a linear
+estimate cannot see that; it needs the recurrence and the thresholds, which is the LIF. so (4) was worth doing for what it rules out: there
+is no single wire to cut. the amplifier is the cord's own recurrent excitation at this constant, its brakes silent, and the honest lever is
+whatever holds the brakes in a standing fly, which the map (running) is asking of every input we have.
+
+**the excitatory premotor, looked up (17:48 PDT; nate: "are we interpreting the wrong neurons as flight reflex? is there really no dampening potential?")**
+the identities are the atlas's: DLMn / DVMn are the flight power muscle motor neurons, b1 / b2 / i1 / hg the steering ones; nothing is
+misread there, only the word "reflex", which nothing here deserves. the two classes that push the power motor neurons, IN19B043 (9 cells)
+and IN19B067 (14), cholinergic, 16,094 and 15,173 input synapses, are themselves a third GABA-braked, and by the same two silent classes:
+IN06B066 is the largest single input to BOTH (940 and 1,037 synapses) and IN03B089 the second and fifth. their excitation is a quarter and a
+seventh descending (DNa08, DNg02, DNg27, DNp31) and the rest cord interneurons; their sensory input is 5-6 %. and IN19B067 and IN06B066
+are reciprocal (IN19B067 -> IN06B066 353 synapses; IN06B066 -> IN19B067 1,037): the shape of a half-centre. so reading (a) of 15:0x
+strengthens: **IN06B066 / IN03B089 look like the flight pattern generator's own antagonist-phase inhibition**, and in ours the excitatory
+half runs tonically from the cord's amplified input while the inhibitory half never engages (0.1 Hz on 18,547 input synapses, of which
+the premotor's 1,037 are 6 %). the dampening potential is real and it is these cells; what would engage them in a standing fly is
+either the pattern generator running properly (the CPG alternates DLM and DVM in flight; ours saturates both) or a state that holds
+the excitatory half down. the descending neurons that excite both halves at once, DNp31 and DNg27, are the flight command's shape,
+and they are not driven here. nothing is misidentified; the missing thing is the gate, and now its cells have names.
+
+**(3) the input sensitivity map (18:00 PDT; `world/wingmap/`, 36 arms x 3 seeds x 30 s: every driving row alone with everything else off, and
+removed with everything else on; wing MNs Hz per cell, mean ± sd over seeds; the power MNs; IN06B013 / dMS2 / vMS12_a; the leg MNs):**
+
+| arm | wing | power MNs | IN06B013 etc. | leg MNs |
+|---|---|---|---|---|
+| everything on (the defaults) | 31.6 ± 0.8 | 78 | 36 | 39 |
+| nothing | 1.2 ± 0.4 | 0.1 | 0.3 | 3 |
+| **alone:** the food-ORN floor (2,635 cells at 8 Hz) | **24.1** | 93 | 1.5 | 5 |
+| the cooling cells alone / the hot cells alone / the thermo rows alone | **34.8 / 26.1 / 34.0** | 109 / 92 / 107 | 8 / 9 / 8 | 16 / 7 / 15 |
+| vision alone (T4/T5) | **27.0 ± 5.4** | 89 | 0.3 | 7 |
+| the walking command alone (DNg100) | **26.5** | 75 | **33.5** | 24 |
+| the ocelli alone | 9.8 ± 11.7 (lit in some seeds) | 34 | 0.2 | 4 |
+| the GRN floor / JO floor / the four small ORN floors / VP1m / hygro / leg proprio / wind, each alone | 0.5-1.9 | 0 | 0-1 | 3-4 |
+| **minus** any one of the sixteen rows, everything else on | 29.8-34.8 (all within 3 Hz of 31.6) | 75-87 | 35-37 (minus the walk command: 7) | 29-41 |
+
+three things the map says that the arms could not:
+
+1. **redundancy, then saturation.** six different inputs each light the wings alone, to 24-35 Hz: the food-ORN floor, either
+   thermal class, the thermal rows, vision, the walking command. remove any one of them with the rest on and nothing changes,
+   within 3 Hz. so the flight motor here is a saturating amplifier: any tonic input above a small threshold (the small ORN
+   classes, the GRN floor, the JO floor, hygro, the leg load and the wind rows alone do not reach it) drives it to the same
+   plateau, and the plateau is set by the constant (the sweep above: 14 -> 46 Hz for 0.15 -> 0.22). that is the mechanism the
+   afternoon was groping for, and it is not a fault of any one sense.
+2. **the hub was the walking command's, not the wings'.** IN06B013 / dMS2 / vMS12_a sit at 33.5 Hz with DNg100 alone and at 7
+   with everything but DNg100; the wings light to 24 Hz from the ORN floor with the hub at 1.5. so the four-cell "hub" of the
+   afternoon rides on the walking command and is not the wings' driver; the wings' driver is the power motor neurons' own
+   premotor (IN19B043 / IN19B067), which any of the six inputs reaches. the record's afternoon story is corrected here.
+3. **more input, slightly less power.** the power motor neurons run at 92-109 Hz on any single input and 78 with everything on:
+   the inhibitory half engages a little when more of the network is up. small, but the right sign for reading (a).
+
+what the map did not log, by my omission: the brake classes themselves (IN06B066, IN03B089, IN11B013) and the premotor pair.
+a second, smaller batch runs now: the six lighting inputs alone, those cells logged.
+

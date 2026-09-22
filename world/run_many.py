@@ -9,7 +9,7 @@ process ~0.8 GB; the 1650 holds four comfortably, so --jobs 4 when the config us
 configs (--no-vision) can use all cores. logs to <out>.log next to each --out. prints a summary table
 of drum-following if the outputs are drum runs.
 """
-import argparse, itertools, os, subprocess, sys, time, re
+import shlex, argparse, itertools, os, subprocess, sys, time, re
 from concurrent.futures import ThreadPoolExecutor
 ap = argparse.ArgumentParser(); ap.add_argument("--jobs", type=int, default=4); ap.add_argument("--threads", type=int, default=None, help="NUMBA_NUM_THREADS per job (default: 8 physical cores // jobs, at least 1; the step scales little past 2 threads and 3 jobs x 4 threads oversubscribed, docs/PERFORMANCE.md 09-18)"); ap.add_argument("--script", required=True); ap.add_argument("--common", default=""); ap.add_argument("--vary", required=True); ap.add_argument("--values", required=True); a = ap.parse_args()
 grid = {k: v.split(",") for k, v in (kv.split("=") for kv in a.values.split(";"))}
