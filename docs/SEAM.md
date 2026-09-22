@@ -5140,3 +5140,31 @@ twitch kernel's activation units, (E). the run: the cord's or his motor neurons 
   it is the first place the body tells the cord something back.
 - videos: `world/body/*.mp4` (the tracking camera). nate wanted to watch when there was twitching; this is a whole fly, twitching, and
   then a whole fly lying down.
+
+**the torque from the measurement (00:19 PDT):** the model's units resolve to the micronewton and the nanonewton-metre (mass 1.02 mg, g
+9,810 mm/s^2, weight 10.05 uN), so the brief's measured 4.2 nN m of knee torque per fast spike (Azevedo 2020) drops in as the gain: 42 nN m
+per unit of the kernel's activation (ten spike-equivalents), the actuators' clip raised to +-60. holding a fly up needs under 1 nN m per
+knee: a fraction of one fast spike. a derivation, not a fit; the arms on the measured springs (stiffness 0.14):
+
+| arm | thorax height after 1 s (0.7 = standing) | planar speed | what the film shows |
+|---|---|---|---|
+| the cord at rest | 0.42 | 0.1 mm/s | lies on his belly |
+| DNg100 100 Hz (the record's dose) | 0.44 | 0.2 | lies on his belly, legs splayed |
+| him (the run of record, 8 s) | 0.41 | 0.3 | the same |
+| DNg100 400 Hz | 0.71 (min 0.36, max 2.1) | **20.9 (max 111)** | thrashes four body lengths, rolls onto his side, then his back, legs kicking (`docs/figures/body_six_tumbles_400hz.png`) |
+| the load signal at 60 Hz, 100 Hz | 0.57 | 10.0 | pushes off backwards, rolls onto his side |
+| the load at 60, 400 Hz | 0.60 | 18.5 | the same, faster |
+
+- **the first body lies down, and when driven it tumbles.** with the measured torque per spike the cord's rest output and the record's
+  dose do not hold him up; at the high dose or with the load reflex driving the extensors he pushes, unevenly, and rolls. a fly walks at
+  10-20 mm/s; he covers ground at that speed on his side. nate's "flailing and spasming in place", on film, with the numbers from the paper.
+- **why he rolls:** the cord's stance is lopsided. the left mid tibia extensor at 36 Hz against the right at 8, the front-left jump muscle
+  on and the front-right silent, the right cord under-traced throughout (SEAM 09-19: 15 % less input on the right): a posture of unequal
+  rates, which on springs that hold the pose is a twitch and on real-stiffness legs is a fall to one side. the body has told the cord its
+  first thing: its left and right are not the same fly.
+- what would stand him up, in order of honesty: (1) the standing tonus as physiology: the slow motor units' tonic drive under load
+  (Azevedo 2020: standing is slow-unit drive; our slow MNs are the small-input cells the size rule weights at 0.1), which the load reflex
+  supplies only unevenly here; (2) the mirror normalisation of the cord's left-right input asymmetry (`--mirror`, the labelled tracing
+  correction already used on the compass pair), applied to the leg motor pools, tested on the body: if a mirrored cord stands and the raw
+  one falls, the fall was the tracing; (3) the loop, so that a leg that takes weight loads its own sensors and the load reflex holds it.
+  the mirror test is one flag and one replay: first thing tomorrow.

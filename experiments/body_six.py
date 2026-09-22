@@ -19,7 +19,7 @@ passive stiffness (Wang 2025: ~70x too weak to stand); `--stiffness` sets it, an
 """
 import os, sys, json, argparse, time, numpy as np
 ap = argparse.ArgumentParser(); ap.add_argument("run"); ap.add_argument("--seconds", type=float, default=5.0); ap.add_argument("--start", type=float, default=2.0)
-ap.add_argument("--out", required=True); ap.add_argument("--gain", type=float, default=10.0, help="torque per unit activation difference (the actuators clip at +-30); (E)")
+ap.add_argument("--out", required=True); ap.add_argument("--gain", type=float, default=42.0, help="torque (nN m = the model's g mm^2/s^2) per unit activation: 42 = ten spike-equivalents at 4.2 nN m per fast spike (Azevedo 2020, brief B1: one fast spike ~ one body weight, 10 uN, at the tibia), a derivation not a fit; the actuators clip at +-60")
 ap.add_argument("--sat", type=float, default=10.0); ap.add_argument("--alpha", type=float, default=1.2); ap.add_argument("--stiffness", type=float, default=None, help="joint spring stiffness (default: flygym's 10)")
 ap.add_argument("--no-adhesion", action="store_true"); ap.add_argument("--no-video", action="store_true"); ap.add_argument("--fps", type=int, default=25); ap.add_argument("--camera", default="track")
 args = ap.parse_args(); t0 = time.time()
@@ -46,7 +46,7 @@ signs = json.load(open("results/body_dof_signs.json")); roles = signs["roles"]
 fly = NeuroMechFly(); skel = Skeleton(axis_order=AxisOrder.PITCH_ROLL_YAW, joint_preset=JointPreset.LEGS_ONLY)
 kw = {} if args.stiffness is None else dict(stiffness=args.stiffness)
 fly.add_joints(skel, KinematicPosePreset.NEUTRAL, **kw); dofs = ActuatedDOFPreset.LEGS_ACTIVE_ONLY.filter(fly.get_jointdofs_order())
-fly.add_actuators(dofs, ActuatorType.MOTOR); adh = fly.add_leg_adhesion() if not args.no_adhesion else {}
+fly.add_actuators(dofs, ActuatorType.MOTOR, forcerange=(-60.0, 60.0)); adh = fly.add_leg_adhesion() if not args.no_adhesion else {}
 if not args.no_video: fly.add_tracking_camera("trackcam")   # a camera that follows the thorax (must be added before the world compiles)
 world = FlatGroundWorld(); world.add_fly(fly, (0.0, 0.0, 0.5), Rotation3D(format="quat", values=(1, 0, 0, 0))); sim = Simulation(world); m = sim.mj_model; d = sim.mj_data
 dof_names = [f"{x.parent.name}->{x.child.name}:{x.axis.value}" for x in dofs]; di = {n: i for i, n in enumerate(dof_names)}
@@ -72,7 +72,7 @@ for j in range(len(bid)):
         k = int(FRw[fidx, j]); a = k * f_w[j] * K / args.sat
         if grip_leg[j] != "": grip[grip_leg[j]][fidx * 10: fidx * 10 + KL] += a
         else: torque[cell_dof[j], fidx * 10: fidx * 10 + KL] += cell_sgn[j] * a
-torque = np.clip(args.gain * torque[:, :nms], -30, 30); print("torque per dof over the window: mean |t|", np.round(np.abs(torque).mean(1), 2).tolist()[:14], "...")
+torque = np.clip(args.gain * torque[:, :nms], -60, 60); print("torque per dof over the window: mean |t|", np.round(np.abs(torque).mean(1), 2).tolist()[:14], "...")
 # run
 os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)
 if not args.no_video:
