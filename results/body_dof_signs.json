@@ -1,0 +1,1250 @@
+{
+ "dofs": [
+  "JointDOF(parent=BodySegment(name='c_thorax'), child=BodySegment(name='lf_coxa'), axis=<RotationAxis.PITCH: 'pitch'>)",
+  "JointDOF(parent=BodySegment(name='c_thorax'), child=BodySegment(name='lf_coxa'), axis=<RotationAxis.ROLL: 'roll'>)",
+  "JointDOF(parent=BodySegment(name='c_thorax'), child=BodySegment(name='lf_coxa'), axis=<RotationAxis.YAW: 'yaw'>)",
+  "JointDOF(parent=BodySegment(name='lf_coxa'), child=BodySegment(name='lf_trochanterfemur'), axis=<RotationAxis.PITCH: 'pitch'>)",
+  "JointDOF(parent=BodySegment(name='lf_coxa'), child=BodySegment(name='lf_trochanterfemur'), axis=<RotationAxis.ROLL: 'roll'>)",
+  "JointDOF(parent=BodySegment(name='lf_trochanterfemur'), child=BodySegment(name='lf_tibia'), axis=<RotationAxis.PITCH: 'pitch'>)",
+  "JointDOF(parent=BodySegment(name='lf_tibia'), child=BodySegment(name='lf_tarsus1'), axis=<RotationAxis.PITCH: 'pitch'>)",
+  "JointDOF(parent=BodySegment(name='c_thorax'), child=BodySegment(name='lm_coxa'), axis=<RotationAxis.PITCH: 'pitch'>)",
+  "JointDOF(parent=BodySegment(name='c_thorax'), child=BodySegment(name='lm_coxa'), axis=<RotationAxis.ROLL: 'roll'>)",
+  "JointDOF(parent=BodySegment(name='c_thorax'), child=BodySegment(name='lm_coxa'), axis=<RotationAxis.YAW: 'yaw'>)",
+  "JointDOF(parent=BodySegment(name='lm_coxa'), child=BodySegment(name='lm_trochanterfemur'), axis=<RotationAxis.PITCH: 'pitch'>)",
+  "JointDOF(parent=BodySegment(name='lm_coxa'), child=BodySegment(name='lm_trochanterfemur'), axis=<RotationAxis.ROLL: 'roll'>)",
+  "JointDOF(parent=BodySegment(name='lm_trochanterfemur'), child=BodySegment(name='lm_tibia'), axis=<RotationAxis.PITCH: 'pitch'>)",
+  "JointDOF(parent=BodySegment(name='lm_tibia'), child=BodySegment(name='lm_tarsus1'), axis=<RotationAxis.PITCH: 'pitch'>)",
+  "JointDOF(parent=BodySegment(name='c_thorax'), child=BodySegment(name='lh_coxa'), axis=<RotationAxis.PITCH: 'pitch'>)",
+  "JointDOF(parent=BodySegment(name='c_thorax'), child=BodySegment(name='lh_coxa'), axis=<RotationAxis.ROLL: 'roll'>)",
+  "JointDOF(parent=BodySegment(name='c_thorax'), child=BodySegment(name='lh_coxa'), axis=<RotationAxis.YAW: 'yaw'>)",
+  "JointDOF(parent=BodySegment(name='lh_coxa'), child=BodySegment(name='lh_trochanterfemur'), axis=<RotationAxis.PITCH: 'pitch'>)",
+  "JointDOF(parent=BodySegment(name='lh_coxa'), child=BodySegment(name='lh_trochanterfemur'), axis=<RotationAxis.ROLL: 'roll'>)",
+  "JointDOF(parent=BodySegment(name='lh_trochanterfemur'), child=BodySegment(name='lh_tibia'), axis=<RotationAxis.PITCH: 'pitch'>)",
+  "JointDOF(parent=BodySegment(name='lh_tibia'), child=BodySegment(name='lh_tarsus1'), axis=<RotationAxis.PITCH: 'pitch'>)",
+  "JointDOF(parent=BodySegment(name='c_thorax'), child=BodySegment(name='rf_coxa'), axis=<RotationAxis.PITCH: 'pitch'>)",
+  "JointDOF(parent=BodySegment(name='c_thorax'), child=BodySegment(name='rf_coxa'), axis=<RotationAxis.ROLL: 'roll'>)",
+  "JointDOF(parent=BodySegment(name='c_thorax'), child=BodySegment(name='rf_coxa'), axis=<RotationAxis.YAW: 'yaw'>)",
+  "JointDOF(parent=BodySegment(name='rf_coxa'), child=BodySegment(name='rf_trochanterfemur'), axis=<RotationAxis.PITCH: 'pitch'>)",
+  "JointDOF(parent=BodySegment(name='rf_coxa'), child=BodySegment(name='rf_trochanterfemur'), axis=<RotationAxis.ROLL: 'roll'>)",
+  "JointDOF(parent=BodySegment(name='rf_trochanterfemur'), child=BodySegment(name='rf_tibia'), axis=<RotationAxis.PITCH: 'pitch'>)",
+  "JointDOF(parent=BodySegment(name='rf_tibia'), child=BodySegment(name='rf_tarsus1'), axis=<RotationAxis.PITCH: 'pitch'>)",
+  "JointDOF(parent=BodySegment(name='c_thorax'), child=BodySegment(name='rm_coxa'), axis=<RotationAxis.PITCH: 'pitch'>)",
+  "JointDOF(parent=BodySegment(name='c_thorax'), child=BodySegment(name='rm_coxa'), axis=<RotationAxis.ROLL: 'roll'>)",
+  "JointDOF(parent=BodySegment(name='c_thorax'), child=BodySegment(name='rm_coxa'), axis=<RotationAxis.YAW: 'yaw'>)",
+  "JointDOF(parent=BodySegment(name='rm_coxa'), child=BodySegment(name='rm_trochanterfemur'), axis=<RotationAxis.PITCH: 'pitch'>)",
+  "JointDOF(parent=BodySegment(name='rm_coxa'), child=BodySegment(name='rm_trochanterfemur'), axis=<RotationAxis.ROLL: 'roll'>)",
+  "JointDOF(parent=BodySegment(name='rm_trochanterfemur'), child=BodySegment(name='rm_tibia'), axis=<RotationAxis.PITCH: 'pitch'>)",
+  "JointDOF(parent=BodySegment(name='rm_tibia'), child=BodySegment(name='rm_tarsus1'), axis=<RotationAxis.PITCH: 'pitch'>)",
+  "JointDOF(parent=BodySegment(name='c_thorax'), child=BodySegment(name='rh_coxa'), axis=<RotationAxis.PITCH: 'pitch'>)",
+  "JointDOF(parent=BodySegment(name='c_thorax'), child=BodySegment(name='rh_coxa'), axis=<RotationAxis.ROLL: 'roll'>)",
+  "JointDOF(parent=BodySegment(name='c_thorax'), child=BodySegment(name='rh_coxa'), axis=<RotationAxis.YAW: 'yaw'>)",
+  "JointDOF(parent=BodySegment(name='rh_coxa'), child=BodySegment(name='rh_trochanterfemur'), axis=<RotationAxis.PITCH: 'pitch'>)",
+  "JointDOF(parent=BodySegment(name='rh_coxa'), child=BodySegment(name='rh_trochanterfemur'), axis=<RotationAxis.ROLL: 'roll'>)",
+  "JointDOF(parent=BodySegment(name='rh_trochanterfemur'), child=BodySegment(name='rh_tibia'), axis=<RotationAxis.PITCH: 'pitch'>)",
+  "JointDOF(parent=BodySegment(name='rh_tibia'), child=BodySegment(name='rh_tarsus1'), axis=<RotationAxis.PITCH: 'pitch'>)"
+ ],
+ "measured": {
+  "c_thorax->lf_coxa:pitch": {
+   "leg": "lf",
+   "joint": "thorax-coxa",
+   "axis": "pitch",
+   "k": 0,
+   "plus": {
+    "fwd": 0.4742526296418524,
+    "lat": -0.8066916649547475,
+    "up": -1.1394506926017698,
+    "dshort": -1.4744540955554797
+   },
+   "minus": {
+    "fwd": 1.2094944938970469,
+    "lat": -0.793828716298376,
+    "up": -0.28454480442786423,
+    "dshort": -1.4744513241589539
+   },
+   "delta": {
+    "fwd": -0.3676209321275973,
+    "lat": -0.006431474328185749,
+    "up": -0.4274529440869528,
+    "dshort": -1.3856982629123493e-06
+   }
+  },
+  "c_thorax->lf_coxa:roll": {
+   "leg": "lf",
+   "joint": "thorax-coxa",
+   "axis": "roll",
+   "k": 1,
+   "plus": {
+    "fwd": 0.5067509300712729,
+    "lat": -1.2551276923693357,
+    "up": -0.58469213714725,
+    "dshort": -1.4744513978162497
+   },
+   "minus": {
+    "fwd": 1.1521205257801892,
+    "lat": -0.16709575921684738,
+    "up": -0.9048266973861341,
+    "dshort": -1.4744538144597723
+   },
+   "delta": {
+    "fwd": -0.32268479785445814,
+    "lat": -0.5440159665762442,
+    "up": 0.16006728011944205,
+    "dshort": 1.2083217613145791e-06
+   }
+  },
+  "c_thorax->lf_coxa:yaw": {
+   "leg": "lf",
+   "joint": "thorax-coxa",
+   "axis": "yaw",
+   "k": 2,
+   "plus": {
+    "fwd": 0.9653684735528119,
+    "lat": -0.8806669554025731,
+    "up": -0.6830067858018087,
+    "dshort": -1.4744520492437323
+   },
+   "minus": {
+    "fwd": 0.977215609620219,
+    "lat": -0.67503312821019,
+    "up": -0.873722465697063,
+    "dshort": -1.4744527862669616
+   },
+   "delta": {
+    "fwd": -0.005923568033703586,
+    "lat": -0.10281691359619155,
+    "up": 0.09535783994762714,
+    "dshort": 3.6851161466788795e-07
+   }
+  },
+  "lf_coxa->lf_trochanterfemur:pitch": {
+   "leg": "lf",
+   "joint": "coxa-trochanterfemur",
+   "axis": "pitch",
+   "k": 3,
+   "plus": {
+    "fwd": 0.6667469213084423,
+    "lat": -0.600307602569148,
+    "up": -1.3712794392306358,
+    "dshort": -1.6386970358285546
+   },
+   "minus": {
+    "fwd": 0.9642740517634206,
+    "lat": -0.8644867102374552,
+    "up": -0.12952318029301546,
+    "dshort": -1.3015137238287728
+   },
+   "delta": {
+    "fwd": -0.14876356522748918,
+    "lat": 0.1320895538341536,
+    "up": -0.6208781294688102,
+    "dshort": -0.1685916559998909
+   }
+  },
+  "lf_coxa->lf_trochanterfemur:roll": {
+   "leg": "lf",
+   "joint": "coxa-trochanterfemur",
+   "axis": "roll",
+   "k": 4,
+   "plus": {
+    "fwd": 1.1978262289889057,
+    "lat": -0.3963340497746126,
+    "up": -0.7660453813187069,
+    "dshort": -1.4760399317444803
+   },
+   "minus": {
+    "fwd": 0.6459001809641166,
+    "lat": -1.1144620386854527,
+    "up": -0.6331171219068352,
+    "dshort": -1.4352874170325636
+   },
+   "delta": {
+    "fwd": 0.27596302401239453,
+    "lat": 0.35906399445542003,
+    "up": -0.06646412970593585,
+    "dshort": -0.020376257355958383
+   }
+  },
+  "lf_trochanterfemur->lf_tibia:pitch": {
+   "leg": "lf",
+   "joint": "trochanterfemur-tibia",
+   "axis": "pitch",
+   "k": 5,
+   "plus": {
+    "fwd": 0.5720576416807767,
+    "lat": -0.5739904468074439,
+    "up": -1.0495688770202682,
+    "dshort": -1.3260127473147338
+   },
+   "minus": {
+    "fwd": 1.204939168549978,
+    "lat": -0.8971564724949634,
+    "up": -0.38315964208155284,
+    "dshort": -1.5503481697236856
+   },
+   "delta": {
+    "fwd": -0.31644076343460065,
+    "lat": 0.16158301284375975,
+    "up": -0.3332046174693577,
+    "dshort": 0.11216771120447588
+   }
+  },
+  "lf_tibia->lf_tarsus1:pitch": {
+   "leg": "lf",
+   "joint": "tibia-tarsus1",
+   "axis": "pitch",
+   "k": 6,
+   "plus": {
+    "fwd": 0.7639140690863649,
+    "lat": -0.6943943746337898,
+    "up": -0.9604148740375336,
+    "dshort": -1.4100159512373152
+   },
+   "minus": {
+    "fwd": 1.0586859224276277,
+    "lat": -0.8271323334319043,
+    "up": -0.5608439285066527,
+    "dshort": -1.455853595488818
+   },
+   "delta": {
+    "fwd": -0.14738592667063138,
+    "lat": 0.06636897939905723,
+    "up": -0.19978547276544045,
+    "dshort": 0.02291882212575147
+   }
+  },
+  "c_thorax->lm_coxa:pitch": {
+   "leg": "lm",
+   "joint": "thorax-coxa",
+   "axis": "pitch",
+   "k": 7,
+   "plus": {
+    "fwd": -0.013329717617248285,
+    "lat": -1.2836796540358837,
+    "up": -0.7595641015156538,
+    "dshort": -1.4916262131877154
+   },
+   "minus": {
+    "fwd": 0.619684521143807,
+    "lat": -1.2780672763059897,
+    "up": -0.45550649638315344,
+    "dshort": -1.491626976410891
+   },
+   "delta": {
+    "fwd": -0.31650711938052767,
+    "lat": -0.00280618886494699,
+    "up": -0.15202880256625018,
+    "dshort": 3.816115877741666e-07
+   }
+  },
+  "c_thorax->lm_coxa:roll": {
+   "leg": "lm",
+   "joint": "thorax-coxa",
+   "axis": "roll",
+   "k": 8,
+   "plus": {
+    "fwd": 0.4815440790063292,
+    "lat": -0.8275536979473834,
+    "up": -1.1437720776578097,
+    "dshort": -1.4916247479316325
+   },
+   "minus": {
+    "fwd": 0.15834372628787055,
+    "lat": -1.4812507628961429,
+    "up": -0.07604046154176025,
+    "dshort": -1.4916295485228954
+   },
+   "delta": {
+    "fwd": 0.1616001763592293,
+    "lat": 0.3268485324743797,
+    "up": -0.5338658080580247,
+    "dshort": 2.400295631477256e-06
+   }
+  },
+  "c_thorax->lm_coxa:yaw": {
+   "leg": "lm",
+   "joint": "thorax-coxa",
+   "axis": "yaw",
+   "k": 9,
+   "plus": {
+    "fwd": 0.10881288891692151,
+    "lat": -1.2819394883728483,
+    "up": -0.7548110797564851,
+    "dshort": -1.4916262476797724
+   },
+   "minus": {
+    "fwd": 0.5141584037954783,
+    "lat": -1.3014111407369786,
+    "up": -0.5166441533387198,
+    "dshort": -1.4916269649637341
+   },
+   "delta": {
+    "fwd": -0.20267275743927837,
+    "lat": 0.009735826182065144,
+    "up": -0.11908346320888263,
+    "dshort": 3.5864198089097243e-07
+   }
+  },
+  "lm_coxa->lm_trochanterfemur:pitch": {
+   "leg": "lm",
+   "joint": "coxa-trochanterfemur",
+   "axis": "pitch",
+   "k": 10,
+   "plus": {
+    "fwd": 0.25226414029511546,
+    "lat": -0.956339650432363,
+    "up": -1.2151412663125214,
+    "dshort": -1.566777272162041
+   },
+   "minus": {
+    "fwd": 0.4252131544393234,
+    "lat": -1.3391926203400721,
+    "up": -0.04866292026355579,
+    "dshort": -1.4059200478299347
+   },
+   "delta": {
+    "fwd": -0.08647450707210397,
+    "lat": 0.19142648495385456,
+    "up": -0.5832391730244828,
+    "dshort": -0.08042861216605313
+   }
+  },
+  "lm_coxa->lm_trochanterfemur:roll": {
+   "leg": "lm",
+   "joint": "coxa-trochanterfemur",
+   "axis": "roll",
+   "k": 11,
+   "plus": {
+    "fwd": 0.8672576443394673,
+    "lat": -1.0645986417490216,
+    "up": -0.5192666807658344,
+    "dshort": -1.4680408629982582
+   },
+   "minus": {
+    "fwd": -0.24357530229547536,
+    "lat": -1.3308610768726867,
+    "up": -0.6301029299653274,
+    "dshort": -1.4924978513130094
+   },
+   "delta": {
+    "fwd": 0.5554164733174713,
+    "lat": 0.13313121756183255,
+    "up": 0.05541812459974649,
+    "dshort": 0.012228494157375591
+   }
+  },
+  "lm_trochanterfemur->lm_tibia:pitch": {
+   "leg": "lm",
+   "joint": "trochanterfemur-tibia",
+   "axis": "pitch",
+   "k": 12,
+   "plus": {
+    "fwd": 0.2322820468718711,
+    "lat": -0.7588477824040876,
+    "up": -0.8970791110212368,
+    "dshort": -1.1977294509150387
+   },
+   "minus": {
+    "fwd": 0.3938203391553502,
+    "lat": -1.6521583898004484,
+    "up": -0.2681542811316411,
+    "dshort": -1.7194849586459524
+   },
+   "delta": {
+    "fwd": -0.08076914614173955,
+    "lat": 0.4466553036981804,
+    "up": -0.3144624149447979,
+    "dshort": 0.26087775386545686
+   }
+  },
+  "lm_tibia->lm_tarsus1:pitch": {
+   "leg": "lm",
+   "joint": "tibia-tarsus1",
+   "axis": "pitch",
+   "k": 13,
+   "plus": {
+    "fwd": 0.30116015354244835,
+    "lat": -1.0550438133926239,
+    "up": -0.8422559281539761,
+    "dshort": -1.3831883222360852
+   },
+   "minus": {
+    "fwd": 0.35032334715430946,
+    "lat": -1.4070821045487103,
+    "up": -0.4379467120767293,
+    "dshort": -1.5147289589631023
+   },
+   "delta": {
+    "fwd": -0.024581596805930556,
+    "lat": 0.1760191455780432,
+    "up": -0.2021546080386234,
+    "dshort": 0.06577031836350855
+   }
+  },
+  "c_thorax->lh_coxa:pitch": {
+   "leg": "lh",
+   "joint": "thorax-coxa",
+   "axis": "pitch",
+   "k": 14,
+   "plus": {
+    "fwd": -1.3749332505144474,
+    "lat": -0.9219366295491395,
+    "up": -0.2050219399615245,
+    "dshort": -1.668065522735914
+   },
+   "minus": {
+    "fwd": -0.640590041874121,
+    "lat": -0.9453567121362833,
+    "up": -1.215880268673736,
+    "dshort": -1.6680586748311728
+   },
+   "delta": {
+    "fwd": -0.36717160432016316,
+    "lat": 0.011710041293571893,
+    "up": 0.5054291643561057,
+    "dshort": -3.423952370629202e-06
+   }
+  },
+  "c_thorax->lh_coxa:roll": {
+   "leg": "lh",
+   "joint": "thorax-coxa",
+   "axis": "roll",
+   "k": 15,
+   "plus": {
+    "fwd": -0.6906478576069326,
+    "lat": -1.1272084122780062,
+    "up": -1.0172697294755038,
+    "dshort": -1.6680620403433781
+   },
+   "minus": {
+    "fwd": -1.4473164533182645,
+    "lat": -0.5188561642492462,
+    "up": -0.6469151228301122,
+    "dshort": -1.6680634914089751
+   },
+   "delta": {
+    "fwd": 0.37833429785566597,
+    "lat": -0.30417612401438,
+    "up": -0.18517730332269577,
+    "dshort": 7.255327985067339e-07
+   }
+  },
+  "c_thorax->lh_coxa:yaw": {
+   "leg": "lh",
+   "joint": "thorax-coxa",
+   "axis": "yaw",
+   "k": 16,
+   "plus": {
+    "fwd": -1.4808296710810902,
+    "lat": -0.5167534617670703,
+    "up": -0.567925554306465,
+    "dshort": -1.668061776504901
+   },
+   "minus": {
+    "fwd": -0.6956355080963166,
+    "lat": -1.2998232874024893,
+    "up": -0.7803719014328303,
+    "dshort": -1.6680616424893073
+   },
+   "delta": {
+    "fwd": -0.3925970814923868,
+    "lat": 0.3915349128177095,
+    "up": 0.10622317356318267,
+    "dshort": -6.700779686674707e-08
+   }
+  },
+  "lh_coxa->lh_trochanterfemur:pitch": {
+   "leg": "lh",
+   "joint": "coxa-trochanterfemur",
+   "axis": "pitch",
+   "k": 17,
+   "plus": {
+    "fwd": -0.9147302980099907,
+    "lat": -0.5603926702702975,
+    "up": -1.339779686408955,
+    "dshort": -1.7163277866142583
+   },
+   "minus": {
+    "fwd": -1.1034365338502607,
+    "lat": -1.134219979798291,
+    "up": -0.13633812203751328,
+    "dshort": -1.5882742931653302
+   },
+   "delta": {
+    "fwd": 0.09435311792013501,
+    "lat": 0.2869136547639968,
+    "up": -0.6017207821857209,
+    "dshort": -0.06402674672446407
+   }
+  },
+  "lh_coxa->lh_trochanterfemur:roll": {
+   "leg": "lh",
+   "joint": "coxa-trochanterfemur",
+   "axis": "roll",
+   "k": 18,
+   "plus": {
+    "fwd": -0.6072116243715617,
+    "lat": -1.2942392788014339,
+    "up": -0.8140019676934638,
+    "dshort": -1.6451019637011066
+   },
+   "minus": {
+    "fwd": -1.4938370722357572,
+    "lat": -0.44353824661282587,
+    "up": -0.5573701828270647,
+    "dshort": -1.6549733820514922
+   },
+   "delta": {
+    "fwd": 0.44331272393209775,
+    "lat": -0.42535051609430397,
+    "up": -0.12831589243319952,
+    "dshort": 0.004935709175192815
+   }
+  },
+  "lh_trochanterfemur->lh_tibia:pitch": {
+   "leg": "lh",
+   "joint": "trochanterfemur-tibia",
+   "axis": "pitch",
+   "k": 19,
+   "plus": {
+    "fwd": -0.7299415626272276,
+    "lat": -0.4627510728335981,
+    "up": -0.9958960393806433,
+    "dshort": -1.3186213108824598
+   },
+   "minus": {
+    "fwd": -1.383790871207273,
+    "lat": -1.3083588805264406,
+    "up": -0.3671877175636391,
+    "dshort": -1.939460480499301
+   },
+   "delta": {
+    "fwd": 0.3269246542900227,
+    "lat": 0.4228039038464212,
+    "up": -0.3143541609085021,
+    "dshort": 0.3104195848084206
+   }
+  },
+  "lh_tibia->lh_tarsus1:pitch": {
+   "leg": "lh",
+   "joint": "tibia-tarsus1",
+   "axis": "pitch",
+   "k": 20,
+   "plus": {
+    "fwd": -0.9395634956936264,
+    "lat": -0.6916904381665692,
+    "up": -0.9225482122783246,
+    "dshort": -1.487383752993497
+   },
+   "minus": {
+    "fwd": -1.243778122529138,
+    "lat": -1.105160161078978,
+    "up": -0.5563322996419324,
+    "dshort": -1.754385541248873
+   },
+   "delta": {
+    "fwd": 0.1521073134177558,
+    "lat": 0.20673486145620446,
+    "up": -0.1831079563181961,
+    "dshort": 0.13350089412768795
+   }
+  },
+  "c_thorax->rf_coxa:pitch": {
+   "leg": "rf",
+   "joint": "thorax-coxa",
+   "axis": "pitch",
+   "k": 21,
+   "plus": {
+    "fwd": 0.47427165437803015,
+    "lat": -0.806764726609106,
+    "up": -1.1393910445001323,
+    "dshort": -1.4744540950922282
+   },
+   "minus": {
+    "fwd": 1.2094886598626147,
+    "lat": -0.7938035410254438,
+    "up": -0.2846398226344622,
+    "dshort": -1.4744513246323783
+   },
+   "delta": {
+    "fwd": -0.3676085027422923,
+    "lat": -0.006480592791831108,
+    "up": -0.42737561093283505,
+    "dshort": -1.3852299249883515e-06
+   }
+  },
+  "c_thorax->rf_coxa:roll": {
+   "leg": "rf",
+   "joint": "thorax-coxa",
+   "axis": "roll",
+   "k": 22,
+   "plus": {
+    "fwd": 0.5067346980612746,
+    "lat": -1.2551200150379107,
+    "up": -0.5847226858446009,
+    "dshort": -1.4744513982187883
+   },
+   "minus": {
+    "fwd": 1.152155979342044,
+    "lat": -0.16710270943494135,
+    "up": -0.904780268037348,
+    "dshort": -1.474453814015162
+   },
+   "delta": {
+    "fwd": -0.3227106406403847,
+    "lat": -0.5440086528014847,
+    "up": 0.16002879109637358,
+    "dshort": 1.207898186805778e-06
+   }
+  },
+  "c_thorax->rf_coxa:yaw": {
+   "leg": "rf",
+   "joint": "thorax-coxa",
+   "axis": "yaw",
+   "k": 23,
+   "plus": {
+    "fwd": 0.9653614080813839,
+    "lat": -0.8806569175619381,
+    "up": -0.6830297148580637,
+    "dshort": -1.474452049420955
+   },
+   "minus": {
+    "fwd": 0.9772247819994273,
+    "lat": -0.6750376067176367,
+    "up": -0.8737087464334157,
+    "dshort": -1.4744527861654824
+   },
+   "delta": {
+    "fwd": -0.005931686959021687,
+    "lat": -0.1028096554221507,
+    "up": 0.09533951578767597,
+    "dshort": 3.683722636926845e-07
+   }
+  },
+  "rf_coxa->rf_trochanterfemur:pitch": {
+   "leg": "rf",
+   "joint": "coxa-trochanterfemur",
+   "axis": "pitch",
+   "k": 24,
+   "plus": {
+    "fwd": 0.6668009368033414,
+    "lat": -0.6004380854903122,
+    "up": -1.3711960432224073,
+    "dshort": -1.6386970350793555
+   },
+   "minus": {
+    "fwd": 0.9642751176087913,
+    "lat": -0.8644684701903189,
+    "up": -0.1296369394521779,
+    "dshort": -1.3015137242700001
+   },
+   "delta": {
+    "fwd": -0.14873709040272493,
+    "lat": 0.13201519235000336,
+    "up": -0.6207795518851147,
+    "dshort": -0.1685916554046777
+   }
+  },
+  "rf_coxa->rf_trochanterfemur:roll": {
+   "leg": "rf",
+   "joint": "coxa-trochanterfemur",
+   "axis": "roll",
+   "k": 25,
+   "plus": {
+    "fwd": 1.1978396533575992,
+    "lat": -0.3963260288783026,
+    "up": -0.7660285395155242,
+    "dshort": -1.4760399315989339
+   },
+   "minus": {
+    "fwd": 0.6458883667985982,
+    "lat": -1.1144564413531604,
+    "up": -0.6331390275352224,
+    "dshort": -1.4352874172888015
+   },
+   "delta": {
+    "fwd": 0.2759756432795005,
+    "lat": 0.3590652062374289,
+    "up": -0.06644475599015087,
+    "dshort": -0.02037625715506619
+   }
+  },
+  "rf_trochanterfemur->rf_tibia:pitch": {
+   "leg": "rf",
+   "joint": "trochanterfemur-tibia",
+   "axis": "pitch",
+   "k": 26,
+   "plus": {
+    "fwd": 0.5720786784213563,
+    "lat": -0.5740310480932286,
+    "up": -1.0495352052991223,
+    "dshort": -1.3260127471640712
+   },
+   "minus": {
+    "fwd": 1.2049319786521393,
+    "lat": -0.8971351882201913,
+    "up": -0.3832320844577519,
+    "dshort": -1.5503481704698692
+   },
+   "delta": {
+    "fwd": -0.3164266501153915,
+    "lat": 0.16155207006348138,
+    "up": -0.33315156042068517,
+    "dshort": 0.11216771165289896
+   }
+  },
+  "rf_tibia->rf_tarsus1:pitch": {
+   "leg": "rf",
+   "joint": "tibia-tarsus1",
+   "axis": "pitch",
+   "k": 27,
+   "plus": {
+    "fwd": 0.7639224713954389,
+    "lat": -0.6944118510018272,
+    "up": -0.9603955546383318,
+    "dshort": -1.4100159511451522
+   },
+   "minus": {
+    "fwd": 1.058681436591665,
+    "lat": -0.8271192979714883,
+    "up": -0.5608716208301519,
+    "dshort": -1.4558535957689156
+   },
+   "delta": {
+    "fwd": -0.14737948259811307,
+    "lat": 0.06635372348483054,
+    "up": -0.19976196690408998,
+    "dshort": 0.022918822311881692
+   }
+  },
+  "c_thorax->rm_coxa:pitch": {
+   "leg": "rm",
+   "joint": "thorax-coxa",
+   "axis": "pitch",
+   "k": 28,
+   "plus": {
+    "fwd": -0.013324866488007056,
+    "lat": -1.2836964779822235,
+    "up": -0.7595357534355527,
+    "dshort": -1.4916262133650646
+   },
+   "minus": {
+    "fwd": 0.6196781139412557,
+    "lat": -1.2780555743902515,
+    "up": -0.45554804352894607,
+    "dshort": -1.4916269761876924
+   },
+   "delta": {
+    "fwd": -0.31650149021463136,
+    "lat": -0.002820451795986001,
+    "up": -0.1519938549533033,
+    "dshort": 3.8141131386559834e-07
+   }
+  },
+  "c_thorax->rm_coxa:roll": {
+   "leg": "rm",
+   "joint": "thorax-coxa",
+   "axis": "roll",
+   "k": 29,
+   "plus": {
+    "fwd": 0.4816197927111054,
+    "lat": -0.8275906582729475,
+    "up": -1.1437134547713992,
+    "dshort": -1.4916247480572546
+   },
+   "minus": {
+    "fwd": 0.15834598131485467,
+    "lat": -1.4812471991556835,
+    "up": -0.07610514627062193,
+    "dshort": -1.491629547875073
+   },
+   "delta": {
+    "fwd": 0.16163690569812536,
+    "lat": 0.326828270441368,
+    "up": -0.5338041542503886,
+    "dshort": 2.399908909156423e-06
+   }
+  },
+  "c_thorax->rm_coxa:yaw": {
+   "leg": "rm",
+   "joint": "thorax-coxa",
+   "axis": "yaw",
+   "k": 30,
+   "plus": {
+    "fwd": 0.10881695990070574,
+    "lat": -1.2819510793113509,
+    "up": -0.7547908072144702,
+    "dshort": -1.491626247813118
+   },
+   "minus": {
+    "fwd": 0.5141535324374662,
+    "lat": -1.3014028736389867,
+    "up": -0.5166698247487385,
+    "dshort": -1.4916269648406164
+   },
+   "delta": {
+    "fwd": -0.20266828626838024,
+    "lat": 0.009725897163817887,
+    "up": -0.11906049123286588,
+    "dshort": 3.585137492434498e-07
+   }
+  },
+  "rm_coxa->rm_trochanterfemur:pitch": {
+   "leg": "rm",
+   "joint": "coxa-trochanterfemur",
+   "axis": "pitch",
+   "k": 31,
+   "plus": {
+    "fwd": 0.2523407677688223,
+    "lat": -0.9564009422575104,
+    "up": -1.215077115292646,
+    "dshort": -1.5667772724727376
+   },
+   "minus": {
+    "fwd": 0.4252142505759358,
+    "lat": -1.3391889426389596,
+    "up": -0.04875444334692114,
+    "dshort": -1.405920047060066
+   },
+   "delta": {
+    "fwd": -0.08643674140355675,
+    "lat": 0.1913940001907246,
+    "up": -0.5831613359728625,
+    "dshort": -0.08042861270633583
+   }
+  },
+  "rm_coxa->rm_trochanterfemur:roll": {
+   "leg": "rm",
+   "joint": "coxa-trochanterfemur",
+   "axis": "roll",
+   "k": 32,
+   "plus": {
+    "fwd": 0.867257089452905,
+    "lat": -1.064582702779461,
+    "up": -0.519300283294351,
+    "dshort": -1.4680408626782633
+   },
+   "minus": {
+    "fwd": -0.24357770678493657,
+    "lat": -1.3308767203041612,
+    "up": -0.6300689587290598,
+    "dshort": -1.4924978514705107
+   },
+   "delta": {
+    "fwd": 0.5554173981189208,
+    "lat": 0.13314700876235008,
+    "up": 0.055384337717354404,
+    "dshort": 0.012228494396123724
+   }
+  },
+  "rm_trochanterfemur->rm_tibia:pitch": {
+   "leg": "rm",
+   "joint": "trochanterfemur-tibia",
+   "axis": "pitch",
+   "k": 33,
+   "plus": {
+    "fwd": 0.23231904448930593,
+    "lat": -0.7588633374810394,
+    "up": -0.8970563720538336,
+    "dshort": -1.197729451106414
+   },
+   "minus": {
+    "fwd": 0.3938100638232864,
+    "lat": -1.6521508392355324,
+    "up": -0.2682158844119886,
+    "dshort": -1.7194849585285938
+   },
+   "delta": {
+    "fwd": -0.08074550966699025,
+    "lat": 0.4466437508772465,
+    "up": -0.3144202438209225,
+    "dshort": 0.2608777537110899
+   }
+  },
+  "rm_tibia->rm_tarsus1:pitch": {
+   "leg": "rm",
+   "joint": "tibia-tarsus1",
+   "axis": "pitch",
+   "k": 34,
+   "plus": {
+    "fwd": 0.3011747662066156,
+    "lat": -1.0550508716362783,
+    "up": -0.8422418616928105,
+    "dshort": -1.3831883223653427
+   },
+   "minus": {
+    "fwd": 0.3503161225093901,
+    "lat": -1.4070771823570354,
+    "up": -0.4379683050094565,
+    "dshort": -1.5147289589205997
+   },
+   "delta": {
+    "fwd": -0.02457067815138725,
+    "lat": 0.17601315536037854,
+    "up": -0.20213677834167698,
+    "dshort": 0.06577031827762847
+   }
+  },
+  "c_thorax->rh_coxa:pitch": {
+   "leg": "rh",
+   "joint": "thorax-coxa",
+   "axis": "pitch",
+   "k": 35,
+   "plus": {
+    "fwd": -1.3749428524867406,
+    "lat": -0.9219390021292708,
+    "up": -0.20494686802345408,
+    "dshort": -1.6680655232826178
+   },
+   "minus": {
+    "fwd": -0.6405517754145953,
+    "lat": -0.9453147001883165,
+    "up": -1.2159330908299184,
+    "dshort": -1.6680586742540309
+   },
+   "delta": {
+    "fwd": -0.3671955385360727,
+    "lat": 0.011687849029522857,
+    "up": 0.5054931114032322,
+    "dshort": -3.424514293470793e-06
+   }
+  },
+  "c_thorax->rh_coxa:roll": {
+   "leg": "rh",
+   "joint": "thorax-coxa",
+   "axis": "roll",
+   "k": 36,
+   "plus": {
+    "fwd": -0.6906459680945203,
+    "lat": -1.1271739961220346,
+    "up": -1.017309145809603,
+    "dshort": -1.6680620398914419
+   },
+   "minus": {
+    "fwd": -1.4473069983799354,
+    "lat": -0.5188741060529596,
+    "up": -0.6469218851168219,
+    "dshort": -1.6680634912781045
+   },
+   "delta": {
+    "fwd": 0.37833051514270755,
+    "lat": -0.3041499450345375,
+    "up": -0.18519363034639058,
+    "dshort": 7.256933313160019e-07
+   }
+  },
+  "c_thorax->rh_coxa:yaw": {
+   "leg": "rh",
+   "joint": "thorax-coxa",
+   "axis": "yaw",
+   "k": 37,
+   "plus": {
+    "fwd": -1.4808240532147652,
+    "lat": -0.5167683550459723,
+    "up": -0.5679266514018733,
+    "dshort": -1.6680617766524328
+   },
+   "minus": {
+    "fwd": -0.6956532859962448,
+    "lat": -1.2998044850961512,
+    "up": -0.780387371302325,
+    "dshort": -1.6680616424705643
+   },
+   "delta": {
+    "fwd": -0.3925853836092602,
+    "lat": 0.39151806502508946,
+    "up": 0.1062303599502259,
+    "dshort": -6.709093425261159e-08
+   }
+  },
+  "rh_coxa->rh_trochanterfemur:pitch": {
+   "leg": "rh",
+   "joint": "coxa-trochanterfemur",
+   "axis": "pitch",
+   "k": 38,
+   "plus": {
+    "fwd": -0.9146493762275015,
+    "lat": -0.5603693070304312,
+    "up": -1.3398447021986915,
+    "dshort": -1.7163277856240118
+   },
+   "minus": {
+    "fwd": -1.1034480693492847,
+    "lat": -1.134216920594426,
+    "up": -0.13627019831881304,
+    "dshort": -1.5882742935850895
+   },
+   "delta": {
+    "fwd": 0.0943993465608916,
+    "lat": 0.28692380678199736,
+    "up": -0.6017872519399392,
+    "dshort": -0.06402674601946112
+   }
+  },
+  "rh_coxa->rh_trochanterfemur:roll": {
+   "leg": "rh",
+   "joint": "coxa-trochanterfemur",
+   "axis": "roll",
+   "k": 39,
+   "plus": {
+    "fwd": -0.6072275405340473,
+    "lat": -1.2942161313151048,
+    "up": -0.8140268976229725,
+    "dshort": -1.6451019635855237
+   },
+   "minus": {
+    "fwd": -1.4938306624691093,
+    "lat": -0.44355342210222504,
+    "up": -0.5573752858824306,
+    "dshort": -1.6549733821738686
+   },
+   "delta": {
+    "fwd": 0.44330156096753104,
+    "lat": -0.4253313546064399,
+    "up": -0.12832580587027098,
+    "dshort": 0.004935709294172419
+   }
+  },
+  "rh_trochanterfemur->rh_tibia:pitch": {
+   "leg": "rh",
+   "joint": "trochanterfemur-tibia",
+   "axis": "pitch",
+   "k": 40,
+   "plus": {
+    "fwd": -0.7299077063012471,
+    "lat": -0.4627239030500422,
+    "up": -0.9959334764321035,
+    "dshort": -1.3186213101758775
+   },
+   "minus": {
+    "fwd": -1.3838058804027482,
+    "lat": -1.3083682700672865,
+    "up": -0.36709768736110115,
+    "dshort": -1.9394604808610971
+   },
+   "delta": {
+    "fwd": 0.32694908705075054,
+    "lat": 0.42282218350862216,
+    "up": -0.3144178945355012,
+    "dshort": 0.3104195853426098
+   }
+  },
+  "rh_tibia->rh_tarsus1:pitch": {
+   "leg": "rh",
+   "joint": "tibia-tarsus1",
+   "axis": "pitch",
+   "k": 41,
+   "plus": {
+    "fwd": -0.9395505806385416,
+    "lat": -0.6916802988317208,
+    "up": -0.9225689667662351,
+    "dshort": -1.4873837527048215
+   },
+   "minus": {
+    "fwd": -1.2437875398229759,
+    "lat": -1.1051654700697997,
+    "up": -0.5563006987651042,
+    "dshort": -1.7543855414075993
+   },
+   "delta": {
+    "fwd": 0.15211847959221714,
+    "lat": 0.20674258561903947,
+    "up": -0.18313413400056544,
+    "dshort": 0.1335008943513889
+   }
+  }
+ },
+ "roles": {
+  "lf": {
+   "protract": {
+    "dof": "c_thorax->lf_coxa:pitch",
+    "k": 0,
+    "sign": -1.0,
+    "size": 0.3676209321275973
+   },
+   "adduct": {
+    "dof": "c_thorax->lf_coxa:roll",
+    "k": 1,
+    "sign": -1.0,
+    "size": 0.5440159665762442
+   },
+   "levate": {
+    "dof": "lf_coxa->lf_trochanterfemur:pitch",
+    "k": 3,
+    "sign": -1.0,
+    "size": 0.6208781294688102
+   },
+   "flex": {
+    "dof": "lf_trochanterfemur->lf_tibia:pitch",
+    "k": 5,
+    "sign": 1.0,
+    "size": 0.11216771120447588
+   },
+   "tarsus_levate": {
+    "dof": "lf_tibia->lf_tarsus1:pitch",
+    "k": 6,
+    "sign": -1.0,
+    "size": 0.19978547276544045
+   }
+  },
+  "lm": {
+   "protract": {
+    "dof": "c_thorax->lm_coxa:pitch",
+    "k": 7,
+    "sign": -1.0,
+    "size": 0.31650711938052767
+   },
+   "adduct": {
+    "dof": "c_thorax->lm_coxa:roll",
+    "k": 8,
+    "sign": 1.0,
+    "size": 0.3268485324743797
+   },
+   "levate": {
+    "dof": "lm_coxa->lm_trochanterfemur:pitch",
+    "k": 10,
+    "sign": -1.0,
+    "size": 0.5832391730244828
+   },
+   "flex": {
+    "dof": "lm_trochanterfemur->lm_tibia:pitch",
+    "k": 12,
+    "sign": 1.0,
+    "size": 0.26087775386545686
+   },
+   "tarsus_levate": {
+    "dof": "lm_tibia->lm_tarsus1:pitch",
+    "k": 13,
+    "sign": -1.0,
+    "size": 0.2021546080386234
+   }
+  },
+  "lh": {
+   "protract": {
+    "dof": "c_thorax->lh_coxa:yaw",
+    "k": 16,
+    "sign": -1.0,
+    "size": 0.3925970814923868
+   },
+   "adduct": {
+    "dof": "c_thorax->lh_coxa:yaw",
+    "k": 16,
+    "sign": 1.0,
+    "size": 0.3915349128177095
+   },
+   "levate": {
+    "dof": "lh_coxa->lh_trochanterfemur:pitch",
+    "k": 17,
+    "sign": -1.0,
+    "size": 0.6017207821857209
+   },
+   "flex": {
+    "dof": "lh_trochanterfemur->lh_tibia:pitch",
+    "k": 19,
+    "sign": 1.0,
+    "size": 0.3104195848084206
+   },
+   "tarsus_levate": {
+    "dof": "lh_tibia->lh_tarsus1:pitch",
+    "k": 20,
+    "sign": -1.0,
+    "size": 0.1831079563181961
+   }
+  },
+  "rf": {
+   "protract": {
+    "dof": "c_thorax->rf_coxa:pitch",
+    "k": 21,
+    "sign": -1.0,
+    "size": 0.3676085027422923
+   },
+   "adduct": {
+    "dof": "c_thorax->rf_coxa:roll",
+    "k": 22,
+    "sign": -1.0,
+    "size": 0.5440086528014847
+   },
+   "levate": {
+    "dof": "rf_coxa->rf_trochanterfemur:pitch",
+    "k": 24,
+    "sign": -1.0,
+    "size": 0.6207795518851147
+   },
+   "flex": {
+    "dof": "rf_trochanterfemur->rf_tibia:pitch",
+    "k": 26,
+    "sign": 1.0,
+    "size": 0.11216771165289896
+   },
+   "tarsus_levate": {
+    "dof": "rf_tibia->rf_tarsus1:pitch",
+    "k": 27,
+    "sign": -1.0,
+    "size": 0.19976196690408998
+   }
+  },
+  "rm": {
+   "protract": {
+    "dof": "c_thorax->rm_coxa:pitch",
+    "k": 28,
+    "sign": -1.0,
+    "size": 0.31650149021463136
+   },
+   "adduct": {
+    "dof": "c_thorax->rm_coxa:roll",
+    "k": 29,
+    "sign": 1.0,
+    "size": 0.326828270441368
+   },
+   "levate": {
+    "dof": "rm_coxa->rm_trochanterfemur:pitch",
+    "k": 31,
+    "sign": -1.0,
+    "size": 0.5831613359728625
+   },
+   "flex": {
+    "dof": "rm_trochanterfemur->rm_tibia:pitch",
+    "k": 33,
+    "sign": 1.0,
+    "size": 0.2608777537110899
+   },
+   "tarsus_levate": {
+    "dof": "rm_tibia->rm_tarsus1:pitch",
+    "k": 34,
+    "sign": -1.0,
+    "size": 0.20213677834167698
+   }
+  },
+  "rh": {
+   "protract": {
+    "dof": "c_thorax->rh_coxa:yaw",
+    "k": 37,
+    "sign": -1.0,
+    "size": 0.3925853836092602
+   },
+   "adduct": {
+    "dof": "c_thorax->rh_coxa:yaw",
+    "k": 37,
+    "sign": 1.0,
+    "size": 0.39151806502508946
+   },
+   "levate": {
+    "dof": "rh_coxa->rh_trochanterfemur:pitch",
+    "k": 38,
+    "sign": -1.0,
+    "size": 0.6017872519399392
+   },
+   "flex": {
+    "dof": "rh_trochanterfemur->rh_tibia:pitch",
+    "k": 40,
+    "sign": 1.0,
+    "size": 0.3104195853426098
+   },
+   "tarsus_levate": {
+    "dof": "rh_tibia->rh_tarsus1:pitch",
+    "k": 41,
+    "sign": -1.0,
+    "size": 0.18313413400056544
+   }
+  }
+ }
+}

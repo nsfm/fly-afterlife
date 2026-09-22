@@ -5095,3 +5095,48 @@ interval, and does the coxa swing *during* them (a swing phase) rather than at r
   coxa's swing during a lift has no consistent direction (sign agreement 0.12-0.25; a swing phase protracts every time). the coxa moves as
   much on the ground as in the air. so the eye assembles "raise, move, fall" from a lift and an unrelated coxa wobble. the treadmill arm is
   the most regular (cv 0.53) and the most directional (0.25), which is the clock showing through, and still far from a step.
+
+**what makes a lift (00:13 PDT; 60 s of him, seed 11, the trochanter flexors, their premotor inputs and the walking-side descending
+neurons per frame; burst-triggered averages around trochanter-flexor bursts):** the front-left leg's flexors burst 10 times in 60 s
+(interval cv 1.8: random), and in the 300 ms before a burst the walking command rises (DNg100 43 -> 51 -> 65 Hz: the command is dosed
+through the PFL2 walk gain, so it surges) and the brake with it (DNg105 10 -> 38 -> 45 Hz: he is feeding at those moments); their
+premotor exciter IN21A010 goes 11 -> 26. the mid-left leg's flexors "burst" 135 times, but the summed rate's autocorrelation is flat at every
+lag from 100 to 500 ms, the loudest cell's spike intervals have cv 0.94, and a burst is 3-4 of 7 tonic cells coinciding: a threshold on
+noise, not a rhythm. the right legs' flexors: 0 bursts (the right cord's under-tracing again). **so the lifts nate saw are coincidences on a
+few tonic trochanter flexors, plus, on the front-left leg, the command surging with the brake.** no oscillator hides in them.
+
+## the six legs (00:16 PDT; §Q 4e stage 1-2 on the whole body; `experiments/body_signs.py`, `experiments/body_six.py`)
+
+**the body:** NeuroMechFly v2 (flygym 2.1) on flat ground, the legs' 42 active joints on torque actuators (+-30), the claws as adhesion,
+MuJoCo at 0.1 ms; 0.43x real time with the replay. **the map, measured not assumed:** each joint of each leg was pushed both ways in
+zero gravity and the foot's displacement read (the springs' passive drift cancels in the difference): lifting the foot is the trochanter's
+pitch on every leg, shortening the leg is the knee's pitch, swinging the foot forward is the coxa's pitch on the front and mid legs and its
+yaw on the hind legs, each with its sign; the adductor's joint is the coxa's roll (front, mid) and yaw (hind; shared with protraction,
+noted). `results/body_dof_signs.json`. **the muscles onto the joints:** promotors + anterior rotator vs remotor + posterior rotator on the
+swing joint; trochanter flexors vs sternotrochanter + trochanter extensor on the lift joint; tibia flexors vs extensor on the knee; tarsal
+levators (Ta levator, and MNml81 / MNhl65 by the serial set) vs depressor on the tarsus; the adductor alone; the long tendon muscles onto
+the claw's adhesion (on while they fire). 301 of the 373 leg motor neurons mapped to a joint, 42 to the grip; unmapped: the femur reductor
+(the trochanter-femur joint is fused in this body), the jump muscle, and the mid / hind numbered types the brief has not yet assigned
+beyond the tarsal levators (19 types; §A's remaining assignments are the next map revision). torque = 10 x (agonist - antagonist) in the
+twitch kernel's activation units, (E). the run: the cord's or his motor neurons per frame, replayed.
+
+| arm (thorax height, mm; 0.7 = standing) | joint springs | height at the end | travelled |
+|---|---|---|---|
+| the cord, DNg100 100 Hz | flygym's (stiffness 10) | 0.69 | 0.8 mm |
+| the cord, 400 Hz | flygym's | 0.71 | 0.8 |
+| **him** (the run of record's motor neurons, 8 s) | flygym's | 0.72 | 2.3 |
+| the cord, DNg100 100 Hz | **the measured passive stiffness** (Wang 2025: ~70x weaker; 0.14) | **0.40** | 0.7 |
+| the cord at rest | the measured | 0.44 | 0.7 |
+
+- **on flygym's springs he stands** (`docs/figures/body_six_stands_springs.png`): the springs hold the neutral pose, the cord's torques
+  twitch the legs on top, he drifts a millimetre or two. **on the measured springs he lies down** (`body_six_collapses_measured.png`):
+  the thorax sinks from 0.7 to 0.4 mm, the legs splay, the belly is on the floor, with the cord's actual output (extensors at 9 Hz per cell,
+  flexors silent) and with it at rest alike. that is the honest first frame this row was promised: the brief said a body that stands with
+  silent muscles is wrong, and it is; standing in life is tonic slow-motor-neuron drive, and his cord does not supply enough of it at
+  0.185 mV under this command to hold a fly up. the stance posture the cord holds is a posture of *rates*, not of force.
+- so the first six-legged fly is a fly on the floor, and the number to move next is the one that lifts him: the tonic drive on the slow
+  motor units (the standing tonus of the leg row), measured against the body's weight. that is a calibration with a target (a fly that
+  stands is a fly whose slow MNs carry its weight; Azevedo 2020: standing is slow-unit drive) and a control (the measured springs), and
+  it is the first place the body tells the cord something back.
+- videos: `world/body/*.mp4` (the tracking camera). nate wanted to watch when there was twitching; this is a whole fly, twitching, and
+  then a whole fly lying down.
