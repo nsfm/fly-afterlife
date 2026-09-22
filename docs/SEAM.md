@@ -4308,3 +4308,68 @@ with the cells named: (a) the gate as a state that drives the brake classes, lab
 (DNp31 / DNg27 excite both halves); (b) a labelled gain correction on the premotor pair; (c) leave it. (a) is the lean and it is a
 better-founded (a) than this morning's.
 
+## what holds the inhibitory half back (18:20 PDT; nate: "have we examined all of the inputs that drive these, in isolation or not?"; `brake_balance.py`: the standing brain in the bare engine, floor + thermal rows, 10 s; every presynaptic cell of each class weighted by its measured rate x synapses x sign)
+
+| class | cells | rate | mean membrane, % of threshold | excitatory input (synapse-spikes/s per cell) | inhibitory | synapses from silent cells |
+|---|---|---|---|---|---|---|
+| IN06B066 (brake) | 25 | 3.2 Hz | +24 % | 3,541 | 760 | 88 % |
+| IN03B089 (brake) | 18 | 0.0 | +1 % | 529 | 88 | 95 % |
+| IN11B013 (brake) | 10 | 0.0 | -2 % | 1,104 | 798 | 96 % |
+| IN19B043 (premotor push) | 9 | 16.9 | +39 % | 10,040 | 3,142 | 87 % |
+| IN19B067 (premotor push) | 14 | 5.7 | +25 % | 5,323 | 2,047 | 88 % |
+| DLMn c-f (power MNs) | 8 | ~100 | | 59,867 | 27,358 | 80 % |
+
+**nothing holds the brakes back. they are under-driven.** their membranes sit at a quarter, one and minus two percent of threshold: not
+hyperpolarised by anyone firing, just not pushed, because 88-96 % of their input synapses come from cells that are silent in the
+standing brain. the premotor push, by contrast, receives 5,000-10,000 synapse-spikes per second per cell, and its two largest sources
+are the same for both cells and for the power motor neurons: **IN19B040**, a cord interneuron (5,608 and 3,724 onto the pair; 18,124
+onto the DLMns) and **DNp31, a descending neuron, firing in the standing brain** (3,122 and 886 onto the pair; 11,540 onto the DLMns;
+2,361 onto IN06B066, its largest excitatory input too). so the drive chain has a name at every stage: DNp31 and IN19B040 push the
+premotor pair, the pair pushes the power motor neurons, and the largest inhibitors of the motor neurons (IN12B015, 16,820) and of the
+pair (**IN06B013**, 1,756 and 1,301: the afternoon's "hub", GABAergic, the walking command's) fire but do not win. that last fact is
+a motif worth its own line: **the walking command's interneuron inhibits the flight premotor**, a walking-versus-flight switch in the
+wiring, which is why the power motor neurons ran at 75 Hz with the command and 93-109 without it in the map.
+
+so the question moves one stage up the chain and out of the cord: **what drives DNp31 in a standing fly?** a descending neuron carrying a
+flight-command-shaped drive (it excites both halves of the generator) into the cord while he stands is the anomaly, and its inputs are
+in the brain. the driver balance for DNp31, IN19B040 and IN12B015 runs now; the sweep of candidate inputs to the brakes runs beside it.
+
+**the two drivers, in the table (18:21 PDT):** DNp31 (2 cells, cholinergic; hemibrain and FlyWire agree on the name) receives 36,126 synapses,
+60 % from central-brain intrinsics and **26 % from visual projection neurons: LLPC2 (2,591), LPLC4 (2,022), LPC2 (776), LC36 (663)**, the
+lobula-plate and lobula columnar cells that carry wide-field motion and looming out of the optic lobe; its only sensory input is a
+whisper of JO. so the descending neuron that pushes the flight generator from above is a visual-motion descending neuron, and "vision
+alone lights the wings" in the map is that wire: flyvis -> his T4 / T5 -> the lobula plate -> DNp31 -> the cord. IN19B040 (4 cells,
+cholinergic, 5,972 input synapses) is 53 % cord-intrinsic with its largest single input **itself** (901 synapses, self-excitation), then
+an ascending glutamatergic class, the ascending sensory SAxx01 (580), and descending DNpe036; a recurrent node, which is what a gain of
+fifteen needs somewhere. what DNp31 does in life is the next thing to read (Namiki 2018's DNp set is the place to look); a visual-motion
+descending neuron into the flight premotor is the shape of an optomotor or landing command, and a standing fly in a lit garden gives it
+optic flow whenever he turns. the rate-weighted balance for DNp31 / IN19B040 / IN12B015 / IN06B013 / DNbe001 runs now.
+
+**the drivers, balanced (18:22 PDT; the same method, the standing brain):** IN19B040 fires at 116 Hz (membrane +29 % of threshold) and its
+input is 26,028 synapse-spikes/s per cell from ITSELF and 9,300 from the descending neuron DNg33, with 36 inhibitory against 36,182
+excitatory: a self-exciting node with a descending input and no brake, the amplifier's core. IN12B015 (155 Hz), the largest inhibitor of
+the DLMns, is driven by **DNb05** (57,727). IN06B013 (71 Hz) is driven by **DNb05** (10,585) and DNp31 (6,325). DNp31 itself is driven by
+**DNb05** (15,977, its largest input by far), then DNbe007, LHPV2i1, LoVP50. so one descending neuron, DNb05, firing in the standing brain,
+feeds the flight-command DN (DNp31), the motor neurons' largest inhibitor (IN12B015) and the premotor's largest inhibitor (IN06B013) at
+once; and a second, DNg33, feeds the self-exciting node. the chain, top to bottom, now reads: **DNb05 and DNg33 (descending, firing while
+he stands) -> DNp31 and IN19B040 -> IN19B043 / IN19B067 -> the power motor neurons**, with the brakes on that chain (IN12B015, IN06B013)
+also fed by DNb05 and firing, and the generator's own inhibitory half (IN06B066 / IN03B089 / IN11B013) fed by cells that are silent. the
+question moves up again: what drives DNb05 and DNg33 in the brain of a standing fly, and what are they in life. running.
+
+**who can turn the brakes on (18:23 PDT; `brake_drivers.py`: the standing brain, each of 21 candidate input classes of the brakes driven alone at 50 Hz for 6 s;
+rates over the last 4 s):** none. IN03B089 stays at 0.0 under every candidate; IN11B013 reaches 3.0 Hz under AN19B001 and 1.4 under INXXX095; IN06B066 reaches
+9.7 under IN08B068 (from 3.2) and 5.1 under DNa08. the power motor neurons fall below their 99 Hz baseline only under inputs that also blow the whole
+network up (SNpp16, the wing campaniforms, 69 Hz with the network at 164,000 spikes/s; INXXX095 likewise) or modestly under IN08B068 (76) and DNp31 (78,
+which was already firing at 82 Hz before the extra drive); DNa08 and IN19B075 push them up to 128. so no single presynaptic class, driven hard, engages the
+generator's inhibitory half: its input is many small sources, and it wants a broad or a state-shaped drive that none of the 21 supplies alone.
+
+**the two upstream descending neurons, in the table:** DNb05 (2 cells, cholinergic; hemibrain and FlyWire agree) receives 36,551 synapses, 26 % from visual
+projection neurons, above all **LPLC4 (4,712) and LLPC2 (1,805)**, the lobula-plate columnar loom / expansion cells, with a little cooling-cell and hygro input;
+its outputs go 20 % into the cord (IN12B018, IN12B015, IN23B001, IN12A001). DNg33 (2 cells, cholinergic; FlyWire only) is self-excitatory (1,496), fed by the
+LAL (LAL195: the steering output of the central complex), DNp35, DNd03 and ascending neurons, and it projects to ascending neurons and to IN19B040. so the
+two descending neurons that feed the flight machinery while he stands are a visual-loom / expansion DN (DNb05, the same inputs as DNp31 one stage down) and
+a LAL-driven, self-exciting DN (DNg33). a walking fly in a lit garden gives the loom / expansion cells self-motion optic flow at every turn, and the LAL is
+where his steering lives: both are inputs a standing fly has, and both reach the flight generator's excitatory half through nothing we can remove without
+removing sight and steering. the literature brief (running) is asked what DNb05 / DNp31 / DNg33 do in life and whether a flight state gates the visual
+drive into them, which is where the honest fix would sit if it does.
+
