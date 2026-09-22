@@ -4497,3 +4497,25 @@ arm]; (4) DNg33 de-latched [the `--std pair` arm]; (5) the flight-state visual g
 correction class with a source]; (6) the labelled brake state, only if 1-5 leave the wings up [unlikely to be needed]. the batch decides
 between 3 and 4 tonight; 5 is queued as the gate's honest form for when he has a flight state to switch it.
 
+## depression on the run of record (18:52 PDT; `world/std/`, the configuration of record (climb, tilt, feeding read from MN9), three seeds x 120 s; the tilt batch of 14:28 as the baseline; rates after 2 s)
+
+| arm | first on the fruit | feeding | walked | DLMn | DVMn | DNg33 | IN19B040 | DNb05 | MN9 on the fruit | KCg-m | leg MNs |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| the defaults (tilt batch) | 8.1 / 5.9 / 9.1 s | 8 / 9 / 8 s | 19.3 / 23.1 / 13.9 m | ~100 | ~100 | ~200 | ~112 | ~190 | 13.5 / 6.2 / 12.0 Hz | | 32.8 / 34.1 / 32.6 |
+| **`--std pair`** (depression on the DNg33 pair's synapses only) | 13.8 / 5.8 / 8.1 s | 8 / 8 / 8 s | 10.8 / 16.8 / 13.3 m | **0.0 / 0.0 / 0.1** | **9.5 / 9.3 / 7.8** | 62-70 | **0.0** | 206-213 | 10.9 / 10.0 / 9.1 | 0.03 | 31.8 / 32.6 / 32.2 |
+| `--std all` (every cell) | never / never / 78.5 s | 0 / 0 / 0 s | 44.8 / 47.3 / 38.2 m | 0.1 | 0.1 | 0 | 0 | 48-50 | 0 | 0.00 | **1.7 / 2.3 / 1.6** |
+
+**depression on the pair alone quiets the wings and leaves him alone.** the DLM motor neurons go from ~100 Hz to 0.0, the DVMs to 8-9, the
+self-exciting cord node to 0, the pair itself from a locked 200 to a driven 62-70; and he walks up the plume, climbs the fruit at 6-14 s, feeds
+by MN9 for 8 s, and leaves, three of three, with the leg tonus (32 Hz per cell) and the feeding readout unchanged. the DVMs' remaining 9 Hz is
+below the flying fly's 5-20 (Harcombe & Wyman 1977) and not the brief's "not flying = 0"; it is driven by what still reaches the premotor
+through DNp31 and the descending set, and it is the residue the flight-state gain (TODO 8e) is for.
+
+**depression on every cell breaks the calibration**, as predicted: the leg motor neurons fall from 32 Hz per cell to 2, so the standing
+tonus the pace is read against is gone and he runs 38-47 m in two minutes without ever reaching the fruit; the mushroom body goes to zero;
+DNb05 drops to 49. every tonic sensory row depresses to a fifth of its drive at steady state and every calibration of the record was made
+without that. it is the physiology, and it is a refreeze day with every baseline re-measured, which is nate's call (docs/ASK.md). the
+middle option, depression on the sensory populations plus the pair (`--std sensory`: the encoding fix the brief asks for, Budelli 2019),
+runs now. tonight's honest default is the pair: two cells, the reason written (a mutual 773 / 723 loop in an engine with no adaptation),
+the mechanism cited (Tsodyks & Markram 1997), the exit the engine-wide physiology when the refreeze is done.
+
