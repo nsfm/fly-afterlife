@@ -31,6 +31,8 @@ ap.add_argument("--log-types", default="", help="comma-separated types to log pe
 ap.add_argument("--warmup", type=float, default=2.0, help="seconds before the walking command comes on (the cord at rest under the floor)")
 ap.add_argument("--treadmill", type=float, default=0.0, help="the headless treadmill (a labelled stand-in, 09-21): step frequency in Hz at which each leg's proprioceptors (world/legs.npz, by bodyId) are loaded in stance (--leg-load-hz) and UNLOADED (0 Hz) in swing, in two alternating tripods (L1 R2 L3 / R1 L2 R3), --treadmill-duty of the cycle in stance; 0 = off (the floor's constant load). asks whether unloading alone releases swing")
 ap.add_argument("--treadmill-duty", type=float, default=0.5)
+ap.add_argument("--adapt", default="", help="spike-frequency adaptation on every cell, B:TAU (mV per spike, ms), e.g. 1:200; off by default. an intrinsic current the LIF lacks (docs/SEAM.md \"the switch\"), constants (E) swept, labelled")
+ap.add_argument("--rebound", default="", help="post-inhibitory rebound on every cell, G:TAU (mV of push per mV of hyperpolarisation, ms), e.g. 1:100; off by default; labelled")
 ap.add_argument("--drive", default="", help="drive named sensory / descending types at a rate: TYPE:HZ,TYPE:HZ (e.g. SNpp50:50, the extension-tuned FeCO claw cells); rows after the floor and the treadmill, so they override on those cells; a labelled diagnostic")
 args = ap.parse_args()
 fps, CH = 100, 10; SPF = 1000 // fps; t0 = time.time()
@@ -40,12 +42,16 @@ mty = M.type.astype(str); mns = M.side.astype(str)
 print(f"{args.brain}: {M.N} cells; engine {type(M).__name__}, {args.integrate}, w {args.wsyn_m} mV, noise {args.noise}")
 
 if args.std != "off":   # the same block as pair.py (09-21)
-    _mask = np.ones(M.N, bool) if args.std == "all" else (mty == "DNg33")
+    _mask = np.ones(M.N, bool) if args.std == "all" else (mty == "DNg33") if args.std == "pair" else np.isin(mty, args.std.split(","))   # all | pair | a comma-separated type list (the inhibitor pools, 09-21 night)
     M._std_mask = _mask; M._std_x = np.ones(M.N, np.float32); M.std_on = True
     if args.std_u is not None: M.p.std_u = float(args.std_u)
     if args.std_tau is not None: M.p.std_tau_rec_ms = float(args.std_tau)
     print(f"short-term depression on {int(_mask.sum())} cells ({args.std}); u {M.p.std_u}, tau {M.p.std_tau_rec_ms} ms")
 
+if args.adapt:
+    b_, tau_ = (float(x) for x in args.adapt.split(":")); M.adapt_on = True; M.adapt_b = b_; M.adapt_tau = tau_; M._adapt_a = np.zeros(M.N, np.float32); print(f"adaptation: b {b_} mV per spike, tau {tau_} ms")
+if args.rebound:
+    g_, tau_ = (float(x) for x in args.rebound.split(":")); M.rebound_on = True; M.rebound_g = g_; M.rebound_tau = tau_; M._reb_r = np.zeros(M.N, np.float32); print(f"rebound: g {g_}, tau {tau_} ms")
 REG = Registry()
 if args.walk > 0:
     _wd = [x for x in args.walk_dn.split(",") if x]; WALK = np.flatnonzero(np.isin(mty, _wd) & (M.sc.astype(str) == "descending_neuron"))   # a comma-separated list: the command as a population (09-21 night)

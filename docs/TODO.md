@@ -70,6 +70,15 @@ one change per run, its control, the measurement that decides it. status: queued
    constant, depression, load constant or tripod-timed, the claw); a flexion-biased DN population (DNge035, DNge049, DNg95, DNge038) makes it
    hold a swing posture instead (flexors 0.9-2.7 Hz), co-contraction with both. **next on the row, in the cord: (1) rebound / plateau currents
    and electrical synapses as labelled engine physics with sources; (2) the walking population with a time course.** the body (4e) regardless.
+   **[stage 1-2 on one leg, 09-21 22:57]** `flygym` 2.1 installed; `experiments/leg_replay.py` replays a cord run's left-front-leg motor neurons
+   through FlyMimic's fifteen Hill muscles (map by name; twitch kernel; force by synapse size) on the tethered body: it twitches, more with the
+   dose; figure `docs/figures/leg_replay_joints.png`, videos `world/cord/video/`. next: the six-legged NeuroMechFly on the floor (joint torques from
+   the same map), then the loop (joints and loads -> his proprioceptors).
+   **[hunted 09-21 22:49]** the half-centre is in the table (flexor exciters -> extensor inhibitors +13.5k, the reverse +10k, inhibitors mutually
+   -13k / -15k) and none of four release mechanisms switches it (depression everywhere / on the inhibitors alone, adaptation, rebound: 40 arms),
+   because the inhibitor pools barely reach the opposing exciters (-0.7k / -1.7k): a router with a load reflex, alternated by its inputs. **the
+   body (4e) is now first**: the load loop through real legs, then the descending population with a time course. `--adapt`, `--rebound`,
+   `--std <types>`, `--drive TYPE:HZ`, `--treadmill` stay in `world/cord.py` as diagnostics; the engine terms are off by default (oracle: see SEAM).
    **[measured 09-21 22:13]** `--std all` on the 90 s probe: the cord goes quiet (0-3 Hz everywhere, flexors still 0), the pace readout degenerates (a
    depressed standing tonus), and a 10 Hz "beat" turned out to be chunk-locked. no stepping; "not like this". next on this row: 4f first.
 4g. **[queued 09-21 22:13] the chunk seam**: the cord's rate dips after every 100 ms chunk boundary and climbs back by the eighth frame (4x under

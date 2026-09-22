@@ -4922,3 +4922,123 @@ seconds; (2) the walking command as it is in life: a population with a *time cou
 brain's own modulation of it, which the headless fly lacks and Bidaye's optogenetic fly also lacked, and walked); (3) the body, which
 closes the load loop honestly and is built regardless (§Q 4e). the headless preparation is the place for (1) and (2): forty times cheaper,
 and it reproduced the whole fly's answer.
+
+## the switch (22:37 PDT; nate: "you have some targets to hunt. go for it")
+
+two intrinsic currents a real neuron has and this LIF does not, added to the engine as labelled terms on the external-current path
+(`world/fastlif.py`; the compiled membrane kernels untouched; off by default, so the oracle's runs are bit for bit what they were: running):
+
+- **spike-frequency adaptation** (`--adapt B:TAU`): a per-cell variable a (mV) that jumps by B on each spike and decays with TAU, subtracted
+  from the drive. the AdEx model's w in voltage units (Brette & Gerstner 2005); ubiquitous in insect neurons; the constants for fly cells
+  are not tabulated per type (van der Veen 2025 use tau_w 50 ms, b 264 pA for insect afferents), so B and TAU are swept and marked (E).
+- **post-inhibitory rebound** (`--rebound G:TAU`): a per-cell variable r that follows G x (the hyperpolarisation below rest) with TAU and is
+  added to the drive: a sag while inhibited and a push that outlasts the inhibition, the shape of an I_h. present in Drosophila motor
+  neurons (larval: Ih documented; adult leg MNs: not measured, (E)).
+
+both are the classic half-centre ingredients besides synaptic fatigue (Brown 1911; Marder & Bucher 2001: reciprocal inhibition needs a
+release, from adaptation, depression or rebound, to alternate). the cord's wiring has the reciprocal inhibition (the 13A / 13B hemilineages
+between flexor and extensor premotor circuits, Cheong 2024); tonight's sweep says depression alone does not release it. arms: each term over
+a box, under the single command (DNg100) and under the population that co-contracts (DNg100 + the flexor set), which is the arm that can
+turn co-contraction into alternation if anything can.
+
+**the arms (22:43 PDT; the cord, 30 s, seed 11; `experiments/gait_score.py`):**
+
+| arm | MN Hz | active | flex Hz | ext Hz | antag | legs |
+|---|---|---|---|---|---|---|
+| DNg100 alone (the record) | 1.96 | 52 | 0.00 | 9.3 | -0.16 | +0.00 |
+| + adaptation b 0.5 / 2 mV, tau 100 / 300 ms (four arms) | 0.97-1.78 | 63-69 | 0.00-0.04 | 2.3-6.6 | -0.04 to -0.14 | +0.00 |
+| + rebound g 0.5 / 2, tau 50 / 150 ms (four arms) | 2.2-3.4 | 66-100 | 0.00-0.10 | 9.0-10.0 | -0.18 to -0.33 | +0.00 |
+| + both (b 1 tau 200; g 1 tau 100) | 2.06 | 89 | 0.11 | 4.6 | -0.16 | +0.00 |
+| the population DNg100 + the flexor set (co-contraction) | 2.54 | 70 | 0.57 | 8.6 | -0.26 | +0.00 |
+| + adaptation (four arms) | 1.9-2.7 | 76-91 | 0.48-0.61 | 5.0-9.4 | -0.12 to -0.26 | +0.00 |
+| + rebound (four arms) | 2.9-4.1 | 80-110 | 0.62-0.78 | 10.2-11.6 | -0.25 to -0.33 | +0.00 |
+| + both | 3.28 | 104 | 0.75 | 8.4 | -0.30 | +0.00 |
+
+- **neither current switches anything.** adaptation quietens the stance (the extensors 9 -> 2-7 Hz) without waking the flexors; rebound
+  recruits cells (52 -> 100-110 active) into the same posture; under the co-contracting population both terms leave flexors and extensors
+  on together at every constant, and no leg anti-phases another anywhere (the inter-leg column is +0.00 in all eighteen arms).
+- with synaptic depression (the sweep above), that is all three classic release mechanisms of a half-centre failing on this wiring at
+  these constants. the question underneath them is structural: **is there a half-centre in the table at all**, as reciprocal inhibition
+  between the flexor-side and extensor-side premotor pools? a query, next.
+
+**the half-centre is in the table (22:43 PDT; the cord file, signed synapses between the ten largest premotor types on each side of the knee):**
+
+| from -> to | excitatory | inhibitory |
+|---|---|---|
+| flexor-exciters -> extensor-**inhibitors** | **+13,543** | |
+| extensor-exciters -> flexor-**inhibitors** | **+9,968** | |
+| flexor-inhibitors -> extensor-inhibitors | | **-13,006** |
+| extensor-inhibitors -> flexor-inhibitors | | **-15,368** |
+| flexor-inhibitors -> extensor-exciters | | -1,660 |
+| extensor-inhibitors -> flexor-exciters | | -666 |
+| flexor-exciters -> flexor-exciters (self) | +8,715 | |
+| extensor-exciters -> extensor-exciters (self) | +2,459 | |
+| between the exciter pools | +572 / +2,354 | |
+
+(flexor-exciters: IN21A004, IN03A004, IN20A.22A009, IN03A031, IN21A022, IN20A.22A010, IN03A039, IN19B012, IN21A020, IN17A016, all
+cholinergic; flexor-inhibitors: IN21A002, IN19A015, IN14A004, IN13A005, IN21A006, IN12B018, IN13A001, IN13A002 + DNg105, DNge079, GABA
+and glutamate; extensor-exciters: IN20A.22A007, IN04B031, IN12A001, IN04B027, IN20A.22A036 / 005 / 004, IN04B037, IN19B003, IN01A038;
+extensor-inhibitors: IN19A005, IN08A007, IN13A006 / 014 / 015 / 045 / 042, IN08A005, IN16B077 + DNg105.)
+
+each side's exciters drive the *other* side's inhibitors, and the two inhibitor pools inhibit each other: reciprocal inhibition through
+interneurons, Brown 1911's circuit as Cheong 2024 drew it for the 13A / 13B hemilineages. what it does under a tonic command is
+winner-take-all: the side the command favours drives the other side's inhibitors, which also silence their own opponents, and the loser's
+exciters never light (the run of record exactly: extensors on, IN09A002 / IN16B016 at 50-60 Hz, IN21A004 / IN03A004 dead). a half-centre
+alternates only when the winning side tires; fatigue on *every* synapse silenced the cord instead. the mechanism-shaped test (nate, 09-21:
+depression on targeted cells over gates): **depression on the two inhibitor pools alone**, so the winning inhibition fades and the other side
+can take over; the exciter pools as the control. `--std` takes a type list now.
+
+**depression on the inhibitor pools alone (22:49 PDT; the cord; 115 cells of the two inhibitor pools, or 164 of the two exciter pools as the control):**
+
+| arm | flex Hz | ext Hz | antag | legs |
+|---|---|---|---|---|
+| DNg100 (the record) | 0.00 | 9.3 | -0.16 | +0.00 |
+| + std on the inhibitor pools, u 0.08 / 0.2 / 0.5, tau 0.5-2 s (four arms) | 0.03-0.18 | 11.5-18.5 | -0.14 to -0.18 | +0.00 |
+| + std on the exciter pools (control, two arms) | 0.00 | 3.5 | -0.12 | +0.00 |
+| the population (co-contraction) | 0.57 | 8.6 | -0.26 | +0.00 |
+| + std on the inhibitor pools (four arms) | 1.19-2.20 | 10.0-15.8 | -0.21 to -0.23 | +0.00 |
+| + std on the exciter pools (control) | 0.38 | 6.1-6.6 | -0.12 | +0.00 |
+
+- **tiring the inhibitors disinhibits both sides.** flexors and extensors both rise (to 2.2 and 15.8 under the population), together, and
+  no leg anti-phases another. the control (tiring the exciters) lowers both. no switch.
+- **why, from the table above:** the inhibitor pools barely touch the opposing *exciters* (-666 and -1,660) against what they put onto each
+  other (-13,000 / -15,000) and onto the motor neurons directly. so the reciprocal inhibition in this cord acts at the motor neuron and the
+  inhibitor level, while the exciter pools are driven from above (the descending neurons) and from the leg (the claw onto IN21A004), not
+  by each other's silence. a circuit like that does not oscillate on its own under a steady command; it holds whichever side is fed, and
+  it alternates when its *inputs* alternate: the descending population with a time course, and the leg's own sensors through a body.
+  which is what deafferented insects do: they walk badly (Bässler & Büschges 1998; in the fly, Mendes 2013 on proprioceptive loss).
+
+**the switch, at the end of the hunt.** four release mechanisms tried on a half-centre that is present in the wiring (synaptic
+depression everywhere, on the inhibitors alone, spike-frequency adaptation, post-inhibitory rebound; 40 arms in the cord, 5-25 s each), none
+switches it, and the table says why: the two sides do not silence each other's exciters. the honest reading is that this cord is a router
+with a load reflex, and the rhythm in life is closed through the leg and shaped from above. **the body moves to the front of the queue.**
+
+## the first body (22:57 PDT; §Q 4e stage 1-2 on one leg; nate: "if you start to get what you'd at least describe as twitching motion, I would like to begin watching")
+
+`flygym` 2.1.0 installed (NeuroMechFly v2's package; it now ships the DeepMind body and FlyMimic's musculoskeletal leg, Özdil 2026, as
+`MusculoskeletalFly`: a tethered thorax with the left front leg on fifteen Hill-type muscles, MuJoCo at 0.1 ms, 0.7x real time on this
+laptop). its fifteen muscle names are the table's muscle names, so the map from his motor neurons is by name: promotors, remotor, the
+rotators, the adductor, trochanter flexors / extensors, tibia flexor / extensor; unmapped (no muscle or joint in FlyMimic): the long tendon
+muscles, the tarsal muscles, the femur reductor, the jump muscle. `experiments/leg_replay.py`: the cord's per-frame spikes of the 68 left
+front-leg motor neurons -> a twitch kernel (difference of exponentials, rise 7 ms, decay 20 ms, peak 21 ms; Azevedo 2020) x a force weight
+by input-synapse size within the muscle ((S / S_max)^1.2, the brief's exponent) / a saturation of 10 spike-equivalents -> the muscle's
+activation in [0, 1] -> the body, 1 ms control, joint angles recorded, a video rendered. **a replay, nothing fed back.** spikes sit at the
+log's 10 ms frames (coarse; the twitch is longer than a frame; noted).
+
+| the cord's arm, 5 s replayed | tibia pitch range (sd) | trochanter pitch range (sd) | coxa yaw sd |
+|---|---|---|---|
+| at rest (no command) | 89-107 (0.9) | -143 to -137 (0.4) | 1.2 |
+| DNg100 100 Hz (the record's dose) | 72-107 (4.9) | -153 to -99 (7.5) | 3.8 |
+| DNg100 400 Hz | 36-107 (17.5) | -146 to -86 (14.0) | 4.3 |
+| 400 Hz + the 5 Hz treadmill | 36-107 (16.9) | -154 to -94 (13.1) | 4.0 |
+| the flexor set, load 0 (the swing posture) | 70-107 (3.6) | -173 to -108 (10.0) | 2.3 |
+
+- **it twitches.** at rest the leg holds still to within a degree; under the command the tibia and trochanter swing tens of degrees, more
+  with the dose (a 70 deg tibia range at 400 Hz). the activations are small (the promotors peak at 0.4 of full, most muscles under 0.2)
+  because the cord's front leg is quiet, and the movement is the leg answering what little there is.
+- `docs/figures/leg_replay_joints.png` (the joint traces across the arms); videos in `world/cord/video/*.mp4` (untracked; 5 s each, the
+  scene camera). this is the point nate asked to start watching: `world/cord/video/walk400.mp4` is the loudest.
+- what it is not: a leg on the ground (the thorax is anchored: a tethered fly), a loop (the joint angles go nowhere yet), or six legs.
+  stage 2 is the NeuroMechFly body on the floor with the same map on all six legs through joint torques; stage 3 feeds its joints and
+  loads back as his proprioceptors. and the map's honest gap: FlyMimic's muscle dynamics (tau_act 0.1 ms) are 85x faster than the measured
+  8.5 ms half-rise, which is why the twitch kernel is ours and the body's own activation dynamics are left near-instant.

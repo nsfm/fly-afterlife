@@ -8,6 +8,7 @@ authors = [
 ]
 requires-python = ">=3.12"
 dependencies = [
+    "flygym>=2.1.0",
     "flyvis>=1.2.0",
     "matplotlib>=3.11.2",
     "numba>=0.67",
