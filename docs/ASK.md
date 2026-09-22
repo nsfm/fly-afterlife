@@ -92,3 +92,9 @@ want to test and it cannot be tested lying down.
 **refined (01:22):** the "smallest 93" are the accessory flexors, ltm and tarsal cells, so a stand-in on them is a flexion tonus (measured:
 he curls). the honest stand-in is on the *extensor* slow units per leg (sternotrochanter / trochanter extensor / tibia extensor's small
 members) at a load-scaled rate; the question for you is still (a) that stand-in, labelled, or (b) no stand-in and a fly on the floor.
+
+**refined again (01:28):** the stance muscles' motor neurons are all large-input cells in this file (7 below the median), so there are no
+"slow extensor units" to hold either. the choice is now: (a) a load-scaled tonic drive on the extensor motor neurons *regardless of size*
+(a stand-in for the slow-unit standing reflex on cells the size rule calls fast; labelled; exit = a dataset that resolves the slow units),
+or (b) no stand-in, and the loop is tested from a fly on the floor, which cannot load its feet. i recommend (a) as a diagnostic first (does
+a standing body walk when the loop closes?), and as a default only if you say so.

@@ -31,6 +31,7 @@ ap.add_argument("--walk", type=float, default=100.0); ap.add_argument("--walk-dn
 ap.add_argument("--leg-load-hz", type=float, default=15.0); ap.add_argument("--loop", default="position+load", help="off | position | load | position+load")
 ap.add_argument("--claw-hz", type=float, default=100.0); ap.add_argument("--hook-hz", type=float, default=100.0); ap.add_argument("--hook-vel", type=float, default=300.0)
 ap.add_argument("--slow-hz", type=float, default=0.0, help="the standing-tonus stand-in: the 93 smallest leg MNs held at this rate x their leg's load (0 = off)")
+ap.add_argument("--slow-set", default="size", help="which cells the standing-tonus stand-in holds: size (the 93 smallest leg MNs: measured to be the accessory flexors, a flexion tonus) | extensor (the stance muscles' motor neurons below the median input size, per leg: sternotrochanter, trochanter extensor, tibia extensor, pleural remotor, sternal posterior rotator; the standing tonus as life has it, on the slow members of the anti-gravity muscles (E))")
 ap.add_argument("--slow-init", type=float, default=0.0, help="set him down standing: for this many seconds after the warm-up the load term is clamped to at least standing (F_stand) on every leg, so the load reflex and the stand-in start engaged; then the body's own load. an initial condition, labelled (0 = off)")
 ap.add_argument("--gain", type=float, default=42.0); ap.add_argument("--sat", type=float, default=10.0); ap.add_argument("--alpha", type=float, default=1.2); ap.add_argument("--stiffness", type=float, default=None)
 ap.add_argument("--warmup", type=float, default=2.0); ap.add_argument("--no-video", action="store_true"); ap.add_argument("--fps", type=int, default=25)
@@ -71,11 +72,14 @@ for g, L in (("fl", "f"), ("ml", "m"), ("hl", "h")):
             if int(wbid[i]) in pos: legof[pos[int(wbid[i])]] = s.lower() + L
 LEGMN = np.array(sorted(legof)); insyn = np.bincount(M._out_tgt, weights=np.abs(M._out_w), minlength=M.N) / M.p.mv_per_synapse
 q25 = np.quantile(insyn[LEGMN], 0.25); SLOW = LEGMN[insyn[LEGMN] < q25]
+if args.slow_set == "extensor":
+    STANCE = ("Sternotrochanter MN", "Tr extensor MN", "Ti extensor MN", "Pleural remotor/abductor MN", "Sternal posterior rotator MN"); q50 = np.quantile(insyn[LEGMN], 0.5)
+    SLOW = np.array([j for j in LEGMN if mty[j] in STANCE and insyn[j] < q50], np.int64)
 if args.slow_hz > 0:
     for leg in LEG6:
         cells = np.array([j for j in SLOW if legof[j] == leg], np.int64)
         if len(cells): REG.add(ReceptorClass(f"slow_{leg}", cells, Rate("slow"), (lambda kk: (lambda st: st[kk]))(f"slow_{leg}"), source="the standing-tonus stand-in (docs/ASK.md a): slow units held at a load-scaled rate; labelled"))
-    print(f"standing-tonus stand-in: {len(SLOW)} small leg MNs (< {q25:.0f} input synapses) at {args.slow_hz} Hz x load")
+    print(f"standing-tonus stand-in ({args.slow_set}): {len(SLOW)} leg MNs at {args.slow_hz} Hz x load; types {sorted(set(mty[SLOW]))}")
 M.driven[:] = False
 for cl in M.SENSORY_CLASSES: M.driven[M.cls == cl] = True
 for rc in REG.classes: M.driven[rc.cells] = True

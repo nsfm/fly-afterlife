@@ -5302,3 +5302,13 @@ flexion claws, 7-9 hooks, 93-101 load cells each; the front legs 1-3 / 27 and 0-
 - so the row stands here: a body that lies down, a loop that works, and a stance that this cord cannot yet hold. the standing tonus is the
   one remaining stand-in question, and it is now precisely posed: which extensor motor neurons carry the tonic load reflex, and at what
   rate under a body weight.
+
+**the extensor stand-in (01:28 PDT; `--slow-set extensor`: the stance muscles' motor neurons below the median input size, held at a
+load-scaled rate, set down standing; 20 s, seed 11):** only **7** of the stance muscles' motor neurons (posterior rotators and trochanter
+extensors) fall below the median input size in this file: the sternotrochanter, trochanter extensor and tibia extensor pools are all
+large-input cells. so the "slow extensor units" do not exist by the size rule either, and seven cells at 60-200 Hz x load do not stand
+him up: thorax 0.43-0.56 (0.7 = standing), one mid leg pushing to 5-6 uN under him again, the loop's flexor wake-up (0.5-0.6) intact, the
+rest unchanged. **the standing tonus has no cells to run on by size in either direction:** the small cells are flexors, the extensor
+cells are large. what remains is a tonus on the extensor motor neurons regardless of size, which is a stand-in for a *function* (the
+slow-unit standing reflex) on cells the size rule calls fast: labelled puppetry of §P's kind, with the exit being a dataset that resolves
+the slow units, or (b) no stand-in and a fly on the floor. this is docs/ASK.md's question, now exactly posed, and it is nate's.
