@@ -5168,3 +5168,30 @@ knee: a fraction of one fast spike. a derivation, not a fit; the arms on the mea
   correction already used on the compass pair), applied to the leg motor pools, tested on the body: if a mirrored cord stands and the raw
   one falls, the fall was the tracing; (3) the loop, so that a leg that takes weight loads its own sensors and the load reflex holds it.
   the mirror test is one flag and one replay: first thing tomorrow.
+
+**the mirror test (00:33 PDT; nate: "mirror correction, real brain surgery eh? let's give it a shot"; `world/cord.py --mirror vnc`: 3,389
+bilateral types' input weights scaled toward the pair mean, clip 2, 462 cells at the clip; the labelled tracing correction of 09-19 on the
+whole cord):**
+
+| the cord | mid tibia extensor L / R (Hz per cell) | segment totals L / R |
+|---|---|---|
+| raw, DNg100 100 Hz | 36.3 / 7.9 | fl 0.58 / 0.54, ml 2.31 / 2.30, hl 3.08 / 3.21 |
+| mirrored | 24.8 / 13.1 | 0.42 / 0.57, 1.87 / 2.73, 2.95 / 3.42 |
+| raw, 400 Hz | 95.7 / 38.9 | |
+| mirrored | 81.2 / 48.5 | |
+
+| the body, measured springs, derived torque (mean thorax height after 1 s; 0.7 = standing; planar speed) | raw | mirrored |
+|---|---|---|
+| at rest | 0.45, 1.1 mm/s | 0.45, 1.0 |
+| DNg100 100 Hz | 0.58, 6.3 | 0.58, 5.0 |
+| 400 Hz | 0.71 (tumbling), 20.9 | 0.57, 16.2 |
+| the load at 60 Hz | 0.57, 10.0 | 0.58, 11.4 |
+
+- **the mirror narrows the asymmetry and changes nothing on the body.** the mid knee's 36 / 8 becomes 25 / 13; the segment totals were
+  even already (the lopsidedness is in *which* cells fire, not in how many spikes a side gets); and on the floor the mirrored cord lies
+  down and scoots exactly as the raw one does (`world/body/mir_*_weak42.mp4`; frame: on his side, legs up). so the fall is not the tracing,
+  or not mainly. (the earlier table's heights were end-of-run values; these are means after the first second, which is why the record's
+  dose reads 0.58 here and 0.44 there; the film is the same film.)
+- what is left is the physiology: a stance that holds a fly up is tonic, symmetric, and on the slow units of every leg at once, and this
+  cord under this command gives a few loud fast cells on a few legs. the standing tonus (SEAM above, (1)) is the next single variable:
+  the load reflex, per leg, from the leg's own load, which is the loop. the mirror stays available as the labelled correction it is.

@@ -29,6 +29,7 @@ ap.add_argument("--leg-load-hz", type=float, default=15.0, help="the floor's rat
 ap.add_argument("--silence", default="", help="comma-separated types whose threshold is put out of reach (no effect on driven cells)")
 ap.add_argument("--log-types", default="", help="comma-separated types to log per frame (default: every leg motor neuron type)")
 ap.add_argument("--warmup", type=float, default=2.0, help="seconds before the walking command comes on (the cord at rest under the floor)")
+ap.add_argument("--mirror", default="off", help="mirror normalisation of bilateral pairs' input weights (src/fly_afterlife/wiring.py; the labelled tracing correction of 09-19): off | all | vnc (motor, IN, AN, SN types) | a comma-separated type list")
 ap.add_argument("--treadmill", type=float, default=0.0, help="the headless treadmill (a labelled stand-in, 09-21): step frequency in Hz at which each leg's proprioceptors (world/legs.npz, by bodyId) are loaded in stance (--leg-load-hz) and UNLOADED (0 Hz) in swing, in two alternating tripods (L1 R2 L3 / R1 L2 R3), --treadmill-duty of the cycle in stance; 0 = off (the floor's constant load). asks whether unloading alone releases swing")
 ap.add_argument("--treadmill-duty", type=float, default=0.5)
 ap.add_argument("--adapt", default="", help="spike-frequency adaptation on every cell, B:TAU (mV per spike, ms), e.g. 1:200; off by default. an intrinsic current the LIF lacks (docs/SEAM.md \"the switch\"), constants (E) swept, labelled")
@@ -52,6 +53,8 @@ if args.adapt:
     b_, tau_ = (float(x) for x in args.adapt.split(":")); M.adapt_on = True; M.adapt_b = b_; M.adapt_tau = tau_; M._adapt_a = np.zeros(M.N, np.float32); print(f"adaptation: b {b_} mV per spike, tau {tau_} ms")
 if args.rebound:
     g_, tau_ = (float(x) for x in args.rebound.split(":")); M.rebound_on = True; M.rebound_g = g_; M.rebound_tau = tau_; M._reb_r = np.zeros(M.N, np.float32); print(f"rebound: g {g_}, tau {tau_} ms")
+if args.mirror != "off":
+    from fly_afterlife.wiring import mirror_normalise; print("mirror normalisation:", mirror_normalise(M, scope=(args.mirror.split(",") if "," in args.mirror else args.mirror)))
 REG = Registry()
 if args.walk > 0:
     _wd = [x for x in args.walk_dn.split(",") if x]; WALK = np.flatnonzero(np.isin(mty, _wd) & (M.sc.astype(str) == "descending_neuron"))   # a comma-separated list: the command as a population (09-21 night)
