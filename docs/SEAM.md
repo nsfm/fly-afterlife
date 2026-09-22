@@ -5385,3 +5385,32 @@ the slow units, or (b) no stand-in and a fly on the floor. this is docs/ASK.md's
   seed-robust change in inter-leg coordination, the first on this row, and the wrong direction, which is the finding's own control.
 - the mechanism is the load loop: MDN loads one mid leg, the load rows and the tonus answer on that leg, and the anti-phase is that leg's
   reflex against the front legs' push, not a swing. the knees under it do not oscillate (no negative lobe).
+
+**the unloading term (09:20 PDT; `--load-deriv G`: the load rows and the stance tonus get F/F_stand + G x dF/dt x 50 ms / F_stand, so a leg
+being unloaded loses its stance drive before its load is gone; the standing body, the loop closed, 20 s, seed 11):**
+
+| arm | flexors | extensors | height | legs (inter-leg min) | feet on the ground (%, lf lm lh rf rm rh) | lifts > 50 ms |
+|---|---|---|---|---|---|---|
+| G = 0 (the standing control) | 0.44 | 24.8 | 0.71 | -0.02 | 59 24 18 64 10 19 | 1 69 44 0 82 82 |
+| G = 1 | 0.36 | 31.4 | 0.71 | -0.15 | | |
+| G = 3 | 0.21 | 34.6 | 0.71 | -0.14 | 68 24 19 68 9 20 | 0 38 35 1 79 44 |
+| G = 10 | 0.33 | 35.1 | 0.71 | -0.19 | 70 25 19 71 7 18 | 1 58 43 1 72 67 |
+| G = 3, 400 Hz | 0.42 | 27.1 | 0.64 | -0.23 | | |
+| G = 3, DNg100 + the flexor set | 3.12 | 28.8 | 0.72 | -0.09 | 43 14 19 42 10 18 | 15 58 36 17 104 73 |
+| G = 3, MDN | 2.91 | 33.7 | 0.71 | -0.38 | | |
+
+- **rate sensitivity on the load makes the legs a little more independent and no more rhythmic.** the inter-leg minimum moves from -0.02 to
+  -0.14 / -0.19 as G rises (each leg's drive now follows its own load's changes), the extensors rise (loading adds), the flexors do not
+  wake further, the feet keep the same on-ground fractions (the front pair 60-70 %, the back four 10-25 %), the back feet tap as before
+  (35-80 lifts), and no knee oscillates. the swing trigger, as a derivative on load feeding the load rows, is not enough by itself: an
+  unloaded leg loses its stance drive and then nothing lifts it, because the flexors' excitation (IN21A004 and company) still waits on
+  input that neither the claws (which drive extension here) nor the load's fall provides.
+
+**where the body row stands, the morning after.** he stands (a labelled stand-in holds him; the file has no slow units); the loop is closed
+and it works (position wakes the flexors; load re-distributes the stance; MDN reorganises the legs the same way on four seeds); nothing
+steps. every reflex term and command tried on the standing body leaves the front pair pushing and the back four tapping. the flexors'
+premotor cells, which have to fire for a swing, have fired for one reason all week: a flexion-biased descending population. so the next
+honest arm is the walking command as the population it is in life (Braun 2024; DNa01 / DNa02 / DNp09 / DNg13 / oDN1 / DNge035 and the rest
+together, at rates from the whole fly's own run rather than a flat 100 Hz), on the standing body, with the loop; and past that the whole
+fly, brain and all, in the body: the descending population as the brain actually produces it. that is the build the row was always
+heading for, and it is now a matter of running him at an eighth of real time with a body attached.

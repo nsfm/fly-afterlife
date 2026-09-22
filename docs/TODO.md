@@ -89,6 +89,10 @@ one change per run, its control, the measurement that decides it. status: queued
    the standing height on six feet at full gravity with the loop closed; propped up (`--tethered`) and at reduced gravity the cord's pattern is
    unchanged (no crushing); standing, he does not step (a front-leg push-up, no tripod). **next: an unloading term on the tonus (dF/dt, the
    campaniform brief), the flexion-biased DNs on the standing body, and three seeds.**
+   **[09-22 09:20]** done: seeds (robust), the flexion DNs and MDN (MDN reorganises the legs the same way on four seeds, forward-right drift, not
+   backward), the unloading term (more independence, no rhythm). **next: the walking DN population at the whole fly's own rates on the standing
+   body with the loop (`--walk-dn` list + per-type rates), then the whole fly in the body (brain + cord + body in one process).** the stand-in
+   as default: nate's call (docs/ASK.md).
    **[hunted 09-21 22:49]** the half-centre is in the table (flexor exciters -> extensor inhibitors +13.5k, the reverse +10k, inhibitors mutually
    -13k / -15k) and none of four release mechanisms switches it (depression everywhere / on the inhibitors alone, adaptation, rebound: 40 arms),
    because the inhibitor pools barely reach the opposing exciters (-0.7k / -1.7k): a router with a load reflex, alternated by its inputs. **the
