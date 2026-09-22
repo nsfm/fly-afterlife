@@ -16,11 +16,11 @@ import sys, numpy as np
 f = sys.argv[1].replace(".npz", "") + ".cells.npz"; C = np.load(f, allow_pickle=True)
 ty = C["type"].astype(str); side = C["side"].astype(str); cells = C["cells"]; X = C["frames"].astype(np.float64); pose = C["pose_frame"]
 n, k = X.shape; FPS = 100.0
-lm = np.load("world/legmn.npz"); segof = {}
+lm = np.load("world/legmn.npz"); _bid = np.load("brain_whole.npz", allow_pickle=True)["bodyId"]; segof = {}   # legmn.npz indexes brain_whole; match by bodyId so the cord's own file (brain_cord.npz) reads too
 for g in ("fl", "ml", "hl"):
     for s in "LR":
-        for i in lm[f"{g}_{s}"]: segof[int(i)] = g
-seg = np.array([segof.get(int(i), "?") for i in cells]); print(f"{n} frames ({n / FPS:.0f} s), {k} cells; by leg:", {g: int((seg == g).sum()) for g in ("fl", "ml", "hl", "?")})
+        for i in lm[f"{g}_{s}"]: segof[int(_bid[i])] = g
+seg = np.array([segof.get(int(b), "?") for b in C["bodyId"]]); print(f"{n} frames ({n / FPS:.0f} s), {k} cells; by leg:", {g: int((seg == g).sum()) for g in ("fl", "ml", "hl", "?")})
 
 # his speed and turning per frame, from the pose
 dx = np.diff(pose[:, 0], prepend=pose[0, 0]); dy = np.diff(pose[:, 1], prepend=pose[0, 1]); v = np.hypot(dx, dy) * FPS

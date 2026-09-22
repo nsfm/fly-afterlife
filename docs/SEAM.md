@@ -4737,3 +4737,97 @@ uncovers the chunk seam. the half-centre question is not closed by this: the rul
 under it, and the headless preparation (§Q 4f) is where the dose and the constants can be swept cheaply. the answer tonight is "not like this."
 
 **oracle (22:18 PDT), on the loop with `--log-frames`, the empty-array fix and the tripod rule on frame time: PASS, v1 + v2, eight configurations, none differing (read from the log).** committed.
+
+## the headless preparation (22:21 PDT; §Q 4f; nate: "if walking is a reflex that works without the head, we may be able to work on that in isolation")
+
+`scripts/build_cord.py` cuts the cord out of `brain_whole.npz`: 23,074 cells (the vnc superclasses, the ascending cells, and the 1,310
+descending neurons kept as the inputs they are in a decapitated fly), 1,117,963 edges (22.6 % of the synapses); 130,465 brain-side inputs
+to the descending neurons cut. `world/cord.py` runs it with no eye, no body and no world: the tonic floor's cord rows (the leg proprioceptors
+at 15 Hz), the walking command on DNg100 at a dose after a 2 s warm-up, every leg motor neuron per frame, `--std off|pair|all` with `--std-u`
+and `--std-tau`, `--silence`, the same engine and constants. **30 s of cord runs in 5 s of wall clock** (the whole fly: ~8 s per second):
+forty times cheaper per arm. `experiments/gait.py` reads it (legs mapped by bodyId now, so either brain file works; no pose: frames after
+2 s count as walking).
+
+**the first three arms (30 s, seed 11):**
+
+| Hz per cell | the cord at the record's dose (DNg100 100 Hz) | the same, `--std all` | the cord at rest (no command) |
+|---|---|---|---|
+| whole cord / leg MNs | 1.13 / 1.96 | 0.53 / 0.08 | 0.64 / 0.27 |
+| leg MNs above 1 Hz | 52 of 373 | 9 | 21 |
+| tibia flexors, all legs | **0.0** | 0.0 | 0.0 |
+| mid tibia extensors L / R | 36.3 / 7.9 | 0 / 0 | 1.1 / 0.1 |
+| hind trochanter depressors | 12.6 / 13.2 | 0.2 / 1.0 | 0.5 / 1.5 |
+| hind coxa retract L / femur reductor L | 14.0 / 11.5 | 0 / 0 | 0.5 / 0.4 |
+| inter-leg correlation | all positive at lag 0 (+0.2 to +0.5) | sparse | sparse |
+| frame-within-chunk profile | x1.2-1.4, no shape | | |
+
+- **the cord alone gives the whole fly's answer: a posture.** the same muscles (mid tibia extensors, the coxa, the hind trochanter depressors),
+  the same silent flexors, the same everything-together at lag zero, at a third the rate (36 Hz where the whole fly's L2 extensor sat at 94),
+  because the other descending neurons the brain drives (DNb05 and the rest) are silent here. so the preparation is faithful enough to
+  the whole fly's result to sweep on, and cheap enough to sweep.
+- **no chunk seam in the cord** (x1.2-1.4 with no consistent shape, against x4 under depression in the whole fly): the seam is the world's
+  per-chunk update, as §Q 4g says, not the engine.
+- **depression at the engine's constants (u 0.08, tau 480 ms) silences the cord**, as it did the whole fly.
+- the spectral "peaks" at 17-20 Hz (x10-22 the median) in the cord are single cells firing regularly at their own rate, a line at the rate,
+  not a population beat; the analysis needs a rhythm measure that a tonic cell cannot produce (next: the spectrum of the leg's rate with each
+  cell's own line removed, or the pairwise phase between cells of one leg).
+
+**the sweep (22:25 PDT; the cord, 30 s, seed 11, one variable per arm against the cord at the record's dose; `experiments/gait_score.py`:
+MN Hz = mean per leg motor neuron, active = above 1 Hz, flex = tibia flexors Hz per cell, antag = the most negative antagonist correlation,
+legs = the most negative inter-leg correlation at lag 0, beat = a cross-spectral rhythm measure (E; noise ~1-4)):**
+
+| arm | MN Hz | active | flex Hz | ext Hz | antag | legs | beat |
+|---|---|---|---|---|---|---|---|
+| rest (no command) | 0.27 | 21 | 0.00 | 0.5 | -0.04 | +0.00 | 3.7 |
+| DNg100 50 Hz | 0.99 | 53 | 0.00 | 4.4 | -0.12 | +0.00 | 2.9 |
+| **100 Hz (the record's dose)** | 1.96 | 52 | 0.00 | 9.3 | -0.16 | +0.00 | 4.3 |
+| 200 Hz | 3.83 | 58 | 0.01 | 17.5 | -0.36 | +0.00 | 6.1 |
+| 400 Hz | 6.35 | 65 | 0.04 | 29.0 | -0.28 | +0.00 | 15.1 (R2, 22 Hz) |
+| w 0.22 mV | 2.81 | 70 | 0.01 | 14.1 | -0.26 | +0.00 | 6.1 |
+| w 0.275 mV | 9.02 | 87 | 0.03 | 47.8 | -0.40 | +0.00 | 4.8 |
+| std all, u 0.08 tau 480 (the engine's) | 0.08 | 9 | 0.00 | 0.1 | -0.00 | -0.00 | 2.9 |
+| std all, u 0.02 tau 480 | 0.71 | 41 | 0.00 | 2.4 | -0.10 | +0.00 | 3.8 |
+| std all, u 0.08 tau 100 | 0.65 | 38 | 0.00 | 2.1 | -0.05 | +0.00 | 4.5 |
+| std all, u 0.08 tau 2000 | 0.00 | 0 | 0.00 | 0.0 | | | |
+| std all, u 0.20 tau 480 | 0.00 | 0 | 0.00 | 0.0 | | | |
+| std all, u 0.02 tau 100 | 1.48 | 54 | 0.00 | 6.5 | -0.14 | +0.00 | 4.0 |
+| std all (engine's) at 400 Hz | 0.09 | 9 | 0.00 | 0.1 | -0.02 | +0.00 | 3.0 |
+| std all u 0.02 tau 100 at 400 Hz | 4.00 | 55 | 0.00 | 18.1 | -0.41 | +0.00 | 18.1 (R2, 23 Hz) |
+
+- **the flexors never wake.** 0.00-0.04 Hz per cell across the dose (50-400 Hz), the constant (0.185-0.275) and the depression's box
+  (u 0.02-0.2, tau 100-2000 ms). the extensors and the coxa scale with the dose and the constant (the posture gets louder); depression
+  at the engine's constants or stronger silences the cord, weaker depression (u 0.02, tau 100) leaves the posture as it was.
+- **no leg ever anti-phases another** (the most negative inter-leg correlation is 0.00 in every arm). the coxal antagonists alternate
+  weakly and more at higher dose (-0.16 to -0.41), which is the only gait-shaped number in the box, and it is at the hip alone.
+- the "beat" at 22-23 Hz in R2 at 400 Hz is being checked against two tonic cells at one rate (the measure's known blind spot).
+
+so fatigue, as a uniform rule on every synapse, does not make this cord step at any constant in the box; nor does the dose; nor the
+synaptic constant. the half-centre is not one missing ingredient away. what the sweep leaves standing: the flexors' excitatory premotor
+cells wait on input the tonic command does not provide, and in life that input is the legs' own unloading (the campaniform swing trigger,
+Zill 2024 / Dallmann 2025): a leg that has pushed and been unloaded is a leg allowed to lift. the floor holds every leg's load at 15 Hz for
+ever: a fly standing on six loaded legs, told to walk. next arms: the load signal off, high, and the floor off entirely.
+
+**the load arms (22:26 PDT; the cord, 30 s, seed 11; the floor's rate on the leg proprioceptors, 15 Hz = standing load):**
+
+| arm | MN Hz | active | flex Hz | ext Hz | antag | legs |
+|---|---|---|---|---|---|---|
+| load 15 Hz (the floor), DNg100 100 Hz | 1.96 | 52 | 0.00 | 9.3 | -0.16 | +0.00 |
+| **load 0**, 100 Hz | 2.25 | 65 | **0.20** | 4.8 | -0.22 | +0.00 |
+| load 60, 100 Hz | 3.77 | 64 | 0.05 | **31.7** | -0.16 | +0.00 |
+| no floor at all, 100 Hz | 2.29 | 66 | 0.21 | 4.9 | -0.18 | +0.00 |
+| load 15, 400 Hz | 6.35 | 65 | 0.04 | 29.0 | -0.28 | +0.00 |
+| **load 0**, 400 Hz | 6.16 | 73 | **0.43** | 24.5 | -0.37 | +0.00 |
+| load 60, 400 Hz | 6.90 | 61 | 0.14 | 43.0 | -0.38 | +0.00 |
+
+- **the load signal is the lever, with the right sign.** more load drives the extensors (9 -> 32 Hz per cell at 60 Hz of load) and holds
+  the flexors down; *no* load lets the tibia flexors fire for the first time in this whole investigation: 0.20 Hz per cell at the record's
+  dose, 0.43 at four times it. small, but the first non-zero, and in the direction life has it (load -> stance muscles; unloading -> swing;
+  Zill 2024, Dallmann 2025). the floor's 15 Hz on every leg for ever is a fly standing on six loaded legs and told to walk, and the cord
+  answers correctly: it stands harder.
+- (the R2 "beat" at 22 Hz under 400 Hz is two trochanter flexor cells at 109 and 118 Hz with a shared modulation (ISI CV 0.5): two cells of
+  one type, not a leg; left as unresolved.)
+
+so the closed loop through the legs is the thing: stance loads the leg, the load holds stance, the push unloads it, the unloading releases
+swing. the cord cannot do this against a constant load and there is no honest way to give it a phasic load except from a body, or from a
+labelled treadmill (a tripod-timed load on the campaniform cells alone, the position cells at their floor) as the headless diagnostic that
+says whether unloading alone is enough. the treadmill first, because it is ten seconds; the body regardless.
