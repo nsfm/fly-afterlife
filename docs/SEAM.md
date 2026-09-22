@@ -4581,3 +4581,24 @@ feeding read from MN9 for 8 s (12 Hz on the fruit), the wings down (DLMn 0.0, DV
 something on 12 % of frames and never still for ten seconds, the stone climbed (0.90 m), ending 5.4 m from the fruit. the stalled file of the
 first make is kept beside it in the scratchpad as what it was. the viewer line is unchanged.
 
+## the neck (20:41 PDT; nate: "do we have any way to interpret what his neck neurons are doing? has our guy been trying to look around? what degrees of freedom does a fly neck have, and are they active lookers?")
+
+**in life:** about twenty-one pairs of neck muscles (Strausfeld et al. 1987, the blowfly atlas; the set is conserved), yaw, pitch and roll of some
+tens of degrees each, roll the largest. no eye movement; the head is the eye's only mount. flies are not scanners: nobody has described a fly looking
+around a scene. what the head does is two things: in flight, saccades of ~20 deg in milliseconds that lead the body's turn (Schilstra & van Hateren
+1999), and counter-roll against the body's roll for gaze stabilisation (Hengstenberg 1993), haltere-, ocelli- and visually driven; walking flies move
+the head less, with the same corrections on top.
+
+**in the table:** his neck motor neurons are MNnm01-14 in the cord (24 cells, left and right) and 20 in the head; their 292,990 input synapses are
+36 % descending neurons (DNge002, DNge033, DNg93), 24 % ascending, 18 % central-brain, and among the largest single inputs the wing and haltere
+campaniform afferents (SApp09 / SApp22, 4,452): commanded from above, corrected from below, the haltere-to-neck reflex in the wiring.
+
+**in the run** (60 s of the configuration of record, 14 of the neck types logged; per-chunk rates against his turning rate and his body's tilt):
+28 Hz per cell, left 39 and right 17 (a side bias to audit against the tracing, like the cord's), and **no relation to anything he does**:
+correlation of the left-right difference with his turning +0.06, with his roll -0.22; of the total with his pitch -0.01; with the size of his
+turns -0.27. the steering cells for scale, HS and DNa02 left-right against turning, -0.11 and -0.05 in the same run. so his neck is a tonic
+hum with a side bias, not a gaze: he has not been looking around, and nothing in him is trying to. the descending neck commands the wiring
+expects come from cells we do not drive, and the haltere afferents that would correct the head are silent because his halteres do not beat,
+which is right for a walking fly. the gaze reflex of TODO 4d is therefore a build, not a readout: the neck motor neurons carry nothing yet to
+read.
+
