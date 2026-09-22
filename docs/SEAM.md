@@ -4521,3 +4521,43 @@ the mechanism cited (Tsodyks & Markram 1997), the exit the engine-wide physiolog
 
 
 oracle after the NameError fix (18:59 PDT; the refractory-freeze flag off, the depression flag off): PASS, eight of eight, read from the log first. the exact kernel's new argument changes nothing when it is false.
+
+**the sensory arm (19:05 PDT; `--std sensory`: depression on the engine's sensory populations, 19,839 cells, plus the pair):** the wings quieter still
+(DLMn 2.5-2.7, DVMn 3.0-3.5) and the fly broken in two new places: he reaches the fruit at 27-29 s and never feeds, because the labellar sugar cells
+depress to a fifth of their drive and MN9 never crosses the read's threshold (0.0 Hz on the fruit); the Kenyon cells go to zero; he walks 50-57 m
+because the plume's ORNs depress and the compass goal loses its whiff. so depression on the sensory synapses at the engine's constants (u 0.08,
+480 ms) is the encoding fix the brief asked for and it invalidates the feeding read, the KC calibration and the anemotaxis threshold at once: every
+one of those was set against non-depressing sensory drive. it is right and it is a refreeze, the same day as `--std all`, with the sugar rate,
+the sparsity and the plume re-measured against depressing synapses.
+
+**decision (tonight): `--std pair` is the default.** two cells, the reason and the source written, the fly intact, the DLMs at zero and the DVMs at
+9. the engine-wide depression (sensory, then all) is the refreeze item, bundled with the two leaks and, from nate's question of 19:xx, the
+synapse-strength policy below. the oracle lines pin `--std off`, so the flip changes no reference.
+
+## the policy for fitting what the connectome cannot say (19:05 PDT; nate: "where synapse strength isn't known, is it intellectually honest to manipulate those constants by receptor type or location, so long as we produce a fly-like fly with minimal boolean intervention?")
+
+yes, on one line drawn hard: **constants are fit to physiology, never to the behaviour we want.** the rules, standing from here:
+
+1. few parameters, structured by biology: by transmitter, by neuropil, by receptor class, by short-term dynamics. never per cell, never per
+   behaviour. a gain with a behaviour's name on it is the flyproject's file of twos and twenties.
+2. the targets are measured rates and response curves, with sources: Kenyon-cell sparsity (Turner 2008, Honegger 2011), the sugar dose-response
+   on MN9 (Shiu 2024), the flight power motor at 5-20 Hz in flight and 0 on the ground (Harcombe & Wyman 1977), the ORN -> PN gain and its
+   depression (Kazama & Wilson 2008), the cooling cells' phasic code (Budelli 2019). each fitted value is written with what it was fit to.
+3. behaviour is the held-out test. he is never tuned until he forages; he is tuned until his cells match their papers, and then we watch.
+4. fewer free numbers than measured constraints, and both counts stated side by side.
+5. every fitted parameter set runs against the uniform fly on the record's behaviours, and is its own oracle freeze, so drift stays visible.
+
+the first two axes, because the literature exists: transmitter class (acetylcholine, GABA and glutamate synapses differ in unitary size and
+kinetics in the fly; we give them one number) and short-term dynamics per sensory class (what the pair and the cooling cells taught this week).
+a handful of numbers, fit to about six targets, tested on the whole record. the refreeze day, with a design behind it: `docs/TODO.md` 5c.
+
+## the run of record, 09-21 evening (19:19 PDT; `world/record/garden_0921b_s11.npz`, 180 s, seed 11, every default of the day: real antennae, the wind rows, the thermal rows, the satiety gate, the ocelli, the climb, tilt, feeding read from MN9, depression on the DNg33 pair; the compass configuration, feeding and satiety, the UV layer, the taste, wing and ocellar cells logged)
+
+- on the fruit at 10.2 s, 14.6 s on it in all, up to the top; MN9 at 11 Hz while there; feeding read from it for 8 s; he leaves, 13 m walked, moving 40 %,
+  ends 3.7 m from the fruit.
+- **his wings are down**: the DLM motor neurons at 0.0 Hz, the DVMs at 7.4, the pair at a driven 43 instead of a locked 200, the cord node at 0. the
+  first run of record in which a standing fly's flight motor is not running.
+- viewer: `uv run python world/replay_app.py world/record/garden_0921b_s11.npz --scale 2`.
+
+
+oracle after the depression default (19:26 PDT; `--std pair` the default, `--std off` pinned on both oracle lines): PASS, eight of eight, read from the log first.

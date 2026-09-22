@@ -141,7 +141,10 @@ time-rescaling control for it. the right side of his ventral cord is under-trace
 reconstruction (about 15% less input than the left), which a bistable pair of interneurons
 amplifies onto one steering neuron; the wheel now reads one synapse upstream of it. the optic
 lobe's direction selectivity is the seam's bottleneck, and he cannot yet see a loom. nothing in
-him persists but feeding. and every number in the record was measured on one laptop, with three
+him persists but feeding. the engine has no synaptic depression or adaptation, so a mutually excitatory pair of
+descending neurons (DNg33) locked itself at 250 Hz and ran his flight motor while he stood; since 09-21 depression is on that
+pair's synapses alone (`--std pair`, the engine's Tsodyks-Markram rule, a labelled two-cell correction in `docs/TODO.md` §P),
+and depression on every synapse is the next refreeze. and every number in the record was measured on one laptop, with three
 seeds where it says three.
 
 ## credits and licence

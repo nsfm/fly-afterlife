@@ -67,3 +67,11 @@
 - L3985: the motor census (13:21 PDT; nate: "what other motor neurons do we have access to and is he firing them?"; 20 s, seed 11, the defaults, from the fruit's edge so
 - L4010: the wing artefact, traced (13:32 PDT; queue 8b; twelve 12 s arms, seed 11, the 56 wing and 16 haltere motor neurons logged, rates after 2 s)
 - L4100: tilt, built (2026-09-21 14:19 PDT; nate: "should we actually tilt him properly as he traverses the angled surfaces, taking heading into account to map gravity a
+- L4164: the wings, systematically (2026-09-21 16:49 PDT; nate: "you feel confident on our wings answer? ... what would it take to be systematic about this?"; TODO 8d)
+- L4311: what holds the inhibitory half back (18:20 PDT; nate: "have we examined all of the inputs that drive these, in isolation or not?"; `brake_balance.py`: the stand
+- L4392: the lesions (18:29 PDT; `--silence`, an in-silico lesion: the named cells' threshold put out of reach; the defaults, 30 s, seed 11; rates after 2 s)
+- L4443: the two fixes on the bench (18:34 PDT; the kick bench: zero state, zero drive, zero noise, one kick of the DNg33 pair, five seconds)
+- L4469: the flight-gate brief (18:43 PDT; `docs/physiology/flight_gate.md`, an opus agent, 517 lines; the claims that change the plan, checked where the table could che
+- L4500: depression on the run of record (18:52 PDT; `world/std/`, the configuration of record (climb, tilt, feeding read from MN9), three seeds x 120 s; the tilt batch 
+- L4537: the policy for fitting what the connectome cannot say (19:05 PDT; nate: "where synapse strength isn't known, is it intellectually honest to manipulate those con
+- L4554: the run of record, 09-21 evening (19:19 PDT; `world/record/garden_0921b_s11.npz`, 180 s, seed 11, every default of the day: real antennae, the wind rows, the th

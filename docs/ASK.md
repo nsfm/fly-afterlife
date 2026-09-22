@@ -69,3 +69,10 @@ left for another day. yes / no / later?
 > single input, no path. the pattern generator's inhibitory half (IN06B066, IN03B089, IN11B013) is unreachable by anything he senses or is
 > commanded, so the gate is a state, and it now has an address. the options stand; my lean is (a) implemented as driving those three brake
 > classes under a labelled "not flying" state, exit = the flight command (DNp31 / DNg27 excite both halves, the shape of take-off). a / b / c?
+
+> **nyx, 09-21 19:05, the wings, resolved for tonight:** not (a), (b) or (c). the wings were a two-cell descending pair (DNg33) locked in its own
+> excitation, driving the flight motor through a self-exciting cord node; depression on that pair's synapses alone (`--std pair`, the engine's own
+> rule, Tsodyks & Markram) unlocks it in a second and leaves the fly intact: DLMs 0, DVMs 9, he climbs, feeds and leaves 3/3. DEFAULT NOW; in the
+> ledger with its exit. depression on the sensory synapses or on every synapse is right and breaks the calibration (no feeding, no KC code, no
+> plume): the refreeze, now TODO 5c with the leaks and the fitting policy you asked about. the flight-state visual gain (Ache 2019) is 8e for the
+> residual 9 Hz. yes to 5c as a day, whenever you want it scheduled?
