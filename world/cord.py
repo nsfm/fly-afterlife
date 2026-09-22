@@ -29,6 +29,8 @@ ap.add_argument("--leg-load-hz", type=float, default=15.0, help="the floor's rat
 ap.add_argument("--silence", default="", help="comma-separated types whose threshold is put out of reach (no effect on driven cells)")
 ap.add_argument("--log-types", default="", help="comma-separated types to log per frame (default: every leg motor neuron type)")
 ap.add_argument("--warmup", type=float, default=2.0, help="seconds before the walking command comes on (the cord at rest under the floor)")
+ap.add_argument("--treadmill", type=float, default=0.0, help="the headless treadmill (a labelled stand-in, 09-21): step frequency in Hz at which each leg's proprioceptors (world/legs.npz, by bodyId) are loaded in stance (--leg-load-hz) and UNLOADED (0 Hz) in swing, in two alternating tripods (L1 R2 L3 / R1 L2 R3), --treadmill-duty of the cycle in stance; 0 = off (the floor's constant load). asks whether unloading alone releases swing")
+ap.add_argument("--treadmill-duty", type=float, default=0.5)
 args = ap.parse_args()
 fps, CH = 100, 10; SPF = 1000 // fps; t0 = time.time()
 
@@ -51,6 +53,17 @@ else: WALK = np.zeros(0, np.int64)
 _fl = tonic_floor(M, REG) if args.floor else []
 for rc in _fl:
     if rc.name == "floor_leg_proprio": rc.transducer.hz = args.leg_load_hz
+if args.treadmill > 0:   # per-leg load rows after the floor, so they override it on the leg cells
+    from fly_afterlife.receptors import Transducer
+    class StanceLoad(Transducer):
+        def __init__(self, hz, phase, f, duty): self.hz, self.phase, self.f, self.duty = hz, phase, f, duty; self.source = "the headless treadmill: load in stance, none in swing (stand-in)"
+        def step(self, stim, t, dt): return self.hz if ((self.f * t - self.phase) % 1.0) < self.duty else 0.0
+    _legs = np.load("world/legs.npz"); _wb = np.load("brain_whole.npz", allow_pickle=True)["bodyId"]; _pos = {int(b_): i_ for i_, b_ in enumerate(M.bodyId)}
+    TRIPOD = {"L1": 0.0, "R2": 0.0, "L3": 0.0, "R1": 0.5, "L2": 0.5, "R3": 0.5}
+    for leg_ in TRIPOD:
+        cells_ = np.array([_pos[int(_wb[i_])] for i_ in _legs[leg_] if int(_wb[i_]) in _pos], np.int64)
+        REG.add(ReceptorClass(f"treadmill_{leg_}", cells_, StanceLoad(args.leg_load_hz, TRIPOD[leg_], args.treadmill, args.treadmill_duty), lambda st: True))
+    print(f"treadmill: {args.treadmill} Hz steps, duty {args.treadmill_duty}, load {args.leg_load_hz} Hz in stance, 0 in swing")
 print(REG.table())
 
 M.driven[:] = False

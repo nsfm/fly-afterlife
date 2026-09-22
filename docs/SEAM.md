@@ -4831,3 +4831,39 @@ so the closed loop through the legs is the thing: stance loads the leg, the load
 swing. the cord cannot do this against a constant load and there is no honest way to give it a phasic load except from a body, or from a
 labelled treadmill (a tripod-timed load on the campaniform cells alone, the position cells at their floor) as the headless diagnostic that
 says whether unloading alone is enough. the treadmill first, because it is ten seconds; the body regardless.
+
+**the treadmill and the constant (22:29 PDT; the cord, 30 s, seed 11):**
+
+| arm | MN Hz | active | flex Hz | ext Hz | antag | legs | beat |
+|---|---|---|---|---|---|---|---|
+| treadmill 2 / 5 / 10 Hz steps, load 15 in stance, 0 in swing, DNg100 100 Hz | 2.0 | 63-65 | 0.02-0.03 | 5.7-6.7 | -0.17 to -0.22 | +0.00 | 4-5 |
+| treadmill 5 Hz, 400 Hz | 6.3 | 74 | 0.11 | 27.6 | -0.35 | **-0.27** | 30 (at 5.1 Hz: the input's) |
+| treadmill 5 Hz, load 60 in stance, 100 Hz | 2.5 | 63 | 0.01 | 16.1 | -0.13 | -0.11 | 16 (5.1 Hz) |
+| treadmill 5 Hz, no command | 0.2 | 20 | 0.00 | 0.2 | | -0.09 | |
+| w 0.35 mV, 100 Hz | 17.5 | 93 | 0.43 | 72.1 | -0.51 | +0.00 | 9 |
+| w 0.50 mV, 100 Hz | 24.0 | 94 | 2.68 | 65.6 | -0.35 | +0.00 | 8 |
+| w 0.50, load 0 | 24.0 | 94 | 2.63 | 70.3 | -0.65 | -0.00 | 4 |
+| w 0.35, **no command** | 15.2 | 93 | 0.29 | 72.0 | -0.47 | +0.00 | 8 |
+
+- **the treadmill makes the legs alternate, and it is the treadmill.** the inter-leg correlation goes negative for the first time (-0.27 at
+  the high dose) and the beat sits exactly at the step frequency: the extensors follow the load (the load reflex, phasic now), so
+  tripod-timed load gives tripod-timed extensors. the flexors stay at 0.02-0.11 Hz: unloading half the cycle releases less swing than
+  constant unloading did (0.20). **unloading alone is not the trigger.**
+- **the constant is not it either** (nate: "could our low mV constant be a factor?"): at 0.35 and 0.50 mV the cord runs away, 93-94 of the
+  373 leg motor neurons active *with or without the command* (15 Hz per cell at 0.35 with DNg100 silent), the extensors at 65-72 Hz per cell
+  and the flexors at 0.3-2.7: the posture, twenty-five times louder, self-sustaining, command-blind. the constant makes the cord run away
+  before it makes a flexor matter. the whole fly cannot even go there (the pharyngeal runaway at 0.275).
+
+**where the headless night leaves the leg row.** under a tonic dose on the walking descending neuron, this cord holds a stance and cannot
+be pushed into swing by the dose (50-400 Hz), the constant (0.185-0.5), depression (u 0.02-0.2, tau 0.1-2 s), the load (0-60 Hz, constant
+or tripod-timed) or any pair of them tried. the only things that moved the flexors at all were unloading (0.2-0.4 Hz) and a runaway
+constant (2.7). what remains, in the order i would test them, each in the cord first:
+1. **the command is a population, not a cell.** walking in life recruits many descending neurons together (Braun / Sapkal 2024: the
+   walking DN population; DNa01 / DNa02, DNp09, oDN1, DNg13, the DNge cells that drive IN17A016 and IN16B016 above). one DN at 100 Hz is
+   Bidaye's optogenetic experiment, and the paper's fly walked; ours does not. a census of which DNs excite the flexors' premotor cells
+   (IN17A016, IN01A005, IN19B003, IN03A059) and a dose on that set is a table query and ten seconds of cord.
+2. **what the model lacks that a cord has:** electrical synapses (gap junctions are not in any chemical connectome and central pattern
+   generators lean on them), intrinsic currents (plateau potentials, post-inhibitory rebound: the half-centre's other classic ingredient,
+   absent from a LIF), neuromodulation. each is a labelled engine change with a source, and each is 5c's kind of day.
+3. **the body.** the honest closure regardless: a load that is the leg's own, from muscles the cord actually drives, on a floor. the first
+   body lies down, and that is the record's starting frame for the row.
