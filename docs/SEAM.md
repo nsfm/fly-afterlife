@@ -4416,3 +4416,27 @@ citable, not a stand-in: the refractory conductance freeze (Shiu 2024's own mode
 its source to be checked), or DNg33's identity in life if it is known to be self-limiting. the refractory test runs now in the bare engine: the
 pair's lock against the refractory period.
 
+**the pair, alone (18:31 PDT; `dng33_kick.py` and `dng33_lock.py`, the bare engine):**
+
+| test | DNg33 | IN19B040 | power MNs | the network |
+|---|---|---|---|---|
+| zero state, zero drive, zero noise, ONE kick of the two DNg33 cells, then 5 s | **250 Hz, every second** | 120 | 93-97 | 8,200 spikes/s |
+| the standing brain, refractory 2.2 ms (the record) / 5 / 10 | 200 / 167 / 68 | 116 / 78 / **0** | 98 / 50 / **0.0** | 87,800 / 63,200 / 45,100 |
+
+**DNg33 is a bistable pair.** with nothing else in the engine, one kick locks the two cells at 250 Hz, the refractory ceiling, forever, and
+through IN19B040 they run the flight power motor at 95 Hz on an otherwise silent network of 8,000 spikes a second. this is the same
+object as the gnathal runaway of the constant sweep, one stage smaller: two cells with 1,496 synapses between them and 900 of inhibition
+against 181,000 of self-excitation, in an engine with no spike-frequency adaptation, no synaptic depression on that path, and no freeze of
+the synaptic conductance during the refractory period. a real pair like that does not lock, because real synapses depress and real cells
+adapt; the LIF of the record does neither. the refractory period alone shows the lock's dependence on rate: at 10 ms the pair drops to 68 Hz
+and the cord node and the wings go to exactly zero, so the wings need the pair above roughly 100 Hz, which only the lock provides. and
+DNb05, the thermosensory DN, is NOT bistable: its rate tracks its input (217 -> 139 -> 74 across the refractory sweep, following the network),
+which is what a driven cell does.
+
+so the wing artefact, all the way down, is one bistable two-cell loop in the brain that anything lights and nothing in the engine can
+put out. the honest fixes are engine-side and citable, in this order: (1) Shiu 2024's refractory conductance freeze (TODO 5b), the one
+difference between his LIF and ours that touches exactly this, to be tested on the kick first; (2) if that does not break the lock,
+spike-frequency adaptation or synaptic depression as an opt-in with a source, oracle v3; (3) a labelled correction on DNg33's recurrent
+synapses only if the physiology brief says the pair is self-limiting in life for a reason the engine cannot hold. not a state, not a
+stand-in: a loop the engine lacks the biology to damp. the kick is the test bench: two cells, five seconds, pass or fail.
+
