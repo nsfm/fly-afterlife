@@ -5370,3 +5370,18 @@ the slow units, or (b) no stand-in and a fly on the floor. this is docs/ASK.md's
 - **the moonwalker's matrix has a tripod-shaped corner** (left-front against left-mid -0.39; left-mid with right-front +0.35; the control
   +0.07 / +0.22) and moved him 4.7 mm, the most of any arm. one seed, one command, and the control's mid-front pair already sits at +0.2:
   weak evidence, kept, to be tried on three seeds against DNg100 before it is called anything.
+
+**the moonwalker on four seeds (09:18 PDT; the standing body, the loop closed, MDN's 4 cells at 100 Hz):**
+
+| | lf-lm | lm-rf | travelled | along his own heading | turn |
+|---|---|---|---|---|---|
+| DNg100, seeds 11 / 10 / 12 (controls) | +0.07 / +0.01 / +0.09 | +0.22 / +0.20 / +0.18 | 1.8-2.6 mm | +1.8 to +2.5 (forward) | +9 / -18 / +24 |
+| **MDN, seeds 11 / 10 / 12 / 13** | **-0.39 / -0.36 / -0.34 / -0.30** | **+0.35 / +0.37 / +0.36 / +0.35** | 4.7-6.4 | **+4.8 to +5.4 (forward)** | **-30 / -63 / -46 / -70** |
+
+- **it replicates, and it is not walking backwards.** under MDN the left mid leg takes load (1.3-1.5 uN against 0.2 under DNg100), its
+  drive anti-correlates with the left front leg and co-varies with the right front, the same on four seeds; he covers twice the control's
+  distance, forward along his own heading, turning right every time. MDN's job in life is backward walking (Bidaye 2014, in headless
+  flies). here it re-distributes the stance (which legs carry him) and the push-up carries him forward and round. so: a command-specific,
+  seed-robust change in inter-leg coordination, the first on this row, and the wrong direction, which is the finding's own control.
+- the mechanism is the load loop: MDN loads one mid leg, the load rows and the tonus answer on that leg, and the anti-phase is that leg's
+  reflex against the front legs' push, not a swing. the knees under it do not oscillate (no negative lobe).
