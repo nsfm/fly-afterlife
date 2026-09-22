@@ -81,6 +81,10 @@ one change per run, its control, the measurement that decides it. status: queued
    claws' grip): on flygym's springs he stands and twitches; on the measured passive stiffness he lies on the floor with the cord's output and at
    rest alike. **next: the standing tonus** (the slow motor units' tonic drive against the body's weight, a calibration with a target and the
    measured springs as the control), then the loop (the body's joints and loads -> the mid legs' sensory cells). figures in docs/figures.
+   **[the loop, 09-22 01:22]** `experiments/body_loop.py`: the cord + the six-legged body at 1 ms; position fed back through the mid and hind
+   legs' claws wakes the flexors (0 -> 0.5-0.7 Hz) and drops the extensors (9 -> 3-4): the loop works. he does not stand: no load on the feet
+   lying down, and the size-rule "slow units" are flexors (the stand-in curled him). **next: the extensor slow units per leg as the standing
+   stand-in (docs/ASK.md), then the loop from a standing body.** hinges are limited (+-45-70 deg about neutral, stiff limits).
    **[hunted 09-21 22:49]** the half-centre is in the table (flexor exciters -> extensor inhibitors +13.5k, the reverse +10k, inhibitors mutually
    -13k / -15k) and none of four release mechanisms switches it (depression everywhere / on the inhibitors alone, adaptation, rebound: 40 arms),
    because the inhibitor pools barely reach the opposing exciters (-0.7k / -1.7k): a router with a load reflex, alternated by its inputs. **the

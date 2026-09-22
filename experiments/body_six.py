@@ -43,12 +43,23 @@ ROLE = {"Tergopleural/Pleural promotor MN": ("protract", +1), "Sternal anterior 
         "Sternal adductor MN": ("adduct", +1), "ltm MN": ("grip", +1), "ltm1-tibia MN": ("grip", +1), "ltm2-femur MN": ("grip", +1)}
 signs = json.load(open("results/body_dof_signs.json")); roles = signs["roles"]
 # the body
+def limit_joints(jm, neutral_of):
+    """joint ranges about the neutral pose, (E): knee +-70 deg, trochanter pitch +-50, coxa +-45, tarsus +-40 (the brief's C gives measured
+    ranges per joint from Karashchuk 2021; these are the coarse first cut). the body ships its hinges unlimited, and a torqued unlimited hinge winds up."""
+    import numpy as _np
+    for dof, j in jm.items():
+        n = f"{dof.parent.name}->{dof.child.name}:{dof.axis.value}"; c = dof.child.name.split("_", 1)[1]
+        span = 70.0 if c == "tibia" else 50.0 if (c == "trochanterfemur" and dof.axis.value == "pitch") else 45.0 if c in ("coxa", "trochanterfemur") else 40.0
+        ref = float(neutral_of.get(n, 0.0)); j.range = (ref - _np.radians(span), ref + _np.radians(span)); j.limited = 1
 fly = NeuroMechFly(); skel = Skeleton(axis_order=AxisOrder.PITCH_ROLL_YAW, joint_preset=JointPreset.LEGS_ONLY)
 kw = {} if args.stiffness is None else dict(stiffness=args.stiffness)
-fly.add_joints(skel, KinematicPosePreset.NEUTRAL, **kw); dofs = ActuatedDOFPreset.LEGS_ACTIVE_ONLY.filter(fly.get_jointdofs_order())
+jm = fly.add_joints(skel, KinematicPosePreset.NEUTRAL, **kw); _pl = fly.get_pose_lookup(KinematicPosePreset.NEUTRAL) if hasattr(fly, 'get_pose_lookup') else {}
+neutral_of = {"{}->{}:{}".format(*k.split("-")): float(v) for k, v in (_pl.items() if isinstance(_pl, dict) else []) if k.count("-") == 2}
+limit_joints(jm, neutral_of); dofs = ActuatedDOFPreset.LEGS_ACTIVE_ONLY.filter(fly.get_jointdofs_order())
 fly.add_actuators(dofs, ActuatorType.MOTOR, forcerange=(-60.0, 60.0)); adh = fly.add_leg_adhesion() if not args.no_adhesion else {}
 if not args.no_video: fly.add_tracking_camera("trackcam")   # a camera that follows the thorax (must be added before the world compiles)
 world = FlatGroundWorld(); world.add_fly(fly, (0.0, 0.0, 0.5), Rotation3D(format="quat", values=(1, 0, 0, 0))); sim = Simulation(world); m = sim.mj_model; d = sim.mj_data
+m.jnt_solref[:, 0] = 0.002; m.jnt_solimp[:, 0] = 0.99; m.jnt_solimp[:, 1] = 0.999   # stiff joint limits: the defaults (20 ms, 0.95) let a full torque spin a knee through 1,600 deg (09-22); this holds it within ~8 deg. a solver setting, not physiology
 dof_names = [f"{x.parent.name}->{x.child.name}:{x.axis.value}" for x in dofs]; di = {n: i for i, n in enumerate(dof_names)}
 # per cell: (dof index, signed weight) and force weight by size within (leg, role, side)
 cell_dof = np.full(len(bid), -1); cell_sgn = np.zeros(len(bid)); grip_leg = np.full(len(bid), "", dtype=object); f_w = np.zeros(len(bid)); groups = {}

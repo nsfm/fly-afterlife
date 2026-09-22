@@ -88,3 +88,7 @@ or not at all, and "not at all" is the record. (a) is puppetry of the kind §P a
 tracing); (b) is stricter and probably leaves him on the floor for as long as this dataset is the dataset. my recommendation is (a),
 because the gap is documented as a gap in the tracing rather than in the biology, and because the loop through the legs is the thing we
 want to test and it cannot be tested lying down.
+
+**refined (01:22):** the "smallest 93" are the accessory flexors, ltm and tarsal cells, so a stand-in on them is a flexion tonus (measured:
+he curls). the honest stand-in is on the *extensor* slow units per leg (sternotrochanter / trochanter extensor / tibia extensor's small
+members) at a load-scaled rate; the question for you is still (a) that stand-in, labelled, or (b) no stand-in and a fly on the floor.

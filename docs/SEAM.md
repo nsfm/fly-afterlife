@@ -5251,3 +5251,54 @@ proprioceptors) or a body that stands on its fast units, which is not a fly. thi
 **the 36 and the 8:** the two left mid tibia extensors receive 5,100 and 5,209 excitatory synapses; the right pair 4,966 and **1,856**. one
 right cell is traced at a third of its twin, and it fires 10 Hz where the left twin fires 78. the mirror scales by the pair mean and cannot
 give one cell what the other three have; a named-homologue correction (its inputs copied from its mirror twin, labelled) could. queued.
+
+**the hinges (01:13 PDT):** the body ships its leg joints unlimited, and under the cord's torques the mid and hind knees wound through 1,000-2,000 deg in the first loop smoke; ranges about the neutral pose (knee +-70, trochanter pitch +-50, coxa +-45, tarsus +-40; (E), the brief's measured ranges next) were not enough, because the limit constraint's default softness (20 ms, impedance 0.95) lets a full torque on a tibia of a hundredth of a milligram blow through it (a +60 push: 104 -> 1,660 deg in 300 ms); stiffened to 2 ms and 0.99 / 0.999 it holds within 8 deg. a solver setting, labelled. **every body result above this line was made with unlimited hinges** and is being remade; the standing / lying-down heights should stand, the tumbling may not.
+
+**the body remade with limited hinges (01:15 PDT; measured springs, derived torque; the same arms as above):**
+
+| arm | height after 1 s | travelled in 6 s | net turn |
+|---|---|---|---|
+| at rest | 0.44 | 0.8 mm | 0 |
+| DNg100 100 Hz | 0.46 | 1.0 | +9 |
+| DNg100 400 Hz | 0.40 | 1.8 | +90 |
+| him (8 s) | 0.40 | 1.7 | +3 |
+| DNg100 100 Hz on flygym's springs | 0.75 (standing) | 3.2 | +172 |
+| 400 Hz on flygym's springs | 0.56 | 3.8 | +132 |
+
+- **the tumbling was the hinges.** with joints that hold their ranges, the measured-stiffness body lies down at every dose and barely
+  moves: no scooting, no rolling, no four body lengths. "flailing and spasming" is withdrawn; what stands is "lying down, twitching". on
+  flygym's springs, standing, he still turns on the spot from the lopsided pushes (+172 / +132 deg; the seeds gave -178 / +105 / +133
+  before the fix, and that spread was partly wind-up too).
+- so the steering and moonwalker body arms above are void twice over (unlimited hinges, and a spinning control), and are not re-run
+  until a body stands straight. the heights stand: on real legs he lies down.
+
+## the loop on six legs (01:22 PDT; `experiments/body_loop.py`: the cord and the NeuroMechFly body in one process at 1 ms, 0.3-0.45x real
+time; measured springs, derived torque, limited hinges; 20 s, seed 11; the mid and hind legs' sensory cells: 12-18 extension claws, 4-9
+flexion claws, 7-9 hooks, 93-101 load cells each; the front legs 1-3 / 27 and 0-1 / 9)
+
+| arm | leg MN Hz | flexors | extensors | thorax height (0.7 = standing) | leg forces (uN; F_stand 1.67) |
+|---|---|---|---|---|---|
+| DNg100 100 Hz, **loop off** | 1.99 | 0.00 | 9.35 | 0.40 | 0 (on his belly) |
+| + **position** (claw + hook from the knees) | 2.26 | **0.49** | **3.27** | 0.41 | 0 |
+| + load only | 2.04 | 0.00 | 5.84 | 0.41 | 0.0-0.2 |
+| + position + load | 2.45 | **0.61** | 4.03 | 0.41 | 0-1.1 |
+| 400 Hz, loop off | 6.34 | 0.04 | 29.1 | 0.41 | 0 |
+| 400 Hz, position + load | 6.32 | 0.68 | 21.3 | 0.41 | 0-0.2 |
+| the stand-in: the 93 smallest MNs at 30 x load, position + load | 3.45 | 1.98 | 4.19 | 0.49 | one mid leg 1.6 |
+| at 60 x load | 6.08 | 6.55 | 3.62 | 0.57 | one mid leg 6.0 |
+| at 60, no command | 2.43 | 4.77 | 0.00 | 0.43 | |
+| set down standing (load clamped to standing for 5 s), 30 / 60 / 120 x load | 4.4 / 6.2 / 13.8 | 4.2 / 7.4 / 20.2 | 3.6 / 3.8 / 3.7 | 0.53 / 0.53 / 0.55 | ~0 after the clamp |
+
+- **the loop moves the cord.** with the knees' angles and speeds fed back through his own claw and hook cells, the tibia flexors wake
+  (0.00 -> 0.49-0.68 Hz per cell) and the extensors fall by two thirds (9.4 -> 3.3-4.0), at both doses; the cord and the body are talking
+  for the first time. lying with the knees flexed, the flexion-tuned claws fire and the cord answers with flexion: the resistance reflex,
+  with the sign life has it, which the one-leg loop could not show because that leg has one extension claw cell and three flexion. the
+  mid and hind legs' sensory sets are enough.
+- **he does not get up.** on his belly the feet bear no load, so the load rows and the stand-in see nothing, and set down standing he sinks
+  back within the clamp. the stand-in as designed drives the wrong muscles: the 93 smallest motor neurons are the accessory *flexors*, ltm
+  and the tarsal cells (the table above), so "slow units by size" is a flexion tonus, not a standing one; at 60 x load he curls (flexors
+  6.5, extensors 3.6) and one mid leg pushes to 6 uN under him. the standing tonus in life is on the slow units of the extensors too, and
+  those are not the smallest cells in this file. docs/ASK.md's option (a) needs the slow units picked by muscle, not by size.
+- so the row stands here: a body that lies down, a loop that works, and a stance that this cord cannot yet hold. the standing tonus is the
+  one remaining stand-in question, and it is now precisely posed: which extensor motor neurons carry the tonic load reflex, and at what
+  rate under a body weight.
