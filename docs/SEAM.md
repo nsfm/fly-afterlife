@@ -5349,3 +5349,24 @@ the slow units, or (b) no stand-in and a fly on the floor. this is docs/ASK.md's
   (60-120 Hz x load), and the swing trigger in life is the *unloading* of a leg, which a body held up by a tonic push never produces
   unless something lifts a leg first. the next arms: the tonus with a leg-load *derivative* term (the campaniform brief's dF/dt, so a
   loaded leg's push fades and its unloading registers), and the flexion-biased descending set on top of the standing body.
+
+**the standing body, more arms (09:14 PDT; the stance tonus at 60 Hz x load, the loop closed, 20 s):**
+
+| arm | flexors | extensors | height | travelled | lf-lm | lm-rf | lf-rf |
+|---|---|---|---|---|---|---|---|
+| DNg100 100 Hz, seed 11 / 10 / 12 | 0.44 / 0.40 / 0.50 | 24.8 / 24.8 / 24.9 | 0.71 all | ~1 mm | +0.07 / +0.01 | +0.22 / +0.20 | +0.51 / +0.40 |
+| no command | 1.47 | 25.9 | 0.71 | | +0.01 | +0.22 | +0.15 |
+| DNg100 + the flexor set | 3.15 | 27.0 | 0.71 | | | | |
+| the flexor set alone | 6.25 | 25.1 | 0.71 | 2.6 mm | -0.08 | +0.03 | +0.36 |
+| MDN (the moonwalker) | 2.98 | 27.6 | 0.71 | 4.7 mm | **-0.39** | **+0.35** | -0.00 |
+| DNg100 400 Hz (mislabelled `stand_pulse3`) | 0.51 | 25.9 | 0.72 | | -0.27 | | +0.46 |
+
+- **standing is robust:** three seeds, three commands, no command, all at 0.71.
+- **how he stands, read from the feet:** the front feet carry the weight (median force 0.4-0.6 uN, on the ground 60-75 % of the time,
+  knees pinned at their limit) and the mid and hind feet tap: median force 0, off the floor 66-92 % of the time, 12-82 "lifts" of over
+  50 ms in 18 s, knees wandering 40-66 deg, **in the controls as much as in any arm**. so the feet do come off the ground by themselves,
+  and it is the stand-in's posture doing it: the tonus pushes the front legs into the floor and the mid and hind legs wave. a push-up with
+  the back four feet tapping, in every arm; not a step.
+- **the moonwalker's matrix has a tripod-shaped corner** (left-front against left-mid -0.39; left-mid with right-front +0.35; the control
+  +0.07 / +0.22) and moved him 4.7 mm, the most of any arm. one seed, one command, and the control's mid-front pair already sits at +0.2:
+  weak evidence, kept, to be tried on three seeds against DNg100 before it is called anything.
