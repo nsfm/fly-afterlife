@@ -4576,3 +4576,8 @@ TODO §2's motor-pattern readout.) and nate's other note: the viewpoint snapped 
 surface under his feet front to back over the body length (the edge crossed over a body length, 54 deg at the first foot on the dome, then 71, then
 down), and the viewer smooths them with the same box filter as the heading.
 
+**the run of record, remade on the stall fix (20:37 PDT; `world/record/garden_0921b_s11.npz`, the same seed and flags):** on the fruit at 6.5 s, 9.9 s on it,
+feeding read from MN9 for 8 s (12 Hz on the fruit), the wings down (DLMn 0.0, DVMn 7.9); then 28 m walked, moving 80 % of the three minutes, touching
+something on 12 % of frames and never still for ten seconds, the stone climbed (0.90 m), ending 5.4 m from the fruit. the stalled file of the
+first make is kept beside it in the scratchpad as what it was. the viewer line is unchanged.
+

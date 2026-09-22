@@ -75,3 +75,4 @@
 - L4500: depression on the run of record (18:52 PDT; `world/std/`, the configuration of record (climb, tilt, feeding read from MN9), three seeds x 120 s; the tilt batch 
 - L4537: the policy for fitting what the connectome cannot say (19:05 PDT; nate: "where synapse strength isn't known, is it intellectually honest to manipulate those con
 - L4554: the run of record, 09-21 evening (19:19 PDT; `world/record/garden_0921b_s11.npz`, 180 s, seed 11, every default of the day: real antennae, the wind rows, the th
+- L4565: the stall at 1:50 (20:23 PDT; nate: "around 1:45 he seems to get trapped on a blade of grass, and though he's facing away from it for over a minute never seems 
