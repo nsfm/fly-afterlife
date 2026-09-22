@@ -4280,3 +4280,31 @@ three things the map says that the arms could not:
 what the map did not log, by my omission: the brake classes themselves (IN06B066, IN03B089, IN11B013) and the premotor pair.
 a second, smaller batch runs now: the six lighting inputs alone, those cells logged.
 
+**the brakes under each lighting input (18:10 PDT; `world/wingbrake/`, six arms x 3 seeds x 30 s, Hz per cell after 2 s):**
+
+| input alone | power MNs | IN19B043 / IN19B067 (the premotor push) | IN06B066 / IN03B089 / IN11B013 (the brakes) | IN06B013 |
+|---|---|---|---|---|
+| nothing | 0.1 | 0 / 0 | 0 / 0 / 0 | 2 |
+| the food-ORN floor | 93 | 9.0 / 6.5 | 0.0 / 0.0 / 0.0 | 12 |
+| the thermal rows | 107 | 16.4 / 6.5 | 0.9 / 0.0 / 0.0 | 53 |
+| vision | 100 | 9.9 / 6.3 | 0.0 / 0.0 / 0.1 | 3 |
+| the walking command | 75 | 6.2 / 5.0 | 0.0 / 0.0 / 0.1 | 32 |
+| everything on | 76 | 9.5 / 4.6 | 0.4 / 0.0 / 0.0 | 66 |
+
+**no input in the model engages the brakes.** the three GABA classes that hold the flight power motor and its premotor in the wiring sit
+below one hertz under every input alone and with everything on, while the premotor push runs at 5-16 Hz and the power motor neurons at
+75-107 under any of them. so the systematic pass ends where the afternoon's guess pointed, but on evidence now, and with the cells named:
+
+**the wings, concluded (09-21).** (1) not song; (2) the flight power muscles, tonic, clock-regular, plus the steering set behind; (3) any tonic
+input above a small threshold lights them to the same plateau, six do, ten do not, removing any one changes nothing: a saturating
+amplifier in the cord; (4) read linearly the wiring has no concentrated path to them, so the drive is recurrent amplification, gain ~15,
+with the power motor neurons' premotor pair as the last stage; (5) the plateau scales with the constant and no available constant gates
+it; (6) the traces are stable over 30 s; and the pattern generator's inhibitory half, IN06B066 / IN03B089 / IN11B013, a third of the
+motor neurons' input and a third of the premotor's, reciprocal with it, is unreachable by anything he senses or is commanded. in life
+the half-centre alternates in flight and both halves are quiet on the ground; here one half is on and the other cannot be turned on.
+the flight gate is therefore a state, and the state has an address: whatever drives those three classes in a standing fly (their
+inputs are cord interneurons and the descending neurons DNae009 / DNp31 / DNg27, none driven here). options unchanged from ASK.md, now
+with the cells named: (a) the gate as a state that drives the brake classes, labelled "not flying", with its exit the flight command
+(DNp31 / DNg27 excite both halves); (b) a labelled gain correction on the premotor pair; (c) leave it. (a) is the lean and it is a
+better-founded (a) than this morning's.
+

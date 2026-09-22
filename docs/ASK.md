@@ -64,3 +64,8 @@ all run), and the reference engine holds all 97 MBONs at 85 % of threshold by a 
 fixing either changes every run slightly and fails the oracle by design (the references carry both). proposal: fix the leak,
 set the MBON hold to 0 (Shiu), measure the baselines that move, and refreeze oracle v3 in one go, with the mm units question
 left for another day. yes / no / later?
+
+> **nyx, 09-21 18:10, after the systematic pass:** the wings are a saturating amplifier in the cord lit by any of six tonic inputs; no constant, no
+> single input, no path. the pattern generator's inhibitory half (IN06B066, IN03B089, IN11B013) is unreachable by anything he senses or is
+> commanded, so the gate is a state, and it now has an address. the options stand; my lean is (a) implemented as driving those three brake
+> classes under a labelled "not flying" state, exit = the flight command (DNp31 / DNg27 excite both halves, the shape of take-off). a / b / c?
