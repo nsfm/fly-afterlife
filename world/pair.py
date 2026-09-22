@@ -41,6 +41,8 @@ ap.add_argument("--leg-load-hz", type=float, default=15.0, help="the standing lo
 ap.add_argument("--hot-r25", type=float, default=37.0, help="the hot cells' rate at 25 C, Hz (Budelli 2019: 37; the record). a dose flag (09-21)")
 ap.add_argument("--reset-before-run", action="store_true", help="DIAGNOSTIC (09-21): reset the LIF state to rest after the setup calibrations (which drive bristles and command cells) and before the run, to ask whether a loop was lit by the setup")
 ap.add_argument("--silence", default="", help="DIAGNOSTIC (09-21): comma-separated cell types whose threshold is set out of reach for the run (an in-silico lesion; never a default)")
+ap.add_argument("--refrac-freeze", action="store_true", help="Shiu 2024's second difference from this engine (TODO 5b): the synaptic conductance does not decay during the refractory period. opt-in until measured (09-21)")
+ap.add_argument("--std", default="off", choices=["off", "pair", "all"], help="short-term synaptic depression (the engine's Tsodyks-Markram-style rule: u 0.08 per spike, recovery 480 ms; sources under audit, 09-21): off = the record; pair = on the DNg33 pair's output synapses only (the minimal labelled correction that unlocks the flight motor); all = every cell (physiology, a refreeze)")
 ap.add_argument("--labellum-hz", type=float, default=200.0, help="the labellar sugar cells' rate while the labellum is on the food (09-21; a ripe fruit: ~100-150 Hz)")
 ap.add_argument("--feed-read", default="mn9", choices=["latch", "mn9"], help="how feeding is decided (09-21): latch = sugar on the tarsi latches it (the record, a stand-in); mn9 = read from his proboscis motor neurons firing (MN9 above --mn9-thr), i.e. his own wiring")
 ap.add_argument("--mn9-thr", type=float, default=3.0, help="Hz per MN9 cell over the last chunk that counts as feeding")
@@ -56,7 +58,10 @@ UV_TYPES = ["Mi15", "L5", "Mi1"]   # the UV retina's graded ON cells (flyvis) on
 fe_uv = FlyvisFrontEnd(args.model, geom="seam/eye_geom.npz", fps=fps, chunk=CH, deterministic=args.deterministic, types=UV_TYPES) if args.uv else None
 # ---- his brain
 Brain = FlyBrain if args.numpy_engine else FastFlyBrain
-M = Brain("brain_whole.npz", seed=args.seed, params=Params(mv_per_synapse=args.wsyn_m, noise=args.noise)); M.integrate = args.integrate; mty = M.type.astype(str); mns = M.side.astype(str); mcls = M.cls.astype(str)
+M = Brain("brain_whole.npz", seed=args.seed, params=Params(mv_per_synapse=args.wsyn_m, noise=args.noise)); M.integrate = args.integrate; M.refrac_freeze = bool(args.refrac_freeze)
+if args.std != "off":   # 09-21: the DNg33 pair is bistable without depression (docs/SEAM.md); the kick bench: depression on the pair alone unlocks it
+    _mask = np.ones(M.N, bool) if args.std == "all" else (M.type.astype(str) == "DNg33")
+    M._std_mask = _mask; M._std_x = np.ones(M.N, np.float32); M.std_on = True; print(f"short-term depression on {int(_mask.sum())} cells ({args.std})"); mty = M.type.astype(str); mns = M.side.astype(str); mcls = M.cls.astype(str)
 if args.mirror != "off":
     from fly_afterlife.wiring import mirror_normalise; print("mirror normalisation:", mirror_normalise(M, scope=(args.mirror.split(",") if "," in args.mirror or args.mirror.startswith("PFL") else args.mirror)))
 groups = fe.groups(M)

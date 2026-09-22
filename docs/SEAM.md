@@ -4440,3 +4440,26 @@ spike-frequency adaptation or synaptic depression as an opt-in with a source, or
 synapses only if the physiology brief says the pair is self-limiting in life for a reason the engine cannot hold. not a state, not a
 stand-in: a loop the engine lacks the biology to damp. the kick is the test bench: two cells, five seconds, pass or fail.
 
+## the two fixes on the bench (18:34 PDT; the kick bench: zero state, zero drive, zero noise, one kick of the DNg33 pair, five seconds)
+
+| engine | DNg33 | IN19B040 | power MNs | the network |
+|---|---|---|---|---|
+| the record's | 250 Hz forever | 120 | 95 | 8,200 spikes/s |
+| **Shiu's refractory conductance freeze** (`--refrac-freeze`, opt-in, bit-exact off) | 250 | **225** | **232** | 14,300 |
+| **short-term synaptic depression on the pair's own synapses** (`--std pair`; u 0.08 per spike, recovery 480 ms) | 19.5 in the first second, **then 0** | 0 | 0 | 0 |
+| the same depression on every cell (`--std all`) | 19.5, then 0 | 0 | 0 | 0 |
+
+**the freeze makes it worse, as it should:** a conductance that does not decay while the cell is refractory arrives intact when the cell is free
+again, so the loop gains. it is Shiu's equation and it stays as an opt-in for the fidelity question (TODO 5b), but it is not this fix.
+**depression breaks the lock in under a second.** with the engine's own Tsodyks-Markram-style rule on the pair's output synapses, each spike
+spends 8 % of the pair's resource and the resource takes half a second to come back; at 250 Hz the pair depletes itself to nothing within the
+first second and stays quiet, the resource recovers to 1.0, and the cord node and the flight motor never light. the same rule on every cell gives
+the same bench result (the bench has nothing else firing). the engine's constants (u 0.08, tau 480 ms) are the flybrain engine's, chosen for its
+sensory populations; their sources are the literature brief's to check (Tsodyks & Markram 1997 for the rule; fly synapses depress strongly at
+first order, Kazama & Wilson 2008 for ORN -> PN; the DN pair itself is unknown).
+
+so the wing artefact's honest fix is a synaptic mechanism the engine has and the record never turned on: depression. two ways to apply it, both
+running now on the configuration of record, three seeds each: `--std pair`, the minimal labelled correction (two cells, the reason written), and
+`--std all`, the physiology (every synapse depresses, which also re-scales every tonic sensory row: the cooling cells at 95 Hz would sit at a
+fifth of their drive at steady state), which is a refreeze and every baseline re-measured. the batch says what each does to him.
+

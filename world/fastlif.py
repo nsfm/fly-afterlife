@@ -70,7 +70,7 @@ def _membrane(v, g, refrac, ext, noise, v_th, free, dt, tau_syn, tau_m, v_floor,
 
 
 @njit(cache=True, fastmath=False, parallel=True, nogil=True)
-def _membrane_exact(v, g, refrac, ext, noise, v_th, free, e_m, e_s, k_g, one_m_em, dt, v_floor, spk):
+def _membrane_exact(v, g, refrac, ext, noise, v_th, free, e_m, e_s, k_g, one_m_em, dt, v_floor, spk, freeze_g):
     """the exact step of the linear system dv/dt = (-v + g + ext) / tau_m, dg/dt = -g / tau_syn over dt (Shiu 2024's
     Brian2 method='linear'; 09-19): v <- v e_m + ext (1 - e_m) + g A (e_s - e_m) with A = tau_syn / (tau_syn - tau_m),
     then g <- g e_s. forward Euler at dt = 1 ms puts the synaptic potential's peak 16 % low (docs/MINECRAFT_OPEN.md)."""
@@ -88,6 +88,8 @@ def _membrane_exact(v, g, refrac, ext, noise, v_th, free, e_m, e_s, k_g, one_m_e
             refrac[i] -= dt
             if v[i] < -v_floor: v[i] = -v_floor
             spk[i] = False
+            if freeze_g:   # Shiu 2024's "(unless refractory)" on dg/dt: the synaptic conductance does not decay while the cell is refractory (opt-in, 09-21; False = the record, bit for bit)
+                g[i] = gi; continue
         g[i] = gi * e_s
 
 
@@ -157,7 +159,7 @@ class FastFlyBrain(FlyBrain):
         if getattr(self, "integrate", "euler") == "exact":
             e_m = np.exp(-dt / p.tau_m); e_s = np.exp(-dt / p.tau_syn); A = p.tau_syn / (p.tau_syn - p.tau_m)
             _membrane_exact(self.v, self.g, self.refrac, ext, np.ascontiguousarray(noise, dtype=np.float32), self.v_th, free,
-                            np.float32(e_m), np.float32(e_s), np.float32(A * (e_s - e_m)), np.float32(1.0 - e_m), np.float32(dt), np.float32(p.v_thresh), spk)
+                            np.float32(e_m), np.float32(e_s), np.float32(A * (e_s - e_m)), np.float32(1.0 - e_m), np.float32(dt), np.float32(p.v_thresh), spk, bool(getattr(self, "refrac_freeze", False)))
         else:
             _membrane(self.v, self.g, self.refrac, ext, np.ascontiguousarray(noise, dtype=np.float32), self.v_th, free,
                   np.float32(dt), np.float32(p.tau_syn), np.float32(p.tau_m), np.float32(p.v_thresh), spk)
