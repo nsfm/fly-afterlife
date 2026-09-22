@@ -4373,3 +4373,46 @@ where his steering lives: both are inputs a standing fly has, and both reach the
 removing sight and steering. the literature brief (running) is asked what DNb05 / DNp31 / DNg33 do in life and whether a flight state gates the visual
 drive into them, which is where the honest fix would sit if it does.
 
+**what fires into the two upstream descending neurons while he stands (18:25 PDT; the standing brain, no vision):** DNb05 fires at **217 Hz** (membrane +11 %
+of threshold: not near threshold, driven straight through it) and its rate-weighted input is **the cooling pathway: VP3+_l2PN 60,840 synapse-spikes/s per
+cell, VP5+VP3_l2PN 19,865, TRN_VP3a (the cooling cells themselves) 15,712**, then a multiglomerular olfactory PN (M_l2PNm16, 12,892) and the lateral horn
+(LHPV2i1, 9,567): 206,000 excitatory against 18,000 inhibitory. so the cooling cells at their 95 Hz resting rate, through the VP3 projection neurons, drive a
+descending neuron at 217 Hz, and that descending neuron drives the flight command (DNp31), the motor neurons' inhibitor (IN12B015) and the premotor's
+(IN06B013). the map's "cooling cells alone light the wings hardest" is this wire; the cooling dose being flat when everything else is on is the other
+inputs (the ORN floor through the multiglomerular PNs, the hygro floor through VP5) feeding the same DN. DNg33 fires at **200 Hz** and its input is
+**itself: 149,600 of 181,313 synapse-spikes/s**, a two-cell pair locked in its own excitation (1,496 recurrent synapses; net inhibition 896), fed at the start
+by DNp35 / IN09A005 / AN09A005. that is the gnathal runaway's shape again, in the brain: a self-exciting pair with no adaptation and almost no
+inhibition, which a LIF without spike-frequency adaptation or frozen refractory conductance holds at its maximum forever once lit.
+
+so the two facts under the whole wing story are now: (1) **a thermosensory descending neuron, DNb05, driven at 217 Hz by the cooling pathway at rest**, and
+(2) **a self-locked descending pair, DNg33, at 200 Hz**. neither is a fly wanting to fly; one is a resting rate carried too far and the other a loop the
+engine cannot damp. the lesion arms run now (`--silence`, an in-silico lesion flag, never a default): DNb05 out, DNg33 out, both, DNp31 out, on the
+defaults, 30 s, the whole chain logged.
+
+## the lesions (18:29 PDT; `--silence`, an in-silico lesion: the named cells' threshold put out of reach; the defaults, 30 s, seed 11; rates after 2 s)
+
+| silenced | power MNs | premotor | brakes | DNb05 | DNg33 | DNp31 | IN19B040 | IN12B015 | IN06B013 | walked |
+|---|---|---|---|---|---|---|---|---|---|---|
+| nothing | 79.6 | 6.9 | 0.2 | 188 | 209 | 40 | 112 | 145 | 67 | 6.8 m |
+| DNb05 (2 cells) | **106.5** | 7.9 | 0.0 | 0 | 210 | 7 | 112 | 16 | 22 | **0.0 m** |
+| **DNg33 (2 cells)** | **2.4** | **0.0** | 0.2 | 190 | 0 | 38 | **0.0** | 145 | 66 | 6.9 m |
+| both | 1.3 | 0.0 | 0.0 | 0 | 0 | 7 | 0 | 17 | 22 | 0.0 m |
+| DNp31 (2 cells) | 48.7 | 3.5 | 0.0 | 202 | 201 | 0 | 111 | 151 | 61 | 7.6 m |
+
+**the wings are two cells.** silence DNg33, the self-locked descending pair, and the power motor neurons fall from 80 Hz to 2, the premotor to 0, the
+self-exciting cord node IN19B040 to 0, and he walks exactly as before (6.9 m). the whole flight motor of a standing fly here hangs on one descending
+pair locked in its own excitation at 200 Hz, through one cord node locked in its own at 112. DNp31, the visual flight-command DN, contributes: cut it
+and the power motor neurons halve (49). and DNb05, the thermosensory DN at 188 Hz, turns out to be on the OTHER side: cut it and the power motor
+neurons rise to 106, because it drives the motor neurons' largest inhibitor (IN12B015, 145 -> 16) and the premotor's (IN06B013, 67 -> 22); and **he
+stops walking**, 0.0 m, because its descending drive is part of the leg tonus the pace reads: the "kinesis" of 09-17, warmth driving the legs, has
+a cell now, and the cooling pathway at rest is the thing walking him as much as the walking command is. two puppets' worth of physiology in one
+lesion.
+
+so the afternoon's "state with an address" collapses to something smaller and stranger: **a two-cell descending pair, DNg33, self-locked at 200 Hz,
+is the flight motor's drive, and nothing in the model can unlock it** because the engine has no spike-frequency adaptation and does not freeze the
+synaptic conductance during the refractory period (Shiu's second difference, TODO 5b), so a pair with 1,496 mutual synapses runs at the refractory
+ceiling forever once lit. what lights it is DNp35 / IN09A005 / AN09A005, which any tonic input reaches. the honest fixes are now engine-side and
+citable, not a stand-in: the refractory conductance freeze (Shiu 2024's own model), spike-frequency adaptation (in the flybrain engine as an option;
+its source to be checked), or DNg33's identity in life if it is known to be self-limiting. the refractory test runs now in the bare engine: the
+pair's lock against the refractory period.
+
