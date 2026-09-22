@@ -40,6 +40,38 @@ one change per run, its control, the measurement that decides it. status: queued
 4c. **[noted 09-21] the loops**: the goal-switch's random inward heading plus the comparator with its null off make pirouettes at
 4d. **[queued 09-21] gaze stabilisation** (nate: "shouldn't his view be smooth too?"): the body's pitch and roll are physics (a body length, ~0.5 s at his pace); the head's are not the body's in life, the neck counter-rotates (Hengstenberg 1993 on head roll compensation; haltere-, ocelli- and visually driven). he has 40 neck motor neurons (cord `nm` 20, head `nm` 20) at 13-15 Hz that nothing reads. the honest build: the retina's tilt = the body's minus a neck command read from those cells (the leg readout's shape), measured against the raw body tilt; the viewer's smoothing stays a camera.
    stalks; on the menotaxis row; left for now (nate).
+4e. **[in flight 09-21 21:39; FIRST IN THE QUEUE] the legs, from the muscles up** (nate: outputs before more inputs; the body actuated from motor neurons
+   through a sourced muscle model, never a trained controller: "I'd rather have our guy flailing and spasming in place"). the probe (SEAM "the legs,
+   per muscle"): the cord under the tonic walking command is a posture (mid tibiae extended, mid coxae protracted), every tibia flexor silent, no
+   rhythm, no inter-leg phase; DNg100 lands on stance muscles and not on a flexor; DNg105 inhibits the flexors most. arms running: the flexors'
+   inputs logged, and `--silence DNg105`. the build, from `docs/physiology/leg_biomech.md` (the brief, 09-21): (1) the muscle sign is per segment
+   (Haustein 2024: front legs flex in stance, hind legs extend), so `legs.MUSCLE_W` becomes `MUSCLE_W[segment]`; (2) 37 of the 45 unnamed mid /
+   hind cells named by serial set / premotor profile (Ta levator = MNml81 = MNhl65, serial 13036, verified in the table), four left labelled
+   unresolved; (3) force per spike by input-synapse size with alpha ~1.2, unclipped, normalised within segment; (4) a twitch kernel (peak ~21 ms,
+   decay ~20 ms, summation 1.6x for two spikes, saturating ~10; Azevedo 2020) in place of `1 - exp(-d/k)` at 100 ms; (5) the body: NeuroMechFly v2
+   (flygym, MuJoCo, Apache-2.0) driven per joint from the muscle torques, FlyMimic's Hill-type front leg (Özdil 2026, vendored in flygym 2.1) as the
+   parallel check; passive stiffness ~70x too weak to stand on (Wang 2025), so silent muscles = a fly on the floor, which is the honest outcome.
+   controls: the summed-cord pace and wheel of record beside it; a fly with uniform muscle weights; the flexor-silent posture as the null.
+   then proprioception from the legs (§S; `E_proprioceptors.md`: FeCO claw / hook / club by type name, 348 cells; campaniforms per Szczecinski
+   2021 with fitted constants; the FeCO transfer function for Drosophila is unpublished, labelled (E)). the readout's sum stays until the legs
+   reproduce it.
+   **[measured 09-21 21:57]** the flexors are silent because nothing excites them (their four excitatory premotor types dead, their inhibitors at
+   50-60 Hz, DNg100 exciting the inhibitor IN09A002 directly); not the brake (driven, 0 outside feeding; `--silence` cannot touch a driven cell);
+   not phasic afferent drive (`--proprio 100`, tripod-timed: no change). a cord that will not pattern under a tonic walking DN is the model's
+   failure (Bidaye 2020: the real cord steps headless). **next single variable on this row: the 90 s probe under `--std all`** (depression on
+   every synapse, the raw calibrations), same analysis; running. this is 5c's question wearing legs.
+4f. **[queued 09-21 22:02] the headless preparation** (nate: "if walking is a reflex that works without the head, we may be able to work on that in
+   isolation"): the cord alone (the vnc_* superclasses plus the descending neurons as driven inputs, ~23k cells, about a seventh of him), the
+   walking command dosed as in Bidaye 2020's decapitated flies, every leg motor neuron per frame, `experiments/gait.py`. seven times faster to
+   iterate: every variable on this row (depression, the constant, the dose, adaptation) is tested there first and confirmed in the whole fly.
+   control: the whole fly at the same dose (the 90 s probe). a build: a brain subset loader (`brain_whole.npz` filtered by superclass) and a
+   pair.py world with no eye. the plain-language page for this row is `docs/WALKING.md`.
+   **[measured 09-21 22:13]** `--std all` on the 90 s probe: the cord goes quiet (0-3 Hz everywhere, flexors still 0), the pace readout degenerates (a
+   depressed standing tonus), and a 10 Hz "beat" turned out to be chunk-locked. no stepping; "not like this". next on this row: 4f first.
+4g. **[queued 09-21 22:13] the chunk seam**: the cord's rate dips after every 100 ms chunk boundary and climbs back by the eighth frame (4x under
+   `--std all`, 1.1-1.2x in the run of record): the world steps once a chunk (the still eye chunk, the wheel, the pace, the goal) and the brain
+   feels it. measure which update carries it (vision held still; the pace / wheel frozen; each alone), then interpolate within the chunk or update
+   per frame; the oracle refreezes with it (a defaults change). the frame-within-chunk profile is `experiments/gait.py` §6.
 5. **[queued] a run that crosses shade** for the ocelli, the ocellar cells logged (§S ocelli row).
 6. **[queued] his own walking wind on the aristae** (§S wind row): a vector add; anemotaxis batch as control.
 7. **[queued] the clock and sleep pressure as the first S2 states** (`states.py`, FeedingState moved into it): a day in the

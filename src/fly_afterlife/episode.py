@@ -20,6 +20,7 @@ class Episode:
         """room: any world with scene(bodies) / step_frame(m, f, fps) / contacts (Room, Drum). her: a Body or None.
         effectors: (steer, pace, her_steer or None, song or None). on_chunk(ep, c, cntM): optional per-chunk hook."""
         self.on_chunk = on_chunk; self.threads = threads; self.state = state
+        self.frame_cells = None; self.FRAMES = []   # per-frame (10 ms) counts of a set of cells, for motor patterns faster than a chunk (the leg probe, 09-21); set by pair.py --log-frames
         self.front_end_uv = front_end_uv; self.LUM_UV = []; self.OCELLI = []; self.Z = []; self.TILT = []
         self.walkmod = walkmod; self.walk_gain = 1.0   # walkmod(cntM) -> a gain on the walking command for the next chunk (PFL2, 09-19)
         self.vread = vread or {}   # {name: (cells L, cells R)}: populations read by mean membrane potential per chunk, graded, as cntM[name_L / name_R] in mV x 100 (09-19: PFL3's output is graded in life; its spikes here are too sparse to steer with)   # the UV retina through a second flyvis (Mi15), when the world has scene_uv (09-18)   # an internal state object with update(t, taste) and .feeding / .sat, or None (09-18)
@@ -65,7 +66,7 @@ class Episode:
         """CH frames of receptor drive and SPF brain steps each; returns per-chunk readout counts (cntM, cntF)."""
         CH, fps, m = self.CH, self.fps, self.m
         accM = np.zeros(self.M.N, np.int32); accF = np.zeros(self.F.N, np.int32) if self.female else None
-        vacc = {nm_: [0.0, 0.0] for nm_ in self.vread} if self.vread else {}
+        vacc = {nm_: [0.0, 0.0] for nm_ in self.vread} if self.vread else {}; fprev = None
         for f in range(CH):
             t_f = (len(self.POSE) - CH + f) / fps
             st_ = {"a": a, "rest": self.rest, "f": f, "tm": touched_m[f], "kind": kind_m[f], "pace": float(np.clip(m.v / 0.45, 0, 1)), "t_chunk_end": len(self.POSE) / fps, "tf": touched_f[f], "singing": singing}
@@ -95,6 +96,8 @@ class Episode:
                     if self.female: self.F.step(); accF[self.F.last_idx] += 1
                     if self.vread:
                         for nm_, (cl_, cr_) in self.vread.items(): vacc[nm_][0] += float(self.M.v[cl_].mean()); vacc[nm_][1] += float(self.M.v[cr_].mean())
+            if self.frame_cells is not None:   # the frame's own spikes of the logged cells: the chunk accumulator differenced per frame
+                cur = accM[self.frame_cells].copy(); self.FRAMES.append(cur if fprev is None else cur - fprev); fprev = cur
         self.last_accM = accM   # per-cell counts for effectors that read motor patterns (legs.LegSteering)
         cntM = {k: int(accM[r].sum()) for k, r in self.RM.items()}
         for nm_, (l_, r_) in vacc.items(): cntM[nm_ + "_L"] = 100.0 * l_ / (CH * self.SPF); cntM[nm_ + "_R"] = 100.0 * r_ / (CH * self.SPF)   # mean membrane over the chunk, mV x 100

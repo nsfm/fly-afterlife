@@ -4602,3 +4602,138 @@ expects come from cells we do not drive, and the haltere afferents that would co
 which is right for a walking fly. the gaze reflex of TODO 4d is therefore a build, not a readout: the neck motor neurons carry nothing yet to
 read.
 
+
+## the legs, per muscle (21:38 PDT; nate: "where would you like to continue from? filling out some of his inputs? or starting to monitor and interpret his muscle outputs?" — outputs first, because every sense is judged through the summed cord, and proprioception (the largest missing sense) needs legs to exist; nate agreed the body will be actuated from motor neurons through a sourced muscle model, never a trained controller: "I'd rather have our guy flailing and spasming in place")
+
+**the table:** the male cord carries 373 leg motor neurons in the brain file (133 front, 116 mid, 124 hind; sides within three cells), most named
+by the muscle they pull (Lesser 2024 / Azevedo 2024 names: tibia flexor and accessory flexor, tibia extensor, trochanter flexor / extensor,
+sternotrochanter, femur reductor, sternal anterior / posterior rotator, pleural remotor, tergopleural promotor, the long tendon muscles ltm /
+ltm1 / ltm2, tarsal depressor / levator, tergotrochanter); 45 mid- and hind-leg cells carry MANC numbers without a muscle (MNml29, 76-83; MNhl01,
+02, 29, 59-65, 87, 88). so a muscle map is a readout off the table, nothing inferred. `--log-frames` (new; with `--log-types`) saves the logged
+cells' counts per 10 ms frame, since a step cycle in life is ~100 ms; oracle on the changed loop PASS (v1 + v2, 8 configurations, none differing,
+read from the log). `experiments/gait.py` asks the neck's question of the legs.
+
+**the probe** (90 s, seed 11, the configuration of record, all 38 leg motor types per frame; walking 62 % of frames at 0.19 m/s, standing 30 %):
+
+| Hz per cell, walking / standing | L1 | R1 | L2 | R2 | L3 | R3 |
+|---|---|---|---|---|---|---|
+| coxa retract (remotor, post. rotator) | 2.6 / 1.0 | 2.4 / 1.2 | 2.3 / 0.6 | 1.1 / 0.6 | 7.5 / 5.8 | 8.3 / 4.7 |
+| coxa protract (ant. rotator, promotor) | 5.7 / 5.5 | 6.5 / 6.0 | **43.9 / 54.7** | **51.1 / 60.3** | 12.6 / 10.9 | 4.8 / 4.4 |
+| trochanter depress (sternotrochanter, tr extensor) | 16.8 / 12.6 | 15.6 / 11.8 | 0.4 / 0.1 | 0.3 / 0.1 | 2.4 / 0.2 | 2.5 / 0.5 |
+| trochanter levate (tr flexor, acc.) | 0 / 0 | 0 / 0 | 5.3 / 5.4 | 12.8 / 6.4 | 0 / 0 | 2.0 / 0.8 |
+| **tibia flex (ti flexor, acc.; 84 cells)** | **0 / 0** | **0 / 0** | **0 / 0** | **0 / 0** | **0 / 0** | **0 / 0** |
+| tibia extend | 3.3 / 3.1 | 2.7 / 3.3 | **93.8 / 85.8** | **44.9 / 37.4** | 3.7 / 1.7 | 5.2 / 2.5 |
+| tarsus (depressor, levator; front only) | 0 / 0 | 0 / 0 | | | | |
+| ltm (grip) | 0 / 0 | 0 / 0 | 0.1 / 0.1 | 0 / 0 | 0 / 0 | 0 / 0 |
+| tergotrochanter (jump) | **18.4 / 16.7** | 0.2 / 0 | 0 / 0 | 0 / 0 | 0.1 / 0.1 | 0.1 / 0 |
+
+- **the flexors are silent.** every tibia flexor on every leg, the largest motor group in the cord, at 0.0 Hz walking and standing; the grip and
+  tarsal muscles too. the mid-leg tibia extensors carry the cord: two cells at 103 and 78 Hz on the left, 75 and 10 on the right; the mid-leg
+  anterior rotators at 29-65 Hz. and those are *higher standing than walking*. the front-left jump muscle at 13-30 Hz on three of four cells,
+  its right twin at 0.
+- **no rhythm.** the spectral peak of each leg's total rate scatters (21, 14, 1.2, 1.7, 1.2, 11 Hz walking) and is no sharper walking than
+  standing (x8-11 the band median in both).
+- **no phase.** every leg correlates with every other at lag 0, all positive (+0.19 to +0.44): one common dose moving the whole cord together.
+  tripod would put L1-R1, L1-L2 in anti-phase; nothing is.
+- **antagonists** at the coxa alternate weakly in the mid and hind legs (-0.25 to -0.36 at 30 ms); every other joint is flat, because one side
+  of it is silent.
+- **left minus right per leg against his turning:** -0.05 (T1), -0.10 (T2), -0.22 (T3); the summed cord against his speed +0.41, by construction.
+
+so the cord under a tonic walking command is a posture, mid tibiae extended and mid coxae protracted, that rises and falls with the dose. no
+stepping in it. the neck was a hum; the legs are a stance.
+
+**why (the table, signed):** leg motor neurons get balanced input (tibia extensor 3,313 excitatory / 2,354 inhibitory synapses per cell;
+anterior rotator 4,465 / 3,527; tibia flexor 786 / 599; the accessory flexors, ltm and tarsal cells under 300 each: the distal muscles are
+thinly connected in this file, worth checking against Azevedo 2024). DNg100's own 1,870 synapses land on the coxa (retract 621, protract 420),
+the mid-leg tibia extensors (218) and the trochanter depressors (151), and barely on a flexor (tibia flex 43, trochanter levate 65): the command
+excites the stance muscles directly and the swing muscles not at all. and the third-largest input to the tibia flexors is DNg105, the brake,
+which is purely inhibitory onto every leg muscle (-8,700 synapses) and largest on exactly the flexors (-1,890). two hypotheses for the silence:
+nothing excites the flexors under this command, or the brake holds them down tonically. two 30 s arms running: the flexors' seven largest inputs
+logged under the defaults, and the same with `--silence DNg105`.
+
+(a query error, kept: my first input census read the weight's sign and found "0 inhibitory synapses on every motor neuron"; the brain file keeps
+weights unsigned and the sign per presynaptic cell. redone with the sign array before anything was concluded from it.)
+
+**the arms (21:46 PDT; 30 s, seed 11, the defaults; the tibia flexors' seven largest inputs and the extensors' three logged):**
+
+| Hz per cell, L / R | defaults | `--silence DNg105` |
+|---|---|---|
+| tibia flexor (37) / acc. flexor (47) | 0.0 / 0.0 | 0.0 / 0.0 |
+| tibia extensor (12) | 30.7 / 16.8 (one cell 97) | 32.3 / 16.5 |
+| DNg100 (the walking command, driven) | 60.3 / 58.7 | 59.8 / 61.2 |
+| DNg105 (the brake, driven) | 22.2 / 22.1 | 22.4 / 21.8 |
+| the flexors' excitatory inputs: IN21A004, IN03A004, IN20A.22A009, IN03A031 | 0.0, 0.0, 0.0, 0.0 (one spike in 30 s among 40 cells) | the same |
+| the flexors' inhibitory inputs: IN16B016, IN09A002, IN21A003, IN21A002 | 48.5 / 51.1, 49.7 / 59.3, 11.8 / 17.3, 5.0 / 9.8 | the same |
+| the extensors' inhibitory inputs: IN19A005, IN08A007, IN13A006 | 9.2 / 10.7, 9.0 / 10.5, 16.6 / 9.7 | the same |
+
+- **arm B is void, and says something anyway.** DNg105 fired identically with its threshold "out of reach", because it is a *driven* cell:
+  the feeding state marks the brake population driven (pair.py line 225), and a driven cell spikes from its rate and never from its membrane.
+  aligned with the feeding array: 77 Hz per cell in the 80 chunks he fed (100 nominal), 0.0 in the other 220. so the brake is a pure input
+  (its own wiring never fires it: the "measured brake" of 09-18 is a puppet string, which §P should say), the lesion flag cannot touch a driven
+  cell (noted on `--silence`), and outside feeding the brake was already silent while the flexors stayed at zero. **the brake is not why.**
+- **the flexors are silent because nothing excites them.** their four largest excitatory premotor types are dead in the run (one spike in
+  thirty seconds), while their inhibitory premotor types run at 50-60 Hz (IN16B016, IN09A002) and 5-17 Hz (21A). the tibia extensors' inhibitors
+  are at 9-17 Hz and the extensors fire anyway, one cell at 97 Hz. the posture is the sign structure of the cord under a tonic dose: the
+  command excites the extensors and the coxa directly; the flexors' excitation is two synapses further in and never lights.
+- the save crashed on both first arms (an empty per-frame array reshaped to zero rows: my new save path; the oracle logs no cells so it could
+  not see it); fixed, both rerun, the oracle rerun on the fix.
+
+next (the question the neck's answer set): what should drive IN21A004 / IN03A004 / IN20A.22A009 / IN03A031 in life, and what does in the
+table. if it is the proprioceptors (the swing-phase afferents: the femoral chordotonal's flexion-sensitive cells, the tarsal load release), the
+cord's rhythm is closed through the legs, not held in the cord, which is Bidaye 2018's reading of the fly and the build order of §Q 4e: legs first.
+
+**what should drive the flexors' premotor cells (21:49 PDT; the table, signed):** IN21A004 (6 cells, cholinergic; 2,421 excitatory /
+1,806 inhibitory synapses per cell) is excited by IN17A016 (+917), IN03A059, IN04B032 and, directly, the femoral chordotonal's claw cells
+SNpp51 (+576) and the proprioceptive class as a whole (+129 per cell); inhibited by IN21A002, IN13A002, IN13A005, IN13B011. IN03A004 (6,
+cholinergic; 3,585 / 3,564) likewise: IN17A016 (+1,712), IN01A005, IN19B003 against IN12B003, IN08A008, IN13A002. and the walking command
+itself excites the flexors' inhibitor: DNg100 -> IN09A002 (GABA, +1,026), which runs at 50-60 Hz in the run. so on paper the tonic command
+holds the flexors down and their excitation waits on premotor cells two synapses in, with a direct proprioceptive line (the claw) among
+their inputs. that is the swing-phase circuit of Bidaye 2018 / Agrawal 2020 as far as the table can say it: closed through the leg.
+
+**a diagnostic before any body** (21:49): `--proprio 100`, the old tripod rule (the leg-nerve proprioceptive class per leg, class-filtered,
+17-138 cells per leg, a 10 Hz sine per leg in two tripods), 60 s, seed 11, the defaults otherwise, all leg motor types per frame; the 90 s
+probe above is its control. the question: does phasic proprioceptive input wake the flexors and put a phase between the legs. a stand-in
+gait driving the afferents, labelled, not a default: it says whether the cord's rhythm is closable through the legs, which is what §Q 4e builds.
+two errors on the way, kept: (1) the rule evaluated its sine at the chunk's end time, and chunk ends fall on the 10 Hz period, so every leg
+got a constant (the code's own note said "to be fixed as its own change"; fixed: the frame's time); (2) my fix dropped a closing paren, the
+first rerun died at import, the oracle was restarted on the compiled file.
+
+**the diagnostic's answer (21:57 PDT; `--proprio 100`, 60 s, seed 11; walking 70 % of frames at 0.20 m/s; against the 90 s probe):** nothing
+moves. the tibia flexors 0.0 / 0.0 on all six legs; the posture the same to within noise (mid tibia extensors 99 / 79 and 48 / 38 walking /
+standing, mid coxa protractors 40-55, front trochanter depressors 16, the left jump muscle 19); the coxal antagonists -0.14 to -0.32 as
+before; spectral peaks scattered and no sharper walking than standing; every inter-leg pair positive at lag 0 except L3-R3 at -0.22 with a
+30 ms lag, one pair on one seed, not called. the afferents were driven (the floor's 15 Hz plus a tripod sine of up to ~37 Hz at his pace,
+100 nominal x 0.85 x pace 0.44), and the claw's line onto IN21A004 is 129 of its 2,421 excitatory synapses per cell: a small handle, and it
+did not lift. so at this dose the cord's rhythm is not closable through the afferents alone.
+
+**what this says, and what it does not.** in life a headless fly's cord steps when a walking DN is driven (Bidaye 2020: BDN2 activation
+walks decapitated flies), so a cord that will not pattern under a tonic DNg100 dose is a failure of the *model*, not a hole in the wiring:
+the premotor network that should turn a tonic command into alternation is present (its sign structure is right there: the command excites
+the extensors and the flexors' inhibitors; the flexors' excitation waits two synapses in), but nothing in a memoryless LIF at one uniform
+constant makes it swing. half-centre oscillators need a fatigue term: adaptation or depression. that is 5c's refreeze day (`--std all`, the
+Tsodyks-Markram rule on every synapse with the calibrations redone), which was queued for the wings and turns out to be the legs' question
+too. queued as the next single variable on this row: the 90 s probe under `--std all` (the raw calibrations, no refreeze), the same analysis,
+before any body. the body is built regardless (nate: the posture is the honest output, flailing included), and with the flexors silent the
+first body will lie on the floor, which is the finding stage 2 of §Q 4e is for.
+
+**depression on every synapse (22:13 PDT; `--std all`, 90 s, seed 11, the raw calibrations, all leg motor types per frame; against the 90 s probe):**
+
+- **the cord goes quiet.** every muscle group on every leg at 0-3 Hz per cell; the posture is gone (mid tibia extensors 0.9 / 1.5 from 94 / 45;
+  mid coxa protractors 2.1 / 0.3 from 44 / 51); the flexors still 0.0. the antagonists are flat or weakly positive. left minus right per leg
+  now tracks his turning at -0.25 / -0.54 / -0.50 (front / mid / hind), which is new and worth a look once the readout is honest.
+- **his "walking 84 % of frames at 0.40 m/s" is the pace readout, not the cord.** the standing tonus it divides by was calibrated on a
+  depressed cord near zero, so the sum reads as full speed while the legs are silent: the calibration break 5c was queued for, measured on the
+  legs. no behavioural number from this run counts.
+- **a 10.0 Hz beat in the left mid and hind legs, thirty and sixty times the band median, is an artefact.** the rate by frame-within-chunk
+  (spikes per frame summed over the leg, the whole run): L3 0.19 0.14 0.09 0.16 0.17 0.18 0.17 0.26 0.37 0.30, a dip after every chunk
+  boundary and a climb to the eighth frame, 4.2x peak to trough, the same shape in all four mid and hind legs (2.3-4.2x). the chunk is 100 ms.
+  a cord that stepped would drift against the chunk; this one is nailed to it. **and the control carries the same shape at a tenth of the size**
+  (1.1-1.2x, the same dip at frames 5-8 in L2): the world updates once a chunk (the eye's still chunk, the wheel and the pace, the goal) and the
+  cord feels the step. small under the tonic posture, dominant once depression takes the posture away. this is a seam artefact in every run,
+  now measured; the fix is per-frame updates or interpolation within the chunk, queued.
+
+so fatigue on every synapse, as the engine has it (u 0.08, tau 480 ms, uncalibrated), does not make the cord step; it makes it quiet, and
+uncovers the chunk seam. the half-centre question is not closed by this: the rule's constants are the wings' (5c), the calibrations are broken
+under it, and the headless preparation (§Q 4f) is where the dose and the constants can be swept cheaply. the answer tonight is "not like this."
+
+**oracle (22:18 PDT), on the loop with `--log-frames`, the empty-array fix and the tripod rule on frame time: PASS, v1 + v2, eight configurations, none differing (read from the log).** committed.
