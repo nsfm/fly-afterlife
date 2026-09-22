@@ -31,6 +31,7 @@ ap.add_argument("--log-types", default="", help="comma-separated types to log pe
 ap.add_argument("--warmup", type=float, default=2.0, help="seconds before the walking command comes on (the cord at rest under the floor)")
 ap.add_argument("--treadmill", type=float, default=0.0, help="the headless treadmill (a labelled stand-in, 09-21): step frequency in Hz at which each leg's proprioceptors (world/legs.npz, by bodyId) are loaded in stance (--leg-load-hz) and UNLOADED (0 Hz) in swing, in two alternating tripods (L1 R2 L3 / R1 L2 R3), --treadmill-duty of the cycle in stance; 0 = off (the floor's constant load). asks whether unloading alone releases swing")
 ap.add_argument("--treadmill-duty", type=float, default=0.5)
+ap.add_argument("--drive", default="", help="drive named sensory / descending types at a rate: TYPE:HZ,TYPE:HZ (e.g. SNpp50:50, the extension-tuned FeCO claw cells); rows after the floor and the treadmill, so they override on those cells; a labelled diagnostic")
 args = ap.parse_args()
 fps, CH = 100, 10; SPF = 1000 // fps; t0 = time.time()
 
@@ -47,7 +48,8 @@ if args.std != "off":   # the same block as pair.py (09-21)
 
 REG = Registry()
 if args.walk > 0:
-    WALK = np.flatnonzero(((mty == args.walk_dn) | np.char.startswith(mty, args.walk_dn + "_")) & (M.sc.astype(str) == "descending_neuron"))
+    _wd = [x for x in args.walk_dn.split(",") if x]; WALK = np.flatnonzero(np.isin(mty, _wd) & (M.sc.astype(str) == "descending_neuron"))   # a comma-separated list: the command as a population (09-21 night)
+    print(f"command: {len(WALK)} cells of {_wd} at {args.walk} Hz")
     REG.add(ReceptorClass(f"walk_{args.walk_dn}", WALK, Scaled(args.walk), lambda st: float(st.get("walk_gain", 1.0)), source="Bidaye 2020: the walking DN driven in a decapitated fly"))
 else: WALK = np.zeros(0, np.int64)
 _fl = tonic_floor(M, REG) if args.floor else []
@@ -64,12 +66,19 @@ if args.treadmill > 0:   # per-leg load rows after the floor, so they override i
         cells_ = np.array([_pos[int(_wb[i_])] for i_ in _legs[leg_] if int(_wb[i_]) in _pos], np.int64)
         REG.add(ReceptorClass(f"treadmill_{leg_}", cells_, StanceLoad(args.leg_load_hz, TRIPOD[leg_], args.treadmill, args.treadmill_duty), lambda st: True))
     print(f"treadmill: {args.treadmill} Hz steps, duty {args.treadmill_duty}, load {args.leg_load_hz} Hz in stance, 0 in swing")
+if args.drive:
+    from fly_afterlife.receptors import Hold
+    for item in args.drive.split(","):
+        t_, hz_ = item.split(":"); cells_ = np.flatnonzero(mty == t_)
+        REG.add(ReceptorClass(f"drive_{t_}", cells_, Hold(float(hz_)), lambda st: True, source="cord.py --drive: a named type held at a rate (diagnostic)")); print(f"drive: {t_} ({len(cells_)} cells) at {hz_} Hz")
 print(REG.table())
 
 M.driven[:] = False
 for cl in M.SENSORY_CLASSES: M.driven[M.cls == cl] = True
 if len(_fl): M.driven[np.unique(np.concatenate([rc.cells for rc in _fl]))] = True
 if len(WALK): M.driven[WALK] = True
+for rc in REG.classes:
+    if rc.name.startswith("drive_") or rc.name.startswith("treadmill_"): M.driven[rc.cells] = True
 M._driven_idx = np.flatnonzero(M.driven); M.reset()
 if args.silence:
     _sil = np.flatnonzero(np.isin(mty, [x for x in args.silence.split(",") if x])); M.v_th[_sil] = np.float32(1e6); print(f"silenced {len(_sil)} cells of {args.silence} (driven cells unaffected)")

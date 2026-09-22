@@ -66,6 +66,10 @@ one change per run, its control, the measurement that decides it. status: queued
    iterate: every variable on this row (depression, the constant, the dose, adaptation) is tested there first and confirmed in the whole fly.
    control: the whole fly at the same dose (the 90 s probe). a build: a brain subset loader (`brain_whole.npz` filtered by superclass) and a
    pair.py world with no eye. the plain-language page for this row is `docs/WALKING.md`.
+   **[built and swept 09-21 22:34]** `world/cord.py` (30 s of cord in 5 s): the cord holds a stance under DNg100; nothing switches it (dose,
+   constant, depression, load constant or tripod-timed, the claw); a flexion-biased DN population (DNge035, DNge049, DNg95, DNge038) makes it
+   hold a swing posture instead (flexors 0.9-2.7 Hz), co-contraction with both. **next on the row, in the cord: (1) rebound / plateau currents
+   and electrical synapses as labelled engine physics with sources; (2) the walking population with a time course.** the body (4e) regardless.
    **[measured 09-21 22:13]** `--std all` on the 90 s probe: the cord goes quiet (0-3 Hz everywhere, flexors still 0), the pace readout degenerates (a
    depressed standing tonus), and a 10 Hz "beat" turned out to be chunk-locked. no stepping; "not like this". next on this row: 4f first.
 4g. **[queued 09-21 22:13] the chunk seam**: the cord's rate dips after every 100 ms chunk boundary and climbs back by the eighth frame (4x under

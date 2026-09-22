@@ -4867,3 +4867,58 @@ constant (2.7). what remains, in the order i would test them, each in the cord f
    absent from a LIF), neuromodulation. each is a labelled engine change with a source, and each is 5c's kind of day.
 3. **the body.** the honest closure regardless: a load that is the leg's own, from muscles the cord actually drives, on a floor. the first
    body lies down, and that is the record's starting frame for the row.
+
+**the command as a population (22:32 PDT; the cord; census then arms):** two-synapse excitatory reach DN -> interneuron -> tibia flexor MN
+against the same onto the extensors: DNg100 is extension-biased (0.09 / 0.20); DNge035 (0.40 / 0.24; the largest exciter of IN21A004,
+IN20A.22A009, IN03A031 and IN19B003), DNge049 (0.27 / 0.15), DNg95 (0.21 / 0.00), DNge038 (0.20 / 0.00), MDN (0.19 / 0.09; the moonwalker,
+backward walking, which a headless fly obeys: Bidaye 2014), DNp02 / DNp06 / DNp11 (escape-side, flexor-only) are flexion-biased.
+
+| arm (30 s, seed 11, 100 Hz on the named cells) | MN Hz | active | flex Hz | ext Hz | antag | legs |
+|---|---|---|---|---|---|---|
+| DNg100 (the record's command) | 1.96 | 52 | 0.00 | 9.3 | -0.16 | +0.00 |
+| DNge035 | 1.40 | 47 | 0.00 | 9.2 | -0.12 | +0.00 |
+| DNg95 | 0.48 | 23 | 0.02 | 0.3 | -0.07 | -0.02 |
+| DNge038 | 0.37 | 24 | 0.11 | 0.2 | -0.05 | -0.05 |
+| MDN (4 cells) | 2.58 | 58 | 0.08 | 3.4 | -0.36 | -0.09 |
+| **the flexor set** DNge035 + DNge049 + DNg95 + DNge038 (8 cells) | 1.68 | 54 | **0.93** | 2.9 | -0.21 | -0.01 |
+| the flexor set, load 0 | 1.81 | 48 | **2.72** | 0.7 | -0.16 | -0.02 |
+| DNg100 + the flexor set + DNge048 (12 cells) | 2.54 | 70 | 0.57 | 8.6 | -0.26 | +0.00 |
+
+- **the population changes the posture, not the pattern.** the flexor-biased set puts the tibia flexors at 0.93 Hz per cell and the
+  extensors down to 3; with the load off, flexors 2.7 and extensors 0.7: the first swing posture the cord has held. DNg100 added back gives
+  both at once (0.57 / 8.6), co-contraction, not alternation. no leg anti-phases another in any arm.
+- so the cord routes a command to the right muscles (extension DN -> stance, flexion DNs -> swing, with the load reflex on top) and never
+  switches between them under tonic input. **the switch is the missing thing**, and nothing on the command side supplies it.
+- the table's candidate for the switch runs through the leg: the extension-tuned claw cells of the femoral chordotonal organ (SNpp50) sit
+  on IN21A004, the flexors' premotor cell, with 576 synapses: the resistance reflex (extension sensed, flexors answered). if that link is
+  live, then stance extends the knee, the claw fires, the flexors lift, the load drops, the command re-extends: an oscillator through the
+  body, which is what the body is for. next arm: the claw driven in the cord (`--drive TYPE:HZ`), does it wake the flexors.
+
+**the claw (22:34 PDT; the cord, `--drive TYPE:HZ`; the femoral chordotonal's claw cells held at a rate on top of the floor):**
+
+| arm (30 s, seed 11) | MN Hz | active | flex Hz | ext Hz | antag | legs |
+|---|---|---|---|---|---|---|
+| DNg100 100 Hz (the record) | 1.96 | 52 | 0.00 | 9.3 | -0.16 | +0.00 |
+| extension-tuned claw SNpp50 (62 cells) 50 Hz, no command | 1.05 | 35 | 0.00 | 8.0 | -0.17 | -0.01 |
+| SNpp50 50 Hz + DNg100 | 2.28 | 50 | 0.00 | **18.0** | -0.20 | +0.00 |
+| SNpp50 150 Hz + DNg100 | 3.25 | 53 | 0.00 | **31.7** | -0.47 | +0.00 |
+| SNpp50 150 Hz + DNg100, load 0 | 3.07 | 45 | 0.00 | 26.2 | -0.53 | +0.00 |
+| flexion-tuned claw SNpp51 (32) 50 Hz + DNg100 | 2.08 | 57 | 0.00 | 7.9 | -0.17 | +0.00 |
+| hook SNpp39 + SNpp41 (61) 50 Hz + DNg100 | 2.02 | 54 | 0.00 | 10.6 | -0.15 | +0.00 |
+
+- **the claw drives extension, never flexion.** the extension-tuned cells at 50 and 150 Hz double and triple the extensors (9 -> 18 -> 32 Hz
+  per cell) and leave every flexor at 0.00, with or without the load. the 576 synapses onto IN21A004 do not carry against whatever else
+  the claw excites. in a resting animal this is the wrong sign (the resistance reflex: extension sensed, flexors answered); in a walking
+  animal the reflex reverses to assistance (Bässler's reflex reversal; extension sensed, extension helped) and the cord under a walking
+  command answering this way is not obviously wrong. either way it is not a switch.
+- so, tonight's last null: the femoral position signal does not release swing in this cord, at rest or under the command. the flexors
+  have fired under exactly one condition all night: a flexion-biased descending population, and then as a posture.
+
+**where the row stands at the end of the headless night.** the cord routes commands to the right muscles and holds whichever posture it
+is told: extension DN -> stance, flexion DNs -> swing, load -> stance, and nothing switches. the candidates for the switch, in order:
+(1) engine physics a cord has and a LIF lacks: post-inhibitory rebound and plateau currents (the half-centre's classic ingredients besides
+fatigue), electrical synapses (absent from the chemical connectome); each a labelled engine change with a source, tested in the cord in
+seconds; (2) the walking command as it is in life: a population with a *time course* (the DN population of Braun / Sapkal 2024, and the
+brain's own modulation of it, which the headless fly lacks and Bidaye's optogenetic fly also lacked, and walked); (3) the body, which
+closes the load loop honestly and is built regardless (§Q 4e). the headless preparation is the place for (1) and (2): forty times cheaper,
+and it reproduced the whole fly's answer.
