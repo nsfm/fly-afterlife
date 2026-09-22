@@ -4463,3 +4463,37 @@ running now on the configuration of record, three seeds each: `--std pair`, the 
 `--std all`, the physiology (every synapse depresses, which also re-scales every tonic sensory row: the cooling cells at 95 Hz would sit at a
 fifth of their drive at steady state), which is a refreeze and every baseline re-measured. the batch says what each does to him.
 
+
+**oracle FAIL (18:38 PDT), mine:** the `--std` block was inserted after the engine line by string replacement, which carried the rest of that line (`mty = ...`, the type array every later line uses) into the new `if` block, so every run without `--std` died on a NameError at the readouts, the oracle's four port arms included. restored at top level; the oracle reruns. the depression batch, which passes `--std`, was not affected. an oracle FAIL from my own edit is recorded as a FAIL.
+
+## the flight-gate brief (18:43 PDT; `docs/physiology/flight_gate.md`, an opus agent, 517 lines; the claims that change the plan, checked where the table could check them)
+
+- **the cooling cells are phasic and their 95 Hz basal rate is the zero of the code** (Budelli 2019): a cooling cell at rest is saying "nothing is
+  changing." feeding that rate through non-depressing synapses into a LIF is a sensory-encoding artefact before it is anything about flight, and it is
+  DNb05's largest input. the brief's first recommendation is to fix that whether or not the wings quiet.
+- **the DNg33 pair's 1,496 recurrent synapses are mutual, not autapses**: 773 one way, 723 the other (verified here). a pair like that with no
+  adaptation is a latch by construction; "a fix to the engine, not to the fly." (the bench agrees: depression unlocks it in a second.)
+- **the flight gate in life is a gain, not a brake** (Ache et al. 2019: the landing descending neurons' visual responses are "severely attenuated
+  during non-flight periods", by octopamine in one case and by flight-motor feedback in the other; Maimon 2010, Suver 2012 for the whole visual
+  pathway). so the honest representation of "not flying", if one is needed, is a multiplicative gain on the LPLC4 / LLPC2 / LPC2 / LC36 synapses
+  onto DNp31 and DNb05, labelled `flight_state = 0`, a modulatory mechanism as a modulatory parameter.
+- **do not silence DNb05 or DNp31 as a default**: DNb05 is established to be active in walking flies and steering-correlated (Yang et al. 2024,
+  Cell; Namiki 2018 flagged it as the odd descending neuron reading both optic and olfactory glomeruli, which is our input table exactly). the
+  lesion of 18:xx agrees from the other side: silence it and he stops walking.
+- **the three GABA classes are not a "not flying" switch**: Cheong et al. 2024 name IN06B066 as the target of DNa08 and DNp31 that may form an
+  inhibition-stabilised network with the tectular interneurons "to limit runaway excitation": inhibition that follows excitation. and a new
+  table fact: IN06B066 and IN03B089 are DLM-biased (5,763 and 6,312 synapses onto DLMns against 882 and 1,105 onto DVMns), IN11B013 is DVM-biased
+  46:1; the excitation is common to both. phase and gain machinery for DLM versus DVM.
+- **the target number**: real DLM / DVM motor neurons fire 5-20 Hz in flight (Harcombe & Wyman 1977), sequenced by electrical coupling between the
+  motor neurons (Hürkey et al. 2023, Nature) that turns unpatterned premotor input into splayed firing. our 119 Hz is six to twenty times a
+  flying fly, and our engine has no gap junctions, so it cannot make the real pattern in any state. "not flying" is 0 Hz; anything that lands them
+  at 40 has not fixed it. the giant-fibre path is present in name only for the same reason (DNp01 -> TTMn 90 chemical synapses; the pathway is
+  electrical in life), and the octopaminergic axis is outside the model (101 cells; mesVUM-MJ makes one synapse onto the power motor neurons).
+
+the brief's experiments, in its order, against what is already done: (1) a control with DLM and DVM logged apart [the std batch logs them apart];
+(2) the cooling row at its true zero [done at 15:1x: the wings did not move, because DNb05 has other inputs and, per the lesion, DNb05 is not
+the wings' driver but their inhibitors'; the brief was written without the lesion]; (3) depression on the thermosensory pathway [the `--std all`
+arm]; (4) DNg33 de-latched [the `--std pair` arm]; (5) the flight-state visual gain, Ache 2019, labelled [to build, in `wiring.py`, as a
+correction class with a source]; (6) the labelled brake state, only if 1-5 leave the wings up [unlikely to be needed]. the batch decides
+between 3 and 4 tonight; 5 is queued as the gate's honest form for when he has a flight state to switch it.
+
