@@ -171,9 +171,13 @@ class Garden(Room):
         if f is not None: self.wall(f)
         m.taste = None; m.labellum = None
         for b in ([m] + ([f] if f is not None and f.present else [])):
-            for gx, gy, gr, _, _ in self.grass:
-                dd = np.hypot(b.x - gx, b.y - gy)
-                if dd < gr + b.r: b.x, b.y = gx + (b.x - gx) / max(dd, 1e-6) * (gr + b.r), gy + (b.y - gy) / max(dd, 1e-6) * (gr + b.r); b.touched = "L" if b.bearing_to(gx, gy) >= 0 else "R"; b.kind = 1
+            for _pass in range(4):   # 09-21: resolve against EVERY stalk until nothing overlaps. sequential single push-outs let two neighbouring stalks push him into each other, and he sat 3 cm inside one, "touching" every frame, for the last 70 s of the run of record (the stall at 1:50)
+                _moved = False
+                for gx, gy, gr, _, _ in self.grass:
+                    dd = np.hypot(b.x - gx, b.y - gy)
+                    if dd < gr + b.r - 1e-4:   # a touch is a penetration of at least 0.1 mm, i.e. motion into the stalk: a body resting at the boundary after a push-out passed the bare test by a rounding hair and "touched" every frame while standing still (the stall of the run of record at 1:50, 09-21)
+                        b.x, b.y = gx + (b.x - gx) / max(dd, 1e-6) * (gr + b.r), gy + (b.y - gy) / max(dd, 1e-6) * (gr + b.r); b.touched = "L" if b.bearing_to(gx, gy) >= 0 else "R"; b.kind = 1; _moved = True
+                if not _moved: break
             if self.climb:   # 09-21: the fruit and the stone are walkable domes; his feet follow the surface, no push-out, no touch; on the fruit his tarsi are on the skin
                 z_, on_ = self.surface(b.x, b.y); b.z = z_
                 if self.tilt:   # 09-21: pitch and roll from the surface under his feet, front to back and side to side over his body (a fly stands parallel to the surface; his body spans a body length, so an edge is crossed over a body length, not in a frame: nate, 09-21 evening)

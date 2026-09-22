@@ -371,6 +371,7 @@ class Episode:
         if "n_feeding" in E.files: self.traces["feeding (read from MN9 since 09-21; before that, the latch)"] = np.asarray(E["n_feeding"], np.float64)
         self._static = None if self.her else self.scene_at(0)     # nothing moves in his world when she is not in it
         self.K = self._chunk_frames()
+        self.pose_tilt = np.asarray(E["pose_tilt"], np.float32) if "pose_tilt" in E.files else None   # pitch, roll per frame (--tilt on, 09-21)
         self.cam_h, self.cam_xy = self._camera()
         self._compass()
 
@@ -387,7 +388,6 @@ class Episode:
         self.sun_dir = np.asarray(E["sun_dir"], np.float64).ravel() if "sun_dir" in E.files else None
         self.ocelli = np.asarray(E["ocelli"], np.float32) if "ocelli" in E.files else None
         self.pose_z = np.asarray(E["pose_z"], np.float32) if "pose_z" in E.files else None   # his feet's height per frame (--climb on, 09-21)   # per frame: median, left, right ocellus sky light 0..1 (--ocelli on, 09-19)
-        self.pose_tilt = np.asarray(E["pose_tilt"], np.float32) if "pose_tilt" in E.files else None   # pitch, roll per frame (--tilt on, 09-21)
         self.sun_az = self.sun_el = None
         if self.sun_dir is not None and len(self.sun_dir) >= 3:
             d = self.sun_dir / (np.linalg.norm(self.sun_dir) + 1e-12)
@@ -456,6 +456,8 @@ class Episode:
             return self.pose[:, 2].copy(), self.pose[:, :2].copy()
         c = np.arange(0, self.n, K)                        # first frame of each chunk
         hs = np.interp(np.arange(self.n), c + (K - 1) / 2.0, h[c])
+        tl = getattr(self, "pose_tilt", None)
+        self.cam_tilt = np.stack([box(tl[:, 0], K), box(tl[:, 1], K)], 1) if tl is not None else None   # the head's pitch and roll, smoothed like the heading (09-21 evening: it snapped to the sky in one frame at the fruit's edge)
         return np.degrees(box(hs, K)), np.stack([box(self.pose[:, 0], K), box(self.pose[:, 1], K)], 1)
 
     def heading_steps(self):
@@ -561,7 +563,8 @@ class HumanView:
         g = uimg = None
         tl = getattr(self.ep, "pose_tilt", None)
         if tl is not None:   # the head pitches and rolls with the body (09-21): rotate the body-frame rays before the yaw
-            pt, rl = np.radians(tl[min(int(i), len(tl) - 1)])
+            tls = self.ep.cam_tilt if (self.smooth and getattr(self.ep, "cam_tilt", None) is not None) else tl
+            pt, rl = np.radians(tls[min(int(i), len(tls) - 1)])
             if abs(pt) > 1e-6 or abs(rl) > 1e-6:
                 Rp = np.array([[np.cos(pt), 0, -np.sin(pt)], [0, 1, 0], [np.sin(pt), 0, np.cos(pt)]], np.float32); Rr = np.array([[1, 0, 0], [0, np.cos(rl), -np.sin(rl)], [0, np.sin(rl), np.cos(rl)]], np.float32)
                 M_ = (Rp @ Rr).T; r0 = np.ascontiguousarray(r0 @ M_); r0u = np.ascontiguousarray(r0u @ M_) if r0u is not None else r0u

@@ -4561,3 +4561,18 @@ a handful of numbers, fit to about six targets, tested on the whole record. the 
 
 
 oracle after the depression default (19:26 PDT; `--std pair` the default, `--std off` pinned on both oracle lines): PASS, eight of eight, read from the log first.
+
+## the stall at 1:50 (20:23 PDT; nate: "around 1:45 he seems to get trapped on a blade of grass, and though he's facing away from it for over a minute never seems to escape")
+
+from 110 s to the end of the run of record he stood at (-2.175, -2.179), speed exactly 0, touching a stalk on every frame, facing away from it, while the
+goal switched four times. the cause, once checked against the run's own stalk layout (the garden's grass is drawn per seed; a first check against the
+default layout said he was 3 cm inside a stalk, which was my error and is kept here): he rests at exactly the stalk's radius plus his own after a
+push-out, and the contact test `dd < gr + r` passes by a rounding hair every frame, so a fly standing still against a stalk is "touching" it a
+hundred times a second. the bristle rows then hold the cord in its withdrawal pattern (leg motor neurons 12,100 -> 9,200 spikes/s), the state pace
+reads that as standing, and standing he never leaves: a deadlock made of one floating-point ulp. fixed: a touch is a penetration of at least 0.1 mm,
+i.e. motion into the stalk; and the stalk contacts now resolve iteratively against every stalk, which the record had assumed and the code did not do.
+the run of record is being made again on it. (the pace reading the summed cord, which the withdrawal pattern pulls down, is the deeper thing here:
+TODO §2's motor-pattern readout.) and nate's other note: the viewpoint snapped to the sky in a frame at the fruit's edge; pitch and roll are now the
+surface under his feet front to back over the body length (the edge crossed over a body length, 54 deg at the first foot on the dome, then 71, then
+down), and the viewer smooths them with the same box filter as the heading.
+
