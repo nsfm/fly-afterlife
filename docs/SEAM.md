@@ -5044,3 +5044,33 @@ log's 10 ms frames (coarse; the twitch is longer than a frame; noted).
   8.5 ms half-rise, which is why the twitch kernel is ours and the body's own activation dynamics are left near-instant.
 
 **oracle (23:00 PDT) on the engine with `--adapt` / `--rebound` present and off: PASS, v1 + v2, eight configurations, none differing (read from the log). the engine terms committed.**
+
+## the first loop (23:36 PDT; `experiments/leg_loop.py`: the cord and FlyMimic's left front leg in one process at 1 ms, 0.47x real time)
+
+the leg's tibia angle drives this leg's claw cells (extension-tuned SNpp50 as it extends, flexion-tuned SNpp51 as it flexes, 0-100 Hz over
+60 deg either side of 90, (E)), its angular velocity drives the hook cells (SNpp39 flexion / SNpp41 extension, 100 Hz at 300 deg/s, (E)),
+and the treadmill can load this leg's other 27 proprioceptors on a clock; the cord's spikes drive the fifteen muscles through the twitch
+kernel. **the sensory side of this leg is thin:** 35 proprioceptive cells in the cord for the left front leg, of which 1 extension claw, 3
+flexion claw, 3 + 1 hook (the worst-traced leg in the volume; the mid legs carry 127-133 each).
+
+| arm (20 s, seed 11) | LF MN Hz | tibia flexors | tibia extensors | tibia range (sd) | claw drove (ext / flex Hz) | hook drove |
+|---|---|---|---|---|---|---|
+| DNg100 100 Hz, loop off (a live replay) | 0.57 | 0.01 | 1.25 | 54-97 (7.5) | 3 / 5 | 12 / 14 |
+| + position | 0.63 | 0.01 | 1.81 | 50-97 (9.4) | 3 / 8 | 17 / 19 |
+| + position + treadmill 5 Hz | 0.58 | 0.00 | 1.78 | 46-97 (9.3) | 3 / 7 | 16 / 18 |
+| + treadmill only | 0.56 | 0.00 | 1.25 | 51-97 (8.0) | 3 / 5 | 13 / 14 |
+| DNg100 400 Hz, loop off | 3.18 | 0.20 | 12.9 | 36-100 (17.6) | 1 / 49 | 38 / 37 |
+| + position | 3.22 | 0.20 | 11.5 | 35-100 (17.3) | 1 / 46 | 38 / 37 |
+| + position + treadmill | 3.29 | 0.21 | 11.8 | 34-101 (16.9) | 1 / 48 | 38 / 38 |
+| + treadmill only | 3.30 | 0.18 | 14.3 | 35-99 (17.1) | 0 / 52 | 38 / 38 |
+
+- **closing the loop on this leg changes nothing measurable.** the sensory cells fired (the flexion-tuned claw at ~49 Hz with the tibia
+  flexed at the high dose, the hooks at 38), the cord's leg output did not move (0.57 vs 0.63 Hz per cell; flexors 0.01 in every arm; the
+  joint ranges within noise of the open-loop replay). the leg's own load clock on its 27 load cells did nothing either.
+- the reading, with the earlier claw arms: this leg's sensory return is one extension cell and three flexion cells into a cord whose
+  flexor premotor cells need thousands of synapses to move, and the treadmill's effect in the whole cord (the inter-leg alternation) came
+  from 645 cells on six legs, not 27 on one. **the loop's honest test needs the mid legs**, which are traced (127-133 sensory cells each),
+  and a body that has them: the six-legged NeuroMechFly on a floor, its own stance as the load. that was the next build already; this
+  makes it the only one.
+- the tibia-angle spectral "peak x800-1500" printed by the script is the red spectrum of a smooth angle signal, not a beat; ignore it.
+  videos: `world/cord/loop/*.mp4`.

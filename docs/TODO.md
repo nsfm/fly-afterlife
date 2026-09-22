@@ -74,6 +74,9 @@ one change per run, its control, the measurement that decides it. status: queued
    through FlyMimic's fifteen Hill muscles (map by name; twitch kernel; force by synapse size) on the tethered body: it twitches, more with the
    dose; figure `docs/figures/leg_replay_joints.png`, videos `world/cord/video/`. next: the six-legged NeuroMechFly on the floor (joint torques from
    the same map), then the loop (joints and loads -> his proprioceptors).
+   **[the loop on one leg, 09-21 23:36]** `experiments/leg_loop.py` closes position (claw) and velocity (hook) from FlyMimic's leg into the cord at 1 ms,
+   with the treadmill as load: no measurable change (this leg has 1 extension claw cell and 3 flexion in the volume). the loop's real test is the
+   mid legs on the six-legged body. **next build: NeuroMechFly on the floor, six legs, the map by name, joint torques; then its stance as the load.**
    **[hunted 09-21 22:49]** the half-centre is in the table (flexor exciters -> extensor inhibitors +13.5k, the reverse +10k, inhibitors mutually
    -13k / -15k) and none of four release mechanisms switches it (depression everywhere / on the inhibitors alone, adaptation, rebound: 40 arms),
    because the inhibitor pools barely reach the opposing exciters (-0.7k / -1.7k): a router with a load reflex, alternated by its inputs. **the
