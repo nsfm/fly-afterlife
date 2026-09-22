@@ -176,9 +176,11 @@ class Garden(Room):
                 if dd < gr + b.r: b.x, b.y = gx + (b.x - gx) / max(dd, 1e-6) * (gr + b.r), gy + (b.y - gy) / max(dd, 1e-6) * (gr + b.r); b.touched = "L" if b.bearing_to(gx, gy) >= 0 else "R"; b.kind = 1
             if self.climb:   # 09-21: the fruit and the stone are walkable domes; his feet follow the surface, no push-out, no touch; on the fruit his tarsi are on the skin
                 z_, on_ = self.surface(b.x, b.y); b.z = z_
-                if self.tilt:   # 09-21: pitch and roll from the slope under his feet and his heading (a fly stands parallel to the surface)
-                    gx_, gy_ = self.slope(b.x, b.y); hr_ = np.radians(b.h); fwd_ = (np.cos(hr_), np.sin(hr_)); left_ = (-np.sin(hr_), np.cos(hr_))
-                    b.pitch = float(np.degrees(np.arctan(gx_ * fwd_[0] + gy_ * fwd_[1]))); b.roll = float(np.degrees(np.arctan(gx_ * left_[0] + gy_ * left_[1])))
+                if self.tilt:   # 09-21: pitch and roll from the surface under his feet, front to back and side to side over his body (a fly stands parallel to the surface; his body spans a body length, so an edge is crossed over a body length, not in a frame: nate, 09-21 evening)
+                    hr_ = np.radians(b.h); fwd_ = (np.cos(hr_), np.sin(hr_)); left_ = (-np.sin(hr_), np.cos(hr_)); L_ = b.r; Wd_ = 0.5 * b.r
+                    zf_ = self.surface(b.x + L_ * fwd_[0], b.y + L_ * fwd_[1])[0]; zb_ = self.surface(b.x - L_ * fwd_[0], b.y - L_ * fwd_[1])[0]
+                    zl_ = self.surface(b.x + Wd_ * left_[0], b.y + Wd_ * left_[1])[0]; zr_ = self.surface(b.x - Wd_ * left_[0], b.y - Wd_ * left_[1])[0]
+                    b.pitch = float(np.degrees(np.arctan2(zf_ - zb_, 2.0 * L_))); b.roll = float(np.degrees(np.arctan2(zl_ - zr_, 2.0 * Wd_)))
                 else: b.pitch = b.roll = 0.0
                 if on_ == "fruit" and b is m: m.taste = "sugar"; m.labellum = "sugar"   # on the food, the labellum is on the skin (a fly walking over fruit dabs it; a stand-in for the extension, which his tarsal path does not drive; docs/SEAM.md 09-21)
             else:
