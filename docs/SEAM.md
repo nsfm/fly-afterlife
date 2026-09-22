@@ -5074,3 +5074,24 @@ flexion claw, 3 + 1 hook (the worst-traced leg in the volume; the mid legs carry
   makes it the only one.
 - the tibia-angle spectral "peak x800-1500" printed by the script is the red spectrum of a smooth angle signal, not a beat; ignore it.
   videos: `world/cord/loop/*.mp4`.
+
+**the lifts (00:03 PDT; nate, watching: "garden_LF ... the leg raises, moves forward or backward, and falls"; "ctl ... strong, decisive extensions, a forward-back component"):**
+a lift = the smoothed trochanter pitch more than 15 deg above its resting level (levation). the question: do lifts come at a walking
+interval, and does the coxa swing *during* them (a swing phase) rather than at random?
+
+| arm | lifts | lift duration | interval (cv) | coxa yaw change during lifts: sign agreement |
+|---|---|---|---|---|
+| **him** (`garden_LF`: the run of record's left front leg, 8 s) | 16 | 213 ms | 492 ms (0.93) | 0.12 |
+| the cord, DNg100 100 Hz (`ctl`) | 5 | 82 ms | 774 ms (0.59) | 0.20 |
+| the cord, 400 Hz | 18 | 113 ms | 256 ms (0.62) | 0.11 |
+| the cord, 400 Hz + the 5 Hz treadmill | 16 | 126 ms | 305 ms (0.53) | 0.25 |
+| the flexor set, load 0 | 2 | 156 ms | | |
+| at rest | 0 | | | |
+
+- **the lifts are real.** discrete trochanter levations, 100-200 ms long, two a second in him, four a second at the high dose, none at
+  rest: the leg lifts and drops, and that is more than twitching. it is a burst on the trochanter flexors, and what makes a burst in a
+  cord that holds a posture is the next thing to look at.
+- **they are not steps.** the interval's coefficient of variation is 0.93 in him (a walking fly's step interval sits near 0.1-0.2), and the
+  coxa's swing during a lift has no consistent direction (sign agreement 0.12-0.25; a swing phase protracts every time). the coxa moves as
+  much on the ground as in the air. so the eye assembles "raise, move, fall" from a lift and an unrelated coxa wobble. the treadmill arm is
+  the most regular (cv 0.53) and the most directional (0.25), which is the clock showing through, and still far from a step.
