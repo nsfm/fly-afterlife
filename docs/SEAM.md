@@ -5224,3 +5224,5 @@ some initial state?"; the cord, 30 s, seed 11):**
 - on the body (measured springs): the 3 Hz-gated 400 Hz command scoots him backwards 12 mm on his side; the 1.0 mV noise cord lies
   down and drifts; and on flygym's springs the gated 400 Hz command knocks him over too (`world/body/pulse3_400_springs.mp4`: on his
   back). the pushes are big enough to topple a standing body and not coordinated enough to carry it.
+
+**seeds (00:45 PDT):** the lopsided stance is the wiring, not the dice: the mid tibia extensors at 36 / 8 Hz (L / R) on seeds 10, 11, 12 and 13 alike (36.3 / 7.1, 36.3 / 7.9, 34.8 / 7.5, 35.6 / 8.0), the hind trochanter depressors even (12-13 both sides), the flexors 0.00 on all four. one left mid extensor cell receives far more drive than its right twin, and the mirror (above) narrows that to 25 / 13 without changing what the body does. (the front-left jump muscle that fired in the whole fly is silent in the cord alone: it was brain-driven.)
