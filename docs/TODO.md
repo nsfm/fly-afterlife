@@ -38,6 +38,7 @@ one change per run, its control, the measurement that decides it. status: queued
    antennae, Kamikouchi 2009) from the tilt; leg load split front / back on a slope into the proprioceptive rows; the ocelli
    sample the sky along the tilted head. this is the "gravity" row of §S and the terrain item of §2a together. a day.
 4c. **[noted 09-21] the loops**: the goal-switch's random inward heading plus the comparator with its null off make pirouettes at
+4d. **[queued 09-21] gaze stabilisation** (nate: "shouldn't his view be smooth too?"): the body's pitch and roll are physics (a body length, ~0.5 s at his pace); the head's are not the body's in life, the neck counter-rotates (Hengstenberg 1993 on head roll compensation; haltere-, ocelli- and visually driven). he has 40 neck motor neurons (cord `nm` 20, head `nm` 20) at 13-15 Hz that nothing reads. the honest build: the retina's tilt = the body's minus a neck command read from those cells (the leg readout's shape), measured against the raw body tilt; the viewer's smoothing stays a camera.
    stalks; on the menotaxis row; left for now (nate).
 5. **[queued] a run that crosses shade** for the ocelli, the ocellar cells logged (§S ocelli row).
 6. **[queued] his own walking wind on the aristae** (§S wind row): a vector add; anemotaxis batch as control.
