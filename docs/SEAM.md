@@ -5195,3 +5195,32 @@ whole cord):**
 - what is left is the physiology: a stance that holds a fly up is tonic, symmetric, and on the slow units of every leg at once, and this
   cord under this command gives a few loud fast cells on a few legs. the standing tonus (SEAM above, (1)) is the next single variable:
   the load reflex, per leg, from the leg's own load, which is the loop. the mirror stays available as the labelled correction it is.
+
+**things thrown at the wall (00:44 PDT; nate: "is there any kind of frankenstein effect ... some kind of electric shock to kick everything into
+some initial state?"; the cord, 30 s, seed 11):**
+
+| arm | leg MN Hz | active | flex Hz | ext Hz | antag | legs | note |
+|---|---|---|---|---|---|---|---|
+| DNg100 100 Hz (the control) | 1.96 | 52 | 0.00 | 9.3 | -0.16 | +0.00 | |
+| **the jolt**: every descending neuron (1,310) at 100 Hz for 1 s after the warm-up, then the command alone | 2.06 | 68 | 0.00 | 8.4 | -0.15 | +0.00 | during the jolt the leg MNs go to 9.5 Hz per cell; from 4 s on the per-cell rates correlate 0.986 with the control, 18 cells differ by more than 2 Hz |
+| the jolt at 200 Hz for 0.2 s | 1.89 | 58 | 0.00 | 7.4 | -0.14 | +0.00 | the same |
+| the jolt, then 400 Hz | 5.50 | 82 | 0.02 | 24.2 | -0.51 | +0.00 | |
+| **the command with a time course**: 100 Hz gated at 3 Hz, half duty | 1.12 | 53 | 0.00 | 4.8 | -0.14 | +0.00 | the cord follows the gating (a "beat" at 3.1 Hz: the input's) |
+| gated at 8 Hz | 1.08 | 54 | 0.00 | 5.0 | -0.11 | +0.00 | the same at 7.8 |
+| 400 Hz gated at 3 Hz | 3.15 | 62 | 0.01 | 14.4 | -0.20 | +0.00 | |
+| **membrane noise** 0.5 mV (the default is 0.15) | 3.49 | 74 | 0.02 | 19.8 | -0.41 | +0.00 | |
+| noise 1.0 mV | 5.93 | **283** | **1.54** | 23.4 | -0.45 | +0.00 | the noise fires three quarters of the cord's motor neurons, flexors included; the whole cord at 4.6 Hz per cell |
+| noise 1.0 at 400 Hz | 8.90 | 241 | 1.50 | 34.4 | -0.46 | -0.03 | |
+
+- **no frankenstein effect.** the cord has no state for a jolt to set: a second of every descending neuron at 100 Hz sends the legs to six
+  times their rate and, once it stops, the cord is back where the gentle start put it within a hair. the membrane forgets in twenty
+  milliseconds and nothing slower exists in it but the two-cell pair we damped. (the first two jolt arms drove nothing: the jolt's cells
+  were not marked driven, and the runs came out identical to the control to the spike; kept, fixed, rerun.)
+- **a command with a time course is followed, not transformed:** gate it at 3 or 8 Hz and the extensors pulse at 3 or 8 Hz; the flexors
+  stay at zero; no leg takes a turn.
+- **noise unsticks cells, not the circuit:** at 1.0 mV (seven times the default, past physiology) the noise fires most motor neurons
+  including the flexors, and the legs still move together. the coxal antagonists alternate more (-0.45), which is noise decorrelating
+  two pools, not a rhythm.
+- on the body (measured springs): the 3 Hz-gated 400 Hz command scoots him backwards 12 mm on his side; the 1.0 mV noise cord lies
+  down and drifts; and on flygym's springs the gated 400 Hz command knocks him over too (`world/body/pulse3_400_springs.mp4`: on his
+  back). the pushes are big enough to topple a standing body and not coordinated enough to carry it.

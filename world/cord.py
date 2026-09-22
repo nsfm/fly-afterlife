@@ -29,6 +29,8 @@ ap.add_argument("--leg-load-hz", type=float, default=15.0, help="the floor's rat
 ap.add_argument("--silence", default="", help="comma-separated types whose threshold is put out of reach (no effect on driven cells)")
 ap.add_argument("--log-types", default="", help="comma-separated types to log per frame (default: every leg motor neuron type)")
 ap.add_argument("--warmup", type=float, default=2.0, help="seconds before the walking command comes on (the cord at rest under the floor)")
+ap.add_argument("--pulse", default="", help="the command with a time course: HZ[:DUTY] square-wave gating of the walking command (e.g. 3:0.5); in life the command is never a steady rate; a diagnostic")
+ap.add_argument("--shock", default="", help="the frankenstein arm (nate, 09-22): SECONDS:HZ, every descending neuron driven at HZ for SECONDS after the warm-up, then the command alone; does the jolt leave the cord elsewhere")
 ap.add_argument("--mirror", default="off", help="mirror normalisation of bilateral pairs' input weights (src/fly_afterlife/wiring.py; the labelled tracing correction of 09-19): off | all | vnc (motor, IN, AN, SN types) | a comma-separated type list")
 ap.add_argument("--treadmill", type=float, default=0.0, help="the headless treadmill (a labelled stand-in, 09-21): step frequency in Hz at which each leg's proprioceptors (world/legs.npz, by bodyId) are loaded in stance (--leg-load-hz) and UNLOADED (0 Hz) in swing, in two alternating tripods (L1 R2 L3 / R1 L2 R3), --treadmill-duty of the cycle in stance; 0 = off (the floor's constant load). asks whether unloading alone releases swing")
 ap.add_argument("--treadmill-duty", type=float, default=0.5)
@@ -56,6 +58,9 @@ if args.rebound:
 if args.mirror != "off":
     from fly_afterlife.wiring import mirror_normalise; print("mirror normalisation:", mirror_normalise(M, scope=(args.mirror.split(",") if "," in args.mirror else args.mirror)))
 REG = Registry()
+if args.shock:
+    _ss, _sh = (float(x) for x in args.shock.split(":")); _alldn = np.flatnonzero(M.sc.astype(str) == "descending_neuron")
+    REG.add(ReceptorClass("shock", _alldn, Scaled(_sh), lambda st: float(st.get("shock_gain", 0.0)))); print(f"shock: {len(_alldn)} descending neurons at {_sh} Hz for {_ss} s after the warm-up")
 if args.walk > 0:
     _wd = [x for x in args.walk_dn.split(",") if x]; WALK = np.flatnonzero(np.isin(mty, _wd) & (M.sc.astype(str) == "descending_neuron"))   # a comma-separated list: the command as a population (09-21 night)
     print(f"command: {len(WALK)} cells of {_wd} at {args.walk} Hz")
@@ -87,7 +92,7 @@ for cl in M.SENSORY_CLASSES: M.driven[M.cls == cl] = True
 if len(_fl): M.driven[np.unique(np.concatenate([rc.cells for rc in _fl]))] = True
 if len(WALK): M.driven[WALK] = True
 for rc in REG.classes:
-    if rc.name.startswith("drive_") or rc.name.startswith("treadmill_"): M.driven[rc.cells] = True
+    if rc.name.startswith("drive_") or rc.name.startswith("treadmill_") or rc.name == "shock": M.driven[rc.cells] = True
 M._driven_idx = np.flatnonzero(M.driven); M.reset()
 if args.silence:
     _sil = np.flatnonzero(np.isin(mty, [x for x in args.silence.split(",") if x])); M.v_th[_sil] = np.float32(1e6); print(f"silenced {len(_sil)} cells of {args.silence} (driven cells unaffected)")
@@ -102,6 +107,9 @@ n_frames = int(round(args.seconds * fps)); FR = np.zeros((n_frames, len(LC)), np
 state = {"walk_gain": 0.0}
 for f in range(n_frames):
     t = f / fps; state["walk_gain"] = 1.0 if t >= args.warmup else 0.0
+    if args.pulse and t >= args.warmup:
+        _ph, _pd = (args.pulse.split(":") + ["0.5"])[:2]; state["walk_gain"] = 1.0 if ((float(_ph) * (t - args.warmup)) % 1.0) < float(_pd) else 0.0
+    if args.shock: state["shock_gain"] = 1.0 if args.warmup <= t < args.warmup + float(args.shock.split(":")[0]) else 0.0
     REG.apply(M, state, t, 1.0 / fps)
     acc = np.zeros(M.N, np.int32)
     for _ in range(SPF): M.step(); acc[M.last_idx] += 1
