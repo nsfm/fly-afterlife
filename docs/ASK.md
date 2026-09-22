@@ -76,3 +76,15 @@ left for another day. yes / no / later?
 > ledger with its exit. depression on the sensory synapses or on every synapse is right and breaks the calibration (no feeding, no KC code, no
 > plume): the refreeze, now TODO 5c with the leaks and the fitting policy you asked about. the flight-state visual gain (Ache 2019) is 8e for the
 > residual 9 Hz. yes to 5c as a day, whenever you want it scheduled?
+
+## the slow units (09-22 01:07; for nate)
+
+the standing tonus in life is tonic drive on the slow leg motor units under load. in the MaleCNS file the 93 smallest leg motor neurons
+(the accessory flexors, ltm, tarsal cells: the slow units by the size rule) receive 26 excitatory synapses per cell and zero from the
+proprioceptors, against 4,671 and 117 for the large ones. there is no wiring for a standing tonus to run on. two honest options, both
+labelled: (a) a stand-in: the slow units held at a tonic rate scaled by their leg's load (the floor's shape), with the load from the body,
+so that standing is a reflex through the legs even though the cells' own inputs are missing; (b) no stand-in: he stands on his fast units
+or not at all, and "not at all" is the record. (a) is puppetry of the kind §P allows (a labelled gap in the map, with an exit: a better
+tracing); (b) is stricter and probably leaves him on the floor for as long as this dataset is the dataset. my recommendation is (a),
+because the gap is documented as a gap in the tracing rather than in the biology, and because the loop through the legs is the thing we
+want to test and it cannot be tested lying down.

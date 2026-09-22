@@ -5226,3 +5226,28 @@ some initial state?"; the cord, 30 s, seed 11):**
   back). the pushes are big enough to topple a standing body and not coordinated enough to carry it.
 
 **seeds (00:45 PDT):** the lopsided stance is the wiring, not the dice: the mid tibia extensors at 36 / 8 Hz (L / R) on seeds 10, 11, 12 and 13 alike (36.3 / 7.1, 36.3 / 7.9, 34.8 / 7.5, 35.6 / 8.0), the hind trochanter depressors even (12-13 both sides), the flexors 0.00 on all four. one left mid extensor cell receives far more drive than its right twin, and the mirror (above) narrows that to 25 / 13 without changing what the body does. (the front-left jump muscle that fired in the whole fly is silent in the cord alone: it was brain-driven.)
+
+## the night's wall, continued (01:07 PDT; nate asleep, the laptop mine)
+
+**steering and the moonwalker, in the cord:** a one-sided command makes one-sided legs, crossed for DNa02 and straight for DNa01: DNa02's
+left cell at 100 Hz drives the right legs (0.81 Hz per cell) four to one over the left (0.20) and its right cell the reverse (0.29 / 0.56);
+DNa01's left cell drives the left (0.58 / 0.18). MDN (the moonwalker, 4 cells) drives the hind legs hardest and the right side more
+(L 1.90 / R 3.28; hind 2.13 / 7.13). `--walk-side`.
+
+**on the body, inconclusive, and the reason is a finding:** the body under the plain command on flygym's springs spins (+157 deg of
+heading in 6 s) before any steering is added, because the stance is lopsided; the one-sided arms turn -145 / +75 (steer left, springs /
+measured), MDN +71 / -119, DNa01-left -2: signs that flip with the springs and cannot be read against a control that spins by itself. a
+turning test needs a body that stands straight first.
+
+**the slow units are not in the file.** the 373 leg motor neurons' input synapses run from 0 to 19,137 per cell (quartiles 178 / 872 /
+4,268). the smallest quarter (93 cells, under 178 synapses: 26 accessory tibia flexors, 16 accessory trochanter flexors, 12 tibia flexors,
+11 ltm, 7 trochanter flexors, 6 tarsal depressors, 5 femur reductors) receives **26 excitatory synapses per cell**, against 4,671 for the
+largest quarter, and the leg proprioceptors reach them with **zero** synapses, directly or through one interneuron (117 direct per cell
+onto the large ones). if these are the slow units (the size rule says so; Azevedo 2020's slow tibia flexor MNs are the small ones), then
+the standing tonus, which in life is tonic slow-unit drive under load, has no wiring to run on in this volume: not a constant to fit, a
+hole in the map. the honest options are a labelled stand-in (slow units held at a load-scaled tonic rate, the way the floor holds the
+proprioceptors) or a body that stands on its fast units, which is not a fly. this goes to `docs/ASK.md`.
+
+**the 36 and the 8:** the two left mid tibia extensors receive 5,100 and 5,209 excitatory synapses; the right pair 4,966 and **1,856**. one
+right cell is traced at a third of its twin, and it fires 10 Hz where the left twin fires 78. the mirror scales by the pair mean and cannot
+give one cell what the other three have; a named-homologue correction (its inputs copied from its mirror twin, labelled) could. queued.

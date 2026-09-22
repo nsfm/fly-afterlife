@@ -21,6 +21,7 @@ ap.add_argument("--noise", type=float, default=0.15, help="membrane noise, mV pe
 ap.add_argument("--integrate", default="exact")
 ap.add_argument("--walk", type=float, default=100.0, help="Hz on the walking command's descending neurons (0 = the cord at rest)")
 ap.add_argument("--walk-dn", default="DNg100")
+ap.add_argument("--walk-side", default="", help="drive the command's cells on one side only: L | R (the steering test, 09-22)")
 ap.add_argument("--std", default="off", help="short-term depression: off | pair (the DNg33 pair, the default of record in the whole fly) | all")
 ap.add_argument("--std-u", type=float, default=None, help="override the engine's release fraction u (default: the engine's)")
 ap.add_argument("--std-tau", type=float, default=None, help="override the engine's recovery tau, ms")
@@ -62,7 +63,8 @@ if args.shock:
     _ss, _sh = (float(x) for x in args.shock.split(":")); _alldn = np.flatnonzero(M.sc.astype(str) == "descending_neuron")
     REG.add(ReceptorClass("shock", _alldn, Scaled(_sh), lambda st: float(st.get("shock_gain", 0.0)))); print(f"shock: {len(_alldn)} descending neurons at {_sh} Hz for {_ss} s after the warm-up")
 if args.walk > 0:
-    _wd = [x for x in args.walk_dn.split(",") if x]; WALK = np.flatnonzero(np.isin(mty, _wd) & (M.sc.astype(str) == "descending_neuron"))   # a comma-separated list: the command as a population (09-21 night)
+    _wd = [x for x in args.walk_dn.split(",") if x]; WALK = np.flatnonzero(np.isin(mty, _wd) & (M.sc.astype(str) == "descending_neuron"))
+    if args.walk_side: WALK = WALK[mns[WALK] == args.walk_side]   # a comma-separated list: the command as a population (09-21 night)
     print(f"command: {len(WALK)} cells of {_wd} at {args.walk} Hz")
     REG.add(ReceptorClass(f"walk_{args.walk_dn}", WALK, Scaled(args.walk), lambda st: float(st.get("walk_gain", 1.0)), source="Bidaye 2020: the walking DN driven in a decapitated fly"))
 else: WALK = np.zeros(0, np.int64)

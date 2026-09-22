@@ -79,14 +79,15 @@ if not args.no_video:
     cams = [mj.mj_id2name(m, mj.mjtObj.mjOBJ_CAMERA, i) for i in range(m.ncam)]; cam = [c for c in cams if "trackcam" in c][0]; print("cameras:", cams, "-> using", cam)
     sim.set_renderer(cam, camera_res=(480, 640), playback_speed=1.0, output_fps=args.fps)
 sim.reset(); steps_per_ms = int(round(0.001 / m.opt.timestep)); segs = [s.name for s in fly.get_bodysegs_order()]; thorax = segs.index("c_thorax")
-P = np.zeros((nms, 3), np.float32); legs6 = ["lf", "lm", "lh", "rf", "rm", "rh"]
+P = np.zeros((nms, 3), np.float32); Q = np.zeros((nms, 4), np.float32); legs6 = ["lf", "lm", "lh", "rf", "rm", "rh"]
 for ms in range(nms):
     sim.set_actuator_inputs("nmf", ActuatorType.MOTOR, torque[:, ms])
     if adh: sim.set_leg_adhesion_states("nmf", np.array([grip[l][ms] > 0.05 for l in legs6])) if hasattr(sim, "set_leg_adhesion_states") else None
     for _ in range(steps_per_ms): sim.step()
-    P[ms] = sim.get_body_positions("nmf")[thorax]
+    P[ms] = sim.get_body_positions("nmf")[thorax]; Q[ms] = sim.get_body_rotations("nmf")[thorax]
     if not args.no_video: sim.render_as_needed()
     if ms % 1000 == 0: print(f"t={ms / 1000:.1f}s thorax {np.round(P[ms], 2)} ({time.time() - t0:.0f}s)")
-np.savez_compressed(args.out + ".npz", thorax=P, torque=torque.astype(np.float32), dofs=np.array(dof_names), args=np.array(str(vars(args))))
+np.savez_compressed(args.out + ".npz", thorax=P, quat=Q, torque=torque.astype(np.float32), dofs=np.array(dof_names), args=np.array(str(vars(args))))
+w_, x_, y_, z_ = Q[:, 0], Q[:, 1], Q[:, 2], Q[:, 3]; yaw = np.degrees(np.arctan2(2 * (w_ * z_ + x_ * y_), 1 - 2 * (y_ ** 2 + z_ ** 2))); print(f"heading (yaw) start {yaw[0]:+.0f} end {yaw[-1]:+.0f} deg; net turn {((yaw[-1] - yaw[0] + 180) % 360) - 180:+.0f} deg")
 print(f"done in {time.time() - t0:.0f}s: thorax start {np.round(P[0], 2)} end {np.round(P[-1], 2)}; travelled {np.linalg.norm(P[-1, :2] - P[0, :2]):.2f} mm; height min {P[:, 2].min():.2f} max {P[:, 2].max():.2f}")
 if not args.no_video: sim.renderer.save_video(args.out + ".mp4"); print("video", args.out + ".mp4")
