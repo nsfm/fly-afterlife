@@ -4519,3 +4519,5 @@ middle option, depression on the sensory populations plus the pair (`--std senso
 runs now. tonight's honest default is the pair: two cells, the reason written (a mutual 773 / 723 loop in an engine with no adaptation),
 the mechanism cited (Tsodyks & Markram 1997), the exit the engine-wide physiology when the refreeze is done.
 
+
+oracle after the NameError fix (18:59 PDT; the refractory-freeze flag off, the depression flag off): PASS, eight of eight, read from the log first. the exact kernel's new argument changes nothing when it is false.
