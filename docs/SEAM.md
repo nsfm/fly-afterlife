@@ -5312,3 +5312,40 @@ rest unchanged. **the standing tonus has no cells to run on by size in either di
 cells are large. what remains is a tonus on the extensor motor neurons regardless of size, which is a stand-in for a *function* (the
 slow-unit standing reflex) on cells the size rule calls fast: labelled puppetry of §P's kind, with the exit being a dataset that resolves
 the slow units, or (b) no stand-in and a fly on the floor. this is docs/ASK.md's question, now exactly posed, and it is nate's.
+
+**the first negative inter-leg correlation (09:00 PDT), read before it is believed:** the two load-scaled stand-in arms score the inter-leg column at -0.17 / -0.18 (`experiments/gait_score.py`), the first negatives in any arm on this row. the matrix says which legs: the left mid leg against its neighbours (lf -0.17, lh -0.15, rf -0.11). that leg carries 6 uN (a third of his weight) with its knee pinned at the range limit (173 deg) while the other five bear 0.1-0.9, and its load-scaled drive rises and falls against theirs; the load traces anti-correlate the same way (-0.12 to -0.20). a one-legged push alternating with five unloaded legs, not a tripod. the number is real and it is not a gait.
+
+## he stands (09:08 PDT; the laptop slept through the small hours and the batch finished at 09:06; nate: "any diagnostics are valid if they produce data")
+
+**the arms (`experiments/body_loop.py`, the loop closed (position + load), measured springs, derived torque, limited hinges, 20 s, seed 11):**
+
+| arm | leg MN Hz | flexors | extensors | thorax height (0.7 = standing) | leg forces, six legs (uN) | legs (inter-leg min) |
+|---|---|---|---|---|---|---|
+| **tethered** (propped: thorax fixed, no floor), DNg100 100 Hz, loop off | 1.99 | 0.00 | 9.35 | held | none | +0.00 |
+| tethered, position loop | 2.26 | 0.58 | 3.50 | held | none | +0.00 |
+| tethered, 400 Hz, position loop | 6.19 | 0.43 | 22.1 | held | none | +0.00 |
+| gravity x0.1, loop | 2.55 | 0.66 | 3.78 | 0.57 | 0 | +0.00 |
+| gravity x0.3, loop | 2.46 | 0.65 | 3.94 | 0.48 | 0-0.3 | +0.00 |
+| **the stance tonus** (73 stance-muscle MNs at 60 Hz x load, set down standing), 100 Hz | 5.97 | 0.44 | 24.9 | **0.71** | 0.8 0.2 0.5 0.8 0.4 0.9 | -0.02 |
+| the same at 120 Hz x load | 9.05 | 0.30 | 41.9 | **0.71** | 0.8 0.2 0.6 0.7 0.3 0.7 | -0.03 |
+| the same, no command | 5.52 | 1.47 | 25.9 | **0.71** | 0.7 0.3 0.6 0.8 0.2 0.9 | -0.04 |
+| the same at gravity x0.3 | 7.25 | 0.31 | 32.6 | 0.84 | 0.7 0.1 0.2 0.7 0.2 0.2 | -0.29 |
+| the same, 400 Hz | 7.62 | 0.51 | 25.9 | **0.72** | 1.2 0.5 0.7 0.9 0.4 0.8 | -0.28 |
+
+- **he stands, on all six feet, at full gravity.** the tonus on the stance muscles' motor neurons regardless of size (docs/ASK.md's (a),
+  run as a diagnostic), load-scaled and set down standing, holds the thorax at the standing height for the whole run at rest, at the
+  record's dose and at the high one, with the weight spread over six feet (0.2-1.2 uN each) instead of one leg's 6. the loop's flexor
+  wake-up survives standing (0.3-0.5). the extensors run at 25-42 Hz per cell under it, which is the stand-in's own doing.
+- **propped up, the cord does what it does on the floor.** tethered with the legs free, the position loop wakes the flexors exactly as
+  it did lying down (0.58) and nothing else changes; so the thrashing-by-crushing hypothesis is out: the legs were never being crushed
+  into a different pattern, the cord's pattern is the same with no weight at all. and reduced gravity does not stand him up (0.48-0.57 at
+  a tenth and a third of his weight): without tonus the legs hold nothing, at any weight.
+- **standing, he does not step.** the negative inter-leg correlations (-0.28 / -0.29) are the front legs against the mid legs (lf-lm -0.24
+  / -0.27, rf-rm -0.29) with the two front legs moving *together* (+0.37 to +0.51, in rate and in load): a front-leg push-up against the
+  mid legs, not a tripod. the knees' autocorrelations decay without a negative lobe (slow drifts, no oscillation); the mid and hind knees
+  wander tens of degrees (sd 20-60) while the front knees sit at their limits (sd 1). frames: `docs/figures/body_stands_tonus.png`.
+- so the row now has a standing fly with the loop closed, and the question it was built to ask is finally askable: does his own stance
+  time his own swing. tonight's answer is no, with one honest caveat: the tonus that stands him is a stand-in at a rate i chose
+  (60-120 Hz x load), and the swing trigger in life is the *unloading* of a leg, which a body held up by a tonic push never produces
+  unless something lifts a leg first. the next arms: the tonus with a leg-load *derivative* term (the campaniform brief's dF/dt, so a
+  loaded leg's push fades and its unloading registers), and the flexion-biased descending set on top of the standing body.

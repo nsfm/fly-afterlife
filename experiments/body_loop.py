@@ -31,9 +31,10 @@ ap.add_argument("--walk", type=float, default=100.0); ap.add_argument("--walk-dn
 ap.add_argument("--leg-load-hz", type=float, default=15.0); ap.add_argument("--loop", default="position+load", help="off | position | load | position+load")
 ap.add_argument("--claw-hz", type=float, default=100.0); ap.add_argument("--hook-hz", type=float, default=100.0); ap.add_argument("--hook-vel", type=float, default=300.0)
 ap.add_argument("--slow-hz", type=float, default=0.0, help="the standing-tonus stand-in: the 93 smallest leg MNs held at this rate x their leg's load (0 = off)")
-ap.add_argument("--slow-set", default="size", help="which cells the standing-tonus stand-in holds: size (the 93 smallest leg MNs: measured to be the accessory flexors, a flexion tonus) | extensor (the stance muscles' motor neurons below the median input size, per leg: sternotrochanter, trochanter extensor, tibia extensor, pleural remotor, sternal posterior rotator; the standing tonus as life has it, on the slow members of the anti-gravity muscles (E))")
+ap.add_argument("--slow-set", default="size", help="which cells the standing-tonus stand-in holds: stance_all (every motor neuron of the stance muscles regardless of size: the load-scaled tonus of docs/ASK.md (a), a stand-in for the slow-unit reflex on cells the size rule calls fast, labelled) | size (the 93 smallest leg MNs: measured to be the accessory flexors, a flexion tonus) | extensor (the stance muscles' motor neurons below the median input size, per leg: sternotrochanter, trochanter extensor, tibia extensor, pleural remotor, sternal posterior rotator; the standing tonus as life has it, on the slow members of the anti-gravity muscles (E))")
 ap.add_argument("--slow-init", type=float, default=0.0, help="set him down standing: for this many seconds after the warm-up the load term is clamped to at least standing (F_stand) on every leg, so the load reflex and the stand-in start engaged; then the body's own load. an initial condition, labelled (0 = off)")
 ap.add_argument("--gain", type=float, default=42.0); ap.add_argument("--sat", type=float, default=10.0); ap.add_argument("--alpha", type=float, default=1.2); ap.add_argument("--stiffness", type=float, default=None)
+ap.add_argument("--tethered", action="store_true", help="the tethered preparation (nate, 09-22: propped up): the thorax fixed in space, the legs free, no floor and no load; the position loop still closes"); ap.add_argument("--gravity", type=float, default=1.0, help="scale on gravity (0.1 = a tenth of his weight; a graded prop-up, diagnostic)")
 ap.add_argument("--warmup", type=float, default=2.0); ap.add_argument("--no-video", action="store_true"); ap.add_argument("--fps", type=int, default=25)
 args = ap.parse_args(); t0 = time.time(); use_pos = "position" in args.loop; use_load = "load" in args.loop
 
@@ -72,6 +73,8 @@ for g, L in (("fl", "f"), ("ml", "m"), ("hl", "h")):
             if int(wbid[i]) in pos: legof[pos[int(wbid[i])]] = s.lower() + L
 LEGMN = np.array(sorted(legof)); insyn = np.bincount(M._out_tgt, weights=np.abs(M._out_w), minlength=M.N) / M.p.mv_per_synapse
 q25 = np.quantile(insyn[LEGMN], 0.25); SLOW = LEGMN[insyn[LEGMN] < q25]
+if args.slow_set == "stance_all":
+    STANCE = ("Sternotrochanter MN", "Tr extensor MN", "Ti extensor MN", "Pleural remotor/abductor MN", "Sternal posterior rotator MN"); SLOW = np.array([j for j in LEGMN if mty[j] in STANCE], np.int64)
 if args.slow_set == "extensor":
     STANCE = ("Sternotrochanter MN", "Tr extensor MN", "Ti extensor MN", "Pleural remotor/abductor MN", "Sternal posterior rotator MN"); q50 = np.quantile(insyn[LEGMN], 0.5)
     SLOW = np.array([j for j in LEGMN if mty[j] in STANCE and insyn[j] < q50], np.int64)
@@ -107,7 +110,9 @@ neutral_of = {"{}->{}:{}".format(*k.split("-")): float(v) for k, v in (_pl.items
 limit_joints(jm, neutral_of)
 fly.add_actuators(dofs, ActuatorType.MOTOR, forcerange=(-60.0, 60.0)); adh = fly.add_leg_adhesion()
 if not args.no_video: fly.add_tracking_camera("trackcam")
-world = FlatGroundWorld(); world.add_fly(fly, (0.0, 0.0, 0.5), Rotation3D(format="quat", values=(1, 0, 0, 0))); sim = Simulation(world); m = sim.mj_model; d = sim.mj_data
+from flygym.compose import TetheredWorld
+world = TetheredWorld() if args.tethered else FlatGroundWorld(); world.add_fly(fly, (0.0, 0.0, 2.0 if args.tethered else 0.5), Rotation3D(format="quat", values=(1, 0, 0, 0))); sim = Simulation(world); m = sim.mj_model; d = sim.mj_data
+m.opt.gravity[2] *= args.gravity
 m.jnt_solref[:, 0] = 0.002; m.jnt_solimp[:, 0] = 0.99; m.jnt_solimp[:, 1] = 0.999   # stiff joint limits: the defaults (20 ms, 0.95) let a full torque spin a knee through 1,600 deg (09-22); this holds it within ~8 deg. a solver setting, not physiology
 all_dofs = fly.get_jointdofs_order(); dof_name = lambda x: f"{x.parent.name}->{x.child.name}:{x.axis.value}"; all_idx = {dof_name(x): i for i, x in enumerate(all_dofs)}
 knee_idx = {leg: all_idx[roles[leg]["flex"]["dof"]] for leg in LEG6}; knee_sign = {leg: roles[leg]["flex"]["sign"] for leg in LEG6}
@@ -122,12 +127,13 @@ for key, js in groups.items():
     smax = max(insyn[js]) or 1.0
     for j in js: f_w[j] = (insyn[j] / smax) ** args.alpha if insyn[j] > 0 else 0.1
 KL = 120; tk = np.arange(KL); K = np.exp(-tk / 20.0) - np.exp(-tk / 7.0); K /= K.max()
-weight = m.body_mass.sum() * abs(m.opt.gravity[2]); F_stand = weight / 6.0
+weight = m.body_mass.sum() * abs(m.opt.gravity[2]); F_stand = max(weight / 6.0, 1e-6); print(f"gravity x{args.gravity}: weight {weight:.2f} uN, F_stand {F_stand:.2f}")
 segs = [s.name for s in fly.get_bodysegs_order()]; thorax = segs.index("c_thorax")
 if not args.no_video: sim.set_renderer([c for c in [mj.mj_id2name(m, mj.mjtObj.mjOBJ_CAMERA, i) for i in range(m.ncam)] if "trackcam" in c][0], camera_res=(480, 640), playback_speed=1.0, output_fps=args.fps)
 sim.reset(); steps_per_ms = int(round(0.001 / m.opt.timestep))
 def leg_forces():
     """ground contact force magnitude per leg (model force units = uN), legs ordered lf lm lh rf rm rh (fly.get_legs_order())."""
+    if args.tethered: return np.zeros(6)
     found, forces, *_ = sim.get_ground_contact_info("nmf"); return np.linalg.norm(np.asarray(forces), axis=1)
 
 # ---- the loop

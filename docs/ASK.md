@@ -98,3 +98,5 @@ members) at a load-scaled rate; the question for you is still (a) that stand-in,
 (a stand-in for the slow-unit standing reflex on cells the size rule calls fast; labelled; exit = a dataset that resolves the slow units),
 or (b) no stand-in, and the loop is tested from a fly on the floor, which cannot load its feet. i recommend (a) as a diagnostic first (does
 a standing body walk when the loop closes?), and as a default only if you say so.
+
+**measured (09:08):** (a) as a diagnostic stands him up on six feet at full gravity (SEAM 'he stands'); the loop's reflex survives standing; he does not step. the decision is still yours: (a) as a labelled default of the body row, or (b).
