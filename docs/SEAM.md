@@ -5042,3 +5042,5 @@ log's 10 ms frames (coarse; the twitch is longer than a frame; noted).
   stage 2 is the NeuroMechFly body on the floor with the same map on all six legs through joint torques; stage 3 feeds its joints and
   loads back as his proprioceptors. and the map's honest gap: FlyMimic's muscle dynamics (tau_act 0.1 ms) are 85x faster than the measured
   8.5 ms half-rise, which is why the twitch kernel is ours and the body's own activation dynamics are left near-instant.
+
+**oracle (23:00 PDT) on the engine with `--adapt` / `--rebound` present and off: PASS, v1 + v2, eight configurations, none differing (read from the log). the engine terms committed.**

@@ -156,6 +156,8 @@ class FastFlyBrain(FlyBrain):
             ext = self._ext.copy(); ext[self._kc] -= np.float32(p.apl_w * self._apl)
         else: ext = self._ext
         free = self._free_buf   # refrac <= 0 before the update, as in flysim: gates the Poisson receptors below
+        if getattr(self, "adapt_on", False) or getattr(self, "rebound_on", False):   # 09-21 night: two labelled intrinsic currents, off by default (docs/SEAM.md "the switch"); as a current on the ext path so the compiled membrane kernels are untouched
+            ext = ext - (self._adapt_a if getattr(self, "adapt_on", False) else 0.0) + (self._reb_r if getattr(self, "rebound_on", False) else 0.0); ext = np.ascontiguousarray(ext, dtype=np.float32)
         if getattr(self, "integrate", "euler") == "exact":
             e_m = np.exp(-dt / p.tau_m); e_s = np.exp(-dt / p.tau_syn); A = p.tau_syn / (p.tau_syn - p.tau_m)
             _membrane_exact(self.v, self.g, self.refrac, ext, np.ascontiguousarray(noise, dtype=np.float32), self.v_th, free,
@@ -170,6 +172,11 @@ class FastFlyBrain(FlyBrain):
             _drive_gate(di, self.drive_hz, r, free, spk, np.float32(dt))
         self.last_idx = np.flatnonzero(spk); _reset(self.last_idx, self.v, self.refrac, np.float32(p.v_reset), np.float32(p.refractory))
         self.last_spikes = spk.astype(np.float32)
+        if getattr(self, "adapt_on", False):   # spike-frequency adaptation: a (mV) decays with tau_a, jumps by b per spike, subtracted from the drive (an AdEx-style w in voltage units)
+            self._adapt_a *= np.float32(1.0 - dt / self.adapt_tau)
+            if self.last_idx.size: self._adapt_a[self.last_idx] += np.float32(self.adapt_b)
+        if getattr(self, "rebound_on", False):   # post-inhibitory rebound: r tracks the hyperpolarisation below rest with tau_r (an I_h-like sag) and pushes back as a depolarising current g_r x r, which outlasts the inhibition
+            self._reb_r += (np.float32(self.rebound_g) * np.maximum(-self.v, np.float32(0.0)) - self._reb_r) * np.float32(dt / self.rebound_tau)
         if getattr(self, "std_on", False):
             m = self._std_mask
             self._std_x[m] += (1.0 - self._std_x[m]) * (dt / p.std_tau_rec_ms)
