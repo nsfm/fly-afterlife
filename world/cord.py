@@ -19,6 +19,7 @@ ap.add_argument("--brain", default="brain_cord.npz")
 ap.add_argument("--wsyn-m", type=float, default=0.185, help="mV per synapse (the male default of record)")
 ap.add_argument("--noise", type=float, default=0.15, help="membrane noise, mV per step (the default of record)")
 ap.add_argument("--integrate", default="exact")
+ap.add_argument("--dt", type=float, default=1.0, help="the engine tick in ms (1.0 = the record; the membrane is exact at any dt, the events are quantised to it; nate 09-22)")
 ap.add_argument("--walk", type=float, default=100.0, help="Hz on the walking command's descending neurons (0 = the cord at rest)")
 ap.add_argument("--walk-dn", default="DNg100")
 ap.add_argument("--walk-side", default="", help="drive the command's cells on one side only: L | R (the steering test, 09-22)")
@@ -39,9 +40,9 @@ ap.add_argument("--adapt", default="", help="spike-frequency adaptation on every
 ap.add_argument("--rebound", default="", help="post-inhibitory rebound on every cell, G:TAU (mV of push per mV of hyperpolarisation, ms), e.g. 1:100; off by default; labelled")
 ap.add_argument("--drive", default="", help="drive named sensory / descending types at a rate: TYPE:HZ,TYPE:HZ (e.g. SNpp50:50, the extension-tuned FeCO claw cells); rows after the floor and the treadmill, so they override on those cells; a labelled diagnostic")
 args = ap.parse_args()
-fps, CH = 100, 10; SPF = 1000 // fps; t0 = time.time()
+fps, CH = 100, 10; SPF = int(round(1000 / fps / args.dt)); t0 = time.time()
 
-M = FastFlyBrain(args.brain, seed=args.seed, params=Params(mv_per_synapse=args.wsyn_m, noise=args.noise)); M.integrate = args.integrate
+M = FastFlyBrain(args.brain, seed=args.seed, params=Params(mv_per_synapse=args.wsyn_m, noise=args.noise * (args.dt ** 0.5), dt=args.dt)); M.integrate = args.integrate
 mty = M.type.astype(str); mns = M.side.astype(str)
 print(f"{args.brain}: {M.N} cells; engine {type(M).__name__}, {args.integrate}, w {args.wsyn_m} mV, noise {args.noise}")
 
