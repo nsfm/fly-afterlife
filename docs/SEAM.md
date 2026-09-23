@@ -7052,3 +7052,32 @@ leans of opposite sign, one from the map and the pose (the puppet's), one from t
 right hind foot never lifts under either, so the hind-right map or pose has a fault of its own (ledger 25's territory). native slow
 motion (`--playback-speed`, a frame per 8 ms of simulated time) is rendering for both.
   (the right hind under the puppet: the same roles, signs and script as the left hind, and the body answers differently: the right trochanter sits at -116 deg against the left's -133, its foot carries 2.4 uN against 1.1 and is off the ground 13 % of the time against 46 %. the script is symmetric; the body is not. the model's pose after the feet-down settle, or its mass, or the pads: not the cord and not the map's signs.)
+
+## the levators' drive (14:15 PDT, 09-23; the middle legs' levators (Tr flexor + Acc. tr flexor MNs, 18 cells, 3,971 synapses each) and
+their 24 largest presynaptic types logged on the cord under DNg100 100 Hz and at rest, the standing floor and the flexion claw, the tone,
+the shunt; synapses x rate as the drive proxy)
+
+- **under the command the levators are held two to one** (I 116 k against E 49 k), by IN16B016 (1,017 synapses at 29.5 Hz), IN19A004 (1,033 at
+  25.6: the command's own inhibitor), IN19A007 (1,601 at 14.4: Pugliese's I2), IN19A008 (3,867 at 5.3), IN16B018, IN19A021; and excited by
+  **the subnet: INXXX466 (1,060 synapses at 14.4 Hz), INXXX464 (2,203 at 6.0), IN19B012 (3,125 at 3.4: Pugliese's E3)**, and IN03A004. the
+  levators fire 0.6 Hz, the accessory 0.0, the depressors 0.0. at rest (E/I 0.36) they fire 0.1.
+- **the levators' largest excitor is silent:** IN21A010 (3,911 synapses onto them, the single biggest input of any sign) at 0.0 Hz under the
+  command and at rest, with IN03A071 (2,388), IN20A.22A006 (1,344), IN17A061 (1,266), IN17A044 (1,186), IN03A093 (1,012) also silent. the
+  subnet reaches the levators (the 20 Hz line rode on them all week: "Tr flexor MN 19.7 Hz x38" on 09-22) and cannot lift them past the
+  tonic inhibitors; the cells that could are asleep.
+- so **the per-leg generator's output stage is Pugliese's loop onto the levators, and it is gated by two tonic inhibitors the command
+  itself turns on (IN19A004) or that fire for other reasons (IN16B016), with the levators' own big excitor never recruited.** the arm
+  that follows silences the inhibitors one at a time and together, and reads whether the levators burst with the subnet's rhythm when
+  the gate is off, which is the closest thing to "what would the generator do if it were let" the file can answer. the inputs onto
+  IN21A010 and the two inhibitors are censused beside it.
+
+**the gate opened (14:15 PDT; the levators' tonic inhibitors silenced, DNg100 100 Hz, the same stack; the middle legs' levators read at 1 ms):**
+IN16B016 out: the levators 1.2 -> 1.6 Hz; IN19A004 out: 1.6; both out: 1.8 (their line moves to 47 Hz, x14, a thin thing); all four
+(+ IN19A007, IN19A008) out: **6.1 Hz, with 16 % of 10-ms frames carrying three or more spikes across the pool (0.8 % under the command),
+and a line at 2.5 Hz, not the subnet's 20** (INXXX466 at 19 Hz with its line at 18.2 in the same run). so with the gate off the levators
+fire five times more and in slow bursts, and the subnet's 20 Hz does not become theirs. **IN21A010, their 3,911-synapse excitor, stays
+asleep with the gate off too** (0.1 -> 1.1 Hz): its inputs are balanced (E 13.5 k, I 12.2 k) with IN19A008 (1,253) and IN12B030, IN21A003
+inhibiting it and **IN07B001 / IN07B002 (531 / 459) and INXXX025, IN19A012 exciting it**; and the 07B cells are the interleg census's top two
+carriers, silent in every arm (IN07B002 0.0 Hz on 09-22 with 5,074 synapses onto the 13A inhibitors and 4,987 onto IN19A004). so the
+levator burst the puppet says a step needs would come from IN21A010, which is driven by the 07B intersegmental cells, which nothing we
+give the cord wakes. their inputs are censused beside this.
