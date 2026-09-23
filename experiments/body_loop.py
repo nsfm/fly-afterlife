@@ -26,6 +26,7 @@ from flygym.anatomy import JointPreset, ActuatedDOFPreset, Skeleton, AxisOrder
 from flygym import Simulation
 
 ap = argparse.ArgumentParser()
+ap.add_argument("--log-x", default="", help="extra cell types logged at 1 ms into the cells file as x_ms / x_type / x_bodyId (09-23, the movement-senses read); off by default, no effect on the run")
 ap.add_argument("--out", required=True); ap.add_argument("--seconds", type=float, default=20.0); ap.add_argument("--seed", type=int, default=11)
 ap.add_argument("--wsyn-m", type=float, default=0.185); ap.add_argument("--noise", type=float, default=0.15)
 ap.add_argument("--walk", type=float, default=100.0); ap.add_argument("--walk-dn", default="DNg100"); ap.add_argument("--std", default="off"); ap.add_argument("--mirror", default="off")
@@ -254,6 +255,8 @@ n_ms = int(args.seconds * 1000); torque = np.zeros((len(dofs), n_ms + KL)); grip
 P = np.zeros((n_ms, 3), np.float32); Q = np.zeros((n_ms, 4), np.float32); FL = np.zeros((n_ms, 6), np.float32); KA = np.zeros((n_ms, 6), np.float32)
 JA = np.zeros((n_ms // 10 + 1, len(all_dofs)), np.float32)
 spk = np.zeros((n_ms // 10 + 1, len(LEGMN)), np.int16); lpos = {int(j): i for i, j in enumerate(LEGMN)}
+LOGX = np.flatnonzero(np.isin(mty, [x for x in args.log_x.split(',') if x])) if args.log_x else np.zeros(0, np.int64); XMS = np.zeros((n_ms + 1, len(LOGX)), np.int16) if len(LOGX) else None; xpos = np.full(M.N, -1, np.int64); xpos[LOGX] = np.arange(len(LOGX))
+if len(LOGX): print(f"log-x: {len(LOGX)} cells of {args.log_x}")
 if args.log_v:   # the membrane logger (09-22, campaign item 2b), as in world/cord.py
     _vt = [x for x in args.log_v.split(",") if x]; _vc = [np.flatnonzero(mty == t_) for t_ in _vt]; _vi = np.concatenate(_vc).astype(np.int64); _vg = np.repeat(np.arange(len(_vt)), [len(c_) for c_ in _vc]); _vn = np.maximum(np.bincount(_vg, minlength=len(_vt)), 1)
     VMS = np.zeros((n_ms, len(_vt)), np.float32); print(f"logging the membrane of {len(_vi)} cells of {len(_vt)} types: " + ", ".join(f"{t_} {len(c_)}" for t_, c_ in zip(_vt, _vc)))
@@ -290,6 +293,9 @@ for ms in range(n_ms):
     if ms % 10 == 0: JA[ms // 10] = np.degrees(ang)
     REG.apply(M, state, t, 0.001); M.step(); idx = M.last_idx
     if VMS is not None: VMS[ms] = np.bincount(_vg, weights=M.v[_vi], minlength=len(_vt)) / _vn
+    if XMS is not None and idx.size:
+        xh = xpos[idx]; xh = xh[xh >= 0]
+        if xh.size: np.add.at(XMS[ms], xh, 1)
     if idx.size:
         hit = idx[np.isin(idx, LEGMN)]
         for j in hit:
@@ -309,7 +315,8 @@ for ms in range(n_ms):
     if ms % 5000 == 0 and ms: print(f"t={t:5.1f}s thorax z {P[ms, 2]:.2f}  legs F {np.round(F, 1)}  knees {np.round(knee, 0)}  ({time.time() - t0:.0f}s)")
 os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)
 nfr = n_ms // 10; frames = spk[:nfr]
-np.savez_compressed(args.out + ".cells.npz", cells=LEGMN, bodyId=mbid[LEGMN], type=mty[LEGMN], side=mns[LEGMN], counts=frames[: (nfr // 10) * 10].reshape(nfr // 10, 10, -1).sum(1).astype(np.int32), pose_chunk=np.zeros((nfr // 10, 3), np.float32), frames=frames, pose_frame=np.zeros((nfr, 3), np.float32), **({'v_ms': VMS, 'v_types': np.array(_vt)} if VMS is not None else {}))
+_x = dict(x_ms=XMS[:n_ms], x_type=mty[LOGX], x_bodyId=mbid[LOGX]) if XMS is not None else {}
+np.savez_compressed(args.out + ".cells.npz", cells=LEGMN, bodyId=mbid[LEGMN], type=mty[LEGMN], side=mns[LEGMN], counts=frames[: (nfr // 10) * 10].reshape(nfr // 10, 10, -1).sum(1).astype(np.int32), pose_chunk=np.zeros((nfr // 10, 3), np.float32), frames=frames, **_x, pose_frame=np.zeros((nfr, 3), np.float32), **({'v_ms': VMS, 'v_types': np.array(_vt)} if VMS is not None else {}))
 w_, x_, y_, z_ = Q[:, 0], Q[:, 1], Q[:, 2], Q[:, 3]; yaw = np.degrees(np.arctan2(2 * (w_ * z_ + x_ * y_), 1 - 2 * (y_ ** 2 + z_ ** 2)))
 np.savez_compressed(args.out + ".npz", thorax=P, quat=Q, leg_force=FL, knee=KA, ground=BODYF[: n_ms // 10], joints=JA[: n_ms // 10], joint_names=np.array([dof_name(x) for x in all_dofs]), args=np.array(str(vars(args))))
 w0 = int(args.warmup * 1000); v = np.linalg.norm(np.diff(P[w0:, :2], axis=0), axis=1) * 1000; hz = frames[w0 // 10:].mean(0) * 100
