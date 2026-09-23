@@ -135,7 +135,7 @@ class FastFlyBrain(FlyBrain):
         p, dt = self.p, self.p.dt
         arrived = self._dly.pop(0); arrived_scale = self._dly_scale.pop(0)
         if getattr(self, "graded_on", False) or getattr(self, "std_on", False):   # per-emission scales: depression (09-21) and graded units (09-22)
-            sc_ = self._std_x[self.last_idx].copy() if getattr(self, "std_on", False) else np.ones(self.last_idx.size, np.float32)
+            sc_ = (self._std_pre if getattr(self, "_std_pre", None) is not None else self._std_x[self.last_idx].copy()) if getattr(self, "std_on", False) else np.ones(self.last_idx.size, np.float32)   # the scale a spike delivers is the resource BEFORE that spike's own decrement (09-22, the review's second pass: it was read after, so a fresh synapse delivered 1 - u)
             if getattr(self, "graded_on", False) and self._graded_scale.size:
                 sc_ = np.concatenate([sc_, self._graded_scale]).astype(np.float32); self.last_idx = np.concatenate([self.last_idx, self._graded_idx])
             self._dly_scale.append(sc_ if self.last_idx.size else None)
@@ -196,6 +196,7 @@ class FastFlyBrain(FlyBrain):
         if getattr(self, "std_on", False):
             m = self._std_mask
             self._std_x[m] += (1.0 - self._std_x[m]) * (dt / p.std_tau_rec_ms)
+            self._std_pre = self._std_x[self.last_idx].copy() if self.last_idx.size else np.zeros(0, np.float32)   # what these spikes deliver next step
             hit = self.last_idx[m[self.last_idx]] if self.last_idx.size else self.last_idx
             if hit.size: self._std_x[hit] *= (1.0 - p.std_u)
         if len(self._kc) and p.apl_w:

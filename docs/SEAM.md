@@ -5912,3 +5912,29 @@ their scaling exactly, gain / size and threshold x size (`--size-gain 1 --size-t
   large cells hard to drive: Azevedo 2020's rest and input resistance by class, Lesser 2024's weights by size) wakes the swing side of the
   knee, which no dose, population, reflex or engine term managed. the sizes are measured (their table), the scaling is their published
   form, and 0.275 is Shiu's constant. **the first swing muscles on, from physiology, in the cord.** no rhythm in them yet.
+
+**withdrawn (20:15 PDT), the flexors under true sizes:** the "12.4 Hz per cell" is two left hind tibia flexor cells at 248.7 Hz with an
+inter-spike interval of exactly 4 ms (cv 0.000, the refractory ceiling), firing in lock-step (coincidence 1.0), one at 83 and one at 71,
+and the other thirteen at 0; the "10 Hz rhythm" in them (autocorrelation 0.84 at 100 / 200 / 300 ms) is my sampling landing on the comb
+of a 4 ms period. the size rule at exponent 1 puts the smallest cells' thresholds at 2.3 mV and pins them. **not swing muscles recruited
+from physiology; two cells pinned by the scaling.** the antagonist column's -0.50 is those pinned cells against the extensors.
+
+## the cut (20:15 PDT; the positive control's second pass, `docs/physiology/rate_model_control.md` "with their sizes and their table")
+
+- **the equation printed in the preprint is not what their code runs** (`vnc_sim.py`: the gain inside the tanh is a / r_max and DNg100's
+  input is I, not r_max x I); the printed form saturates their own table as it did ours. with the code's form, **their table oscillates in
+  our port** (11-15 Hz, 74-197 cells active, none saturated, 3-9 front motor neurons on one DNg100, promotor-remotor antiphase -0.73 to
+  -0.87, the tibia flexors silent), and **our cord table restricted to their 4,242 cells with their sizes oscillates too** (the loop at
+  12-14.4 Hz, 4-8 motor neurons, the same offset). the wiring is cleared: 117,347 shared edges with the same weights (median ratio 1.00),
+  not one sign disagreeing, the inputs onto IN17A001 / INXXX466 / IN16B036 / IN19A007 / IN09A002 identical.
+- **why ours is dense: the headless cut kept the brain.** `scripts/build_cord.py` keeps every edge between kept cells, and 25,157 of them
+  are synapses ONTO descending neurons from other descending and ascending neurons, ~623 k synapses, which sit in the brain (their matrix
+  counts only synapses inside the cord's ROIs: DNg100's inputs +0 / -84 in theirs, +2,300 / -3,900 in ours). a decapitated fly does not
+  have them. with both DNg100s driven our table runs away (2,063 cells active, 610 saturated) and theirs stays sparse; **with those edges
+  dropped ours runs sparse and rhythmic too** (177-202 cells, none saturated, 10 motor neurons, both loops at 12-14.4 Hz).
+- **every cord arm since 09-21 22:20 ran with the brain's synapses onto its descending neurons.** the cut is fixed below (v2: no synapses
+  onto descending neurons; v1 kept for the record), and the baseline arms are re-run on it before anything else is claimed. the
+  synapse-count size proxy is also out (it overstates the big cells 2-3x and leaves the loop silent); their volumes stand in for the
+  4,242 cells they cover.
+
+**the depression fix, oracle (20:19 PDT):** `scripts/oracle_check.sh` v1 + v2, all eight configs bit for bit (`--std off` in every oracle config; the fix touches only the depressed path). the scale a spike delivers is now the resource before its own decrement; a fresh synapse delivers 1, not 1 - u. the `--std pair` run of record is re-measured under it before the 09-21 depression numbers are cited again (TODO 4i).
