@@ -7051,3 +7051,4 @@ rolls -7.8 deg (sd 10) under the puppet with the cord disconnected from the musc
 leans of opposite sign, one from the map and the pose (the puppet's), one from the cord's asymmetric drive (the connectome's), and the
 right hind foot never lifts under either, so the hind-right map or pose has a fault of its own (ledger 25's territory). native slow
 motion (`--playback-speed`, a frame per 8 ms of simulated time) is rendering for both.
+  (the right hind under the puppet: the same roles, signs and script as the left hind, and the body answers differently: the right trochanter sits at -116 deg against the left's -133, its foot carries 2.4 uN against 1.1 and is off the ground 13 % of the time against 46 %. the script is symmetric; the body is not. the model's pose after the feet-down settle, or its mass, or the pads: not the cord and not the map's signs.)
