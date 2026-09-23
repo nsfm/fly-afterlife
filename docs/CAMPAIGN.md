@@ -85,7 +85,7 @@ unloaded leg including rest and the old fit; the hooks lead each lift because th
 unloading. **neural** (09-23, `--freeze-mn 15`: muscles frozen, every leg stops; the cord in the loop, the bouts continue). a per-leg reflex
 oscillation at five hertz through the leg's senses, the first rhythm the connectome makes with its body and no fitted term. uncoupled
 across legs (at most four legs lift; the right front and right hind never do); no gait yet.
-**WITHDRAWN (09-23, review R1: the force was not read in the no-load arms; the no-senses arm steps too). the bouts need the cord's motor output (freeze) and no sense (ablations, and the corrected no-senses arm). was:** the load reflex. campaniform rows alone make the bouts; position and movement senses alone make none
+**WITHDRAWN (09-23, review R1: the force was not read in the no-load arms; the no-senses arm steps too). the bouts need a NOISY MOTOR DRIVE at the cord's rates and nothing else: Poisson trains at each motor neuron's mean rate make the same bouts, three of three (`--mn-poisson`). the rhythm is the body's; the connectome sets the posture. was:** the load reflex. campaniform rows alone make the bouts; position and movement senses alone make none
 (he holds all six feet up); no single sense is necessary, the load is sufficient. the stick insect's stance-swing transition on the fly's wiring.
 the hinted middle-leg exclusion did not replicate (one seed); he leans right and the left legs co-lift. coupling: central in the fly
 (Mendes 2013, Sapkal 2026's 19B commissurals onto 19A locals). LOGGED AND SILENCED: present, wired as described, nearly silent under

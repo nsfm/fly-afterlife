@@ -6825,3 +6825,26 @@ middle legs).
 (2) a muscle on the hind coxa pitch; (3) a start pose with all six feet down (at the neutral pose the front feet are 0.3 mm up and the hind
 legs load first); (4) 0.14 relabelled as derived, the springs set from the sourced 2e-8 N.m/rad with the derivation shown; (5) then the
 hind levators re-read with honest hind-leg load. none of this changes a neuron; all of it changes what the clips mean.
+
+## the rhythm is the body's (12:56 PDT, 09-23; `--mn-poisson RUN` in `experiments/body_loop.py`: the muscle map fed Poisson spike trains at
+each of the 373 leg motor neurons' own mean rate from `lift_s11` (2.12 Hz per cell), the cord running and logged but never reaching the
+body; the full stack otherwise; seeds 11 / 12 / 13; the default path re-checked bit for bit after the restructure)
+
+| arm | lf off / lifts / gap (cv) | lm | rm | lh, rf, rh | floor (old statistic) |
+|---|---|---|---|---|---|
+| the cord's spikes (`lift_s11`) | 22 % / 30 / 163 ms (0.46) | 69 % / 72 / 191 (0.32) | 46 % / 69 / 182 (0.29) | 7, 1, 0 lifts | 7 % |
+| Poisson at the same rates, seed 11 | 28 % / 52 / 200 (0.26) | 79 % / 49 / 212 (0.29) | 62 % / 72 / 191 (0.31) | 1, 0, 0 | 4 % |
+| seed 12 | 38 % / 68 / 189 (0.31) | 86 % / 40 / 224 (0.19) | 47 % / 67 / 192 (0.31) | 1, 1, 0 | 5 % |
+| seed 13 | 40 % / 66 / 190 (0.30) | 85 % / 38 / 184 (0.30) | 50 % / 71 / 191 (0.32) | 2, 1, 0 | 5 % |
+
+**random spike trains at the cord's mean rates make the same bouts on the same legs with the same 180-220 ms gaps at the same cv, three of
+three.** the cord's timing plays no part; what the cord supplies is each motor neuron's mean rate, which is the posture (which legs
+hang), and the body (springs at flygym's default, pads, the 120 ms twitch kernel, the floor) does the rest under a noisy drive. so, in
+place: **the bouts are not a reflex, not the cord's rhythm, and not a rhythm of the connectome's at all; they are the body's, with the
+connectome setting the tone.** the freeze control stands and reads correctly now: a frozen drive has no noise, so no bouts. "lifts in
+bouts that need the cord's motor output" becomes "lifts in bouts that need a noisy motor drive at the cord's rates". the claims
+reviewer's likeliest reading was right. what this leaves for the connectome: the posture (real: which legs he holds up under which
+command, the lean, the tone), and nothing rhythmic yet. the campaign's coupling question dissolves with it (there was nothing to couple);
+the rhythm question returns to the cord, where every arm since 09-21 has found the 20 Hz subnet line and no step. the record's honest
+sentence for a stranger, today: a headless fly on a physics floor, driven by his own recorded brain, sits on his hind coxae with his
+legs under him, and the legs twitch in bouts that any noisy drive at the same rates would make.

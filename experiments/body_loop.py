@@ -312,12 +312,16 @@ for ms in range(n_ms):
         hit = np.zeros(0, np.int64)
     elif MNP is not None:
         hit = LEGMN[_mnp_rng.random(len(LEGMN)) < MNP]
+        if idx.size:
+            for j in idx[np.isin(idx, LEGMN)]: spk[ms // 10, lpos[int(j)]] += 1   # the cord's own motor spikes are still logged
     elif idx.size:
         hit = idx[np.isin(idx, LEGMN)]
-        for j in hit:
-            j = int(j); spk[ms // 10, lpos[j]] += 1
-            if j in grip_of: grip[grip_of[j]][ms: ms + KL] += f_w.get(j, 0.1) * K / args.sat
-            elif j in cell_dof: torque[cell_dof[j], ms: ms + KL] += cell_sgn[j] * f_w[j] * K / args.sat
+        for j in hit: spk[ms // 10, lpos[int(j)]] += 1
+    else: hit = np.zeros(0, np.int64)
+    for j in hit:   # what the body sees: the cord's spikes, or the Poisson trains, or nothing after a freeze
+        j = int(j)
+        if j in grip_of: grip[grip_of[j]][ms: ms + KL] += f_w.get(j, 0.1) * K / args.sat
+        elif j in cell_dof: torque[cell_dof[j], ms: ms + KL] += cell_sgn[j] * f_w[j] * K / args.sat
     tq = np.clip(args.gain * torque[:, ms], -60, 60); sim.set_actuator_inputs("nmf", ActuatorType.MOTOR, tq)
     if adh and args.adhesion == "ltm": sim.set_leg_adhesion_states("nmf", np.array([grip[l][ms] > 0.05 for l in LEG6]))
     elif adh and args.adhesion == "contact": pad_on = F > 0.05; sim.set_leg_adhesion_states("nmf", pad_on)
