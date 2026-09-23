@@ -514,3 +514,9 @@ item in §2a and should come before the taste path is judged.
 - [ ] `docs/SEAM.md` is 1,400 lines; split by track (eye, behaviour, her, physiology) with
       the STATUS block as the index, once the refactor lands.
 - [ ] `results/` index: one line per file saying which section produced it.
+
+4h. **[queued 09-22 17:37] graded premotor interneurons** (SEAM "where this leaves the leg row"): the brain's own descending population, played into
+   the headless cord and body, does not make him step; every body-side term is in place; the switch is absent from the cord model. the next
+   single variable: the premotor hemilineages that are non-spiking in life (13A, 13B, 21A: Büschges 1995, Bässler & Büschges 1998) run as graded
+   units (a labelled engine change with a source, the seam's own move for the optic lobe), in the cord first, then on the standing body with the
+   loop. controls: the same cells spiking (the record), and a graded set chosen at random.

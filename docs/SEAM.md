@@ -5479,3 +5479,37 @@ body, the loop closed, 20 s):**
   brain's descending output into the headless cord and body as a recording (the same headless preparation, the real channels).
 
 **the descending census (17:30 PDT; 60 s of the whole fly, the configuration of record, every descending-neuron type logged per chunk; `world/record/dn_census_0922.cells.npz`):** 1,306 descending cells, 481 types; mean 3.9 Hz per cell; 256 cells above 1 Hz, 65 above 20. the loudest: DNb05 194 Hz per cell (the thermosensory / steering DN the floor drives), DNp20 144, DNg56 124, DNp12 108, DNp18 92, DNbe001 85, DNge129 73, DNg99 72, DNg33 67 (the damped pair), DNb06 60, DNp26 51, DNpe017 54, DNg100 48 (the walking command as the PFL2 gain doses it), DNp15 47, DNp31 42, DNge033 35. he walked 70 % of the recording at 0.14 m/s. **the playback** (`--dn-playback`): each of these cells in the headless cord held at its own recorded rate, chunk by chunk, on the standing body with the loop: the brain's descending output as a recording, the same headless preparation with the real channels. running.
+
+**the brain's own descending output, played into the headless cord and body (17:37 PDT; `--dn-playback`, all 1,306 descending cells at
+their recorded rates chunk by chunk; the standing body, the loop closed, 20 s; 0.22-0.29x real time):**
+
+| arm | leg MN Hz | flexors | extensors | height | along his heading | turn | feet on the ground (%) | knee lobes |
+|---|---|---|---|---|---|---|---|---|
+| playback, tonus + co-contraction + pads, seeds 11 / 10 | 14.5 / 12.4 | 10.7 / 9.2 | 45.6 / 38.4 | 0.65 / 0.69 | +2.0 / -0.6 mm | -27 / +157 | 45 11 16 83 95 39 | none |
+| playback, tonus + co-contraction | 7.80 | 5.27 | 23.1 | 0.70 | +0.8 | +70 | 56 24 19 41 15 27 | none |
+| playback, tonus alone | 6.92 | 0.17 | 26.3 | 0.71 | +5.2 | +112 | 62 16 19 53 19 20 | none |
+| playback, lying (no tonus) | 2.98 | 0.32 | 2.42 | 0.41 | 0.0 | -40 | on his belly | none |
+| DNg100 100 Hz, tonus + co-contraction + pads (the control) | 15.2 | 11.7 | 49.1 | 0.65 | +0.2 | -7 | 59 11 32 83 95 32 | none |
+
+- **the brain's descending population does not make the cord step either.** with all 1,306 descending cells held at the rates the brain
+  gave them in the garden (DNb05 at 194, DNp20 at 144, the walking command at 48 as his compass doses it, 65 cells above 20 Hz), the
+  standing body does what it did under one cell at a flat 100 Hz: the front pair pushes, the back four tap, no knee oscillates, no leg
+  anti-phases another (the inter-leg minimum -0.11 to -0.20, the same as the controls), and he covers 0.6-5 mm turning on the spot.
+  the plain-tonus playback arm travels the most (5.2 mm) and spins 112 deg, which is the lopsided push-up again.
+- (with the pads on, the contact-force readings include the adhesion's pull, so "19 uN on the right mid leg" is the pad holding, not
+  the body's weight; the load rows saturate at twice standing and read it the same. noted, not fixed: the loop's load signal should be
+  the ground reaction net of adhesion, a later correction.)
+
+**where this leaves the leg row, at the end of the day (17:37).** every input the headless preparation can be given has now been given:
+one walking neuron at a flat rate, a flexion-biased set, the moonwalker, a gated command, a jolt, noise, the brain's own descending
+population as a recording; and every body-side term: a tonus that stands him, co-contraction, pads that grip, an unloading term, a
+loop that feeds his knees and his loads back into his own sensory cells. he stands, grips, strains, taps, turns, and does not step. the
+cord's premotor network routes every command to the right muscles and never alternates between them, and the table said why two
+nights ago: the half-centre's inhibitors do not reach the opposing exciters. **the gap is in the cord model**, and it is one of three
+things, each a labelled engine change with a source: (1) the premotor interneurons that are graded in life (non-spiking local
+interneurons are the substrate of insect leg pattern generation, Büschges 1995 / Bässler & Büschges 1998; in a LIF a graded cell is
+either silent or a spiker, and the 13A / 13B / 21A pools may be the cells whose analogue release the switch needs, the way flyvis's
+graded optic lobe was the seam's fix for vision); (2) electrical synapses (absent from a chemical connectome; central pattern generators
+lean on them); (3) the slow units and the front legs' sensory tracing, which this file lacks and no model change supplies. (1) is the one
+the record's own history points at, and it is the next single variable: a graded-unit engine for named premotor hemilineages, in the
+cord, on the standing body.
