@@ -6693,3 +6693,24 @@ are off the ground 20-97 % of the time and the right legs 0-13 % in every dose a
 legs lift together because they are the unloaded side. that is a posture, not a coordination. the record's line on coupling stands as
 it was before noon: six oscillators, uncoupled, and the fly's coupling is central (Mendes 2013: proprioceptive silencing leaves the
 tripod intact; Sapkal 2026: the commissural 19B cells onto the 19A locals), which is the read that comes next.
+
+**which sense is sufficient (11:56 PDT; the bouts arm, seed 11, one class of sense at a time):**
+
+| senses in the loop | lf | lm | lh | rm |
+|---|---|---|---|---|
+| all (the arm) | 22 % off, 30 lifts, 163 ms | 69 %, 72, 191 | 5 %, 7 | 46 %, 69, 182 |
+| position only (claw + hook + hair plates; `--loop position`) | 100 % off, 0 | 100 %, 0 | 100 %, 0 | 100 %, 0 |
+| hooks only | 100 %, 0 | 100 %, 0 | 100 %, 0 | 100 %, 0 |
+| load + touch (`--loop load`) | 57 %, 41, 222 | 88 %, 25, 209 | 32 %, 44, 170 | 19 %, 27, 184 |
+| **load only (campaniform + untyped, no touch)** | 62 %, 42, 210 | 89 %, 26, 194 | 36 %, 35, 188 | 12 %, 13 |
+| none | 100 %, 0 | 100 %, 0 | 100 %, 0 | 100 %, 0 |
+
+**the load reflex is the oscillator.** with only the campaniform (load) rows in the loop, four legs step in bouts at 170-210 ms; with every
+position and movement sense in the loop and no load, he holds all six feet in the air and never steps, exactly as with no senses at all.
+so: load on a foot -> the cord extends the leg into stance; the foot's unloading (or the extension itself) -> the leg lifts; the lift
+unloads it further; ~200 ms later it comes back down. the stick insect's load-dependent stance-swing transition (campaniform sensilla
+timing the step: Zill, Büschges; `walking_review.md`), running on the fly's wiring and the fly's body, with the load signal as the file
+and the map give it (111 cells; rate chosen, ledger row 3 / 6). the position senses shape it (touch and the hair plates hold the foot
+down; the claw and hooks change the gaps by 20-60 ms) and cannot make it. **campaign: the reflex is named.** next: the fly's central
+coupling (the commissural 19B cells onto the 19A locals, Sapkal 2026; Mendes 2013 says the tripod survives without proprioception), logged
+and silenced on this arm.

@@ -85,6 +85,10 @@ unloaded leg including rest and the old fit; the hooks lead each lift because th
 unloading. **neural** (09-23, `--freeze-mn 15`: muscles frozen, every leg stops; the cord in the loop, the bouts continue). a per-leg reflex
 oscillation at five hertz through the leg's senses, the first rhythm the connectome makes with its body and no fitted term. uncoupled
 across legs; no gait yet. the coupling between legs is now the question.
+**named (09-23 afternoon):** the load reflex. campaniform rows alone make the bouts; position and movement senses alone make none
+(he holds all six feet up); no single sense is necessary, the load is sufficient. the stick insect's stance-swing transition on the fly's wiring.
+the hinted middle-leg exclusion did not replicate (one seed); he leans right and the left legs co-lift. coupling: central in the fly
+(Mendes 2013, Sapkal 2026's 19B commissurals onto 19A locals), to be logged and silenced next.
 
 ## working habits
 
