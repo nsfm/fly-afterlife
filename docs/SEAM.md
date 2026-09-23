@@ -6207,3 +6207,27 @@ female brain). the fly biology: no adult leg measurement; larval RP2 motor neuro
 without octopamine walk; clearance half-life 1.4 s in the larval cord. borrowed effects cut both ways (locust: extension-tuned sensors
 up strengthens our 13A side). the design (a low-passed EN00B008 rate, saturating, applied as gains on named targets, no 13A target, three
 controls including the cells silenced) is on file; not built. two count errors in `knobs.md` section 4a are flagged there (T1 / T3 swapped).
+
+**which sense feeds which side (23:15 PDT; the excitatory synapses onto each layer of the flexor chain by sensory subtype, from
+`world/leg_senses.csv`):** the 13A winners (IN13A002 / 005 / 003, IN12B003, IN19A004) take 15 % of their excitation from the senses and of
+that **claw_50 (SNpp50, the extension-tuned class as labelled) 5,517**, tactile 3,353, unclassified chordotonal 3,196, hook 439. the 13B
+releasers, 14 %: **tactile 2,328, claw_51 (flexion-tuned as labelled) 2,084**, hair plates 400. the 13B side's excitors, 27 %: tactile 11,661,
+claw_51 397. the flexor excitors, 4 %: claw_51 1,026, tactile 913, hair plate 247. the tibia flexor motor neurons themselves, 2 %: claw_51
+293, hook 156, campaniform 106; the extensors, 2 %: claw_50 408. **the two sides of the half-centre listen to the two claw classes and
+the bristles: extension-tuned claw to the extension side, flexion-tuned claw and touch to the flexion side.** the file's resistance-reflex
+wiring, readable. two consequences: (1) the floor at 15 Hz on BOTH claw classes was feeding both sides and the extension side more (62 vs
+31 cells); a standing fly's tibia is flexed, so the honest standing claw signal is claw_51, not claw_50, under the labels as printed, and
+the reverse if the labels are swapped (ledger row 1 is now the question of which side the standing leg feeds); (2) sensory is 2-5 % of the
+excitation onto the flexor motor neurons and their excitors: **95 % is central and silent.** the flexor side is not waiting on a sense; it
+is waiting on interneurons that nothing wakes under a tonic command. the claw arms are beside this.
+
+**the standing leg's own senses (23:18 PDT; the floor on campaniform + hair plates, the club / hook cells at 0, and the claw class of a FLEXED
+tibia (SNpp51 as labelled) at 15 or 40 Hz with the extension class at 0; seed 11):** claw_51 at 15 under the command: IN13A002 0, IN13A006 1.4,
+flexors 0.20. at 40: IN13A006 9.1, IN03A004 4.8, flexors 0.33. the other class instead (claw_50 at 15, claw_51 at 0): IN13A002 39 Hz, flexors
+0.00, IN13A006 0.1: **the two claw classes pick the side, as the wiring said.** claw_51 at 40 plus the six tactile types at 20 Hz (a foot on
+the ground): **IN13A006 21.4 Hz, IN03A004 12.7, the tibia flexors 2.30 Hz per cell against the extensors' 2.8: the first arm in which the
+flexors fire from a sensory story alone, and nearly match the extensors.** the same at rest (no command): IN13A006 15.8, IN21A004 2.5,
+flexors 1.01, extensors 0.0. seeds and the swapped labelling are running. what this is: the standing leg's afferents as the file has them
+(flexed tibia -> claw_51; feet on the ground -> bristles) driven at rates nobody has recorded in an adult leg (ledger row 7), instead of a
+floor that drove the vibration cells. what it is not: Azevedo's 30 Hz, or a step. and the reading of "which claw class is extension-tuned"
+(ledger row 1) now has a physiological handle: under the labels as printed, the flexed standing leg wakes the flexion side.
