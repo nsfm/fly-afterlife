@@ -7214,3 +7214,23 @@ does not hold: they are not under-traced relative to their size. what is left of
 over-represented, which no source makes. the imbalance is the file's, and it is by pool, not by size. (IN21A010: 6.7x its size and
 silent, because its excitation and inhibition are balanced; the hold-side density and the lift-side balance are the two halves of the
 lid.) one table, the front leg only (the volumes exist for it alone).
+
+## the excitatory premotor layer, listening (15:27 PDT, 09-23; the kin-drive arm under DNg100 100 Hz with the 160 excitatory premotor types
+that put the most synapses onto leg motor neurons logged at 1 ms, and its deaf twin; `experiments/kin_lock_rank.py`: per type the rate,
+the swing/stance rate ratio, the vector strength of its spikes in the imposed cycle against a rolled null (20 draws, 95th percentile)
+and against the deaf run's own value; every interneuron read against the left front leg's cycle, a first pass that dilutes locks to
+other legs; 30 spikes minimum)
+
+- **123 of the 160 types fire fewer than 30 spikes in 27 s.** the excitatory premotor layer of the leg is mostly asleep under the command
+  with a real step's afferents on it. that is the lid seen from its own side: not held down cell by cell, simply not driven.
+- of the 37 readable types, **8 lock to the imposed step and 7 of those fire more in the imposed swing than in the stance:** IN03A004 (1.4 Hz,
+  swing/stance 1.96, VS 0.24 vs null 0.20, the deaf run 0.02), IN17A028 (0.9 Hz, 1.58, VS 0.33 vs 0.23), **IN21A010 (0.2 Hz, 38 spikes, ratio
+  1.73, VS 0.31 vs 0.24, deaf 0.00)**, IN19B004 (9.6 Hz, 1.39), IN19A014 (26 Hz, 1.17, weak), IN01A011, IN01A007; IN03A007 locks to the stance
+  side (ratio 0.82, VS 0.59, the strongest lock in the table). the subnet (INXXX466 17.5 Hz, INXXX464, IN19B003, IN07B001) and the
+  levators (1.3 Hz) do not lock in this labelling.
+- so **the lift side does hear the step, faintly, and in the right phase:** the flexor excitors IN03A004 and IN17A028, and IN21A010 itself,
+  fire more in the imposed swing, at rates of a few tenths of a hertz to a hertz and a half. the reflex arc to the lift side is in the
+  file with the right sign and it is starved: its cells sit under threshold and a walking leg's afferents lift them a few tenths of a
+  hertz, where the hold side's 13A cells lock at 15-50 Hz. the asymmetry is gain, not absence. that is the most specific thing the week
+  has said about the gap: the excitation that would time a step exists, phase-correct, at a hundredth of the rate it would need.
+  one seed, one labelling (swapped), the interneurons read against one leg's cycle; the per-leg read and the as-printed labelling follow.
