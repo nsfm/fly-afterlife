@@ -6934,3 +6934,16 @@ sourced` on the full stack of record; 30 s, seed 11; the subnet, the pair and th
 - **the cord on this body:** the 20 Hz subnet line under the tonic neuron and the population (19-23 Hz, x30-48), weak and low under the
   recorded standing command (3-7 Hz, x16); no alternation between the middle legs at any lag (xcorr <= 0.09); nothing rhythmic that the
   body did not make. the levators of the front and hind legs at ~1 Hz: the wiring (above) at work.
+
+**the twitch per class (13:31 PDT; commit 32467d1, `--twitch uniform|azevedo`, `--slow-tau` 300 ms (E), default bit for bit on every array):
+null, and the null explains itself.** the slow class (13 cells: lh 5, rf 3, rm 2, rh 3, none on the left legs) gets Azevedo's slow time
+course (a first-order low-pass, the integral per spike held at the class factor times the twitch's 35 ms of peak; a regular 30 Hz train
+gives 0.0057 nN.m mean either way, peak-to-trough 11 % against the twitch's 72 %); the intermediate and fast cells and every unclassed pool
+keep the sourced twitch. on the honest stack: the recorded population 90 / 72 middle-leg lifts at 184 / 189 ms (uniform 83 / 75 at 176 /
+175); the Poisson drive 75 / 71 at 190 / 183 (77 / 68 at 186 / 184); DNg100 100 Hz 15 / 71 (7 / 71); the thorax rock 1.1-1.7 Hz and its band
+power unchanged within seven points. **the bounce is the levators', the trochanter flexors, which are not a classed pool** (no measurement of
+their units exists), so they keep the 21-ms twitch, and the slow cells' force is 0.0013 of a fast cell's, so their time course cannot show. the
+palsy is therefore the fast twitch on the middle legs' levators under the cord's noisy 1-5 Hz drive, which is what Azevedo's measured
+twitch does when a big motor neuron fires irregularly: a fly whose middle-leg levators fired like ours would twitch like ours. the fix is
+not a kernel; it is the drive, which is the cord's. (the agent's caveat kept: matching the integral leaves the slow force ~10x under the
+resting-force check in `force_per_spike.md`; matching the peak would be 8.6x more at 300 ms and near that bracket.) clip: `twitch_a.mp4`.
