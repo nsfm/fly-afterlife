@@ -7,7 +7,84 @@ that would say whether they do. no run here.
 
 tags: **(M)** measured in the fly; **(I)** inferred in the fly from a connectome or a model; **(C)** another insect; **(D)** ours.
 
-PART1_PLACEHOLDER
+## 1. what is known (literature)
+
+**the short version.** no fly paper has tested an interleg-coupling neuron by function. every proposed fly cell class is inferred from
+a connectome. what is measured in the fly is that the coupling is **central**: it survives without the head, without leg
+proprioception, and in stumps.
+
+**the coupling is central in the fly (M).**
+- **Mendes et al. 2013** (*eLife* 2:e00231): silencing leg proprioceptors (nan36a mutants; 5-40-Gal4 > TNT) changed step kinematics
+  and left **interleg coordination and the tripod in place**.
+- **Sapkal et al. 2026** (bioRxiv 10.64898/2026.04.29.721658, preprint; decapitated): under DNg100 there is **180 deg left-right
+  antiphase in every leg pair** and in every condition (ball, slippery glass, air, legs amputated). ipsilateral neighbours are in
+  antiphase and tripod partners in phase. air-stepping runs at ~11 Hz. under MDN there is no left-right coupling. (figure-level
+  numbers from a fetch-tool extraction, not checked by eye.)
+- **Berendes et al. 2016** (*J Exp Biol* 219:3781): amputated stumps oscillate with a period of ~100 ms, and are **coupled one to one
+  only at high walking speed**. at low speed the local rhythm and the intact legs drift apart. so sensory signals shape the coupling
+  in a speed-dependent way; they do not create it.
+- **Harris et al. 2015** (*eLife* 4:e04493): activating whole hemilineages in headless flies gives hemilineage-specific leg
+  movements: **1A** gives intersegmentally coordinated movement without a tripod, **19A** waving of the T2 legs, **12B** T2 / T3
+  extension, **18B** walking-like movement. this is the only functional handle on the hemilineages, and each hemilineage is hundreds
+  of cells.
+
+**the proposed fly cells (I).**
+- **Sapkal 2026:** left-right through **two commissural 19B types, AN19B009 and IN19B005** (named as in our file), onto **local 19A
+  inhibitory** interneurons: disynaptic alternation. ipsilateral through an **excitatory first layer, "mostly 19A intersegmental"**,
+  then an inhibitory second layer. there are no perturbations; the authors call the circuit "putative". 19A is a GABAergic
+  hemilineage (Lacin et al. 2019, *eLife* 8:e43701), so an excitatory 19A layer is a problem. our file has the same conflict (§2, open
+  signs): the intersegmental 19A cells are predicted ACh at 0.95-0.97 with no ground truth.
+- **Pugliese et al.** (bioRxiv 10.1101/2025.09.12.675944): "Several VNC neurons connect the left and right CPG circuits, but their
+  inclusion in our simulations was insufficient to couple the phase of the left and right legs."
+- **DeAngelis et al. 2019** (*eLife* 8:e46409): a phase-oscillator model with **constant posterior-to-anterior ipsilateral
+  inhibition plus bidirectional contralateral coupling** reproduces the fly's gait manifold. they point to MAN ascending neurons
+  as loose anatomical support. this is a model fit, not a cell.
+- **Marin et al. 2024** (*eLife* 13:RP97766, MANC typing): serial sets classed as independent-leg, **sequential** (dendrites in one
+  neuromere, axon in the next) or complex. **Cheong et al. 2024** (*eLife* 13:RP96084, fig. 14): sequential, bil_T1/T3, proj_T1/T2 and
+  bil_all groups; DNa02 -> IN07B006 reaches all three contralateral leg neuropils; DNg13 drives sequential T1 -> T2 -> T3 cells.
+  **Lesser et al. 2024** (*Nature* 631:369): local premotor cells are 43 % of preMNs and carry 63 % of MN input, so the
+  intersegmental ones are a minority that carries less.
+
+**the stick-insect rules (Cruse 1990, *Trends Neurosci* 13:15; Dürr, Schmitz & Cruse 2004, *Arthropod Struct Dev* 33:237) (C), and
+fly candidates:**
+
+| rule | what it does | direction | substrate in another insect (C) | fly candidate |
+|---|---|---|---|---|
+| 1 | a leg in swing inhibits swing onset in the leg in front | caudal -> rostral, ipsi (weaker contra) | intersegmental interneurons carrying load / position (Brunn & Dean 1994; Borgmann et al. 2009) | none named. only DeAngelis 2019's posterior-to-anterior inhibition, a model term (I) |
+| 2 | the end of stance / start of swing in a leg excites swing in the leg in front | rostral, ipsi and contra | Borgmann 2009; Grabowska et al. 2022 | contralateral: Sapkal's 19B -> 19A (I). ipsilateral: Sapkal's "19A intersegmental" first layer (I, sign disputed) |
+| 3 | a leg's position late in stance excites swing in the leg behind | caudal, ipsi and contra | Ludwar et al. 2005 (contralateral influence in the stick insect) | contralateral: Sapkal's 19B -> 19A (I). ipsilateral: the same 19A layer (I) |
+| 4 | targeting: the swing leg aims at the tarsus of the leg in front | caudal, ipsi | position signals (Cruse; Dürr) | none |
+| 5 | load or obstruction spreads to the neighbours (coactivation) | both | load signals (campaniform), Dürr 2004 | none |
+| 6 | treading-on-tarsus correction | caudal, ipsi | not identified | none |
+
+(rules 5 and 6 are grouped differently in different reviews; the table follows Dürr, Schmitz & Cruse 2004.)
+
+**cross-check: the census against Sapkal's named cells (D, from §2 and `SEAM.md`).**
+- **IN19B005** (2 cells, ACh, intrinsic): rank 124 overall, **33rd by contralateral flow** (2,411; mostly f <-> f; 3rd in the f <-> f
+  list at 2,397). **AN19B009** (4 cells) is an **ascending neuron**, so the census does not rank it (only `vnc_intrinsic`). scored by
+  the same rule it has 3,839 contralateral of 5,974 interleg units, which would place it about 14th by contralateral flow. **neither is
+  in the top 40 or in contra12.** the top contralateral types are other commissural cells: 19B (IN19B021, IN19B004, IN19B035), 18B
+  (IN18B021, IN18B006) and 14B (IN14B005, IN14B010, IN14B011).
+- their targets are in the table: **IN19A012** (561 synapses from them) is 11th overall and ipsilateral. IN19A011 is 62nd, IN19B010
+  23rd, IN19B003 is the convergence node of §2.
+- **measured on the body (`SEAM.md`, "the fly's coupling circuit, on this arm" and "the commissurals under a walking-rate command";
+  nate's runs, 09-23):**
+  - AN19B009 / IN19B005 fire 0.4 / 3.5 Hz under the recorded command, 2.0 / 7.3 under DNg100 at 60 Hz, and 3.1 / 12.3 at 100.
+  - they take input from IN17A001 622, INXXX468 605, DNg100 366 and IN03A006 364, and are inhibited by their own targets: E = I, one
+    to one.
+  - silencing them, or silencing their 19A targets, changes nothing in the bouts or in the both-off statistic.
+  - so the sourced circuit is present, weakly driven and balanced. its synaptic weights are the only thing left to vary, which is
+    campaign item 7.
+- Sapkal's "19A intersegmental" layer matches our ipsilateral top list (IN19A006, 010, 012, 009, 014, 019, 018). in both places the
+  sign is the open question.
+
+**the recommended arm.** the commissural silencing is already done and null, because the cells are nearly silent. so the next read
+is **arm 1 of §3 (log first)**: log the top interleg types on the bouts arm and read them cross-leg (lm-triggered on rm, lf-triggered
+on lm). it should start with the **ipsilateral 19A set and IN19B021 / IN18B021**, which carry the most interleg flow in the file and
+have not been logged. silence (arm 2, with the three matched random controls) only the sets that fire and lock to the other leg's
+lifts. if nothing in the top 40 fires above a few hertz under a walking-rate command, the census says what campaign item 7 needs:
+a sourced weight on a named pair (19B -> 19A for left-right, the 19A intersegmental layer for ipsilateral, with its sign settled
+first). it does not need another silencing arm.
 
 ## 2. the census: cells in our file that carry one leg to another (D)
 
