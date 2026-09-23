@@ -39,6 +39,7 @@ ap.add_argument("--size-gain", type=float, default=0.0, help="size-scaled excita
 ap.add_argument("--size-thr", type=float, default=0.0, help="size-scaled excitability, the threshold form: v_th_i = 7 mV x (S_i / S_med)^B; a small cell sits closer to threshold (Azevedo 2020: slow MNs rest 20 mV nearer threshold than fast). 0 = off (E; sweep B)")
 ap.add_argument("--size-clip", type=float, default=4.0, help="clip on both size factors")
 ap.add_argument("--edge-scale", default="", help="scale the synapses among a named set of types: TYPES:FACTOR (e.g. DNg100,IN17A001,INXXX466,IN16B036:1.49 = the published rhythm loop at Pugliese 2026's LIF weight, 0.275 mV, the rest of the cord at 0.185; the review's item 5; a labelled stand-in with a source)")
+ap.add_argument("--cell-delay", default="", help="per-cell conduction delay, TYPES:MS: the named cells' output reaches their targets after MS instead of the engine's 1.8 (effective 3) ms. axonal delays in the cord are real and unmeasured per cell (E); the ring's period is the loop's delays (3 x 3 ms + rise = 40 ms, 25 Hz), so this asks whether a slower loop rings at the band a leg follows")
 ap.add_argument("--mirror", default="off", help="mirror normalisation of bilateral pairs' input weights (src/fly_afterlife/wiring.py; the labelled tracing correction of 09-19): off | all | vnc (motor, IN, AN, SN types) | a comma-separated type list")
 ap.add_argument("--treadmill", type=float, default=0.0, help="the headless treadmill (a labelled stand-in, 09-21): step frequency in Hz at which each leg's proprioceptors (world/legs.npz, by bodyId) are loaded in stance (--leg-load-hz) and UNLOADED (0 Hz) in swing, in two alternating tripods (L1 R2 L3 / R1 L2 R3), --treadmill-duty of the cycle in stance; 0 = off (the floor's constant load). asks whether unloading alone releases swing")
 ap.add_argument("--treadmill-duty", type=float, default=0.5)
@@ -84,6 +85,10 @@ if args.size_gain > 0 or args.size_thr > 0:
 if args.edge_scale:
     _et, _ef = args.edge_scale.rsplit(":", 1); _em = np.isin(mty, _et.split(",")); _src = np.repeat(np.arange(M.N), np.diff(M._out_ptr)); _sel = _em[_src] & _em[M._out_tgt]
     M._out_w[_sel] *= np.float32(float(_ef)); print(f"edge scale: {int(_sel.sum())} synapses among {_et} x {_ef}")
+if args.cell_delay:
+    _dt_, _dms = args.cell_delay.rsplit(":", 1); _dsteps = max(1, int(round(float(_dms) / M.p.dt))); _base = max(1, int(round(M.p.syn_delay_ms / M.p.dt)))
+    M._cell_delay = np.full(M.N, _base, np.int64); M._cell_delay[np.isin(mty, _dt_.split(","))] = _dsteps; Dmax = int(M._cell_delay.max())
+    M._dly_max = Dmax; M.delay_on = True; print(f"cell delay: {int((M._cell_delay == _dsteps).sum())} cells of {_dt_} at {_dms} ms ({_dsteps} steps); the rest {_base} steps")
 REG = Registry()
 if args.shock:
     _ss, _sh = (float(x) for x in args.shock.split(":")); _alldn = np.flatnonzero(M.sc.astype(str) == "descending_neuron")

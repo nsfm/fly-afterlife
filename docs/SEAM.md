@@ -5750,3 +5750,31 @@ the non-leg segments, 0 = on his feet):**
   the loop's surround is the problem and name the same sink (IN09A002). next, in the cord: a conduction delay on the loop's cells (a
   per-cell output delay in the engine; axonal delays in the cord are real and unmeasured, (E)) to see whether the ring slows to the
   band, and depression on the sink itself.
+
+**the sink (19:01 PDT; IN09A002 + IN16B016, the flexor inhibitors both engines find pinned, depressed (u 0.2, tau 1 s) or silenced, in the cord):** without the ring (DNg100 100 Hz): leg MNs 5.1 / 4.1 Hz per cell (from 2.0), flexors 0.01 / 0.00, no rhythm. **with the ring** (400 Hz, loop x3): leg MNs 15.0 / 12.4, flexors 0.16 / 0.07, and with IN09A002 silenced the front legs' promotor and remotor pools anti-correlate at the ring's half-period (lf -0.26 at +10 ms, rf -0.22; the promotor spectrum 24-25 Hz at x40 / x22 against a shuffled null of x5.6): **the first antiphase between a coxa's antagonists on this row**, at 25 Hz, and only when the sink is out. the sink is where the ring's alternation dies in this cord as in Pugliese's model; in life IN09A002 is part of Sapkal's motif, so silencing it is a diagnostic, not a correction.
+
+## the ring slowed, and the coxa alternates (19:07 PDT; `--cell-delay`: a per-cell conduction delay in the engine (the delay line is
+Dmax long and a cell's emission is inserted at its own delay; off by default; oracle running); on the loop's three cells IN17A001, INXXX466,
+IN16B036, with the loop at x3 and DNg100 at 400 Hz; the cord, 30 s, seed 11, logged at 1 ms)
+
+| delay on the loop cells | the ring (IN17A001 / IN16B036) | lf promotor pool | lf promotor vs remotor cross-correlation |
+|---|---|---|---|
+| the engine's (3 ms effective) | 25.0 / 25.0 Hz, x480 / x288 | 25.0 Hz x104 | -0.03: in phase |
+| 4 ms | 20.3 / 20.3, x464 / x346 | 15.1 x46 | -0.03 |
+| 6 ms | 16.2 / 16.9, x235 / x118 | 13.6 x91 | -0.03 |
+| 8 ms | 13.8 / 13.8, x77 / x76 | 11.8 x276 | **-0.38 at +10 ms, +0.31 at +50** |
+| **12 ms** | **10.4 / 10.4**, x47 / x90 | **8.8 Hz x771** | **-0.37 at 0 ms, +0.31 at +60 ms** |
+
+- **the delay sets the period, as the arithmetic said,** and as the ring slows into the band a fly steps at, the left front coxa's
+  promotor pool carries it harder (x46 -> x771 the median) and **its promotor and remotor pools alternate:** anti-correlated at zero lag and
+  back in phase half a period later, at 8.8 Hz (12 ms) and 11.8 Hz (8 ms); the right front coxa the same, weaker (-0.24 / +0.16). the
+  promotor autocorrelation at 70 ms is -0.49 at 12 ms. **the first alternation between a joint's antagonists on this row, at the walking
+  frequency, from the published loop at the published weight with a conduction delay.** (Pugliese 2026's result, coxa promotor vs remotor
+  at 7-15 Hz, reproduced in the spiking engine; Sapkal 2026's headless flies step at ~11 Hz.)
+- **who carries it, at 12 ms (1 ms bins):** left front promotors 24 Hz per cell at 8.8 Hz (x654), remotors 15 Hz (x39), the tibia extensors
+  22 Hz (x169), the trochanter depressors 7 Hz (x14); left mid remotors 11 Hz (x101), tibia extensors 76 Hz (x78); right front trochanter
+  depressors (x58). **the tibia flexors and the trochanter levators: 0.0 Hz in every leg.** the rhythm is on the stance side of every joint
+  and alternates only at the front coxa. the mid and hind legs carry the beat without alternation.
+- the delay is a stand-in with a source and no measurement: axonal conduction in the cord is real, intersegmental premotor cells are
+  long, and no per-cell delay is published (E); the loop's 12 ms is chosen for the band, which is a fit to physiology (the step frequency of
+  a headless fly), not to the gait. the ring's own weight (x3 on 44 synapses) is the other stand-in, labelled since 18:40.
