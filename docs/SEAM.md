@@ -7282,3 +7282,27 @@ not a synapse the fly lacks, but the weight of ones it has, on cells whose respo
 that tests it: the inputs onto IN03A004 / IN17A028 / IN21A022 / IN21A010 scaled (2x, 5x, 10x) on the cord and on the honest body, under the
 command, with the listening rig's phase read as the physiological check (does the swing-locked whisper become a swing-locked burst, and
 do the levators follow), the puppet's numbers as the yardstick, and the deaf twin as the control. and the muscle ceiling beside it.
+
+## item 7, defensible form, on the cord (15:36 PDT, 09-23; ledger 28; the inputs onto IN03A004 / IN17A028 / IN21A022 / IN21A010 scaled x2 / x5 /
+x10 through the size path; DNg100 100 Hz; the standing floor with the PINNED flexion claw (SNpp50 at 40 Hz: a flexed standing tibia), the
+graded tone with the small flexors' current, the shunt; seed 11, 30 s)
+
+| inputs onto the four | IN03A004 | IN17A028 | IN21A022 | IN21A010 | levators, middle (front) Hz | >= 3-spike frames | levators' line | Ti flexors | Ti extensors | IN13A002 | front pro / rem |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| x1 | 0.0 | 0.0 | 0.0 | 0.5 | 5.3 (0.0) | 10 % | 22.9 Hz x24 | 11.8 | 7.7 | 79.9 | 1.1 / 11.1 |
+| x2 | 0.6 | 0.0 | 2.9 | 12.7 | 5.7 (0.0) | 15 % | 22.6 x17 | 11.8 | 8.0 | 79.9 | 1.0 / 13.3 |
+| x5 | 9.2 | 2.0 | 23.1 | 50.8 | 8.0 (1.1) | 41 % | 23.1 x14 | 12.2 | 7.8 | 79.9 | 0.6 / 20.5 |
+| x10 | 56.4 | 43.9 | 50.6 | 78.5 | **20.1** (4.4) | **83 %** | 5.1 x15 | 13.7 | 12.6 | 80.1 | 0.8 / 14.6 |
+
+- **the gain wakes the excitors and the middle legs' levators.** IN21A010 goes 0.5 -> 51 -> 79 Hz, the other three 0 -> 9-56; the middle
+  levators 5.3 -> 8.0 -> 20.1 Hz per cell with the pool firing three or more spikes in 41 % then 83 % of 10-ms frames (10 % at x1): the
+  levators go from a whisper to a sustained roar, and the 20 Hz line they carried at x1 gives way to slow bursting (a 5 Hz line, x15).
+  the front legs' levators reach 4.4 Hz at x10 (their tenth of the wiring holds). the puppet's target was a 50 Hz burst for 80 ms in 200;
+  at x10 the middle levators average 20 Hz and burst most of the time, so the rate is there and the phasing is not: nothing gates them
+  off in stance, because nothing in this cord alternates.
+- **the flexors do not follow and the hold side does not move:** the tibia flexors 12-14 Hz throughout (the small cells' own current),
+  IN13A002 at 80 Hz in every arm (the flexed standing claw driving it, as pinned), IN13A006 0, the front remotors 11-20 against the
+  promotors' 1. so on a cord alone, x10 on the lift side's excitors makes the levators fire and changes nothing about who wins the knee.
+- this is what a gain fit looks like when it is honest: it moves the cells it is aimed at, by the amount asked, and shows what they do
+  not do on their own. the body arms (the listening rig with the gain, and the free-running body) say whether the phase the leg's own
+  senses give these excitors survives the gain, which is the actual question; they follow. one seed.
