@@ -6947,3 +6947,26 @@ palsy is therefore the fast twitch on the middle legs' levators under the cord's
 twitch does when a big motor neuron fires irregularly: a fly whose middle-leg levators fired like ours would twitch like ours. the fix is
 not a kernel; it is the drive, which is the cord's. (the agent's caveat kept: matching the integral leaves the slow force ~10x under the
 resting-force check in `force_per_spike.md`; matching the peak would be 8.6x more at 300 ms and near that bracket.) clip: `twitch_a.mp4`.
+
+## item 7 on the cord (13:38 PDT, 09-23; ledger 26; the 19B -> 19A pathway's synapses scaled and the commissurals driven; DNg100 100 Hz, the
+standing floor with the flexion claw at 40, the graded tone, the shunt; seed 11, 30 s; the left-right promotor and levator pools per segment
+cross-correlated at lags to +-300 ms on 10 ms frames)
+
+| arm | AN19B009 | IN19B005 | IN19A011 | IN19B003 | front promotors L / R Hz | L-R r at 0 | min (lag) |
+|---|---|---|---|---|---|---|---|
+| x1 | 3.5 | 12.3 | 20.2 | 11.6 | 4.2 / 2.5 | -0.02 | -0.09 (+20 ms) |
+| the pathway x3 | 2.7 | 12.5 | 28.3 | 10.4 | 3.8 / 2.4 | -0.06 | -0.09 (+20) |
+| x10 | 1.5 | 13.7 | 44.4 | 7.3 | 4.3 / 2.1 | -0.04 | -0.09 (+20) |
+| x30 | 1.3 | 16.9 | 57.7 | 6.5 | 4.6 / 1.6 | -0.03 | -0.08 (-40) |
+| the commissurals driven at 20 Hz | 19.1 | 18.6 | 24.5 | 14.3 | 4.1 / 2.7 | +0.06 | -0.05 (+20) |
+| driven at 50 | 43.9 | 43.3 | 34.3 | 16.5 | 2.9 / 1.3 | 0.00 | -0.04 (-260) |
+| x10 + driven at 20 | 19.1 | 18.6 | 67.4 | 12.5 | 1.1 / 1.1 | 0.00 | -0.03 (+200) |
+
+the pathway does what its wiring says: scaling it drives the 19A targets from 20 to 58 Hz and silences the commissurals further (their
+own targets inhibit them, 3.5 -> 1.3 Hz); driving the commissurals lifts them to 19-44 Hz and their targets with them. **and the left and
+right front promotors stay uncorrelated at every lag in every arm** (r at 0 between -0.06 and +0.06, the deepest trough -0.09 at +20 ms in
+the control itself, no lobe at a half or a whole period of anything). the middle legs' levators fire 0.0-0.1 Hz on the left and 3-4 on the
+right in every arm (the lean, cord-side). so on the cord, thirty times the file's weight on Sapkal's pathway and fifty hertz of drive
+into it produce no left-right alternation in the front promotors; the pathway's output reaches the 19A locals and stops there, because
+the 19A locals' targets (the stance side) are not oscillating to be alternated. Pugliese's "insufficient to couple the phase" holds at
+every gain we tried. **item 7 on the cord: negative, one seed, seven arms.** the body sweep (with the leg-pair reader) follows.
