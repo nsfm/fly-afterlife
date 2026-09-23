@@ -66,7 +66,9 @@ ap.add_argument("--stiffness", type=_stiffness, default=None, help="the joints' 
 ap.add_argument("--load-from", default="leg", choices=["leg", "tarsi"], help="the per-leg force the load rows, the tactile rows and the pads read (09-23, docs/REVIEW_PHYSICS.md P1): leg (the runs of record: flygym's per-leg contact sensor, the whole leg's subtree from the coxa down, a vector norm with friction, so a coxa on the floor reads as a loaded foot) | tarsi (the vertical ground reaction on tarsus1-5 only, summed per leg; tarsus5 carries the claw and pad, the model has no pretarsus segment). either way net of the pad's pull; leg_force in the .npz stays the leg sensor's")
 ap.add_argument("--hind-map", default="v1", choices=["v1", "v2"], help="the hind legs' motor-neuron-to-DOF table (09-23, the review's P4 / P5): v1 (the runs of record: the front leg's type map on the measured roles; the hind 'protract' role is coxa yaw, the hind coxa pitch gets no cord torque; MNhl01/02/29/59/60/62/64/87/88 unmapped) | v2: the hind 'protract' role (every promotor / remotor / rotator class) moves to the hind coxa PITCH, sign by its measured fore-aft action (results/body_dof_signs.json: + pitch moves the foot 0.367 mm back and 0.505 mm up per unit, so protraction = - pitch, which also presses the foot down), and the unnamed hind cells get leg_biomech.md A2's recommended action: MNhl62 promotor (high), MNhl29 remotor (high), MNhl01 / MNhl02 trochanter depressors (medium-high), MNhl60 / MNhl64 tarsus depressors (low, (E)); MNhl59 (low: anterior rotator by cos 0.36 only), MNhl87 / 88 (none), Tergotr. and Fe reductor stay unmapped, as A2 says. the adductor stays on coxa yaw. printed at startup")
 ap.add_argument("--start-pose", default="neutral", choices=["neutral", "feet"], help="where the run starts (09-23, the review's P2): neutral (the runs of record: spawned in NeuroMechFly's neutral pose, which is not a six-foot stance: the hind feet lowest, the middle 0.155 mm and the front ~0.30 mm up; he falls and settles during the warm-up with the cord already driving) | feet: before the warm-up, 0.5 s of physics under gravity on the arm's own springs with no muscle and no pad, then the run starts from that settled pose. (lowering the spawn cannot put six feet down: the neutral feet are not level)")
-ap.add_argument("--mn-force", default="uniform", choices=["uniform", "azevedo"], help="force per spike by motor neuron class (09-23; docs/physiology/force_per_spike.md): uniform (the runs of record: every mapped MN's spike scaled by the size proxy f_w = (S / S_max of its leg-role group)^--alpha) | azevedo (Azevedo et al. 2020 eLife 9:e56754, fig 4, the female front-leg tibia flexor: ~10 / ~1 / 0.013 uN per spike for fast / intermediate / slow, so 1 : 0.1 : 0.0013 with fast at today's --gain; the class from the input-synapse third of the 'Ti flexor MN' pool, the same thirds as --pic smallflex and the graded size CSV, small = slow; the measured factor REPLACES f_w on those cells; every other mapped MN keeps f_w x 1.0, a stated default, counted at startup). the slow class's own slow kinetics (no twitch, force still rising at 500 ms) are not modelled: same kernel, measured gain")
+ap.add_argument("--mn-force", default="uniform", choices=["uniform", "azevedo"], help="force per spike by motor neuron class (09-23; docs/physiology/force_per_spike.md): uniform (the runs of record: every mapped MN's spike scaled by the size proxy f_w = (S / S_max of its leg-role group)^--alpha) | azevedo (Azevedo et al. 2020 eLife 9:e56754, fig 4, the female front-leg tibia flexor: ~10 / ~1 / 0.013 uN per spike for fast / intermediate / slow, so 1 : 0.1 : 0.0013 with fast at today's --gain; the class from the input-synapse third of the 'Ti flexor MN' pool, the same thirds as --pic smallflex and the graded size CSV, small = slow; the measured factor REPLACES f_w on those cells; every other mapped MN keeps f_w x 1.0, a stated default, counted at startup). the slow class's own slow kinetics (no twitch, force still rising at 500 ms) are not modelled here: same kernel, measured gain (--twitch azevedo gives them their own)")
+ap.add_argument("--twitch", default="uniform", choices=["uniform", "azevedo"], help="the muscle's time course per spike by motor neuron class (09-23; docs/physiology/force_per_spike.md): uniform (the runs of record: every motor neuron's spike adds the one twitch kernel, K = e^-t/20 - e^-t/7, peak 1, 120 ms) | azevedo: the slow class gets the slow unit's time course (Azevedo 2020 fig 4C: no resolvable twitch, force still rising at 500 ms), a first-order low-pass of its spike train with tau --slow-tau; the intermediate and fast classes keep the sourced twitch (fast and intermediate share it, fig 4A/B). NORMALISATION: a slow spike's force-time integral = the cell's per-spike factor (under --mn-force azevedo the class's 0.0013; under uniform its f_w) x the twitch's integral (sum K = 35.05 ms of peak), so the mean force at a given rate is today's and only its time course changes: a slow cell at 30 Hz gives a smooth, small, sustained pull instead of a train of 20 ms twitches. which cells are slow: the --mn-force azevedo rule (the small input-synapse third of the 'Ti flexor MN' pool, pooled over the cord); every pool without a class keeps the twitch, counted at startup. built as one low-pass state per DOF, updated per ms (exact by linearity: every slow cell shares tau), no per-spike cost")
+ap.add_argument("--slow-tau", type=float, default=300.0, help="--twitch azevedo: the slow unit's low-pass time constant in ms (E; bracketed 200-500 from fig 4C: force not peaked at 500 ms, release ~100 ms; force_per_spike.md section 1)")
 ap.add_argument("--tethered", action="store_true", help="the tethered preparation (nate, 09-22: propped up): the thorax fixed in space, the legs free, no floor and no load; the position loop still closes"); ap.add_argument("--gravity", type=float, default=1.0, help="scale on gravity (0.1 = a tenth of his weight; a graded prop-up, diagnostic)")
 ap.add_argument("--walk-ramp", type=float, default=0.0, help="the command rises linearly over this many seconds after the warm-up instead of stepping on in one ms (nate 09-22: the fling at the 2 s mark; a walking bout's descending drive ramps in life, Aymanns 2022, Sapkal 2024 ramped their light)");
 ap.add_argument("--warmup", type=float, default=2.0); ap.add_argument("--no-video", action="store_true"); ap.add_argument("--fps", type=int, default=25)
@@ -257,11 +259,14 @@ if args.hind_map == "v2":
             elif _t in ROLE_H: print(f"  {_l}   {_t:30s} {len(_js):2d}  grip (the pads' ltm, as v1)")
             else: print(f"  {_l}   {_t:30s} {len(_js):2d}  -              no torque                                         {HIND_SRC.get(_t, 'unmapped')}")
 MNF = {"slow": 0.013 / 10.0, "intermediate": 1.0 / 10.0, "fast": 1.0}   # (09-23) Azevedo 2020 fig 4: uN per spike over the fast spike's ~10 uN
-if args.mn_force == "azevedo":   # the tibia flexor pool by input-synapse third (the file's counts, as --pic smallflex ranks it), the measured factor in place of the size proxy
-    _tp = np.flatnonzero(mty == "Ti flexor MN"); _tp = _tp[np.argsort(insyn[_tp], kind="stable")]; MN_CLASS = {}
-    for _cl, _th in zip(("slow", "intermediate", "fast"), np.array_split(_tp, 3)):
-        for j in _th:
-            if int(j) in cell_dof: MN_CLASS[int(j)] = _cl
+def mn_classes():   # (09-23) the tibia flexor pool by input-synapse third (the file's counts, as --pic smallflex ranks it): {cell: slow | intermediate | fast}, mapped cells only; shared by --mn-force and --twitch
+    tp = np.flatnonzero(mty == "Ti flexor MN"); tp = tp[np.argsort(insyn[tp], kind="stable")]; out = {}
+    for cl, th in zip(("slow", "intermediate", "fast"), np.array_split(tp, 3)):
+        for j in th:
+            if int(j) in cell_dof: out[int(j)] = cl
+    return tp, out
+if args.mn_force == "azevedo":   # the measured factor in place of the size proxy
+    _tp, MN_CLASS = mn_classes()
     _fw0 = {j: f_w[j] for j in MN_CLASS}
     for j, _cl in MN_CLASS.items(): f_w[j] = MNF[_cl]
     print(f"--mn-force azevedo (Azevedo 2020 eLife fig 4, female T1 tibia flexor: 10 / 1 / 0.013 uN per spike): 'Ti flexor MN' by input-synapse third of {len(_tp)} cells; torque per unit activation = --gain {args.gain} x factor (fast = today's reference)")
@@ -273,6 +278,18 @@ if args.mn_force == "azevedo":   # the tibia flexor pool by input-synapse third 
     _dflt = [j for j in cell_dof if j not in MN_CLASS]
     print(f"  no measurement: {len(_dflt)} mapped leg MNs keep f_w x 1.0 (the stated default; types {len(set(mty[_dflt]))}, e.g. Acc. ti flexor {sum(mty[j] == 'Acc. ti flexor MN' for j in _dflt)}, Ti extensor {sum(mty[j] == 'Ti extensor MN' for j in _dflt)}); {len(grip_of)} grip MNs unchanged")
 KL = 120; tk = np.arange(KL); K = np.exp(-tk / 20.0) - np.exp(-tk / 7.0); K /= K.max()
+TW = None
+if args.twitch == "azevedo":   # (09-23) the slow class on a first-order low-pass: per spike a jump of A_j, decaying by D per ms, so its force-time integral is A_j / (1 - D) = f_w[j] x sum(K) / sat, the twitch's
+    _tp2, _cls2 = mn_classes(); _D = float(np.exp(-1.0 / args.slow_tau)); _slow = sorted(j for j, c_ in _cls2.items() if c_ == "slow")
+    TW = dict(D=_D, s=np.zeros(len(dofs)), A={j: f_w[j] * K.sum() / args.sat * (1.0 - _D) for j in _slow})
+    _ss = f_w[_slow[0]] * K.sum() / args.sat * args.gain if _slow else 0.0
+    print(f"--twitch azevedo: {len(_slow)} slow 'Ti flexor MN' cells (the small input-synapse third of {len(_tp2)}) on a low-pass, tau {args.slow_tau:.0f} ms (E), one state per DOF; integral per spike = factor x the twitch's {K.sum():.1f} ms "
+          f"(factor {min((f_w[j] for j in _slow), default=0):.4f}-{max((f_w[j] for j in _slow), default=0):.4f}); per leg " + " ".join(f"{l} {sum(legof[j] == l for j in _slow)}" for l in LEG6))
+    print(f"  keep the twitch: {sum(c_ != 'slow' for c_ in _cls2.values())} intermediate / fast 'Ti flexor MN' (sourced kernel); {len([j for j in cell_dof if j not in _cls2])} mapped MNs of pools without a class (the twitch, unmeasured); {len(grip_of)} grip MNs")
+    _tr = np.zeros(3000); _tr[::33] = 1.0; _fk = np.convolve(_tr, K)[:3000]; _fl = np.zeros(3000); _x = 0.0
+    for _i in range(3000): _x = _x * _D + _tr[_i] * K.sum() * (1.0 - _D); _fl[_i] = _x
+    _rp = lambda f: (f[2000:].max() - f[2000:].min()) / f[2000:].mean() * 100
+    print(f"  a slow cell at 30 Hz (regular train): mean torque {_ss * 30 / 1000:.4f} nN.m at the first slow cell's factor, the same under either kernel; peak-to-trough {_rp(_fl):.0f} % of the mean on the low-pass vs {_rp(_fk):.0f} % on the twitch")
 weight = m.body_mass.sum() * abs(m.opt.gravity[2]); F_stand = max(weight / 6.0, 1e-6); print(f"gravity x{args.gravity}: weight {weight:.2f} uN, F_stand {F_stand:.2f}")
 segs = [s.name for s in fly.get_bodysegs_order()]; thorax = segs.index("c_thorax")
 TARS = [np.array([segs.index(f"{l}_tarsus{i}") for i in range(1, 6)]) for l in LEG6]   # (09-23, P1) the feet: tarsus1-5 (tarsus5 carries the claw and pad; no pretarsus segment in the model)
@@ -353,6 +370,7 @@ for ms in range(n_ms):
     if XMS is not None and idx.size:
         xh = xpos[idx]; xh = xh[xh >= 0]
         if xh.size: np.add.at(XMS[ms], xh, 1)
+    if TW is not None: TW["s"] *= TW["D"]; torque[:, ms] += TW["s"]   # (--twitch azevedo) the slow cells' low-pass, from the spikes before this ms
     if args.freeze_mn > 0 and ms >= int(args.freeze_mn * 1000):
         if ms == int(args.freeze_mn * 1000): _hold_t = torque[:, ms].copy(); _hold_g = {l: float(grip[l][ms]) for l in LEG6}; print(f"muscles frozen at {args.freeze_mn:.1f} s: torque {np.round(np.abs(_hold_t).max(), 3)} max, grip {np.round(list(_hold_g.values()), 2)}")
         torque[:, ms] = _hold_t
@@ -369,6 +387,7 @@ for ms in range(n_ms):
     for j in hit:   # what the body sees: the cord's spikes, or the Poisson trains, or nothing after a freeze
         j = int(j)
         if j in grip_of: grip[grip_of[j]][ms: ms + KL] += f_w.get(j, 0.1) * K / args.sat
+        elif TW is not None and j in TW["A"]: a_ = cell_sgn[j] * TW["A"][j]; TW["s"][cell_dof[j]] += a_; torque[cell_dof[j], ms] += a_   # a slow spike: a jump in the low-pass, felt from this ms
         elif j in cell_dof: torque[cell_dof[j], ms: ms + KL] += cell_sgn[j] * f_w[j] * K / args.sat
     tq = np.clip(args.gain * torque[:, ms], -60, 60); sim.set_actuator_inputs("nmf", ActuatorType.MOTOR, tq)
     if adh and args.adhesion == "ltm": sim.set_leg_adhesion_states("nmf", np.array([grip[l][ms] > 0.05 for l in LEG6]))
