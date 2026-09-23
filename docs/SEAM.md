@@ -7039,3 +7039,15 @@ classes and actuator limits as the cord's spikes; the honest stack; seed 11, 20 
 - **so the connectome's target, in its own motor neurons:** per leg, a swing burst of ~50 Hz on the levator and protractor motor neurons for
   ~40 % of a 125-200 ms cycle, alternating with ~25 Hz on the depressors, retractors and extensors, the two tripods in antiphase. the
   cord's arms give the levators 0.8-2 Hz and no burst. that is the gap, measured in the same units on both sides.
+
+**the puppet's joints and the lean (14:07 PDT; nate, from the slow clip: "the movements are quite exaggerated in the front legs... back legs
+kinda low-movement"; the joint excursions (sd after 2.1 s) of the clean 5 Hz puppet against the connectome's recorded-population arm):**
+under the puppet every leg swings its coxa 22-27 deg and its trochanter 18-25 deg, and its knee only 6-11: the script drives the levator
+and protractor in swing and does not flex the tibia (the agent said so), so a puppet step is a whole-leg swing from the hip with the
+tibia held, which is what looks exaggerated in front, where the coxa's arc is longest, and low behind, where the hind foot barely
+clears the floor (rh 0 lifts even here). a fly's swing flexes the tibia first and lifts the foot with it. the connectome's arm swings the
+coxae 6-12 deg and the knees 1-7: a quarter of the puppet's, and mostly the middle legs. **the lean is not only the cord's:** the body
+rolls -7.8 deg (sd 10) under the puppet with the cord disconnected from the muscles, and +2.9 (sd 6) under the connectome's command: two
+leans of opposite sign, one from the map and the pose (the puppet's), one from the cord's asymmetric drive (the connectome's), and the
+right hind foot never lifts under either, so the hind-right map or pose has a fault of its own (ledger 25's territory). native slow
+motion (`--playback-speed`, a frame per 8 ms of simulated time) is rendering for both.
