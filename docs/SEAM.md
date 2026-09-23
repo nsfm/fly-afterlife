@@ -7386,3 +7386,22 @@ on the listening rig under DNg100 100 Hz with a deaf twin; the same rank read; 3
   right phase, gone when the cord is deaf. **the release exists in the file, phase-correct, and starved.** the compound arm follows: the
   four swing-locked releasers' inputs scaled x3 / x5 / x10 beside the lift side's excitors at x3 (the gain that kept him standing), cord
   first (IN13A002's rate and the levators' and flexors' bursting as the read), then the free body and the listening rig. one seed.
+
+**the compound arm on the cord (16:13 PDT; row 30; the releasers' inputs x3 / x5 / x10 beside the lift excitors at x3; DNg100 100 Hz, the pinned
+flexion claw at 40 Hz (a flexed standing tibia), the graded tone, the shunt; seed 11):**
+
+| arm | IN13A002 | IN13A005 | IN14A008 | IN13B013 | IN13B006 | IN13B004 | IN21A010 | mid levators (>= 3-spike frames) | Ti flex / ext | front pro / rem | flex-ext xcorr min |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| lift x3 | 79.9 | 28.2 | 0.0 | 9.2 | 3.6 | 16.3 | 27.1 | 6.0 (13 %) | 11.9 / 7.6 | 0.9 / 16.0 | -0.04 |
+| release x5 alone | 78.8 | 24.2 | 12.1 | 170 | 97 | 137 | 0.5 | 3.4 (8 %) | 12.2 / 5.7 | 0.9 / 10.8 | -0.03 |
+| lift x3 + release x3 | 79.7 | 25.5 | 3.9 | 116 | 54 | 89 | 26.8 | 5.3 (15 %) | 12.2 / 6.8 | 1.2 / 15.6 | -0.04 |
+| lift x3 + release x5 | 78.9 | 24.4 | 13.8 | 170 | 97 | 138 | 27.8 | 5.7 (17 %) | 12.3 / 6.7 | 0.8 / 15.7 | -0.02 |
+| lift x3 + release x10 | 71.6 | 19.8 | 43.6 | 203 | 145 | 183 | 28.9 | 7.0 (21 %) | 12.6 / 5.8 | 0.7 / 16.6 | -0.04 |
+
+the releasers saturate (the 13B cells at 90-200 Hz, IN14A008 to 44) and **IN13A002 comes down from 80 to 72 Hz**: the four cells the
+listening rig named do not unseat the hold, because on a cord alone the hold is driven by a constant flexed-knee claw (SNpp50 at 40 Hz
+onto IN13A002 with 4,612 synapses) that nothing in the arm changes, and the releasers' output is spread across seven winner types.
+the flexors and extensors do not alternate (xcorr min -0.02 to -0.04). **which is the cord alone saying what it has said all week: with
+a constant sense it holds a posture.** in the fly the claw changes through the step (flexion in stance, extension in late stance and
+swing), which is exactly the phase the listening rig showed the 13A cells following; on the body the claw is the body's. the compound
+arm on the free body and on the listening rig is the test that can close the loop, and it runs next. one seed.
