@@ -528,14 +528,14 @@ item in §2a and should come before the taste path is judged.
    second pass); fixed in `world/fastlif.py` (the scale is read before the spike's own decrement; the two-cell test delivers the full weight);
    oracle running (the oracle pins `--std off`, so it tests only that the fix is silent there). to re-measure: the run of record's `--std pair`
    (the DNg33 pair at 0.92 of nominal before the fix: does the pair still unlock at the true u 0.08?), the `--std all` and inhibitor-pool arms
-   of 09-21/22 (all at 0.92-0.5 of nominal), and the flysim reference engine has the same bug (ref/, untracked; note for its author)- **4k. the 20 Hz.** a 16-22 Hz shared rhythm across Pugliese's eight cited cells and the trochanter motor neurons at the published weight, on both
+   of 09-21/22 (all at 0.92-0.5 of nominal), and the flysim reference engine has the same bug (ref/, untracked; note for its author).
+- **4k. the 20 Hz.** a 16-22 Hz shared rhythm across Pugliese's eight cited cells and the trochanter motor neurons at the published weight, on both
   cuts, three seeds; needs the subnet as a whole (all eight silent: gone) and none of its cells singly; IN17A001 sets its frequency (13.6 Hz without
   it). not the three-cell loop. open: what its generator is (which pair or triangle among the eight, tested by pairs); why 20 and not
   Pugliese's 7-15 (the LIF's 1.8 ms delay + 2.2 ms refractory against the rate model's 20 ms tau); whether the body can carry it (it low-passes
   it; the trochanter flexors carry it at 3 Hz per cell). read at 1 ms with a spectral line and a rolled null; the 10 ms lobe read misses it.
 - **4l. the cut, v2.** `scripts/build_cord.py` drops edges onto descending neurons from descending / ascending cells (a labelled approximation of
   vncRoisOnly). nearly inert in the LIF (the drive gate), decisive in the rate model. the 09-21 arms stand as run; re-run only what is cited.
-.
 4j. **[queued 09-22 19:56] what the second pass leaves for the stepping leg**: the springs stand him (withdrawn as his); the remotors and the
    trochanter levators do not join the promotors' rhythm; the return stroke is the spring's. next: the same arm on the measured springs with the
    added-current tonus; the loop's synapses onto the remotor side; the levators. and the other five legs.
