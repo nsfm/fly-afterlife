@@ -5807,3 +5807,21 @@ IN16B036, with the loop at x3 and DNg100 at 400 Hz; the cord, 30 s, seed 11, log
 - **seeds (19:25 PDT):** the stepping leg replicates on seeds 10 and 12: left front coxa at 8.8 Hz (x202 / x477), autocorrelation -0.39 / +0.49 and -0.40 / +0.47 at 60 / 110 ms, 128 and 106 lifts, interval cv 0.51 and 0.57, sign agreement of the coxa's swing during lifts 0.70 and 0.66 (0.55 on seed 11). **one honest wrinkle:** on seed 10 the coxa swings *backward* during lifts (-17 deg) where seeds 11 and 12 swing forward (+8, +9): the rhythm and the lift are the same on all three, the direction of the swing is not, so the step's direction is not yet the cord's to claim. three of three on the rhythm; two of three on the direction.
 
 **oracle (19:32 PDT), the engine with per-cell conduction delays present and off: PASS, v1 + v2, eight configurations, none differing (read from the log). committed.**
+
+**the ring at a lower dose (19:34 PDT; the loop stronger so it rings under less command; 12 ms delay, claw labels swapped, the pads, the
+loop closed, 20 s, seed 11):**
+
+| arm | body on the floor (% of his weight) | thorax height | lf coxa pitch: peak, autocorr 60 / 110 ms | foot lifts (lf lm lh rf rm rh) | flexors / extensors |
+|---|---|---|---|---|---|
+| DNg100 400 Hz, loop x3, springs (the stepping arm above) | 94 | 0.57 | 8.8 Hz x558, -0.36 / +0.49 | 102 67 3 1 78 4 | 0.28 / 21.3 |
+| 200 Hz, loop x5, springs | **10** | 0.70 | 9.3 Hz x246, -0.39 / +0.49 | **126** 2 28 43 18 11 | 0.26 / 14.4 |
+| **100 Hz (the record's dose), loop x8, springs** | **2** | 0.68 | **8.9 Hz x220, -0.20 / +0.42** | **126** 1 8 64 75 2 | 0.31 / 9.8 |
+| 200 Hz, loop x5, measured springs + the tonus current | 63 | 0.64 | 2.8 Hz (wander) | 53 35 73 60 33 78 | 0.60 / 26.4 |
+| 100 Hz, loop x8, measured springs + the tonus current | 77 | 0.59 | 9.4 Hz x94 under +0.77 / +0.85 (drift) | 47 14 64 51 31 86 | 0.76 / 20.4 |
+
+- **at the record's dose, with the loop at eight times the constant, on flygym's springs, he stands on his feet (2 % of his weight on
+  the body) and his left front leg steps at 8.9 Hz, 126 lifts in 18 s;** the right front lifts 64 times and the right mid 75, without the
+  9 Hz cycle (their coxae wander). the extensors are at the record's 9.8 Hz per cell, the cord is the record's cord with one loop's
+  synapses strong. `world/body/loop/ld_100_x8_springs.mp4`.
+- on real-stiffness legs with the tonus current he does not stand (63-77 % on the floor) and the wander swamps the cycle: the standing
+  problem is still the standing problem; the stepping leg needs a body held up by something, and the springs are that something for now.
