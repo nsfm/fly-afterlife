@@ -5602,3 +5602,37 @@ excitation from driven sensory cells); the graded emission's timing and scale (n
 interneurons silenced); the units (uN, nN m); the gait measures (a synthetic tripod scores antag -0.73, legs -0.81). **so the headless
 cord's negative results stand; the body loop's are remade.** fixes, in the reviewer's order: F0 (the stand-in as an added current), F1
 (the centre restored, both claw labellings run), F2 (standing = weight on the feet), F3, F7.
+
+## the literature review (18:28 PDT; `docs/physiology/walking_review.md`, an independent read of the walking baseline against the field)
+
+- **the rhythm is generated in the cord, not closed through the legs.** Sapkal et al. 2026 (bioRxiv 10.64898/2026.04.29.721658) drove DNg100
+  in headless flies with the legs held in the air: the legs stepped at ~11 Hz, in a stronger tripod than on a ball, left-right antiphase
+  on every pair; stumps with the femoral chordotonal organ removed still oscillated. **this row's reading since 09-21, that the rhythm comes
+  back through the legs, is contradicted by the experiment that decides it.** (a citation corrected in place: the headless DNg100 walking
+  result is Sapkal 2024, Nature 634:191, not Bidaye 2020, which is the P9 / BPN paper; Braun 2024: headless DNp09 does not walk forward,
+  MDN does walk backward.)
+- **a rhythm has been produced from this wiring.** Pugliese et al. 2026 (Tuthill / Brunton; `docs/research/sources/pugliese_2026_connectome_cpg.md`)
+  ran the MaleCNS cord as a rate model and got a 7-15 Hz within-leg rhythm on the coxa's promotor and remotor from a three-cell loop,
+  IN17A001 -> INXXX466 -> IN16B036 -| IN17A001. their decisive ingredient: **each cell's gain and threshold scaled by its size** (volume /
+  surface area), stated necessary: "without adjusting a and theta for size, the network does not produce robust oscillations in response
+  to DNg100 input." a uniform-threshold network, which ours is, is the configuration they say fails. in their model too the tibia flexors
+  were silent or arrhythmic and the legs did not coordinate. the reviewer checked the male file today: all of Pugliese's and Sapkal's
+  candidate rhythm cells exist, 6 per type; DNg100 -> IN17A001 818 synapses, IN17A001 -> INXXX466 2,733, INXXX466 -> IN16B036 445 (the weak
+  link), IN16B036 -> IN17A001 3,705. IN09A002, the flexor inhibitor at 50-60 Hz in every arm, is in Sapkal's published motif, and DNg100
+  excites it (1,026) harder than the rhythm cell (818).
+- **the motor neurons' resting potentials are measured and graded by size** (Azevedo 2020): -68 / -60 / -48 mV for fast / intermediate / slow,
+  input resistance 150 / 300 / 700 MOhm; the slow units fire ~30 Hz with no drive. a uniform-threshold LIF gives every cell the same 7 mV
+  to threshold, so **"the slow units are not in the file" (09-22 01:07) was the engine, not the map**: in life the small cells are the ones
+  that need almost no input. withdrawn in place as a statement about the map.
+- **the claw labels are probably inverted:** SNpp50 excites the tibia extensor directly (470 synapses) and SNpp51 the flexors (360) and
+  IN21A004 (577); by the measured rule (Lee 2025) that makes SNpp51 the extension-sensing claw; one indicator (SNpp50 -> 13B, 2,280 vs 511)
+  disagrees. and "claw extension answered with more extension is the assistance reflex" does not hold: no reflex reversal is shown in
+  Drosophila, and the stick-insect reversal answers movement during active flexion, not a steady position.
+- **only one fly leg interneuron is known to be graded (13B-alpha), and it relays posture, not rhythm;** nothing is known of 13A, 21A, 19A,
+  03A or 12B. the graded sweep of 17:48 had no fly source. gap junctions: no location, strength or count published for fly leg circuits.
+  neuromodulation: the headless fly walks without the brain's modulatory neurons and Pugliese's model steps with none; both rank last.
+- **the next moves, in the reviewer's order:** log the eight published rhythm cells in the cord under DNg100; rescore the coxa at 50-150 ms
+  lags with fine bins (the coxal antagonist anti-correlation at 30 ms is half a 14 Hz cycle); run Pugliese's rate model on our table as
+  the positive control; **size-scaled excitability in the LIF**; settle the claw labels. a fair negative has a narrow scope: "a LIF at Shiu
+  2024's uniform constants fails where a rate model on the same table oscillates", and needs the positive control and a rhythm measure
+  checked against a planted 10-15 Hz oscillation. **the burden is on the engine, not the wiring.**
