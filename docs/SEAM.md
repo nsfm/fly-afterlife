@@ -6629,3 +6629,10 @@ gaps. a frozen muscle set on springs and pads holds a still posture; the bouts n
 reflex oscillation through the leg's own senses and the cord, on a body, with no term fitted to it.** what it is not: coupled across
 legs (above), a gait, or a rhythm the cord makes alone (no cord arm has ever shown it; it needs the leg to move). what it is: the first
 rhythm in this project that the connectome makes with its body and nothing else. one seed; the second and the subnet's part are running.
+
+**replicated and opened (11:33 PDT):** the freeze on seed 12: before it the same run as `lift_s12` (lf 14 lifts at 174 ms, lm 34 at 207, rm 31 at
+183); after it 0 lifts on every leg (the left middle frozen in the air, the others on the ground) where the unfrozen seed goes on at 33 /
+29 / 45. **two of two.** and the loop opened (`--loop off`: no claw, hook, hair-plate, load or touch rows; the floor and the command as
+before): he holds every foot off the ground for the whole run (100 % off on all three legs read, 18 % of his weight on the floor) and
+makes no lift at all. so the bouts need the senses in the loop AND the cord in the loop: a leg that cannot feel itself does not step, a
+cord that cannot move the leg does not step, and a leg that can do both steps at five hertz on its own. the reflex has its two halves.
