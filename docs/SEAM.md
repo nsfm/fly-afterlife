@@ -6334,3 +6334,19 @@ the engine gets a per-cell membrane-noise scale (`world/fastlif.py`, off unless 
 MOhm cell is a larger voltage noise than on a 300 MOhm one, so the noise follows the synaptic scale; with the small cells' rest 3 mV
 under threshold that is the cell's own excitability, sourced the same way the synapses were, and it is the honest test of whether
 Azevedo's tone can come from the cell rather than from wiring the file does not have.
+
+**corrected in place (23:53 PDT): the claw's side at the standing pose.** the model's knee angle is 0 with the leg straight and grows with
+flexion, so the femur-tibia angle is 180 minus it (checked on the geometry by the agent: model 0 -> 179.6 deg, 30 -> 150.4, 90 -> 90.4). at the
+neutral pose the femur-tibia angle is 102 / 77 / 79 deg (front / middle / hind): **the front legs stand 12 deg on the EXTENSION side of
+Mamiya's 90-deg null and the middle and hind 13 / 11 deg on the flexion side**, the reverse of the 23:26 entry. the magnitude stands; the
+class flips per leg. the code (`--senses v2`) uses the geometry.
+
+**the senses on the body, the option landed (23:53 PDT; commit cefd3b2, agent; `--senses v1|v2` in `experiments/body_loop.py`, `--floor
+all|standing` in `world/cord.py`, `src/fly_afterlife/leg_senses.py`; the defaults reproduce the runs of record bit for bit, body (thorax,
+quaternion, forces, knees, joints, frames, counts: max difference 0) and cord):** v2 puts the floor and each leg's load row on the 111
+campaniform + untyped cells (was 580), holds club 208 / hook 61 / unclassified 41 at 0, drives the claw from |femur-tibia - 90 deg| by
+class, the hair plates (97) from coxa pitch toward its +-45 deg limit at `--hp-hz` 30 (unsourced), and a seeded quarter of each leg's
+tactile cells (42-106 per leg) at `--tactile-hz` 20 with a 30 ms onset burst while the foot's contact force is above the pads' threshold
+(unsourced). the 8 s smoke (50flex, no reversal): 63 % of his weight on the floor against v1's 1 %, flexors 0.08 / 0.18 (Ti), extensors 6.0:
+**the honest senses take away the standing** the 580-cell floor was giving him (its 15 Hz on the vibration cells was tone). the 20 s
+arms on both labellings follow. ledger rows 3 and 6 are answered by this option; the rates in it are row 7's.
