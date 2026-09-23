@@ -6791,3 +6791,37 @@ they hang (with none or with load only the left legs hang more and the left hind
 full arm's), not whether the bouts happen. so the bouts are the cord's motor output on the body with no sensory loop required, which
 leaves two candidates for their timing: the cord's own output dynamics under the command, or the body (springs, pads, the twitch kernel)
 under a noisy drive. the Poisson-motor control (running) separates them.
+
+## the physics review (12:52 PDT, 09-23; `docs/REVIEW_PHYSICS.md`; nate: "he does look heavy")
+
+**sound:** gravity 9810 mm/s^2 (9.81 m/s^2, flygym's `mujoco_globals.yaml`; our only override is `--gravity`, 1.0 in every clip); units mm / g / s
+so forces are uN and torques nN.m; his weight 10.05 uN computed from the body masses (`body_loop.py:248`), the vertical ground reactions
+summing to it at rest (10.02-10.20); the model 1.024 mg (head 0.150, thorax 0.307, abdomen 0.450, legs 0.109) against Vaxenburg 2025's
+weighed females (0.983 mg), so 15-25 % heavy for a male, worth 0.05 mm of height; the spike-to-torque conversion consistent (gain 42 / 10 =
+4.2 nN.m at the peak of a full spike, Azevedo's fast tibia spike; the actuator cap +-60 nN.m); ten physics steps per neural millisecond;
+friction and the contact solver; no joint limit carrying weight at rest.
+
+**withdrawn in place: "he stands."** the clips ran on flygym's default springs (stiffness 10, not the 0.14 the record calls "measured": the
+0.14 was flygym's 10 divided by 70, a derivation), and those springs cannot hold the model's neutral pose: with no muscle he sinks from
+1.39 mm to 0.78, and **the hind coxae rest on the floor carrying 45 % of his weight.** the standing statistic ("the body (thorax / abdomen /
+head) rests on the floor with x % of his weight") counts only those three segments, and each leg's contact force is summed from the coxa
+down, so a coxa on the ground was counted as a foot: in the clips a coxa is down in 45-78 % of frames. so every "he stands on his feet, n %
+on the floor" since 09-22 is "he sits on his hind coxae with his feet under him"; the pads (1 uN each, a tenth of his weight, unsourced)
+are not holding him up (on a flat floor their pull only adds to the floor's push: 16.07 = 10.05 + 6). the body needs a stiffness of ~20 to
+stand on its feet with no muscle and >= 50 to stand near its neutral height; the repo's own sourced passive stiffness (2e-8 N.m/rad = 20
+in model units) would stand this body alone, which the earlier headline ("the standing is the springs'") had backwards in scale.
+the joint damping 0.5 has no source.
+
+**why the hind legs never lift:** lifting a hind foot on these springs takes 4-8 nN.m (measured directly); the cord's hind levators deliver
+0.00-0.20 on average (1.5 at the 95th percentile) where the middle legs' deliver 3.7-5.2 (12-18); the left hind leg has ONE trochanter
+flexor in the map (the middle legs seven) firing at 0 Hz, the accessory trochanter flexors at 0, the depressors at ~9; the body keeps
+loading the hind legs (38-68 % of the load, part of it the coxa on the floor; a lifted hind foot's coxa takes 6 uN and the leg still reads
+5.5, so the load rows keep it in stance); **the hind coxa pitch, the joint he sinks through (+10 deg under his weight), has no motor
+neuron mapped to it** (hind protraction and adduction both map to coxa yaw in `results/body_dof_signs.json`); and the hind leg's busiest
+motor neurons (MNhl62 at 8-33 Hz, a promotor; MNhl59) are not in the joint table. the senses are not the difference (same counts as the
+middle legs).
+
+**the fix order (the reviewer's, agreed):** (1) the standing check and the foot load from the tarsal segments only, the coxa share reported;
+(2) a muscle on the hind coxa pitch; (3) a start pose with all six feet down (at the neutral pose the front feet are 0.3 mm up and the hind
+legs load first); (4) 0.14 relabelled as derived, the springs set from the sourced 2e-8 N.m/rad with the derivation shown; (5) then the
+hind levators re-read with honest hind-leg load. none of this changes a neuron; all of it changes what the clips mean.
