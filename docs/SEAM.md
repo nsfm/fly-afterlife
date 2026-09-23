@@ -6664,3 +6664,21 @@ independence (29.6 vs 32.2). so when the legs carry him, one middle leg up means
 between legs in this project, and it appears exactly where mechanics would put it (a loaded body) and disappears where a leg is not
 loading the other. the onset cross-correlations stay small (0.03-0.07 at their best lag), so it is exclusion, not a phase lock. small
 counts (13-38 lifts); seeds 12 / 13 at 60 and 100 Hz and 80 Hz are running before the word "coupling" is used without a hedge.
+
+**the senses removed one at a time (11:50 PDT; the bouts arm, seed 11; each sense's rate set to 0 with the others on):**
+
+| removed | lf off / lifts / gap | lm off / lifts / gap | rm off / lifts / gap |
+|---|---|---|---|
+| nothing (the arm) | 22 % / 30 / 163 ms | 69 % / 72 / 191 | 46 % / 69 / 182 |
+| the hooks (velocity) | 26 % / 40 / 222 | 78 % / 66 / 201 | 48 % / 75 / 188 |
+| the claw (position) | 35 % / 37 / 229 | 78 % / 45 / 194 | 40 % / 50 / 192 |
+| the load (campaniform + untyped) | 16 % / 23 / 200 | 54 % / 66 / 191 | 57 % / 66 / 193 |
+| touch (the bristles) | 38 % / 55 / 202 | 79 % / 46 / 181 | 28 % / 62 / 163 |
+| the hair plates | 37 % / 60 / 202 | 79 % / 51 / 183 | 44 % / 69 / 190 |
+| everything (`--loop off`) | 100 % / 0 | 100 % / 0 | 100 % / 0 |
+
+**no single sense is necessary and the sum of them is:** the bouts run at 160-230 ms with any one sense gone and stop only when all are.
+the reflex is redundant across the leg's afferents, which is what a leg's reflexes are in the stick insect (any of load, position and
+movement can time the transition). the load is the one whose removal lowers the front leg's lifts (30 -> 23) and raises the middle's
+time in the air least; touch and the hair plates, removed, raise the front leg's lifts (55, 60): they hold the foot down. which single
+sense is SUFFICIENT is the next arm (`--loop position` = claw, hook, hair plates only; `--loop load` = load and touch only).
