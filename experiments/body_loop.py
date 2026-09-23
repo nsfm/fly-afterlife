@@ -36,6 +36,8 @@ ap.add_argument("--load-deriv", type=float, default=0.0, help="a rate-sensitive 
 ap.add_argument("--cocon", type=float, default=0.0, help="co-contraction: the swing muscles' motor neurons (trochanter flexors, tibia flexors, promotors, anterior rotators) held at this fraction of the stance tonus rate x load, so each joint is stiff mid-range instead of driven to its limit (standing in life is co-contraction; nate 09-22: the front legs are struts); 0 = extensors only")
 ap.add_argument("--adhesion", default="ltm", help="how the feet grip: ltm (the long tendon muscles' motor neurons, the honest hookup; unwired in this file, so never on) | contact (a labelled stand-in for the pulvilli's passive adhesion: a loaded foot sticks, an unloaded one releases; Ramdya lab convention: adhesion during stance) | off")
 ap.add_argument("--adhesion-gain", type=float, default=1.0, help="adhesion force per foot in the model's uN (flygym's default actuator gain 1; a fly's pads hold several body weights)")
+ap.add_argument("--dn-playback", default="", help="drive the cord's descending neurons with the brain's own descending output as a recording: a whole-fly run's <run>.cells.npz with every DN type logged per chunk (100 ms); each DN cell in the cord is held at its own measured rate in that chunk, chunk by chunk (the headless preparation with the real channels; nate 09-22: not a head, a recording of one). replaces --walk / --walk-dn")
+ap.add_argument("--playback-start", type=float, default=2.0, help="seconds into the recording to start (after its warm-up)")
 ap.add_argument("--slow-init", type=float, default=0.0, help="set him down standing: for this many seconds after the warm-up the load term is clamped to at least standing (F_stand) on every leg, so the load reflex and the stand-in start engaged; then the body's own load. an initial condition, labelled (0 = off)")
 ap.add_argument("--gain", type=float, default=42.0); ap.add_argument("--sat", type=float, default=10.0); ap.add_argument("--alpha", type=float, default=1.2); ap.add_argument("--stiffness", type=float, default=None)
 ap.add_argument("--tethered", action="store_true", help="the tethered preparation (nate, 09-22: propped up): the thorax fixed in space, the legs free, no floor and no load; the position loop still closes"); ap.add_argument("--gravity", type=float, default=1.0, help="scale on gravity (0.1 = a tenth of his weight; a graded prop-up, diagnostic)")
@@ -49,8 +51,18 @@ if args.mirror != "off":
     from fly_afterlife.wiring import mirror_normalise; print("mirror:", mirror_normalise(M, scope=args.mirror))
 if args.std != "off":
     _mask = np.ones(M.N, bool) if args.std == "all" else (mty == "DNg33") if args.std == "pair" else np.isin(mty, args.std.split(",")); M._std_mask = _mask; M._std_x = np.ones(M.N, np.float32); M.std_on = True
-REG = Registry(); _wd = args.walk_dn.split(","); WALK = np.flatnonzero(np.isin(mty, _wd) & (M.sc.astype(str) == "descending_neuron")) if args.walk > 0 else np.zeros(0, np.int64)
-if len(WALK): REG.add(ReceptorClass("walk", WALK, Scaled(args.walk), lambda st: st["walk_gain"]))
+REG = Registry(); PB = None
+if args.dn_playback:
+    _C = np.load(args.dn_playback.replace(".npz", "") + ".cells.npz", allow_pickle=True); _cnt = _C["counts"].astype(np.float32) * 10.0   # Hz per cell per 100 ms chunk
+    _idx = np.array([pos.get(int(b_), -1) for b_ in _C["bodyId"]]); _ok = _idx >= 0; PB = dict(cells=_idx[_ok], hz=_cnt[:, _ok], n=_cnt.shape[0]); WALK = PB["cells"]
+    class Playback(Transducer):
+        def __init__(self): self.source = "the brain's descending output, recorded from the whole fly (a recording, not a head)"
+        def step(self, stim, t, dt): return stim
+    REG.add(ReceptorClass("dn_playback", PB["cells"], Playback(), lambda st: st["dn_hz"]))
+    print(f"descending playback: {len(PB['cells'])} of {len(_idx)} logged DN cells found in the cord; {PB['n'] / 10:.0f} s recorded; mean rate {_cnt[:, _ok].mean():.1f} Hz per cell")
+else:
+    _wd = args.walk_dn.split(","); WALK = np.flatnonzero(np.isin(mty, _wd) & (M.sc.astype(str) == "descending_neuron")) if args.walk > 0 else np.zeros(0, np.int64)
+    if len(WALK): REG.add(ReceptorClass("walk", WALK, Scaled(args.walk), lambda st: st["walk_gain"]))
 _fl = tonic_floor(M, REG)
 for rc in _fl:
     if rc.name == "floor_leg_proprio": rc.transducer.hz = args.leg_load_hz
@@ -154,6 +166,8 @@ spk = np.zeros((n_ms // 10 + 1, len(LEGMN)), np.int16); lpos = {int(j): i for i,
 state = {"walk_gain": 0.0}; prev_knee = None; force_ok = True; Fsm = np.zeros(6); prevF = np.zeros(6)
 for ms in range(n_ms):
     t = ms / 1000.0; state["walk_gain"] = 1.0 if t >= args.warmup else 0.0
+    if PB is not None:
+        ch = int((args.playback_start + max(t - args.warmup, 0.0)) * 10) if t >= args.warmup else -1; state["dn_hz"] = PB["hz"][min(ch, PB["n"] - 1)] if ch >= 0 else np.zeros(len(PB["cells"]), np.float32)
     ang = sim.get_joint_angles("nmf"); knee = np.array([np.degrees(ang[knee_idx[l]]) * knee_sign[l] for l in LEG6]); om = np.zeros(6) if prev_knee is None else (knee - prev_knee) * 1000.0; prev_knee = knee
     F = leg_forces() if (use_load or args.slow_hz > 0) else np.zeros(6)
     if np.isnan(F).any(): F = np.zeros(6); force_ok = False
