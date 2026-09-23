@@ -5414,3 +5414,37 @@ honest arm is the walking command as the population it is in life (Braun 2024; D
 together, at rates from the whole fly's own run rather than a flat 100 Hz), on the standing body, with the loop; and past that the whole
 fly, brain and all, in the body: the descending population as the brain actually produces it. that is the build the row was always
 heading for, and it is now a matter of running him at an eighth of real time with a body attached.
+
+## the struts and the ice (17:12 PDT; nate, watching the standing clips: "his front legs slowly splay out until his abdomen is back on the
+ground ... they're stuck straight out"; "did we fail to give him friction with the ground, or adhesion?")
+
+**the struts.** the front knees sit at their range limit for the whole run (sd 1 deg): the stand-in drives the extensors only, so every
+front joint goes to the end of its range and what holds him up is the joint limit, not a muscle; a strut on a hinge splays (the front
+coxa's yaw drifts 10 -> 22 deg over the run). gravity is right (1.02 mg, 9.81 m/s^2, 10.05 uN: a fruit fly). standing in life is
+co-contraction, both antagonists on and the joint stiff mid-range. `--cocon F`: the swing muscles' motor neurons at F x the stance tonus x
+load (a stand-in, labelled, within nate's licence: "any manipulation of the motor neurons that doesn't involve us scripting his walking
+sequence"):
+
+| cocon | height | lf knee (mean, sd) | lf coxa yaw drift | feet on the ground (%) |
+|---|---|---|---|---|
+| 0 (extensors only) | 0.71 | 7 (1): at the limit | 10 -> 22 | 59 24 18 64 10 19 |
+| **0.2** | **0.70** | **29 (27): off the limit, moving** | 22 -> 25 | 54 23 21 45 18 25 |
+| 0.4 | 0.53 | 114 (26) | -58 -> -16 | 2 5 10 0 3 8 (crouched, feet off) |
+| 0.6 | 0.55 | 112 (28) | | 0-5 |
+| 0.4, no command / MDN | 0.53 / 0.55 | 130 / 145 | | |
+
+- **a fifth of co-contraction takes the front legs off their limits and keeps him standing;** two fifths and up the flexors win and he
+  crouches with his feet off the floor. 0.2 is the arm to carry forward. (the file's own flexors fire at 5 Hz under it: the stand-in on
+  the swing muscles wakes the swing side too, which is the point of co-contraction.)
+
+**the ice.** the ground's friction coefficient is 1.0 (the package's; a plain surface), and his adhesion, wired to the long tendon
+muscles' motor neurons as the honest hookup, has never switched on, because those cells are among the unwired (100-250 synapses each,
+0 Hz in every arm). a fly walks up glass on its pulvilli: pads of tenent hairs with a secreted fluid film, capillary and van der Waals
+adhesion, several body weights, pressed to stick and peeled to release. `--adhesion contact --adhesion-gain 20`: a loaded foot sticks
+(20 uN, two body weights) and an unloaded one releases; a labelled stand-in for the pads' passive adhesion (the Ramdya lab's convention:
+adhesion during stance). arms running: the record's dose and MDN with the pads, with and without co-contraction.
+
+**nate's clip** (`stand_mdn.mp4`, from 8 s: "his middle legs start doing a rhythmic walking motion that does indeed propel him forward"):
+the right mid knee in that window oscillates at 1.5 Hz with a clean autocorrelation lobe at 352 ms, the first knee on this row with one;
+the thorax moves at 1.1 mm/s (a fly walks 10-20), sliding. the other three moonwalker seeds do not repeat it (slow wander, no lobe, like
+the controls). one leg on one seed: real, kept, not called a gait.
