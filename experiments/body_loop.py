@@ -56,6 +56,7 @@ ap.add_argument("--graded", default="", help="graded (non-spiking) units as in w
 add_size_args(ap)   # --size-gain --size-thr --size-noise --size-clip --size-from, as in world/cord.py (src/fly_afterlife/size.py, one block for both)
 ap.add_argument("--slow-init", type=float, default=0.0, help="set him down standing: for this many seconds after the warm-up the load term is clamped to at least standing (F_stand) on every leg, so the load reflex and the stand-in start engaged; then the body's own load. an initial condition, labelled (0 = off)")
 ap.add_argument("--gain", type=float, default=42.0); ap.add_argument("--sat", type=float, default=10.0); ap.add_argument("--alpha", type=float, default=1.2); ap.add_argument("--stiffness", type=float, default=None)
+ap.add_argument("--mn-force", default="uniform", choices=["uniform", "azevedo"], help="force per spike by motor neuron class (09-23; docs/physiology/force_per_spike.md): uniform (the runs of record: every mapped MN's spike scaled by the size proxy f_w = (S / S_max of its leg-role group)^--alpha) | azevedo (Azevedo et al. 2020 eLife 9:e56754, fig 4, the female front-leg tibia flexor: ~10 / ~1 / 0.013 uN per spike for fast / intermediate / slow, so 1 : 0.1 : 0.0013 with fast at today's --gain; the class from the input-synapse third of the 'Ti flexor MN' pool, the same thirds as --pic smallflex and the graded size CSV, small = slow; the measured factor REPLACES f_w on those cells; every other mapped MN keeps f_w x 1.0, a stated default, counted at startup). the slow class's own slow kinetics (no twitch, force still rising at 500 ms) are not modelled: same kernel, measured gain")
 ap.add_argument("--tethered", action="store_true", help="the tethered preparation (nate, 09-22: propped up): the thorax fixed in space, the legs free, no floor and no load; the position loop still closes"); ap.add_argument("--gravity", type=float, default=1.0, help="scale on gravity (0.1 = a tenth of his weight; a graded prop-up, diagnostic)")
 ap.add_argument("--walk-ramp", type=float, default=0.0, help="the command rises linearly over this many seconds after the warm-up instead of stepping on in one ms (nate 09-22: the fling at the 2 s mark; a walking bout's descending drive ramps in life, Aymanns 2022, Sapkal 2024 ramped their light)");
 ap.add_argument("--warmup", type=float, default=2.0); ap.add_argument("--no-video", action="store_true"); ap.add_argument("--fps", type=int, default=25)
@@ -222,6 +223,22 @@ f_w = {}
 for key, js in groups.items():
     smax = max(insyn[js]) or 1.0
     for j in js: f_w[j] = (insyn[j] / smax) ** args.alpha if insyn[j] > 0 else 0.1
+MNF = {"slow": 0.013 / 10.0, "intermediate": 1.0 / 10.0, "fast": 1.0}   # (09-23) Azevedo 2020 fig 4: uN per spike over the fast spike's ~10 uN
+if args.mn_force == "azevedo":   # the tibia flexor pool by input-synapse third (the file's counts, as --pic smallflex ranks it), the measured factor in place of the size proxy
+    _tp = np.flatnonzero(mty == "Ti flexor MN"); _tp = _tp[np.argsort(insyn[_tp], kind="stable")]; MN_CLASS = {}
+    for _cl, _th in zip(("slow", "intermediate", "fast"), np.array_split(_tp, 3)):
+        for j in _th:
+            if int(j) in cell_dof: MN_CLASS[int(j)] = _cl
+    _fw0 = {j: f_w[j] for j in MN_CLASS}
+    for j, _cl in MN_CLASS.items(): f_w[j] = MNF[_cl]
+    print(f"--mn-force azevedo (Azevedo 2020 eLife fig 4, female T1 tibia flexor: 10 / 1 / 0.013 uN per spike): 'Ti flexor MN' by input-synapse third of {len(_tp)} cells; torque per unit activation = --gain {args.gain} x factor (fast = today's reference)")
+    print("  leg  class         n  factor   synapses     f_w it replaces")
+    for leg in LEG6:
+        for _cl in ("slow", "intermediate", "fast"):
+            _js = [j for j, c_ in MN_CLASS.items() if c_ == _cl and legof[j] == leg]
+            if _js: print(f"  {leg}   {_cl:12s} {len(_js):2d}  {MNF[_cl]:.4f}   {int(min(insyn[_js])):5d}-{int(max(insyn[_js])):5d}  {min(_fw0[j] for j in _js):.4f}-{max(_fw0[j] for j in _js):.4f}")
+    _dflt = [j for j in cell_dof if j not in MN_CLASS]
+    print(f"  no measurement: {len(_dflt)} mapped leg MNs keep f_w x 1.0 (the stated default; types {len(set(mty[_dflt]))}, e.g. Acc. ti flexor {sum(mty[j] == 'Acc. ti flexor MN' for j in _dflt)}, Ti extensor {sum(mty[j] == 'Ti extensor MN' for j in _dflt)}); {len(grip_of)} grip MNs unchanged")
 KL = 120; tk = np.arange(KL); K = np.exp(-tk / 20.0) - np.exp(-tk / 7.0); K /= K.max()
 weight = m.body_mass.sum() * abs(m.opt.gravity[2]); F_stand = max(weight / 6.0, 1e-6); print(f"gravity x{args.gravity}: weight {weight:.2f} uN, F_stand {F_stand:.2f}")
 segs = [s.name for s in fly.get_bodysegs_order()]; thorax = segs.index("c_thorax")
