@@ -6464,3 +6464,34 @@ nothing else. **no arm switches anything.** the command decides how hard the ext
 rhythm is not in the command, which is what the sourced doc and Pugliese's screen both say, and the subnet's 20 Hz is loudest under the
 one neuron. the doc's prediction for the body (the population still lies him down) is being tested with the shunt on, which stood him
 under DNg100 this morning.
+
+**campaign item 4 landed (10:43 PDT; commit 2aa78b7, agent; `--pic TYPES:G:VHALF:K:TAU` in `world/cord.py` and `experiments/body_loop.py`, a
+persistent inward current on named cells, off by default; oracle PASS, v1 + v2, eight configs; `experiments/pic_test.py`: a single cell is
+quiet below v_half, fires 13 / 25 / 41 / 63 Hz at g 0.25 / 0.5 / 1 / 2 once held near it, off vs g = 0 bit for bit):** I = g m (E - v), E +70 mV re
+rest, m first-order with m_inf a sigmoid at v_half, on the ext path. **the parameters are borrowed and say so in the help:** the cockroach
+Df L-type calcium plateau (its -51 / -37 mV numbers unverified), the locust plateaus under octopamine (50-75 ms bursts); v_half +3 mV re
+rest (the small cells' threshold; -45 mV absolute against Azevedo's -48 rest), k 3 mV (chosen so the onset lands on the cockroach's
+plateau threshold), tau 50 ms (the locust's low end), and g set so a fully open cell sits 5 / 10 / 15 mV up (10-15 mV is the plateau
+envelope in `knobs.md`; 5 is deliberately below it). no fly leg cell has this measured.
+
+**the arm (the standing senses, the graded tone, the shunt; seed 11, 30 s; `--pic smallflex:G:3:3:50`):**
+
+| g (plateau) | small third | middle | large | extensors | IN13A002 | IN13A006 |
+|---|---|---|---|---|---|---|
+| 0 (control) | 1.24 (0.4-2.6) | 0.00 | 0.01 | 0.00 | 0.0 | 28.8 |
+| 0.27 (5 mV) | 12.1 (8.9-15.8) | 0.00 | 0.01 | 0.00 | 0.0 | 28.8 |
+| 0.58 (10 mV) | **36.4** (28.9-39.7) | 0.00 | 0.01 | 0.00 | 0.0 | 28.8 |
+| 0.95 (15 mV) | 62.3 (52.5-65.0) | 0.00 | 0.01 | 0.00 | 0.0 | 28.8 |
+
+**Azevedo's ~30 Hz at rest for the slow tibia flexors falls between the small and the medium borrowed value (about g 0.5 by interpolation;
+not tuned to it), with the middle and large thirds and the extensors at zero in every arm.** so a persistent inward current of the size
+other insects' motor neurons carry supplies the tone the file's wiring cannot; it does not pin how big the fly's is. the caveat the agent
+wrote and i keep: with these parameters the current is a quarter open at rest (m_inf(0) = 0.27), so the small cells fire on their own
+current, a tonic depolarisation rather than a plateau switched on by input, which follows from mixing absolute voltages across species.
+nothing downstream moves (IN13A002 0, IN13A006 28.8 in every arm). ledger row 9. one seed, cord only.
+
+**the population on the body (10:43 PDT; the standing senses, the graded tone, the shunt, ramp 1 s, 20 s, seed 11):** A1 (DNg100 + DNg97 +
+DNg75 + DNa01 + DNa02 at 38.2 Hz): **0 % of his weight on the floor in both labellings** (leg MNs 0.84 / 0.85 Hz per cell, extensors 0.84 / 0.56),
+10 lifts (swapped) / 2 (as printed); A3 (+ the flexion set at 22.9): 0 %, 5 lifts, the coxa forward on all of them, -10 deg. the sourced
+doc's prediction ("the body still lies down") was written for a body without the shunt; with it he stands under the population as he
+stood under the single neuron, and quieter (the extensors 0.6-1.1 against 2.1). the standing is the springs' in every case. no rhythm.
