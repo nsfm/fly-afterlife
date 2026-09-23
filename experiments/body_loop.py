@@ -272,7 +272,7 @@ for ms in range(n_ms):
     if PB is not None:
         ch = int((args.playback_start + max(t - args.warmup, 0.0)) * 10) if t >= args.warmup else -1; state["dn_hz"] = PB["hz"][min(ch, PB["n"] - 1)] if ch >= 0 else np.zeros(len(PB["cells"]), np.float32)
     ang = sim.get_joint_angles("nmf"); knee = np.array([(np.degrees(ang[knee_idx[l]]) - knee_neutral[l]) * knee_sign[l] for l in LEG6]); om = np.zeros(6) if prev_knee is None else (knee - prev_knee) * 1000.0; prev_knee = knee   # signed flexion FROM NEUTRAL (the review's F1: the centre was lost in the port from leg_loop.py)
-    F = leg_forces() if (use_load or args.slow_hz > 0 or args.slow_mv > 0) else np.zeros(6)
+    F = leg_forces()   # always read (09-23, review R1: with load out of the loop the feet's force was never read, so 'no lifts' in those arms was zero by construction and the pads never engaged; the position+load path is unchanged)
     if adh and args.adhesion == "contact": F = np.maximum(F - args.adhesion_gain * pad_on, 0.0)   # the review's F3: the contact reading includes the pad's pull while it is on
     if np.isnan(F).any(): F = np.zeros(6); force_ok = False
     Fsm = F if ms == 0 else 0.8 * Fsm + 0.2 * F; dF = (Fsm - prevF) * 1000.0 if ms else np.zeros(6); prevF = Fsm.copy()

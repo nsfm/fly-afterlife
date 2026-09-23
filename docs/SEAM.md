@@ -6735,3 +6735,28 @@ seeds, so there is no second leg to couple. the sourced coupling circuit is pres
 and the subnet, and balanced by its own targets. **where day two ends on coupling:** the fly's circuit needs, in this file at these
 weights, either more drive than the command gives it or more weight on its synapses than the file carries, and the second is item 7
 with, for the first time, a named circuit and a paper that names it. not built today.
+
+## withdrawn in place (12:39 PDT, 09-23; the code review of day two, `docs/REVIEW_DAY_TWO.md`, R1-R5)
+
+**R1, the highest: "the loop opened: no senses, no lifts" and "the load reflex is the oscillator" are withdrawn.** `experiments/body_loop.py`
+read the feet's contact force only when load was in the loop (`F = leg_forces() if (use_load or ...) else np.zeros(6)`), and the lift
+counter reads a lift as force <= 0.05, so in the `--loop off`, `--loop position` and hooks-only arms every foot was "off the ground 100 % of
+the time, 0 lifts" by construction (the saved `leg_force` of those arms is identically zero), and the pads never engaged in them either.
+the reviewer rebuilt foot heights from the saved joint angles and body pose (82-97 % agreement with the force count where the force was
+read): **all three arms step in the same ~200 ms bouts, the no-senses arm included.** so the sufficiency table's position / hooks / none rows
+are artifacts, the bouts do not need the senses, "the reflex has its two halves" is withdrawn, and the campaign's "named" reflex is unnamed.
+what stands: the freeze control (force read; the bouts need the cord's motor output), the ablation rows (force read; no single sense
+necessary), the load-only row (force read; bouts with load alone), and every clip. the force is now read unconditionally (the
+`position+load` path is unchanged); the three arms are re-run below with the force read.
+**R2:** the bout statistics do not show an oscillator: gaps drawn from a memoryless process give the same ~190 ms and cv ~0.3; the
+Poisson rate taken over time on the ground puts the middle legs' clustering at chance (0.93 vs 0.92); the motor neurons carry no 5 Hz
+peak. what the lifts track is the trochanter levator burst 20 ms ahead. "five hertz, regular" is withdrawn; "lifts in bouts" stays as a
+description. **R3:** the slow / intermediate / fast thirds were ranked across all six legs, so the left front and left middle legs got no
+slow tibia flexor, no rest tone and no plateau current: the two legs that hang in "he leans right". untested as a cause. **R4: the
+small flexors' rest is built in.** an isolated LIF with no synapses, a 3 mV threshold and the engine's noise x2.33 fires 0.80 Hz (the
+record: 1.15); with x5.4, 13.6 Hz (the record: 14.05). so "the small third fires at rest" is the thresholds and the noise scale i set,
+and "Azevedo's ordering" is the ordering i put in; the entries of 23:47-23:58 and 00:06 stand as measurements with this beside them: they
+are constructions, not physiology, and the one size CSV also gave the middle and large thirds x0.47 and x0.30 where the stated
+resistances give x1.0 and x0.5. **R5:** the touch rows chatter (the net force crosses the contact threshold 20-74 times a second per leg,
+restarting the onset burst), so touch ran at ~100 Hz for 31-93 % of stance instead of 20. **sound:** the three engine terms and their
+tests, the defaults (max difference 0), the claw's 90-deg reference and the knee sign, the tactile seeding, the load-only arm's rows.
