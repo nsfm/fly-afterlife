@@ -6495,3 +6495,15 @@ DNg75 + DNa01 + DNa02 at 38.2 Hz): **0 % of his weight on the floor in both labe
 10 lifts (swapped) / 2 (as printed); A3 (+ the flexion set at 22.9): 0 %, 5 lifts, the coxa forward on all of them, -10 deg. the sourced
 doc's prediction ("the body still lies down") was written for a body without the shunt; with it he stands under the population as he
 stood under the single neuron, and quieter (the extensors 0.6-1.1 against 2.1). the standing is the springs' in every case. no rhythm.
+
+## the switch, aimed (10:46 PDT, 09-23; the cord under DNg100 100 Hz on the full stack: the standing senses, the graded flexor tone, the shunt;
+release mechanisms on the half-centre's own cells: the winners IN13A002 / 003, IN13B001, IN26X001, IN12B003, IN19A004 and the releasers
+IN13A006 / 015, IN13B019, AN06B002; seed 11, 30 s)
+
+- **fatigue (depression u 0.3, tau 300 ms) on the winners' outputs:** IN13A003 7.1 -> 11.9 Hz (the depressed cell fires more, its output
+  weaker), IN13A006 10.1 -> 12.8, IN03A004 7.4 -> 10.4, the extensors 1.8 -> 1.1, the tibia flexors 12.7 -> 12.7 (the small third's tone,
+  unchanged); r(IN13A002, IN13B019) 0.00. **on the releasers' outputs:** nothing moves (IN13A006 10.0, extensors 2.3). no alternation, no
+  lobe in the promotors (autocorrelation -0.04 / -0.01 / 0.00 at 30 / 70 / 140 ms; lf promotor 3.5 Hz, remotor 1.4).
+- the `--pic` parser takes one group (TYPES:G:VHALF:K:TAU) and `smallflex` does not combine with named types, so the plateau arms on the
+  pair run without the small flexors' current (their tone is the graded rest + noise, 1.2 Hz); the switch question does not need it.
+  plateau on the releasers, on the winners, on both, both + fatigue on both (u 0.3 / 300 and u 0.5 / 500), fatigue on both alone: running.
