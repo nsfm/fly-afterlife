@@ -6775,3 +6775,19 @@ lift-triggered read is the depressor, which is consistent with a push-off, not a
 (the left middle driven toward remotion, the right toward levation) that persists without the size terms, the current or the shunt;
 "Azevedo's ordering" is put in, not found, and the plateau strength "nearest 30 Hz" is calibration; fourteen ledger rows were missing
 and are added to `CAMPAIGN.md` now; silencing the commissurals at 0.4 Hz tested nothing.
+
+**the three arms re-run with the force read (12:45 PDT; seed 11; the default path checked bit for bit against `lift_s11` first):**
+
+| senses in the loop | lf off / lifts / gap | lm | lh | rm |
+|---|---|---|---|---|
+| all (`lift_s11`, and the re-run `fx_full`, identical) | 22 % / 30 / 163 ms | 69 % / 72 / 191 | 5 % / 7 | 46 % / 69 / 182 |
+| none (`--loop off`) | 62 % / 33 / 226 | 88 % / 24 / 172 | 36 % / 32 / 186 | 16 % / 27 / 193 |
+| position only | 29 % / 47 / 191 | 76 % / 60 / 178 | 3 % / 5 | 39 % / 60 / 207 |
+| hooks only | 65 % / 23 / 173 | 88 % / 30 / 179 | 37 % / 35 / 190 | 14 % / 22 / 205 |
+| load only | 62 % / 42 / 210 | 89 % / 26 / 194 | 36 % / 35 / 188 | 12 % / 13 |
+
+**with no sense in the loop at all the legs lift in the same 170-230 ms bouts, on four legs.** the senses change which legs and how long
+they hang (with none or with load only the left legs hang more and the left hind joins in; with the position senses the pattern is the
+full arm's), not whether the bouts happen. so the bouts are the cord's motor output on the body with no sensory loop required, which
+leaves two candidates for their timing: the cord's own output dynamics under the command, or the body (springs, pads, the twitch kernel)
+under a noisy drive. the Poisson-motor control (running) separates them.
