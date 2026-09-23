@@ -71,6 +71,15 @@ methods dig: "the field is less shy than we are." agreed, with the edit that the
   (`--dn-playback world/record/dn_census_0922`) replayed on the honest body beside the tonic command and rest, both labellings.
 - then both together on the body, both labellings, with clips.
 
+**day two, closed (11:02 PDT).** item 4 landed (`--pic`): the small tibia flexors reach Azevedo's rate at a borrowed size, on the cord and on
+the body, in his ordering, in both labellings; force per spike sourced (Azevedo 2020, eLife; tibia flexor only) and built (`--mn-force`); the
+walking command sourced (tonic; no measured rates; DNg100 is the extension neuron) and its population arms switch nothing; the recorded
+population and the five-DN population both stand the shunted body. **the switch is not in the premotor pair:** plateaus + fatigue on both
+sides of the file's 13A / 13B pair, with and without the shunt, co-fire at every lag to 2 s. two withdrawals in place (the folded leg was
+not the flexors' force; the fast-spike claim was wrong). **where the sourced moves end:** the two candidates left for a rhythm are (a) the
+leg's movement senses closing on the body's own lifts, which is a read, not a term, and (b) stronger mutual inhibition than the file
+has, which is item 7 and needs a source. nothing else on the list has a paper behind it.
+
 ## working habits
 
 one change per run, controls beside every arm, both claw labellings beside every body result, the oracle before any engine commit, agents
