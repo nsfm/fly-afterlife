@@ -7443,3 +7443,24 @@ settled pose moves with the scale (0.63-0.76 mm); and a single scale for all fif
   never stands him; he rows on his coxae at 10-20 mm/s, which is not a gait.
 - clips: `hill_best.mp4`, `hill_best_slow.mp4` (x10, sourced springs: upright at 10 s, on his back at 19.6). one seed; the Hill muscles
   carry no +-60 limit and pass it from x7; the passive scaling caveat above.
+
+**the compound arm on the body (16:22 PDT; row 30; lift x3 + release x5 / x10, seeds 11 / 12; and the listening rig with lift x3 + release x5):**
+
+| arm | feet / other / body, uN | lifts lf lm lh rf rm rh | lm-rm both-off vs independence; antiphase share (n) |
+|---|---|---|---|
+| lift x3 + release x5, seed 11 | 8.96 / 1.01 / 0.06 | 24 83 0 0 122 3 | 42.3 vs 43.1 %; 0.42 (129) |
+| lift x3 + release x10 | 8.88 / 1.09 / 0.05 | 32 57 0 1 126 2 | 57.9 vs 57.6; 0.44 (75) |
+| lift x3 + release x5, seed 12 | 8.03 / 1.96 / 0.03 | 19 90 0 1 112 6 | 37.5 vs 35.2; 0.39 (114) |
+
+- **he stays up and both middle legs step** (83-126 lifts each on both sides, the front left 19-32), where the lift alone at x5 dropped him:
+  the release gain buys the posture back. and the middle legs ignore each other exactly as before (both-off at independence, the
+  antiphase share at chance on both seeds). the hind legs and the right front do not lift.
+- **on the listening rig the compound gain re-phases the hold instead of silencing it:** IN14A008 saturates at 88 Hz locked to late stance
+  (phase 0.80), and IN13A002 comes down to 24 Hz and now fires MORE in the imposed swing (swing/stance 1.59, phase 0.25) where at x1 it
+  fired less (0.5-0.7, locked to stance). so the file's own sensory timing of the hold (13A quiet in swing, which the listening rig found
+  at x1) is what a step needs, and the gained releasers, driven to saturation, push it the wrong way: an inhibitor that fires in late
+  stance releases the hold in the swing that follows, then lets it back in mid-swing. **row 30, honest summary:** the release side gained
+  keeps him standing and moves the hold's phase without making a step; the 13A cells were already released in the swing by the leg's
+  own senses at x1, and what the step lacks is the lift's amplitude, not its permission. the excitor gain gives the amplitude and costs
+  the posture through the torque path's +-60 clip and the springs; the Hill muscles at x10 carry a fused stance without the clip. the
+  arm that follows puts the two together: lift x3 through the Hill muscles at x10, free-running, under the command.
