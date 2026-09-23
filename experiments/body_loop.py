@@ -30,6 +30,9 @@ ap.add_argument("--log-x", default="", help="extra cell types logged at 1 ms int
 ap.add_argument("--freeze-mn", type=float, default=0.0, help="hold every muscle activation (torque and grip) at its value at this many seconds, and stop feeding spikes into it (09-23, the control for the per-leg five-hertz bouts: the cord out of the loop); 0 = off")
 ap.add_argument("--silence", default="", help="comma-separated types whose threshold is put out of reach (no effect on driven cells); as in world/cord.py")
 ap.add_argument("--mn-poisson", default="", help="the review's control (09-23): feed the muscle map Poisson spike trains at each leg motor neuron's own mean rate taken from this run's .cells.npz (after its warm-up), instead of the cord's spikes; the cord still runs and is logged, the body never sees it. if the lifts survive, the body sets the rhythm")
+ap.add_argument("--puppet", default="", help="THE PUPPET BASELINE (nate 09-23, TODO 4o; a labelled puppet, NEVER a result): tripod:F_HZ:DUTY. the muscle map ignores the cord (which still runs and is logged, as --mn-poisson) and is fed scripted Poisson spike trains on each leg's own mapped motor neurons: tripod groups lf rm lh / rf lm rh in antiphase at F_HZ, DUTY the stance fraction (phase 0..DUTY stance, then swing), from the warm-up's end (nothing before it); in swing the levators (levate +) and promotors (protract +) at --puppet-swing-hz, in stance the depressors (levate -), remotors (protract -) and tibia extensors (flex -) at --puppet-stance-hz, every spike through the same f_w, K, --mn-force and actuator clip as a cord spike. every printed line and the saved args carry PUPPET; '' = off")
+ap.add_argument("--puppet-swing-hz", type=float, default=100.0, help="--puppet: the scripted rate per swing-set motor neuron during its leg's swing (a chosen number)")
+ap.add_argument("--puppet-stance-hz", type=float, default=50.0, help="--puppet: the scripted rate per stance-set motor neuron during its leg's stance (a chosen number)")
 ap.add_argument("--out", required=True); ap.add_argument("--seconds", type=float, default=20.0); ap.add_argument("--seed", type=int, default=11)
 ap.add_argument("--wsyn-m", type=float, default=0.185); ap.add_argument("--noise", type=float, default=0.15)
 ap.add_argument("--walk", type=float, default=100.0); ap.add_argument("--walk-dn", default="DNg100"); ap.add_argument("--std", default="off"); ap.add_argument("--mirror", default="off")
@@ -74,6 +77,15 @@ ap.add_argument("--tethered", action="store_true", help="the tethered preparatio
 ap.add_argument("--walk-ramp", type=float, default=0.0, help="the command rises linearly over this many seconds after the warm-up instead of stepping on in one ms (nate 09-22: the fling at the 2 s mark; a walking bout's descending drive ramps in life, Aymanns 2022, Sapkal 2024 ramped their light)");
 ap.add_argument("--warmup", type=float, default=2.0); ap.add_argument("--no-video", action="store_true"); ap.add_argument("--fps", type=int, default=25)
 args = ap.parse_args(); t0 = time.time(); use_pos = "position" in args.loop; use_load = "load" in args.loop
+if args.puppet:   # (TODO 4o) the puppet must be impossible to mistake for a result: every printed line carries PUPPET, and the saved args say so
+    import builtins; _bprint = builtins.print
+    def _pprint(*a, **k):
+        s = (k.get("sep") if k.get("sep") is not None else " ").join(str(x) for x in a)
+        _bprint("\n".join("PUPPET | " + ln for ln in s.split("\n")), **{kk: vv for kk, vv in k.items() if kk != "sep"})
+    builtins.print = _pprint
+    _pk, _pf, _pd = args.puppet.split(":"); assert _pk == "tripod", "--puppet: only tripod:F_HZ:DUTY"; PUP_F = float(_pf); PUP_DUTY = float(_pd)
+    args.PUPPET = f"PUPPET: a scripted tripod at {PUP_F:g} Hz, duty {PUP_DUTY:g}, swing {args.puppet_swing_hz:g} Hz / stance {args.puppet_stance_hz:g} Hz per MN; the cord does NOT drive the body; not a result"
+    print(args.PUPPET)
 
 # ---- the cord
 M = FastFlyBrain("brain_cord.npz", seed=args.seed, params=Params(mv_per_synapse=args.wsyn_m, noise=args.noise)); M.integrate = "exact"
@@ -327,6 +339,22 @@ MNP = None
 if args.mn_poisson:
     _R = np.load(args.mn_poisson.replace('.npz', '') + '.cells.npz', allow_pickle=True); _rb = {int(x): i for i, x in enumerate(_R['bodyId'].astype(np.int64))}; _rr = _R['frames'].astype(float)[200:].mean(0) * 100
     MNP = np.array([_rr[_rb[int(mbid[j])]] / 1000.0 if int(mbid[j]) in _rb else 0.0 for j in LEGMN]); _mnp_rng = np.random.default_rng([args.seed, 77]); print(f"mn-poisson: the muscle map fed by Poisson trains at the rates of {args.mn_poisson} (mean {MNP.mean()*1000:.2f} Hz per cell over {len(LEGMN)} cells); the cord's spikes do not reach the body")
+PUP = None
+if args.puppet:   # (TODO 4o) the scripted tripod's cells: each leg's own mapped motor neurons by role and sign (the map above, --hind-map as given)
+    _TRI = {"lf": 0.0, "rm": 0.0, "lh": 0.0, "rf": 0.5, "lm": 0.5, "rh": 0.5}; _SW = (("levate", +1), ("protract", +1)); _ST = (("levate", -1), ("protract", -1), ("flex", -1))
+    _pc, _pl, _pk2 = [], [], []
+    print(f"the scripted tripod: {PUP_F:g} Hz, duty {PUP_DUTY:g} (stance {PUP_DUTY / PUP_F * 1000:.0f} ms, swing {(1 - PUP_DUTY) / PUP_F * 1000:.0f} ms), groups lf rm lh (phase 0) / rf lm rh (phase 0.5), from {args.warmup:g} s; Poisson trains, rng [seed, 88]")
+    _dofn2 = [dof_name(x) for x in dofs]
+    for leg in LEG6:
+        for kind, sel, hz_ in ((0, _SW, args.puppet_swing_hz), (1, _ST, args.puppet_stance_hz)):
+            for ro, ag in sel:
+                js = sorted(groups.get((leg, ro, ag), []))
+                _pc += js; _pl += [LEG6.index(leg)] * len(js); _pk2 += [kind] * len(js)
+                if js: print(f"  {leg} {'swing ' if kind == 0 else 'stance'} {hz_:5.0f} Hz  {ro:8s} {ag:+d} -> {_dofn2[roles[leg][ro]['k']]:36s} {len(js):2d} cells: " + ", ".join(f"{t_} x{int(sum(mty[j] == t_ for j in js))}" for t_ in sorted(set(mty[js]))) + f"; f_w {min(f_w[j] for j in js):.3f}-{max(f_w[j] for j in js):.3f}")
+                else: print(f"  {leg} {'swing ' if kind == 0 else 'stance'} {hz_:5.0f} Hz  {ro:8s} {ag:+d} -> no mapped cells")
+    PUP = dict(cells=np.array(_pc, np.int64), leg=np.array(_pl, np.int64), kind=np.array(_pk2, np.int64), off=np.array([_TRI[l] for l in LEG6]), rng=np.random.default_rng([args.seed, 88]))
+    PUPSW = np.zeros((n_ms, 6), np.int8)   # 1 = the leg's scripted swing this ms
+    print(f"{len(PUP['cells'])} motor neurons scripted; the cord's own motor spikes are logged, never felt")
 LOGX = np.flatnonzero(np.isin(mty, [x for x in args.log_x.split(',') if x])) if args.log_x else np.zeros(0, np.int64); XMS = np.zeros((n_ms + 1, len(LOGX)), np.int16) if len(LOGX) else None; xpos = np.full(M.N, -1, np.int64); xpos[LOGX] = np.arange(len(LOGX))
 if len(LOGX): print(f"log-x: {len(LOGX)} cells of {args.log_x}")
 if args.log_v:   # the membrane logger (09-22, campaign item 2b), as in world/cord.py
@@ -382,6 +410,14 @@ for ms in range(n_ms):
         torque[:, ms] = _hold_t
         for l in LEG6: grip[l][ms] = _hold_g[l]
         hit = np.zeros(0, np.int64)
+    elif PUP is not None:   # (TODO 4o) the PUPPET: the scripted tripod, the cord's spikes logged only
+        if t >= args.warmup:
+            sw = ((((t - args.warmup) * PUP_F + PUP["off"]) % 1.0) >= PUP_DUTY); PUPSW[ms] = sw
+            pon_ = np.where(PUP["kind"] == 0, sw[PUP["leg"]], ~sw[PUP["leg"]]); rate_ = np.where(PUP["kind"] == 0, args.puppet_swing_hz, args.puppet_stance_hz) * pon_ / 1000.0
+            hit = PUP["cells"][PUP["rng"].random(len(PUP["cells"])) < rate_]
+        else: hit = np.zeros(0, np.int64)
+        if idx.size:
+            for j in idx[np.isin(idx, LEGMN)]: spk[ms // 10, lpos[int(j)]] += 1
     elif MNP is not None:
         hit = LEGMN[_mnp_rng.random(len(LEGMN)) < MNP]
         if idx.size:
@@ -411,7 +447,7 @@ nfr = n_ms // 10; frames = spk[:nfr]
 _x = dict(x_ms=XMS[:n_ms], x_type=mty[LOGX], x_bodyId=mbid[LOGX]) if XMS is not None else {}
 np.savez_compressed(args.out + ".cells.npz", cells=LEGMN, bodyId=mbid[LEGMN], type=mty[LEGMN], side=mns[LEGMN], counts=frames[: (nfr // 10) * 10].reshape(nfr // 10, 10, -1).sum(1).astype(np.int32), pose_chunk=np.zeros((nfr // 10, 3), np.float32), frames=frames, **_x, pose_frame=np.zeros((nfr, 3), np.float32), **({'v_ms': VMS, 'v_types': np.array(_vt)} if VMS is not None else {}))
 w_, x_, y_, z_ = Q[:, 0], Q[:, 1], Q[:, 2], Q[:, 3]; yaw = np.degrees(np.arctan2(2 * (w_ * z_ + x_ * y_), 1 - 2 * (y_ ** 2 + z_ ** 2)))
-np.savez_compressed(args.out + ".npz", thorax=P, quat=Q, leg_force=FL, knee=KA, ground=BODYF[: n_ms // 10], tarsal_force=FTN, other_leg_force=FO.astype(np.float32), body_force=FB.astype(np.float32), stand3=np.stack([FTN.sum(1), FO.sum(1), FB], 1)[::10][: n_ms // 10].astype(np.float32), joints=JA[: n_ms // 10], joint_names=np.array([dof_name(x) for x in all_dofs]), args=np.array(str(vars(args))))
+np.savez_compressed(args.out + ".npz", thorax=P, quat=Q, leg_force=FL, knee=KA, ground=BODYF[: n_ms // 10], tarsal_force=FTN, other_leg_force=FO.astype(np.float32), body_force=FB.astype(np.float32), stand3=np.stack([FTN.sum(1), FO.sum(1), FB], 1)[::10][: n_ms // 10].astype(np.float32), joints=JA[: n_ms // 10], joint_names=np.array([dof_name(x) for x in all_dofs]), args=np.array(str(vars(args))), **({"puppet_swing": PUPSW} if PUP is not None else {}))
 w0 = int(args.warmup * 1000); v = np.linalg.norm(np.diff(P[w0:, :2], axis=0), axis=1) * 1000; hz = frames[w0 // 10:].mean(0) * 100
 flex = np.array([("Ti flexor" in t_) or ("Acc. ti flexor" in t_) for t_ in mty[LEGMN]]); ext = mty[LEGMN] == "Ti extensor MN"
 gb = BODYF[w0 // 10: n_ms // 10]; body_on_floor = float(np.nanmean(gb[:, 1])); _ft = FTN[w0:].sum(1).mean(); _fo = np.nanmean(FO[w0:].sum(1)); _fb = np.nanmean(FB[w0:])
