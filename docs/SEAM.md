@@ -5707,3 +5707,21 @@ ext path (`--slow-mv`, 13.6 mV ~ 60 Hz alone; the driven form `--slow-hz` kept a
 - so the rhythm is in the cord and reaches a muscle, and it is too fast for a leg by a factor of two or three, in phase across the coxa's
   antagonists, and absent at the knee. running: the ringing cord on flygym's springs with film (nate: "i wanna see some leg motion"), and
   the standing checks with the repaired statistic.
+
+**the positive control (18:54 PDT; `experiments/rate_model.py`, `docs/physiology/rate_model_control.md`: Pugliese 2026's rate model on our
+cord table; their Methods: gain divided by size and threshold multiplied by size, median-normalised volume, DNg100 input 400 for MaleCNS;
+our file has no volumes, so input-synapse count stands in, stated):**
+
+- **the loop alone oscillates on our file at 10-18 Hz under their equation** (their ~14), and with the coxa motor neurons added drives the
+  left front promotor pool at 17 Hz. the loop's wiring and signs are cleared. the rhythm survives the loop's 80 strongest partners and is
+  gone by 160.
+- **embedded in our front-leg network (3,109 cells; MANC's was 4,604) their model runs away:** about half the cells pinned near r_max, the
+  rest silent, with size scaling on, total or off, at any input from 0.01 to 400, any b, one-sided DNg100, the DNs' own inputs cut; the
+  loop cells pinned or switching at 1-3 Hz, IN16B036 and IN19A007 at 0 in every seed (inhibited by pinned cells), **IN09A002 pinned near
+  200 Hz**. the whole cord the same with the inhibitors pinned instead of silent.
+- so the control does not give the clean "wiring or engine" answer: under their model too, on our file, the network around the loop
+  smothers it, and the sink is the same cell our LIF finds at 50-60 Hz. what it cannot separate: volume-based size scaling (theirs) from
+  our synapse-count proxy, or the smaller network; their code or the MaleCNS volumes would settle it (a query to make: neuprint carries
+  a size per body that the flat files do not). **in this engine the loop rings when its own synapses dominate the surround (x3); in
+  theirs the loop rings alone and the surround smothers it. the two engines agree on where the problem is: not the loop, the balance
+  around it.**
