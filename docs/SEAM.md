@@ -6993,3 +6993,18 @@ RIGHT promotors (11.8 -> 4.0 Hz) with the left untouched: a one-sided inhibition
 and fifty hertz of drive couples nothing.** Pugliese's line holds in the LIF as in their rate model. what remains under row 26 is the
 body sweep (running) and the honest statement: the file's left-right coupling circuit, at any gain we can name, does not alternate two
 loops that ring at 20 Hz; the fly's alternate at 11 Hz with stance and swing, which these loops do not have.
+
+**item 7 on the body (13:50 PDT; agent; `--drive` added to `body_loop.py` as in the cord (default bit for bit), `experiments/leg_pairs.py` the
+pair-coupling reader (onset cross-correlation with a rolled null, both-off against independence, the antiphase share of one leg's onsets
+in the other's in-bout cycle, the promotor pools' left-right correlation per segment); 16 runs on the honest stack, seeds 11 / 12, the
+pathway x3 / x10 / x30, the commissurals at 20 / 50 Hz, x10 + 20, under DNg100 100 Hz and under the recorded population):** null. the rates
+move as wired (the commissurals to 19 / 43 Hz under drive; IN19A011 to 45-66 Hz and IN19A001 to 25-44 under the scale, which also scales
+the targets' feedback onto the commissurals and IN19A012's ACh-signed recurrence, so "x30" is not only the pathway); he stands in every
+arm (feet 9.5-10.0 uN); the x10 settings halve the right middle leg's lifts on both seeds (a one-sided inhibition, again). **the coupling
+does not move off independence in any arm:** under DNg100 only the right middle leg steps so there is nothing to phase; under the
+recorded population both middle legs step 55-90 times and the onset cross-correlation stays under its rolled null everywhere (best 0.062
+against 0.064), both-off is 1.04-1.12 times independence (the controls 1.04-1.06; the excess is slight co-lifting, the wrong direction),
+the antiphase share 0.42-0.48 (the controls 0.39 / 0.51), the promotor pools co-fire left and right (+0.10 to +0.19) with no trough beyond
+-0.05 at any lag. the front pair is unreadable (the right front never lifts). **row 26, closed: on the cord and on the body, the fly's
+left-right coupling pathway at thirty times its weight and fifty hertz of drive couples nothing, because there is nothing per leg to
+couple.** the gap is upstream of it: the per-leg generator does not make stance and swing at the file's weights.
