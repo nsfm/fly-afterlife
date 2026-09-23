@@ -534,6 +534,8 @@ item in §2a and should come before the taste path is judged.
   it). not the three-cell loop. open: what its generator is (which pair or triangle among the eight, tested by pairs); why 20 and not
   Pugliese's 7-15 (the LIF's 1.8 ms delay + 2.2 ms refractory against the rate model's 20 ms tau); whether the body can carry it (it low-passes
   it; the trochanter flexors carry it at 3 Hz per cell). read at 1 ms with a spectral line and a rolled null; the 10 ms lobe read misses it.
+- **4m. the threshold arithmetic.** agent D (parameter_provenance.md) computes 0.157 mV per synapse under Shiu's kinetics, so ~45 coincident
+  synapses to threshold, not the 26 in `docs/physiology/vision_motor_courtship.md` section 5. verify the integral before correcting the doc.
 - **4l. the cut, v2.** `scripts/build_cord.py` drops edges onto descending neurons from descending / ascending cells (a labelled approximation of
   vncRoisOnly). nearly inert in the LIF (the drive gate), decisive in the rate model. the 09-21 arms stand as run; re-run only what is cited.
 4j. **[queued 09-22 19:56] what the second pass leaves for the stepping leg**: the springs stand him (withdrawn as his); the remotors and the

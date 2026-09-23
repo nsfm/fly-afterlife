@@ -36,6 +36,11 @@ this is the plan and the ledger of what we changed on the fly to get there.
 7. **add connections.** gap junctions; the flexor motor neurons' inputs where tracing is thin. a reason each time.
 8. **the fitter,** bounded by 2-5's ranges, aimed at measured targets.
 
+**the target, named 09-22 night (`docs/SEAM.md` "the campaign opens"):** the tibia flexors are silent because the 13A / 12B / 19A premotor
+inhibitors, woken by the standing load and the command, hold the flexors and their excitors down and inhibit their own releasers (IN13A002
+-> IN13B019, 2,279 synapses). the loser's side has no live excitation under tonic senses. so every item above is aimed at one thing: what
+lets IN13B019 / IN13A006 / AN06B002 and the flexor excitors IN21A004 / IN03A004 win a half-cycle. read those cells, not the gait.
+
 order: 1 tonight, 2 and 3 this week, then look. if the flexors wake and the 20 Hz drops toward 10 on sourced changes, the rest is earned.
 if not, 4-7 are a claim about what the file is missing, and we say so.
 
@@ -52,4 +57,5 @@ the reads and the record stay mine.
 | 0 | 09-21 | the headless cut keeps the descending neurons as driven inputs | a decapitated fly's DNs can be driven (Bidaye 2020) | a brain |
 | 1 | 09-22 | claw labels reported both ways (as printed / swapped) | the file's label may be inverted for the tibia joint | a measured sign |
 | 2 | 09-22 | edges under 5 synapses dropped at the build (brain_whole.npz / brain_cord.npz) | a build default of ours; the release has them | removed: `brain_*_all.npz` beside the originals; every run of record is on the floored file, and the cord baseline is the same on both |
+| 4 | 09-22 | the leg's tactile afferents (SNta, 2,573 cells) driven at a rate as a stand-in for ground contact | the file's 13B-side excitors take 27 % of their excitation from them and nothing drives them; a standing fly's tarsi are on the ground | a contact model on the body; as a cord diagnostic it wakes the releaser to 2.5 Hz, not the switch |
 | 3 | 09-21 | the standing load as a tonic 15 Hz on the leg proprioceptors (`--leg-load-hz`) | the cord alone has no body to unload | the body loop (position + load) replaces it; on the body the load never lifts because the flexors never fire |
