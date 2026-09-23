@@ -6970,3 +6970,26 @@ right in every arm (the lean, cord-side). so on the cord, thirty times the file'
 into it produce no left-right alternation in the front promotors; the pathway's output reaches the 19A locals and stops there, because
 the 19A locals' targets (the stance side) are not oscillating to be alternated. Pugliese's "insufficient to couple the phase" holds at
 every gain we tried. **item 7 on the cord: negative, one seed, seven arms.** the body sweep (with the leg-pair reader) follows.
+
+**item 7 stacked on the ringing loop (13:42 PDT; two fits, both labelled: the rhythm loop DNg100 / IN17A001 / INXXX466 / IN16B036 at x3 (the
+gain at which it rang at 25 Hz on 09-22) under the 19B -> 19A pathway at x10 and / or the commissurals driven at 20 Hz; `--edge-scale` now
+takes groups separated by ';', one group unchanged; seed 11):**
+
+| arm | IN17A001 Hz (line) | IN19A011 | front promotors L / R Hz (L line) | L-R promotor r at 0 | min (lag) | L pro-rem r |
+|---|---|---|---|---|---|---|
+| x1 | 14.9 (21.3 Hz x26) | 20 | 4.2 / 2.5 (20.0 x15) | -0.02 | -0.09 (+20 ms) | +0.07 |
+| the loop x3 | 34.0 (24.5 x42) | 30 | 12.8 / 11.8 (24.0 x17) | 0.00 | -0.15 (+20) | +0.04 |
+| loop x3 + pathway x10 | 27.9 (21.5 x37) | 60 | 12.2 / 4.0 (20.7 x23) | -0.03 | -0.16 (+20) | +0.12 |
+| loop x3 + drive 20 | 32.8 (22.6 x39) | 34 | 11.7 / 9.3 (15.7 x13) | +0.09 | -0.05 (+20) | +0.07 |
+| loop x3 + pathway x10 + drive 20 | 23.7 (22.7 x17) | 73 | 3.9 / 3.2 (17.8 x10) | -0.02 | -0.04 (+280) | +0.02 |
+| loop x3 + pathway x10, current inhibition | 31.4 (20.0 x63) | 68 | 16.2 / 4.6 (20.7 x44) | +0.07 | -0.19 (+20) | +0.27 |
+
+the loop rings (20-25 Hz, x37-63) and the front promotors carry it (12-16 Hz, their own line at 20-24 Hz); the pathway's targets go to
+60-73 Hz; **and the left and right promotors never alternate:** r at zero lag between -0.03 and +0.09, the deepest trough -0.19 at +20 ms,
+which is the shared 20 Hz line read 20 ms off (a 20 Hz alternation would trough at 25 ms and peak at 50; nothing peaks), and within a leg
+the promotors and remotors co-fire (+0.02 to +0.27), so there is no stance-swing to alternate either. the pathway x10 does lower the
+RIGHT promotors (11.8 -> 4.0 Hz) with the left untouched: a one-sided inhibition, the lean's cord-side asymmetry again, not a phase.
+**item 7 on the cord, closed: with two oscillators ringing at the fitted gain, the fly's commissural pathway at ten times its weight
+and fifty hertz of drive couples nothing.** Pugliese's line holds in the LIF as in their rate model. what remains under row 26 is the
+body sweep (running) and the honest statement: the file's left-right coupling circuit, at any gain we can name, does not alternate two
+loops that ring at 20 Hz; the fly's alternate at 11 Hz with stance and swing, which these loops do not have.

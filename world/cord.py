@@ -84,8 +84,9 @@ if args.graded:
     print(f"graded units: {len(gc)} cells ({label}), gain {g_} per ms at v = {v1} mV")
 apply_size(M, args)   # --size-gain / --size-thr / --size-noise (src/fly_afterlife/size.py, shared with experiments/body_loop.py)
 if args.edge_scale:
-    _et, _ef = args.edge_scale.rsplit(":", 1); _em = np.isin(mty, _et.split(",")); _src = np.repeat(np.arange(M.N), np.diff(M._out_ptr)); _sel = _em[_src] & _em[M._out_tgt]
-    M._out_w[_sel] *= np.float32(float(_ef)); print(f"edge scale: {int(_sel.sum())} synapses among {_et} x {_ef}")
+    for _grp in args.edge_scale.split(";"):   # several groups separated by ';' (09-23, item 7); one group is exactly the old behaviour
+        _et, _ef = _grp.rsplit(":", 1); _em = np.isin(mty, _et.split(",")); _src = np.repeat(np.arange(M.N), np.diff(M._out_ptr)); _sel = _em[_src] & _em[M._out_tgt]
+        M._out_w[_sel] *= np.float32(float(_ef)); print(f"edge scale: {int(_sel.sum())} synapses among {_et} x {_ef}")
 if args.cell_delay:
     _dt_, _dms = args.cell_delay.rsplit(":", 1); _dsteps = max(1, int(round(float(_dms) / M.p.dt))); _base = max(1, int(round(M.p.syn_delay_ms / M.p.dt)))
     M._cell_delay = np.full(M.N, _base, np.int64); M._cell_delay[np.isin(mty, _dt_.split(","))] = _dsteps; Dmax = int(M._cell_delay.max())
