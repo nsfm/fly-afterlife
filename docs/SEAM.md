@@ -5801,3 +5801,5 @@ IN16B036, with the loop at x3 and DNg100 at 400 Hz; the cord, 30 s, seed 11, log
   under which the wiring's own reflex sign comes out as life has it, which is a reason but not a measurement.
 - the tibia flexors themselves still fire at 0.28 Hz; the knee's rhythm at 8.8 Hz is the extensors modulated by the ring against the
   springs. the stance-side rhythm with a swing-side reflex, not yet a swing muscle.
+
+- **the step test (19:21 PDT), the one that failed on every lift before:** the left front foot's 102 lifts last 145 ms and come every 176 ms (cv 0.62, against 0.93 for his lifts in the garden); the coxa swings +7.8 deg forward during a lift and -8.3 deg back on the ground, with sign agreement 0.55 / 0.44 (0.12 before): protraction in the air, retraction on the floor, a swing and a stance. the coxa pitch autocorrelation -0.36 / +0.49 / -0.33 / +0.36 at 60 / 110 / 170 / 230 ms: a sustained 9 Hz cycle. the foot is on the ground 12 % of the time: a leg stepping mostly in the air, on a fly lying down. seeds running.
