@@ -6391,3 +6391,5 @@ output leaves the springs holding him, and the 580-cell floor's 1 % of 09-22 was
 legs under him. the honest body: stands on its springs at rest, falls under a tonic walking neuron, stands again when inhibition shunts.
 no step, no rhythm, no flexor tone on the body yet (the small flexors' rest of the cord arms needs the graded thresholds and the noise
 scale on the body, which `body_loop.py` does not take yet).
+
+**the noise term, oracle (00:05 PDT, 09-23):** `scripts/oracle_check.sh` v1 + v2, all eight configs bit for bit with the per-cell membrane-noise scale unset (`M._noise_scale`, `world/fastlif.py`; `--size-noise K` in the size path). committed.

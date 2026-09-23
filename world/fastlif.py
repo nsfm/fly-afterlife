@@ -381,6 +381,7 @@ class FastFlyBrain(FlyBrain):
             else:
                 o = self._noise_off; noise = self._noise_pool[o:o + self.N]; self._noise_off = (o + self._noise_step) % (self._noise_pool.size - self.N)
         else: noise = self._zero_noise
+        if p.noise and getattr(self, "_noise_scale", None) is not None: noise = noise * self._noise_scale   # (09-22, campaign item 3) per-cell membrane-noise scale, off unless set: the same current noise on a cell of higher input resistance is a larger voltage noise, so the scale follows the synaptic scale (S_med / S); bit for bit unchanged when unset
         spk = self._spk_buf
         if len(self._kc) and p.apl_w:
             # fold the APL conductance into ext for the KCs for this step (identical arithmetic: ext*(dt/tau_m) - apl_w*apl*(dt/tau_m))
