@@ -26,7 +26,9 @@ ap.add_argument("--walk-side", default="", help="drive the command's cells on on
 ap.add_argument("--std", default="off", help="short-term depression: off | pair (the DNg33 pair, the default of record in the whole fly) | all")
 ap.add_argument("--std-u", type=float, default=None, help="override the engine's release fraction u (default: the engine's)")
 ap.add_argument("--std-tau", type=float, default=None, help="override the engine's recovery tau, ms")
-ap.add_argument("--floor", dest="floor", action="store_true", default=True); ap.add_argument("--no-floor", dest="floor", action="store_false")
+ap.add_argument("--floor", nargs="?", const="all", default="all", choices=["all", "standing"], help="the tonic floor: all (the runs of record: every typed sense at rest, the leg proprioceptors all 580 at --leg-load-hz) | standing (campaign item 6, 09-22; world/leg_senses.npz): the leg rows as a motionless standing leg has them: campaniform + untyped at --leg-load-hz, the hair plates at --hp-hz, club / hook / unclassified chordotonal / claw at 0; --drive still overrides after it")
+ap.add_argument("--no-floor", dest="floor", action="store_const", const="")
+ap.add_argument("--hp-hz", type=float, default=30.0, help="--floor standing: the hair plates' tonic rate. UNSOURCED: a chosen number (life: 0 inside the working range, 20-60 Hz near the joint limits, Pratt 2026)")
 ap.add_argument("--leg-load-hz", type=float, default=15.0, help="the floor's rate on the leg proprioceptors (standing load)")
 ap.add_argument("--silence", default="", help="comma-separated types whose threshold is put out of reach (no effect on driven cells)")
 ap.add_argument("--log-ms", action="store_true", help="also log the logged cells per engine step (1 ms) as ms_counts in <out>.cells.npz (a 25 Hz rhythm is 4 bins at the 10 ms frame)")
@@ -118,6 +120,17 @@ else: WALK = np.zeros(0, np.int64)
 _fl = tonic_floor(M, REG) if args.floor else []
 for rc in _fl:
     if rc.name == "floor_leg_proprio": rc.transducer.hz = args.leg_load_hz
+if args.floor == "standing":   # (campaign item 6, 09-22) the floor's leg rows by subtype; rows in the floor's place, so --treadmill / --drive override them
+    from fly_afterlife.receptors import Hold
+    from fly_afterlife.leg_senses import leg_cells, union, counts
+    LS = leg_cells(M.bodyId); _cs = union(LS, ("campaniform", "untyped"))
+    for rc in _fl:
+        if rc.name == "floor_leg_proprio":
+            _old = rc.cells; rc.cells = _cs; rc.transducer.source = rc.source = f"--floor standing: campaniform + untyped (leg_senses.npz; {len(np.intersect1d(_cs, _old))} of them in the old 580) at --leg-load-hz (campaign item 6, 09-22; rate unsourced)"
+    _extra = [ReceptorClass("floor_leg_hairplate", union(LS, ("hair_plate",)), Hold(args.hp_hz, source="--floor standing: hair plates 45 + 52 + xx at --hp-hz (campaign item 6, 09-22; rate unsourced)"), lambda st: True),
+              ReceptorClass("floor_leg_quiet", union(LS, ("club", "hook_39", "hook_41", "co_unclassified", "claw_50", "claw_51")), Hold(0.0, source="--floor standing: club / hook / unclassified chordotonal / claw at 0 (campaign item 6, 09-22)"), lambda st: True)]
+    REG.classes = _fl + _extra + REG.classes[len(_fl):]; _fl = _fl + _extra
+    print("--floor standing, the leg map per leg:\n" + counts(LS, ("campaniform", "untyped", "hair_plate", "club", "hook_39", "hook_41", "co_unclassified", "claw_50", "claw_51")) + f"\n  floor_leg_proprio {len(_cs)} cells (was {len(_old)}), hair plates {len(_extra[0].cells)} at {args.hp_hz} Hz, quiet {len(_extra[1].cells)} at 0")
 if args.treadmill > 0:   # per-leg load rows after the floor, so they override it on the leg cells
     from fly_afterlife.receptors import Transducer
     class StanceLoad(Transducer):

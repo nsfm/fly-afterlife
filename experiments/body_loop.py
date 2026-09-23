@@ -33,6 +33,10 @@ ap.add_argument("--claw-hz", type=float, default=100.0); ap.add_argument("--hook
 ap.add_argument("--slow-hz", type=float, default=0.0, help="the standing-tonus stand-in: the 93 smallest leg MNs held at this rate x their leg's load (0 = off)")
 ap.add_argument("--slow-mv", type=float, default=0.0, help="the standing-tonus stand-in as an ADDED CURRENT (the review's F0 fix, 09-22): the stance muscles' motor neurons get a tonic current of this many mV x their leg's load on the engine's ext path, on top of every synapse the cord sends them (13.6 mV ~ 60 Hz alone). --slow-hz is the withdrawn form (it marked the cells driven and REPLACED the cord); kept for the record, do not use")
 ap.add_argument("--claw-labels", default="50ext", help="which claw type is extension-tuned: 50ext (SNpp50, the E_table label) | 50flex (SNpp51 extension-tuned, the review's reading of the wiring: Lee 2025's rule); unsourced either way, so both are run")
+ap.add_argument("--senses", default="v1", choices=["v1", "v2"], help="the body's senses: v1 (the runs of record: the whole 580-cell floor at --leg-load-hz, the load row on every leg proprioceptor that is not claw or hook, the claw from the knee's angle away from the model's neutral pose) | v2 (campaign item 6, 09-22; world/leg_senses.npz): the floor and each leg's load row on campaniform + untyped only; club / hook / unclassified chordotonal held at 0 under the floor (the hooks still by velocity); the claw from |femur-tibia angle - 90 deg| / 60 deg (Mamiya 2018: tonic in angle, silent near 90), the flexion side on the flexion-tuned class as --claw-labels names it; the hair plates from the thorax-coxa pitch angle (--hp-hz); the leg's tactile cells on foot contact (--tactile-frac, --tactile-hz). hair plates and claw / hook ride on --loop position, load and tactile on --loop load")
+ap.add_argument("--hp-hz", type=float, default=30.0, help="--senses v2: the hair plates' rate at the coxa's joint limit, rising linearly from 0 at the coxa's neutral (thorax-coxa pitch; the limit is limit_joints' +-45 deg). UNSOURCED: a chosen number (life: 0 inside the working range, 20-60 Hz near the limits, Pratt 2026; the linear ramp over the whole half-range is ours)")
+ap.add_argument("--tactile-frac", type=float, default=0.25, help="--senses v2: the fraction of each leg's tactile cells driven while its foot is on the ground (a fixed random subset, seeded by --seed; the map cannot tell tarsal bristles from the rest). UNSOURCED: a chosen number")
+ap.add_argument("--tactile-hz", type=float, default=20.0, help="--senses v2: the tactile rate while the foot's contact force is over the pads' threshold (0.05 uN, as pad_on), 5x for the first 30 ms after touchdown (the onset burst), 0 off the ground. UNSOURCED: chosen rates (Corfas & Dudai 1990 give an onset burst and a plateau for bristles, no adult leg bristle has a recorded rate under walking contact)")
 ap.add_argument("--slow-set", default="size", help="which cells the standing-tonus stand-in holds: stance_all (every motor neuron of the stance muscles regardless of size: the load-scaled tonus of docs/ASK.md (a), a stand-in for the slow-unit reflex on cells the size rule calls fast, labelled) | size (the 93 smallest leg MNs: measured to be the accessory flexors, a flexion tonus) | extensor (the stance muscles' motor neurons below the median input size, per leg: sternotrochanter, trochanter extensor, tibia extensor, pleural remotor, sternal posterior rotator; the standing tonus as life has it, on the slow members of the anti-gravity muscles (E))")
 ap.add_argument("--load-deriv", type=float, default=0.0, help="a rate-sensitive term on the load signal (the campaniform brief, Szczecinski 2021: campaniforms report dF/dt as well as F): the load rows and the stance tonus get clip(F/F_stand + G x dF/dt x 50 ms / F_stand, 0, 2), so unloading a leg cuts its stance drive before the load is gone and loading it adds; 0 = off (E)")
 ap.add_argument("--cocon", type=float, default=0.0, help="co-contraction: the swing muscles' motor neurons (trochanter flexors, tibia flexors, promotors, anterior rotators) held at this fraction of the stance tonus rate x load, so each joint is stiff mid-range instead of driven to its limit (standing in life is co-contraction; nate 09-22: the front legs are struts); 0 = extensors only")
@@ -94,10 +98,11 @@ for rc in _fl:
 wb = np.load("brain_whole.npz", allow_pickle=True); wbid = wb["bodyId"]; legs = np.load("world/legs.npz"); lm = np.load("world/legmn.npz")
 LEG6 = ["lf", "lm", "lh", "rf", "rm", "rh"]; SENS = {"lf": "L1", "lm": "L2", "lh": "L3", "rf": "R1", "rm": "R2", "rh": "R3"}
 class Rate(Transducer):
-    def __init__(self, key): self.key = key; self.source = "body_loop: a rate from the body (E)"
+    def __init__(self, key, source="body_loop: a rate from the body (E)"): self.key = key; self.source = source
     def step(self, stim, t, dt): return float(stim)
 sens = {}
-for leg in LEG6:
+if args.senses == "v1":   # the runs of record, unchanged
+  for leg in LEG6:
     cells = np.array([pos[int(wbid[i])] for i in legs[SENS[leg]] if int(wbid[i]) in pos], np.int64)
     of = lambda types: cells[np.isin(mty[cells], types)]
     sens[leg] = dict(claw_e=of(["SNpp50"]), claw_f=of(["SNpp51"]), hook_f=of(["SNpp39"]), hook_e=of(["SNpp41"]), load=cells[~np.isin(mty[cells], ["SNpp50", "SNpp51", "SNpp39", "SNpp41"])])
@@ -105,7 +110,30 @@ for leg in LEG6:
         for k in ("claw_e", "claw_f", "hook_f", "hook_e"):
             if len(sens[leg][k]): REG.add(ReceptorClass(f"{k}_{leg}", sens[leg][k], Rate(k), (lambda kk: (lambda st: st[kk]))(f"{k}_{leg}")))
     if use_load and len(sens[leg]["load"]): REG.add(ReceptorClass(f"load_{leg}", sens[leg]["load"], Rate("load"), (lambda kk: (lambda st: st[kk]))(f"load_{leg}")))
-print("sensory cells per leg:", {l: {k: len(v) for k, v in sens[l].items()} for l in LEG6})
+  print("sensory cells per leg:", {l: {k: len(v) for k, v in sens[l].items()} for l in LEG6})
+else:   # --senses v2 (campaign item 6, 09-22): every row from world/leg_senses.npz by bodyId, every chosen rate labelled
+    from fly_afterlife.receptors import Hold
+    from fly_afterlife.leg_senses import leg_cells, union, counts
+    LS = leg_cells(mbid); U = "(campaign item 6, 09-22; rate unsourced)"
+    _cs = union(LS, ("campaniform", "untyped")); _quiet = union(LS, ("club", "hook_39", "hook_41", "co_unclassified"))
+    for rc in _fl:
+        if rc.name == "floor_leg_proprio":
+            _old = rc.cells; rc.cells = _cs; rc.transducer.source = rc.source = f"the standing floor on the leg's campaniform + untyped cells only (leg_senses.npz; {len(np.intersect1d(_cs, _old))} of them in the old 580) at --leg-load-hz {U}"
+    REG.classes.insert(len(_fl), ReceptorClass("floor_leg_quiet", _quiet, Hold(0.0, source="club / hook / unclassified chordotonal held at 0 under the floor: silent in a motionless leg (the hooks' velocity rows below override) (campaign item 6, 09-22)"), lambda st: True))
+    for leg in LEG6:
+        sens[leg] = dict(claw_e=LS[leg]["claw_50"], claw_f=LS[leg]["claw_51"], hook_f=LS[leg]["hook_39"], hook_e=LS[leg]["hook_41"], hp=LS[leg]["hair_plate"],
+                         load=np.union1d(LS[leg]["campaniform"], LS[leg]["untyped"]).astype(np.int64))
+        _t = LS[leg]["tactile"]; _n = int(round(args.tactile_frac * len(_t)))
+        sens[leg]["tact"] = np.sort(np.random.default_rng([args.seed, 6, LEG6.index(leg)]).choice(_t, _n, replace=False)).astype(np.int64) if _n else np.zeros(0, np.int64)
+        SRC = dict(claw_e=f"SNpp50: --claw-hz x |femur-tibia - 90 deg| / 60 deg on the side --claw-labels gives it (null at 90: Mamiya 2018) {U}", claw_f=f"SNpp51: as SNpp50, the other side of 90 deg {U}",
+                   hook_f=f"SNpp39: flexion velocity, --hook-hz at --hook-vel {U}", hook_e=f"SNpp41: extension velocity, --hook-hz at --hook-vel {U}",
+                   hp=f"hair plates 45 + 52 + xx: --hp-hz x |coxa pitch - neutral| / (limit - neutral) {U}", load=f"campaniform + untyped: --leg-load-hz x load (F / F_stand) {U}",
+                   tact=f"tactile, a seeded {args.tactile_frac} of the leg's cells: --tactile-hz on contact, x5 for the first 30 ms {U}")
+        for k in (("claw_e", "claw_f", "hook_f", "hook_e", "hp") if use_pos else ()) + (("load", "tact") if use_load else ()):
+            if len(sens[leg][k]): REG.add(ReceptorClass(f"{k}_{leg}", sens[leg][k], Rate(k, SRC[k]), (lambda kk: (lambda st: st[kk]))(f"{k}_{leg}")))
+    print("--senses v2: the leg map (world/leg_senses.npz) per leg:\n" + counts(LS, ("tactile", "claw_50", "claw_51", "hook_39", "hook_41", "club", "co_unclassified", "hair_plate", "campaniform", "untyped")))
+    print("--senses v2: the rows per leg:\n" + "\n".join(f"  {k:6s} " + " ".join(f"{l} {len(sens[l][k]):4d}" for l in LEG6) for k in sens["lf"]) + f"\n  floor_leg_proprio {len(_cs)} cells (was {len(_old)}), floor_leg_quiet {len(_quiet)} cells at 0")
+    print(REG.table())
 # the leg motor neurons, their legs, the small (slow) quarter
 legof = {}
 for g, L in (("fl", "f"), ("ml", "m"), ("hl", "h")):
@@ -168,6 +196,17 @@ m.jnt_solref[:, 0] = 0.002; m.jnt_solimp[:, 0] = 0.99; m.jnt_solimp[:, 1] = 0.99
 all_dofs = fly.get_jointdofs_order(); dof_name = lambda x: f"{x.parent.name}->{x.child.name}:{x.axis.value}"; all_idx = {dof_name(x): i for i, x in enumerate(all_dofs)}
 knee_idx = {leg: all_idx[roles[leg]["flex"]["dof"]] for leg in LEG6}; knee_sign = {leg: roles[leg]["flex"]["sign"] for leg in LEG6}
 knee_neutral = {leg: float(np.degrees(neutral_of.get(roles[leg]["flex"]["dof"], 0.0))) for leg in LEG6}
+if args.senses == "v2":   # (campaign item 6, 09-22) the claw's null and the hair plates' range
+    # the knee: the model's femur-tibia pitch is 0 with the tibia in line with the femur and grows with flexion (knee_sign +1 on every leg), so the
+    # femur-tibia angle as Mamiya 2018 measure it (180 = straight) is 180 - the model's angle (checked on the model's geometry: 0 -> 179.6 deg,
+    # 90 -> 90.4). the absolute model angle is knee_neutral + knee x knee_sign (= degrees(ang[knee_idx]); knee_neutral 78 / 103 / 101 deg front /
+    # middle / hind, i.e. femur-tibia 102 / 77 / 79), so flexion past the claw's null is k90 = (knee_neutral + knee x knee_sign - 90) x knee_sign
+    # = knee + (knee_neutral - 90) x knee_sign: at the neutral pose the front legs sit 12 deg on the EXTENSION side of 90, the middle and hind 13 / 11
+    # on the flexion side.
+    knee90 = {leg: (knee_neutral[leg] - 90.0) * knee_sign[leg] for leg in LEG6}
+    cx_idx = {leg: all_idx[f"c_thorax->{leg}_coxa:pitch"] for leg in LEG6}; cx_n = {leg: float(neutral_of.get(f"c_thorax->{leg}_coxa:pitch", 0.0)) for leg in LEG6}
+    _jr = {f"{d_.parent.name}->{d_.child.name}:{d_.axis.value}": (float(j_.range[0]), float(j_.range[1])) for d_, j_ in jm.items()}; cx_rng = {leg: _jr[f"c_thorax->{leg}_coxa:pitch"] for leg in LEG6}
+    print("--senses v2: femur-tibia at neutral " + ", ".join(f"{l} {180 - knee_neutral[l]:.0f}" for l in LEG6) + " deg (claw null 90); coxa pitch neutral / limits " + ", ".join(f"{l} {np.degrees(cx_n[l]):.0f} [{np.degrees(cx_rng[l][0]):.0f}, {np.degrees(cx_rng[l][1]):.0f}]" for l in LEG6) + " deg")
 cell_dof = {}; cell_sgn = {}; grip_of = {}; groups = {}
 for j in LEGMN:
     if mty[j] not in ROLE: continue
@@ -197,7 +236,7 @@ if args.log_v:   # the membrane logger (09-22, campaign item 2b), as in world/co
     _vt = [x for x in args.log_v.split(",") if x]; _vc = [np.flatnonzero(mty == t_) for t_ in _vt]; _vi = np.concatenate(_vc).astype(np.int64); _vg = np.repeat(np.arange(len(_vt)), [len(c_) for c_ in _vc]); _vn = np.maximum(np.bincount(_vg, minlength=len(_vt)), 1)
     VMS = np.zeros((n_ms, len(_vt)), np.float32); print(f"logging the membrane of {len(_vi)} cells of {len(_vt)} types: " + ", ".join(f"{t_} {len(c_)}" for t_, c_ in zip(_vt, _vc)))
 else: VMS = None
-state = {"walk_gain": 0.0}; prev_knee = None; force_ok = True; Fsm = np.zeros(6); prevF = np.zeros(6)
+state = {"walk_gain": 0.0}; prev_knee = None; t_touch = np.full(6, -1e9); was_on = np.zeros(6, bool); force_ok = True; Fsm = np.zeros(6); prevF = np.zeros(6)
 NONLEG = np.array([i for i, s_ in enumerate(segs) if not any(s_.startswith(l + "_") for l in LEG6)]); pad_on = np.zeros(6, bool); BODYF = np.zeros((n_ms // 10 + 1, 2), np.float32)   # the feet's and the whole body's ground reaction, per 10 ms (F2)
 for ms in range(n_ms):
     t = ms / 1000.0; state["walk_gain"] = (min(1.0, (t - args.warmup) / args.walk_ramp) if args.walk_ramp > 0 else 1.0) if t >= args.warmup else 0.0
@@ -209,12 +248,19 @@ for ms in range(n_ms):
     if np.isnan(F).any(): F = np.zeros(6); force_ok = False
     Fsm = F if ms == 0 else 0.8 * Fsm + 0.2 * F; dF = (Fsm - prevF) * 1000.0 if ms else np.zeros(6); prevF = Fsm.copy()
     for i, leg in enumerate(LEG6):
-        k = knee[i]; ext_rate = args.claw_hz * float(np.clip((-k) / 60.0, 0, 1)); flex_rate = args.claw_hz * float(np.clip(k / 60.0, 0, 1))   # + = flexion from neutral by the measured sign
+        k = knee[i] if args.senses == "v1" else knee[i] + knee90[leg]   # v2: flexion past the claw's null at 90 deg femur-tibia (Mamiya 2018), not past the model's neutral
+        ext_rate = args.claw_hz * float(np.clip((-k) / 60.0, 0, 1)); flex_rate = args.claw_hz * float(np.clip(k / 60.0, 0, 1))   # + = flexion by the measured sign
         state[f"claw_e_{leg}"], state[f"claw_f_{leg}"] = (ext_rate, flex_rate) if args.claw_labels == "50ext" else (flex_rate, ext_rate)   # the rows are named by TYPE (claw_e = SNpp50); the labels say which rate each type gets
         state[f"hook_f_{leg}"] = args.hook_hz * float(np.clip(om[i] / args.hook_vel, 0, 1)); state[f"hook_e_{leg}"] = args.hook_hz * float(np.clip(-om[i] / args.hook_vel, 0, 1))
         ld = float(np.clip(F[i] / F_stand + args.load_deriv * dF[i] * 0.05 / F_stand, 0, 2))
         if args.slow_init > 0 and t < args.warmup + args.slow_init: ld = max(ld, 1.0)
         state[f"load_{leg}"] = args.leg_load_hz * ld; state[f"slow_{leg}"] = args.slow_hz * ld; state[f"cocon_{leg}"] = args.cocon * args.slow_hz * ld
+        if args.senses == "v2":   # (campaign item 6, 09-22) hair plates from the coxa's pitch; touch while the foot is on the ground (pad_on's threshold)
+            a_ = float(ang[cx_idx[leg]]); n_ = cx_n[leg]; lo_, hi_ = cx_rng[leg]
+            state[f"hp_{leg}"] = args.hp_hz * float(np.clip((a_ - n_) / max(hi_ - n_, 1e-9) if a_ >= n_ else (n_ - a_) / max(n_ - lo_, 1e-9), 0, 1))
+            on_ = bool(F[i] > 0.05)
+            if on_ and not was_on[i]: t_touch[i] = t
+            was_on[i] = on_; state[f"tact_{leg}"] = (args.tactile_hz * (5.0 if (t - t_touch[i]) < 0.030 - 1e-9 else 1.0)) if on_ else 0.0
         if args.slow_mv > 0:
             if len(SLOW_BY_LEG[leg]): M._ext[SLOW_BY_LEG[leg]] = np.float32(args.slow_mv * ld)
             if args.cocon > 0 and len(SWING_BY_LEG[leg]): M._ext[SWING_BY_LEG[leg]] = np.float32(args.cocon * args.slow_mv * ld)
