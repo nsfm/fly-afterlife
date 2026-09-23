@@ -13,7 +13,7 @@ size path's excitability, not a pure synaptic weight; the doc says so.
 from __future__ import annotations
 import csv, os, numpy as np
 
-BASE_CSV = "/tmp/claude-1000/-home-nate-code-fly-afterlife/3b9ae0bc-b084-4552-908f-32720c832286/scratchpad/flex_graded_abs.csv"
+BASE_CSV = "world/flex_graded.csv"
 
 # name, cell types, ledger row(s), what it is
 GAIN_SETS = [
