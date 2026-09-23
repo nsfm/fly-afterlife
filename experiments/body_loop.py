@@ -31,6 +31,9 @@ ap.add_argument("--freeze-mn", type=float, default=0.0, help="hold every muscle 
 ap.add_argument("--silence", default="", help="comma-separated types whose threshold is put out of reach (no effect on driven cells); as in world/cord.py")
 ap.add_argument("--mn-poisson", default="", help="the review's control (09-23): feed the muscle map Poisson spike trains at each leg motor neuron's own mean rate taken from this run's .cells.npz (after its warm-up), instead of the cord's spikes; the cord still runs and is logged, the body never sees it. if the lifts survive, the body sets the rhythm")
 ap.add_argument("--puppet", default="", help="THE PUPPET BASELINE (nate 09-23, TODO 4o; a labelled puppet, NEVER a result): tripod:F_HZ:DUTY. the muscle map ignores the cord (which still runs and is logged, as --mn-poisson) and is fed scripted Poisson spike trains on each leg's own mapped motor neurons: tripod groups lf rm lh / rf lm rh in antiphase at F_HZ, DUTY the stance fraction (phase 0..DUTY stance, then swing), from the warm-up's end (nothing before it); in swing the levators (levate +) and promotors (protract +) at --puppet-swing-hz, in stance the depressors (levate -), remotors (protract -) and tibia extensors (flex -) at --puppet-stance-hz, every spike through the same f_w, K, --mn-force and actuator clip as a cord spike. every printed line and the saved args carry PUPPET; '' = off. tripod2:F_HZ:DUTY:OFFSET (09-23, refined once against the KINEMATIC REPLAY, experiments/kin_replay.py): the same tripod groups (B at +0.5) with a per-segment phase offset inside the group, OFFSET = F/M/H in cycles (leg phase = t x F_HZ + group + offset), and the stance duty per leg, DUTY = one value, F/M/H, or lf/lm/lh/rf/rm/rh; within each leg's swing the tibia flexors (flex +) and the levators fire in the first 40 %% of swing, the protractors in the middle 60 %% (20-80 %%), and in stance the depressors, remotors and tibia extensors, as tripod")
+ap.add_argument("--kin-drive", default="", help="KIN-DRIVE (nate 09-23; '' = off): the body is the fly's and the cord only listens. the joints are driven by position control from a recorded clip exactly as experiments/kin_replay.py drives them (the code is shared: experiments/kin_clip.py; CLIP = spotlight for flygym_demo's Spotlight clip, or a path to an .npz of its layout): the recording refit into our axis order, smoothed, looped with a --kin-blend-ms crossfade, per physics step torque = clip(--kin-kp x (target - angle), +-60); before --warmup the targets ramp from the settled pose to the first frame over 0.5 s and hold, the replay starts at --warmup. the senses are computed from that moving body every ms as always (--senses / --loop as given), the cord runs under its command (--walk / --dn-playback), and its motor spikes are logged and NEVER applied (as --mn-poisson decouples the body from the cord, in reverse). saved beside the usual arrays: target (deg per 10 ms, as kin_replay.py), kin_foot (per ms, per leg, the tarsus5 origin in the thorax's frame, mm), kin_swing (per ms, per leg, 1 = the imposed swing: the foot moving FORWARD relative to the thorax, its thorax-frame x velocity over a 9 ms centred mean > 0, runs under 10 ms absorbed; 0 before --warmup). every printed line and the saved args carry KIN-DRIVE")
+ap.add_argument("--kin-kp", type=float, default=150.0, help="--kin-drive: the position gain (kin_replay.py's --kp)")
+ap.add_argument("--kin-blend-ms", type=float, default=30.0, help="--kin-drive: the loop seam's crossfade (kin_replay.py's --blend-ms)")
 ap.add_argument("--puppet-swing-hz", type=float, default=100.0, help="--puppet: the scripted rate per swing-set motor neuron during its leg's swing (a chosen number)")
 ap.add_argument("--puppet-stance-hz", type=float, default=50.0, help="--puppet: the scripted rate per stance-set motor neuron during its leg's stance (a chosen number)")
 ap.add_argument("--out", required=True); ap.add_argument("--seconds", type=float, default=20.0); ap.add_argument("--seed", type=int, default=11)
@@ -94,6 +97,16 @@ if args.puppet:   # (TODO 4o) the puppet must be impossible to mistake for a res
         args.PUPPET = (f"PUPPET: a scripted tripod2 at {PUP_F:g} Hz, stance duty lf lm lh rf rm rh {'/'.join(f'{x:g}' for x in PUP_DUTY6)}, segment offsets F/M/H {_po} cycles, swing = flexors + levators 0-40 % then protractors 20-80 %, "
                        f"swing {args.puppet_swing_hz:g} Hz / stance {args.puppet_stance_hz:g} Hz per MN; the cord does NOT drive the body; not a result")
     print(args.PUPPET)
+if args.kin_drive:   # (09-23, nate) KIN-DRIVE: the body moved by a real fly's recorded angles, the cord listening; impossible to mistake for the cord's own output
+    assert not (args.puppet or args.mn_poisson or args.freeze_mn > 0 or args.tethered), "--kin-drive excludes --puppet / --mn-poisson / --freeze-mn / --tethered"
+    import builtins; _bprint = builtins.print
+    def _kprint(*a, **k):
+        s = (k.get("sep") if k.get("sep") is not None else " ").join(str(x) for x in a)
+        _bprint("\n".join("KIN-DRIVE | " + ln for ln in s.split("\n")), **{kk: vv for kk, vv in k.items() if kk != "sep"})
+    builtins.print = _kprint
+    args.KIN_DRIVE = (f"KIN-DRIVE: the body's joints driven by position control (kp {args.kin_kp:g}, clip 60) from the recorded clip '{args.kin_drive}' as kin_replay.py drives them; "
+                      f"the senses from that moving body; the cord under its command, its motor output logged and NOT applied; the body is the fly's, the cord only listens")
+    print(args.KIN_DRIVE)
 
 # ---- the cord
 M = FastFlyBrain("brain_cord.npz", seed=args.seed, params=Params(mv_per_synapse=args.wsyn_m, noise=args.noise)); M.integrate = "exact"
@@ -332,6 +345,20 @@ if args.start_pose == "feet":   # (09-23, P2) settle on the springs with no musc
     _cf0 = np.asarray(sim.get_bodysegment_contact_forces("nmf", segs))
     print(f"--start-pose feet: settled 0.5 s on the springs ({'flygym default 10' if args.stiffness is None else args.stiffness}) with no muscle: thorax z {_z[-1]:.3f} mm (moved {abs(_z[-1] - _z[-50]) * 1000:.1f} um in the last 50 ms); "
           f"tarsi per leg {np.round([_cf0[TARS[i], 2].sum() for i in range(6)], 2)} uN, other leg segments {np.round([_cf0[OTHL[i], 2].sum() for i in range(6)], 2)} uN (lf lm lh rf rm rh)")
+KD = None
+if args.kin_drive:   # (09-23) the clip, refit, looped and upsampled as kin_replay.py does it (experiments/kin_clip.py); the targets in the actuated DOFs' order
+    import warnings; warnings.filterwarnings("ignore", message="Compiling a fly model")
+    from kin_clip import load_clip, loop_targets, clip_columns, target_at, position_law, swing_from_foot
+    _A, _FPS, _DPL, _FIT, _ = load_clip(args.kin_drive, "pry", print=print)
+    _rs = args.seconds - args.warmup; assert _rs > 0 and args.warmup > 0, "--kin-drive: --seconds must exceed --warmup > 0"
+    assert abs(m.opt.timestep - 1e-4) < 1e-12, m.opt.timestep
+    _TGT, _nrep, _loop = loop_targets(_A, _FPS, args.kin_blend_ms, _rs, 1e-4, print=print)
+    _act = np.array([all_idx[dof_name(x)] for x in dofs]); _TGT = _TGT[:, clip_columns(dofs, _DPL)]
+    _lo = np.array([jm[x].range[0] for x in dofs]); _hi = np.array([jm[x].range[1] for x in dofs]); _out = (_TGT < _lo) | (_TGT > _hi)
+    KD = dict(TGT=_TGT, n_rep=_nrep, act=_act, q_set=np.asarray(sim.get_joint_angles("nmf"))[_act].copy(), w0=int(args.warmup * 1000), ramp=min(500, int(args.warmup * 1000)), loop=np.array(_loop), fit=_FIT,
+              TA=np.full((int(args.seconds * 1000) // 10 + 1, len(all_dofs)), np.nan, np.float32), FOOT=np.zeros((int(args.seconds * 1000), 6, 3), np.float32), TAR5=np.array([segs.index(f"{l}_tarsus5") for l in LEG6]), sat=np.zeros(len(dofs)))
+    print(f"the body: {len(dofs)} actuated DOFs by position (kp {args.kin_kp:g}, clip +-60) every physics step; targets outside the joint limits: {_out.mean() * 100:.1f} % of samples; the settled pose ramps to the first frame over {KD['ramp']} ms, the replay from {args.warmup:g} s; "
+          f"the cord's {len(LEGMN)} leg motor neurons logged, never applied")
 def leg_forces():
     """ground contact force magnitude per leg (model force units = uN), legs ordered lf lm lh rf rm rh (fly.get_legs_order())."""
     if args.tethered: return np.zeros(6)
@@ -442,6 +469,10 @@ for ms in range(n_ms):
         else: hit = np.zeros(0, np.int64)
         if idx.size:
             for j in idx[np.isin(idx, LEGMN)]: spk[ms // 10, lpos[int(j)]] += 1
+    elif KD is not None:   # KIN-DRIVE: the cord's motor spikes logged, never felt
+        hit = np.zeros(0, np.int64)
+        if idx.size:
+            for j in idx[np.isin(idx, LEGMN)]: spk[ms // 10, lpos[int(j)]] += 1
     elif MNP is not None:
         hit = LEGMN[_mnp_rng.random(len(LEGMN)) < MNP]
         if idx.size:
@@ -455,12 +486,23 @@ for ms in range(n_ms):
         if j in grip_of: grip[grip_of[j]][ms: ms + KL] += f_w.get(j, 0.1) * K / args.sat
         elif TW is not None and j in TW["A"]: a_ = cell_sgn[j] * TW["A"][j]; TW["s"][cell_dof[j]] += a_; torque[cell_dof[j], ms] += a_   # a slow spike: a jump in the low-pass, felt from this ms
         elif j in cell_dof: torque[cell_dof[j], ms: ms + KL] += cell_sgn[j] * f_w[j] * K / args.sat
-    tq = np.clip(args.gain * torque[:, ms], -60, 60); sim.set_actuator_inputs("nmf", ActuatorType.MOTOR, tq)
+    if KD is None: tq = np.clip(args.gain * torque[:, ms], -60, 60); sim.set_actuator_inputs("nmf", ActuatorType.MOTOR, tq)
     if adh and args.adhesion == "ltm": sim.set_leg_adhesion_states("nmf", np.array([grip[l][ms] > 0.05 for l in LEG6]))
     elif adh and args.adhesion == "contact": pad_on = F > 0.05; sim.set_leg_adhesion_states("nmf", pad_on)
     elif adh: sim.set_leg_adhesion_states("nmf", np.zeros(6, bool))
-    for _ in range(steps_per_ms): sim.step()
+    if KD is None:
+        for _ in range(steps_per_ms): sim.step()
+    else:   # KIN-DRIVE: kin_replay.py's per-physics-step position law (experiments/kin_clip.py)
+        for s_k in range(steps_per_ms):
+            tgt_k = target_at(KD["TGT"], KD["q_set"], ms, s_k, steps_per_ms, KD["w0"], KD["ramp"], KD["n_rep"])
+            if s_k == 0 and ms % 10 == 0: KD["TA"][ms // 10, KD["act"]] = np.degrees(tgt_k)
+            q_k = np.asarray(sim.get_joint_angles("nmf"))[KD["act"]]; u_k, uc_k = position_law(args.kin_kp, 60.0, tgt_k, q_k); KD["sat"] += (np.abs(u_k) >= 60.0) & (ms >= KD["w0"])
+            sim.set_actuator_inputs("nmf", ActuatorType.MOTOR, uc_k); sim.step()
     P[ms] = sim.get_body_positions("nmf")[thorax]; Q[ms] = sim.get_body_rotations("nmf")[thorax]
+    if KD is not None:   # the feet in the thorax's frame (a function of the joint angles alone)
+        _bp = np.asarray(sim.get_body_positions("nmf")); _w, _x, _y, _z = (float(v_) for v_ in Q[ms])
+        _Rt = np.array([[1 - 2 * (_y * _y + _z * _z), 2 * (_x * _y - _w * _z), 2 * (_x * _z + _w * _y)], [2 * (_x * _y + _w * _z), 1 - 2 * (_x * _x + _z * _z), 2 * (_y * _z - _w * _x)], [2 * (_x * _z - _w * _y), 2 * (_y * _z + _w * _x), 1 - 2 * (_x * _x + _y * _y)]])
+        KD["FOOT"][ms] = (_bp[KD["TAR5"]] - P[ms]) @ _Rt
     if ms % 10 == 0:
         try: _cf = np.asarray(sim.get_bodysegment_contact_forces("nmf", segs)); BODYF[ms // 10] = (float(FLEG.sum()), float(np.abs(_cf[NONLEG, 2]).sum()))   # the feet's load, and the vertical ground reaction on the NON-leg segments (thorax, abdomen, head): a standing fly has none of the second (the review's F2)
         except Exception: BODYF[ms // 10] = (float(FLEG.sum()), np.nan)
@@ -471,7 +513,14 @@ nfr = n_ms // 10; frames = spk[:nfr]
 _x = dict(x_ms=XMS[:n_ms], x_type=mty[LOGX], x_bodyId=mbid[LOGX]) if XMS is not None else {}
 np.savez_compressed(args.out + ".cells.npz", cells=LEGMN, bodyId=mbid[LEGMN], type=mty[LEGMN], side=mns[LEGMN], counts=frames[: (nfr // 10) * 10].reshape(nfr // 10, 10, -1).sum(1).astype(np.int32), pose_chunk=np.zeros((nfr // 10, 3), np.float32), frames=frames, **_x, pose_frame=np.zeros((nfr, 3), np.float32), **({'v_ms': VMS, 'v_types': np.array(_vt)} if VMS is not None else {}))
 w_, x_, y_, z_ = Q[:, 0], Q[:, 1], Q[:, 2], Q[:, 3]; yaw = np.degrees(np.arctan2(2 * (w_ * z_ + x_ * y_), 1 - 2 * (y_ ** 2 + z_ ** 2)))
-np.savez_compressed(args.out + ".npz", thorax=P, quat=Q, leg_force=FL, knee=KA, ground=BODYF[: n_ms // 10], tarsal_force=FTN, other_leg_force=FO.astype(np.float32), body_force=FB.astype(np.float32), stand3=np.stack([FTN.sum(1), FO.sum(1), FB], 1)[::10][: n_ms // 10].astype(np.float32), joints=JA[: n_ms // 10], joint_names=np.array([dof_name(x) for x in all_dofs]), args=np.array(str(vars(args))), **({"puppet_swing": PUPSW} if PUP is not None else {}))
+if KD is not None:   # KIN-DRIVE: the imposed swing from the feet's own motion relative to the thorax
+    KSW = swing_from_foot(KD["FOOT"][:, :, 0], KD["w0"]); KDSAVE = dict(target=KD["TA"][: n_ms // 10], kin_foot=KD["FOOT"], kin_swing=KSW, kin_loop=KD["loop"], **KD["fit"])
+    _w0 = KD["w0"]; _ach = JA[_w0 // 10: n_ms // 10][:, KD["act"]]; _tar = KD["TA"][_w0 // 10: n_ms // 10][:, KD["act"]]; _te = np.abs(_ach - _tar)
+    print(f"tracking after {args.warmup:g} s: |achieved - target| median {np.median(_te):.1f} deg, p95 {np.percentile(_te, 95):.1f}; torque at the clip {KD['sat'].sum() / (len(dofs) * (n_ms - _w0) * steps_per_ms) * 100:.1f} % of DOF-steps")
+    _cof = (FTN[_w0:] <= 0.05).mean(0)
+    print("the imposed swing (foot forward relative to the thorax): fraction " + " ".join(f"{l} {v:.2f}" for l, v in zip(LEG6, KSW[_w0:].mean(0))) + "; swings " + " ".join(f"{l} {int((np.diff(KSW[_w0:, i].astype(int)) == 1).sum())}" for i, l in enumerate(LEG6))
+          + "; beside it, the foot off the ground (tarsal force <= 0.05 uN) " + " ".join(f"{l} {v:.2f}" for l, v in zip(LEG6, _cof)))
+np.savez_compressed(args.out + ".npz", thorax=P, quat=Q, leg_force=FL, knee=KA, ground=BODYF[: n_ms // 10], tarsal_force=FTN, other_leg_force=FO.astype(np.float32), body_force=FB.astype(np.float32), stand3=np.stack([FTN.sum(1), FO.sum(1), FB], 1)[::10][: n_ms // 10].astype(np.float32), joints=JA[: n_ms // 10], joint_names=np.array([dof_name(x) for x in all_dofs]), args=np.array(str(vars(args))), **({"puppet_swing": PUPSW} if PUP is not None else {}), **(KDSAVE if KD is not None else {}))
 w0 = int(args.warmup * 1000); v = np.linalg.norm(np.diff(P[w0:, :2], axis=0), axis=1) * 1000; hz = frames[w0 // 10:].mean(0) * 100
 flex = np.array([("Ti flexor" in t_) or ("Acc. ti flexor" in t_) for t_ in mty[LEGMN]]); ext = mty[LEGMN] == "Ti extensor MN"
 gb = BODYF[w0 // 10: n_ms // 10]; body_on_floor = float(np.nanmean(gb[:, 1])); _ft = FTN[w0:].sum(1).mean(); _fo = np.nanmean(FO[w0:].sum(1)); _fb = np.nanmean(FB[w0:])

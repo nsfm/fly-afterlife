@@ -37,14 +37,11 @@ all-DOF order, nan elsewhere), and an empty <out>.cells.npz so experiments/leg_p
 """
 import os, sys, json, argparse, time, warnings, numpy as np
 import mujoco as mj
-from scipy.signal import savgol_filter
-from scipy.interpolate import interp1d
-from scipy.optimize import least_squares
-from importlib.resources import files
 from flygym.utils.math import Rotation3D
 from flygym.compose import NeuroMechFly, FlatGroundWorld, ActuatorType, KinematicPosePreset
 from flygym.anatomy import JointPreset, ActuatedDOFPreset, Skeleton, AxisOrder
 from flygym import Simulation
+from kin_clip import load_clip, loop_targets, clip_columns, target_at, position_law   # (09-23) the clip, the refit, the loop and the law, shared with body_loop.py --kin-drive
 
 TAG = "KINEMATIC REPLAY"
 ap = argparse.ArgumentParser()
@@ -68,60 +65,10 @@ warnings.filterwarnings("ignore", message="Compiling a fly model")
 LEG6 = ["lf", "lm", "lh", "rf", "rm", "rh"]
 ORDER = AxisOrder.PITCH_ROLL_YAW if args.axis_order == "pry" else AxisOrder.YAW_PITCH_ROLL
 
-# ---- the recording
-CLIP = files("flygym_demo.spotlight_data") / "assets/spotlight_behavior_clip.npz"
-Z = np.load(str(CLIP), allow_pickle=True); A = Z["joint_angles"].astype(float).copy(); FPS = float(Z["data_fps"]); DPL = [tuple(x) for x in Z["dofs_per_leg"].tolist()]; ZL = Z["legs"].tolist()
-assert ZL == LEG6, ZL
-for li, l in enumerate(LEG6):   # SeqIKPy's global convention -> flygym's anatomical one (MotionSnippet._apply_global2anatomical)
-    if l[0] == "r":
-        for k, (_, _, ax) in enumerate(DPL):
-            if ax in ("roll", "yaw"): A[:, li, k] *= -1
-print(f"the recording: {CLIP.name}, trial {Z['experiment_trial']}, frames {Z['framerange_in_raw_recording'].tolist()} of the raw recording, {len(A)} frames at {FPS:g} Hz ({len(A) / FPS:.2f} s), {A.shape[1] * A.shape[2]} angles")
-jname = lambda l, p, c, ax: f"{'c_thorax' if p == 'thorax' else l + '_' + p}-{l}_{c}-{ax}"
-
-def compiled(order):
-    f = NeuroMechFly(); f.add_joints(Skeleton(axis_order=order, joint_preset=JointPreset.LEGS_ONLY), KinematicPosePreset.NEUTRAL); m, d = f.compile()
-    return m, d, {mj.mj_id2name(m, mj.mjtObj.mjOBJ_JOINT, i): int(m.jnt_qposadr[i]) for i in range(m.njnt)}
-
-if args.axis_order == "pry":   # step 1: re-express each thorax-coxa orientation in our order, bounded to our coxa limits
-    my, dy, Jy = compiled(AxisOrder.YAW_PITCH_ROLL); mp, dp, Jp = compiled(AxisOrder.PITCH_ROLL_YAW)
-    bid = lambda m, n: mj.mj_name2id(m, mj.mjtObj.mjOBJ_BODY, n)
-    dy.qpos[:] = my.key_qpos[0]; dp.qpos[:] = mp.key_qpos[0]; rng = np.random.default_rng(0)
-    AX = ("pitch", "roll", "yaw"); qn = {l: np.array([mp.key_qpos[0][Jp[f"c_thorax-{l}_coxa-{a}"]] for a in AX]) for l in LEG6}; qprev = {l: qn[l].copy() for l in LEG6}
-    B = np.zeros((len(A), 6, 7)); ferr = np.zeros((len(A), 6)); aerr = np.zeros((len(A), 6))
-    for fr in range(len(A)):
-        for li, l in enumerate(LEG6):
-            for k, (p, c, ax) in enumerate(DPL):
-                dy.qpos[Jy[jname(l, p, c, ax)]] = A[fr, li, k]
-                if p != "thorax": dp.qpos[Jp[jname(l, p, c, ax)]] = A[fr, li, k]; B[fr, li, k] = A[fr, li, k]
-        mj.mj_kinematics(my, dy)
-        for li, l in enumerate(LEG6):
-            cb = bid(mp, f"{l}_coxa"); tgt = dy.xmat[bid(my, f"{l}_coxa")].reshape(3, 3).copy(); ad = [Jp[f"c_thorax-{l}_coxa-{a}"] for a in AX]
-            def res(q):
-                dp.qpos[ad] = q; mj.mj_kinematics(mp, dp); return np.concatenate([(dp.xmat[cb].reshape(3, 3) - tgt).ravel(), 1e-4 * (q - qn[l])])
-            lo, hi = qn[l] - np.radians(45), qn[l] + np.radians(45); best = None
-            for k0, x0 in enumerate([qprev[l], qn[l]] + [lo + (hi - lo) * u for u in rng.random((6, 3))]):
-                s_ = least_squares(res, np.clip(x0, lo + 1e-6, hi - 1e-6), bounds=(lo, hi), xtol=1e-10, ftol=1e-10)
-                if best is None or s_.cost < best.cost - 1e-12: best = s_
-                if k0 >= 1 and best.cost < 1e-8: break
-            qprev[l] = best.x; dp.qpos[ad] = best.x; B[fr, li, :3] = best.x
-            R_ = dp.xmat[cb].reshape(3, 3).T @ tgt; aerr[fr, li] = np.degrees(np.arccos(np.clip((np.trace(R_) - 1) / 2, -1, 1)))
-        mj.mj_kinematics(mp, dp)
-        ferr[fr] = [np.linalg.norm(dp.xpos[bid(mp, f"{l}_tarsus5")] - dy.xpos[bid(my, f"{l}_tarsus5")]) * 1000 for l in LEG6]
-    print("step 1, the recording in our PITCH_ROLL_YAW order (the thorax-coxa angles fitted to the recorded coxa orientation, bounded to neutral +-45 deg):")
-    print("  coxa orientation error, deg: median " + " ".join(f"{l} {v:.1f}" for l, v in zip(LEG6, np.median(aerr, 0))) + "; p95 " + " ".join(f"{l} {v:.1f}" for l, v in zip(LEG6, np.percentile(aerr, 95, 0))))
-    print("  the foot (tarsus5 origin) off the recording's, um: median " + " ".join(f"{l} {v:.0f}" for l, v in zip(LEG6, np.median(ferr, 0))) + "; p95 " + " ".join(f"{l} {v:.0f}" for l, v in zip(LEG6, np.percentile(ferr, 95, 0))) + "; frames exact (< 1 um) " + " ".join(f"{l} {v * 100:.0f}%" for l, v in zip(LEG6, (ferr < 1).mean(0))))
-    A = B; FIT = dict(coxa_err_deg=aerr, foot_err_um=ferr)
-else: FIT = {}
-
-# step 2-3: smooth (MotionSnippet), loop, upsample
-w_ = int(0.03 * FPS); w_ += 1 - (w_ % 2); As = savgol_filter(A, window_length=w_, polyorder=3, axis=0).reshape(len(A), -1)
-n0 = len(As); cand = np.arange(int(0.8 * n0), n0); dist = np.sqrt(((As[cand] - As[0]) ** 2).mean(1)); E = int(cand[np.argmin(dist)])
-nb = max(1, int(round(args.blend_ms / 1000 * FPS))); Lp = As[:E].copy(); wgt = np.linspace(0, 1, nb + 2)[1:-1, None]; Lp[E - nb:] = (1 - wgt) * As[E - nb:E] + wgt * As[:nb]
-print(f"step 3, the loop: cut at frame {E} of {n0} ({E / FPS * 1000:.0f} ms), pose distance to frame 0 {np.degrees(dist.min()):.1f} deg rms over the 42 angles (the clip's own frame-to-frame step is {np.degrees(np.sqrt((np.diff(As, axis=0) ** 2).mean(1)).mean()):.1f}); the last {nb} frames ({nb / FPS * 1000:.0f} ms) crossfaded into the first")
-dt_phys = 1e-4; n_ms = int(round((args.warmup + args.replay_seconds) * 1000)); n_rep = int(round(args.replay_seconds / dt_phys))
-reps = int(np.ceil(args.replay_seconds * FPS / len(Lp))) + 2; Tl = np.tile(Lp, (reps, 1)); tg = np.arange(len(Tl)) / FPS
-TGT = interp1d(tg, Tl, kind="cubic", axis=0)(np.arange(n_rep) * dt_phys)   # (n_rep, 42), recording order (leg, dof)
+# ---- the recording (steps 0-3 in experiments/kin_clip.py)
+A, FPS, DPL, FIT, CLIP = load_clip("spotlight", args.axis_order, print=print)
+dt_phys = 1e-4; n_ms = int(round((args.warmup + args.replay_seconds) * 1000))
+TGT, n_rep, (E, nb, n0) = loop_targets(A, FPS, args.blend_ms, args.replay_seconds, dt_phys, print=print)
 
 # ---- the body, as body_loop.py builds it
 def limit_joints(jm, neutral_of):   # body_loop.py's, verbatim in effect
@@ -140,11 +87,7 @@ m.jnt_solref[:, 0] = 0.002; m.jnt_solimp[:, 0] = 0.99; m.jnt_solimp[:, 1] = 0.99
 assert abs(m.opt.timestep - dt_phys) < 1e-12, m.opt.timestep
 all_dofs = fly.get_jointdofs_order(); dof_name = lambda x: f"{x.parent.name}->{x.child.name}:{x.axis.value}"; all_idx = {dof_name(x): i for i, x in enumerate(all_dofs)}
 act_all = np.array([all_idx[dof_name(x)] for x in dofs])
-col = []   # the recording's (leg, dof) column for each actuated DOF
-for x in dofs:
-    l = x.child.name.split("_")[0]; p = "thorax" if x.parent.name == "c_thorax" else x.parent.name.split("_", 1)[1]; c = x.child.name.split("_", 1)[1]
-    col.append(LEG6.index(l) * 7 + DPL.index((p, c, x.axis.value)))
-col = np.array(col); TGT = TGT[:, col]
+col = clip_columns(dofs, DPL); TGT = TGT[:, col]
 lo_ = np.array([jm[x].range[0] for x in dofs]); hi_ = np.array([jm[x].range[1] for x in dofs]); out_ = (TGT < lo_) | (TGT > hi_)
 print(f"the body: {ORDER.name}, springs {STIFF:g} nN.m/rad, limits as body_loop.py, {len(dofs)} actuated DOFs by position (kp {args.kp:g}, clip +-{args.forcerange:g}), pads on tarsal contact; "
       f"targets outside the joint limits: {out_.mean() * 100:.1f} % of samples (" + ", ".join(f"{dof_name(dofs[i])} {out_[:, i].mean() * 100:.0f}%" for i in np.flatnonzero(out_.mean(0) > 0.01)) + ")")
@@ -177,11 +120,10 @@ for ms in range(n_ms):
     pad_on = FTN[ms] > 0.05; sim.set_leg_adhesion_states("nmf", pad_on)   # --adhesion contact --load-from tarsi
     if ms % 10 == 0: JA[ms // 10] = np.degrees(ang)
     for s in range(spm):
-        if ms < w0: tgt = q_set + (TGT[0] - q_set) * min(1.0, (ms + s / spm) / ramp)
-        else: tgt = TGT[min((ms - w0) * spm + s, n_rep - 1)]
+        tgt = target_at(TGT, q_set, ms, s, spm, w0, ramp, n_rep)
         if s == 0 and ms % 10 == 0: TA[ms // 10, act_all] = np.degrees(tgt)
-        q = np.asarray(sim.get_joint_angles("nmf"))[act_all]; u = args.kp * (tgt - q); sat += (np.abs(u) >= args.forcerange) & (ms >= w0)
-        sim.set_actuator_inputs("nmf", ActuatorType.MOTOR, np.clip(u, -args.forcerange, args.forcerange)); sim.step()
+        q = np.asarray(sim.get_joint_angles("nmf"))[act_all]; u, uc = position_law(args.kp, args.forcerange, tgt, q); sat += (np.abs(u) >= args.forcerange) & (ms >= w0)
+        sim.set_actuator_inputs("nmf", ActuatorType.MOTOR, uc); sim.step()
     P[ms] = sim.get_body_positions("nmf")[thorax]; Q[ms] = sim.get_body_rotations("nmf")[thorax]
     if ms % 10 == 0:
         _cf = np.asarray(sim.get_bodysegment_contact_forces("nmf", segs)); BODYF[ms // 10] = (float(F.sum()), float(np.abs(_cf[NONLEG, 2]).sum()))
