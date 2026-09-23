@@ -6848,3 +6848,37 @@ command, the lean, the tone), and nothing rhythmic yet. the campaign's coupling 
 the rhythm question returns to the cord, where every arm since 09-21 has found the 20 Hz subnet line and no step. the record's honest
 sentence for a stranger, today: a headless fly on a physics floor, driven by his own recorded brain, sits on his hind coxae with his
 legs under him, and the legs twitch in bouts that any noisy drive at the same rates would make.
+
+## his feet under him (13:02 PDT, 09-23; commit f1fb78e: the physics fix order as options, every default bit for bit: `--load-from leg|tarsi`,
+`--hind-map v1|v2`, `--start-pose neutral|feet`, `--stiffness sourced` (= 20 nN.m/rad: 1 model unit = g.mm^2/s^2 = 1e-9 N.m, so 2e-8
+N.m/rad = 20); the standing line now reads feet / other leg segments / body, saved per ms as `tarsal_force`, `other_leg_force`,
+`body_force`; the full stack under the recorded command, seed 11, 30 s)
+
+| | (a) as the clips were | (b) tarsal load, hind map v2, feet down | (c) + the sourced springs (20) | (d) as (c), DNg100 60 Hz |
+|---|---|---|---|---|
+| feet / other leg segments / body, uN of 10.05 | 4.39 / 4.84 / 0.69 | 6.34 / 2.89 / 0.43 | **9.65 / 0.29 / 0.03** | 10.04 / 0.02 / 0.00 |
+| thorax height, mm (min) | 0.75 (0.50) | 0.70 (0.52) | 0.81 (0.57) | 0.84 (0.64) |
+| tarsal load per leg (lf lm lh rf rm rh) | .55 .09 1.01 1.25 .18 1.30 | .87 .19 1.66 1.53 .26 1.84 | 1.40 .32 2.83 2.30 .55 2.24 | 1.32 1.25 2.34 2.06 1.04 2.03 |
+| coxa-and-femur share over the run | 37-57 % | 18-42 % | 1-6 % | 0 % |
+| lifts lm / rm (in-bout gap, cv) | 69 / 81 (188 / 194 ms, 0.30 / 0.25) | 52 / 58 (208 / 195) | 83 / 74 (176 / 174, 0.32 / 0.34) | 4 / 27 (194, 0.31) |
+| lifts lh / rh | 8 / 1 | 5 / 8 | 0 / 0 | 1 / 1 |
+| hind Tr flexor (levator) Hz per cell, lh / rh | 0.00 / 0.38 | 0.00 / 0.28 | 0.00 / 0.39 | 0.00 / 0.01 |
+
+- **(a) is the honest reading of every clip nate has:** about half his weight on coxae, femora and tibiae (the left hind mostly), 4.4 uN
+  on his feet, where the old line said "7 % on the floor". **(c) is him standing:** on the sourced springs, six tarsi loaded (1.3-2.8 uN
+  each), the coxae and femora carrying 0.3 uN, 0.03 on his body, thorax at 0.81 mm; under the tonic neuron at 60 Hz (d) the coxa share
+  is zero throughout. the settle before the warm-up (0.5 s of physics, no torque, pads off) is what puts the feet down; at stiffness 10
+  the hind coxae still end on the floor (review P2), at 20 nothing but tarsi touches.
+- **the bouts go on** on the middle legs at 175-210 ms in every arm (the body's, as the Poisson control says), and **the hind legs still
+  do not lift with their coxa pitch driven and their load read honestly (0 / 0 in (c)): the hind levators (the trochanter flexors) are
+  silent in every arm, 0.00 Hz on the left hind,** with MNhl62 (a promotor by A2, now on coxa pitch) at 25-31 Hz there. by the review's own
+  test, that silence is the cord's, not the body's.
+- the caveats the agent kept: moving the hind protract role to coxa pitch makes the protractors push the body up (MNhl62 at 30 Hz is part of
+  why (c) sits higher than the passive settle); joining cells rescale their size-proxy groups; MNhl59, the largest and busiest hind motor
+  neuron, stays unmapped (A2's low confidence); "sourced" is the printed number and on it he stands with no muscle at all, which the
+  paper's headline (a fly cannot stand on passive stiffness) contradicts, so the spring's value is bracketed, not settled (ledger 21).
+- clip: `world/body/loop/feet_c.mp4`.
+
+**where the day ends.** he stands on his feet on the sourced springs with the connectome setting his posture; his middle legs twitch in
+bouts the body makes; his hind legs never lift because the cord never drives their levators; nothing rhythmic is the connectome's yet.
+the rhythm goes back to the cord with the body honest for the first time: the next arms are the cord's own, on this body.
