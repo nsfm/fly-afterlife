@@ -7081,3 +7081,27 @@ inhibiting it and **IN07B001 / IN07B002 (531 / 459) and INXXX025, IN19A012 excit
 carriers, silent in every arm (IN07B002 0.0 Hz on 09-22 with 5,074 synapses onto the 13A inhibitors and 4,987 onto IN19A004). so the
 levator burst the puppet says a step needs would come from IN21A010, which is driven by the 07B intersegmental cells, which nothing we
 give the cord wakes. their inputs are censused beside this.
+
+**the descending neurons that reach the chain (14:18 PDT; DNp38 (2 cells, onto IN07B002 with 691 synapses) and DNge049 (2 cells, onto IN19B012
+with 983) driven at 100 Hz beside DNg100, and DNp38 alone; the same stack; the levator chain read):**
+
+| command | middle levators Hz (>=3-spike frames) | IN21A010 | IN07B002 | IN07B001 | IN19B012 | IN17A001 | IN19A004 | IN16B016 |
+|---|---|---|---|---|---|---|---|---|
+| DNg100 | 1.2 (0.8 %) | 0.1 | 0.0 | 0.0 | 3.4 | 14.4 | 25.6 | 29.5 |
+| DNg100 + DNp38 | 1.2 (1.4 %) | 0.2 | **17.8** | 8.5 | 3.2 | 13.6 | **37.0** | 30.6 |
+| DNg100 + DNge049 | 1.8 (1.2 %) | 0.0 | 0.0 | 7.6 | **23.2** | 8.4 | 12.3 | **39.9** |
+| all three | 1.7 (1.5 %) | 0.0 | 18.4 | 5.0 | 18.7 | 8.5 | 29.1 | 38.0 |
+| DNp38 alone | 0.1 | 0.0 | 21.2 | 0.1 | 0.0 | 0.1 | 26.2 | 0.1 |
+
+DNp38 wakes IN07B002 (18-21 Hz) and IN07B002 wakes IN19A004, the levators' inhibitor, more than anything else (4,987 synapses: 25.6 -> 37
+Hz); DNge049 wakes IN19B012, Pugliese's E3, to 23 Hz, and IN16B016, the levators' other inhibitor, to 40. IN21A010 stays at zero under
+every command. **every descending route into the levator chain that the file offers also feeds the levators' inhibitors, and feeds them
+more.** the middle legs' levators sit at 1-2 Hz under DNg100 with DNp38, with DNge049, with both, and with their four inhibitors silenced
+they burst slowly at 6 Hz without the subnet's rhythm. so the per-leg generator's output stage, as the file wires it, is lidded under any
+tonic descending drive we can compose: its excitors and its inhibitors share their inputs, and the inhibitors win by the synapse count.
+what would lift the lid is a phasic input the inhibitors do not share, and a headless fly's only phasic inputs are its legs' senses,
+which this week's arms say shape the pattern and do not make it. **where the cord stands at the end of day two:** the step's motor burst
+is a documented chain (levators <- IN21A010 <- 07B <- the subnet and DNs) with a lid at every stage, and the file at its weights does not
+open it. this is the honest ceiling of the headless preparation as we can run it, and the next question is what the fly does that we
+do not (Sapkal's headless flies step under DNg100; ours holds a posture under it), which is a question about the file's weights on this
+chain, not about anything downstream.
