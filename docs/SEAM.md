@@ -6413,3 +6413,26 @@ in both; the flexor tone at this rate changes neither. the small cells sit at -0
 the campaign's first night ends:** the slow flexors fire at rest, on the body, in the right order, from three sourced changes and one
 stated assumption, at a fortieth of Azevedo's rate; the rest of the tone is the cell's own and is item 4's; the standing is the springs';
 the command as one tonic neuron knocks him down; no step, no rhythm, no claim about walking.
+
+## day two (10:22 PDT, 09-23): the recorded population on the honest body
+
+**the arm:** `--senses v2`, the graded flexor labelling with synapses and noise at the resistance ratio, shunting inhibition (70:-5:-5 each),
+springs, pads, the loop closed, 20 s, seed 11; the command = the whole fly's own descending output recorded on 09-22 (`world/record/
+dn_census_0922`: 1,306 DN cells, 60 s, 3.9 Hz per cell mean) replayed onto the cord's DNs, beside DNg100 tonic at 100 Hz and rest.
+
+| arm | on the floor | leg MN Hz | extensors | lifts (lf, 18 s) | coxa fwd frac | lf coxa rhythm | flexors small / mid / large |
+|---|---|---|---|---|---|---|---|
+| playback, labels swapped | 2 % | 1.06 | 3.4 | 17 | 0.71 | 1.2 Hz (drift) | 0.89 / 0.00 / 0.0 |
+| playback, as printed | 31 % | 1.66 | 12.1 | 11 | 0.18 | 1.5 (drift) | 1.00 / 0.00 / 0.0 |
+| DNg100 tonic, swapped | 7 % | 1.23 | 2.1 | 10 | 0.60 | 2.0 (drift) | 1.19 / 0.03 / 0.0 |
+| rest, swapped | 0 % | 0.12 | 0.1 | 0 | - | 1.1 (sd 1 deg) | 0.68 / 0.10 / 0.0 |
+
+**he stands under the recorded population** (2 % of his weight on the floor with the labels swapped; 31 % as printed, the extensors at 12 Hz
+splaying him) with the small flexors' tone on and the middle and large thirds silent, and the left front foot lifts 17 times in 18 s, the
+coxa swinging forward on 0.71 of them. no rhythm in any coxa (every spectrum peaks at 1-2 Hz, drift). the tonic DNg100 with the shunt on
+also stands (7 %) where without the shunt it lay him down (86-94 % last night): **the shunt is what keeps him up under a command,** in both
+forms of it. the recorded population does not walk him; it stands him with occasional forward lifts, the same as one tonic neuron with
+the shunt. what it changes: the extensors 2.1 -> 3.4 Hz and the lifts 10 -> 17 in the swapped labelling. the standing is still the
+springs' (rest: 0 %, leg MNs 0.12 Hz). one seed; the sourced population (agent) will say which DNs in the recording carry walking and at
+what rate, and whether the playback's 3.9 Hz mean is a standing fly's or a walking one's (the recording was the whole fly in its garden,
+mostly standing).
