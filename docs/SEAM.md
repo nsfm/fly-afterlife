@@ -6636,3 +6636,12 @@ rhythm in this project that the connectome makes with its body and nothing else.
 before): he holds every foot off the ground for the whole run (100 % off on all three legs read, 18 % of his weight on the floor) and
 makes no lift at all. so the bouts need the senses in the loop AND the cord in the loop: a leg that cannot feel itself does not step, a
 cord that cannot move the leg does not step, and a leg that can do both steps at five hertz on its own. the reflex has its two halves.
+
+**what the reflex is made of, first pass (11:37 PDT; the bouts arm, seed 11, cells silenced by threshold; `--silence` added to `body_loop.py`):**
+the eight cited subnet cells silenced (48 cells): lf 35 lifts at 192 ms, lm 62 at 195, rm 53 at 213: **the bouts do not need the 20 Hz
+subnet** (it bursts with each lift; it does not make them). the 13A inhibitors IN13A002 / 003 / 005 silenced (18 cells): lf 51 / lm 73 / rm 77
+at 192-209 ms, the extensors 4.1 -> 2.9: **not needed either,** more lifts without them. the hook cells (SNpp39 / 41) "silenced": the run
+is bit for bit the control, because the hooks are driven rows and the threshold cannot touch a driven cell (the flag says so); the
+senses are removed by their own rates instead (`--hook-hz 0`, `--claw-hz 0`, `--leg-load-hz 0`, `--tactile-hz 0`), running next. what
+stands: the reflex runs through the leg's senses and the cord's motor side without the rhythm subnet and without the premotor
+inhibitors the campaign spent two days on.

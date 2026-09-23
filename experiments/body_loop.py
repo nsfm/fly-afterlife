@@ -28,6 +28,7 @@ from flygym import Simulation
 ap = argparse.ArgumentParser()
 ap.add_argument("--log-x", default="", help="extra cell types logged at 1 ms into the cells file as x_ms / x_type / x_bodyId (09-23, the movement-senses read); off by default, no effect on the run")
 ap.add_argument("--freeze-mn", type=float, default=0.0, help="hold every muscle activation (torque and grip) at its value at this many seconds, and stop feeding spikes into it (09-23, the control for the per-leg five-hertz bouts: the cord out of the loop); 0 = off")
+ap.add_argument("--silence", default="", help="comma-separated types whose threshold is put out of reach (no effect on driven cells); as in world/cord.py")
 ap.add_argument("--out", required=True); ap.add_argument("--seconds", type=float, default=20.0); ap.add_argument("--seed", type=int, default=11)
 ap.add_argument("--wsyn-m", type=float, default=0.185); ap.add_argument("--noise", type=float, default=0.15)
 ap.add_argument("--walk", type=float, default=100.0); ap.add_argument("--walk-dn", default="DNg100"); ap.add_argument("--std", default="off"); ap.add_argument("--mirror", default="off")
@@ -173,6 +174,8 @@ apply_size(M, args)   # (campaign item 3, 09-23) as in world/cord.py; here after
 M.driven[:] = False
 for cl in M.SENSORY_CLASSES: M.driven[M.cls == cl] = True
 for rc in REG.classes: M.driven[rc.cells] = True
+if args.silence:
+    _sil = np.flatnonzero(np.isin(mty, [x for x in args.silence.split(',') if x])); M.v_th[_sil] = np.float32(1e6); print(f"silenced {len(_sil)} cells of {args.silence} (driven cells unaffected)")
 M._driven_idx = np.flatnonzero(M.driven); M.reset()
 
 # ---- the body
