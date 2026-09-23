@@ -32,7 +32,9 @@ this is the plan and the ledger of what we changed on the fly to get there.
    700 / 300 / 150 MOhm for slow / intermediate / fast, and **the slow cells fire ~30 Hz at rest** (ours 0.00). thresholds and taus unmeasured
    for any leg MN; extensors never recorded. RUN 09-22: every flexor at the slow rest (3 mV to threshold, x2.3 input): 0.14 Hz under the
    command, 2.7 with the load off; the cells sit far under rest because inhibition here hyperpolarises without bound. the target needs 2b.
-2b. **reversal potentials.** GABA-A and GluCl reverse near rest in the fly (`knobs.md`): inhibition is a shunt, not a current. the engine
+2b. **reversal potentials.** LANDED 09-22 (44a16b8, dcfbf9f; `--syn-rev 70:-5:-5 --syn-rev-hold each`). the as-built `ach` hold loses inhibition
+   fourteen-fold and runs the cord away; `each` holds every PSP at rest and shunts. it lifts the cells the winner held deep by 2-3 mV and halves
+   the flexors when the senses are on; not the flexors' lever. **original note:** GABA-A and GluCl reverse near rest in the fly (`knobs.md`): inhibition is a shunt, not a current. the engine
    subtracts inhibitory current without limit, which is why fourteen-to-one inhibition parks the flexors where no threshold reaches them.
    an engine term: inhibitory (and excitatory) conductances to reversal potentials, off by default, oracle. NEXT, after item 2 lands.
 4. **plateau potentials and rebound on named cells.** rebound is in the engine (off); plateaus are not. stick-insect walking runs on them.

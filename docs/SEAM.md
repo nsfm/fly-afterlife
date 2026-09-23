@@ -6278,3 +6278,34 @@ bristles are not driven at all, the hair plates are inside the load row. **the e
 claw from |angle - 90 deg| by class, hair plates from coxa angle near its limits (a stand-in, rate unsourced), the leg's tactile cells at
 a rate while its foot's contact force is above the pads' threshold (onset burst, then tonic; rates unsourced, ledger 7). every row
 labelled; the default stays as it was so every run of record reproduces.
+
+## the three sourced changes together (23:45 PDT; the cord, seed 11, 30 s; the standing senses = the floor on campaniform + hair plates, club /
+hook / unclassified chordotonal at 0, the flexion claw class (SNpp51 as labelled) at 40 Hz, the six tactile types at 20; Azevedo = every tibia
+flexor's threshold at 3 mV (slow rest) with its synapses x2.3 (700 vs ~300 MOhm); rev = reversal potentials 70:-5:-5 held each; membranes
+logged)
+
+| arm | Ti flexors Hz (membrane) | Ti extensors | IN13A002 | IN13A006 | IN03A004 |
+|---|---|---|---|---|---|
+| control (floor as built) | 0.00 (-1.53 mV) | 8.0 | 52 | 0.1 | 0.1 |
+| rev alone | 0.00 (-0.61) | 3.7 | 49 | 0.2 | 0.0 |
+| rev + Azevedo | 0.33 (-0.80) | 3.7 | 49 | 0.2 | 0.0 |
+| senses alone | 2.30 (-0.05) | 2.8 | 0 | 21.4 | 12.7 |
+| senses + rev | 0.51 (+0.17) | 1.8 | 0 | 10.3 | 7.2 |
+| senses + rev + Azevedo | 3.25 (+0.02) | 1.6 | 0 | 10.1 | 7.3 |
+| senses + rev + Azevedo + gain | 8.66 (-0.03) | 1.6 | 0 | 10.3 | 6.9 |
+| **senses + Azevedo + gain (no rev)** | **14.22** (-0.69) | 2.7 | 0 | 21.4 | 12.6 |
+| senses + rev + Azevedo + gain, at rest | 11.85 (+0.20) | 0.0 | 0 | 15.9 | 9.2 |
+
+- **the order matters and it is the senses first.** with the floor as built nothing moves the flexors (rev + Azevedo: 0.33 Hz); with the
+  standing leg's own senses they reach 2.3, and Azevedo's rest and resistance on top take them to 14.2 Hz per cell under the command,
+  five times the extensors, and 11.9 at rest with shunting on. **Azevedo's slow flexors at ~30 Hz at rest is within a factor of two to
+  three, from three changes each with a source, none of them aimed at a step.**
+- **shunting inhibition halves the flexors here** (14.2 -> 8.7) rather than freeing them: with the senses on, the flexion side's inhibition
+  is already small and the shunt also weakens the excitation's reach (a conductance to +70 from near rest is today's EPSP, and the
+  reversal term's inhibition grows as the cell depolarises). it does what it should for the cells the winner held deep (IN13A006 from
+  -5.1 to -2.1 mV under the control; the excitors from -6.6 / -4.1 to -3.1), which is the argument for keeping it; it is not the flexors' lever.
+- **caveats, all of them:** every tibia flexor is labelled slow here (the pool is a third slow by size rank; the graded labelling is running);
+  the claw class is as printed and the whole result flips with the labels (ledger 1); the sensory rates are chosen (ledger 7); the
+  accessory flexors stay at 0.00 in every arm; the extensors fall to 1.6-2.7 Hz, which is a standing fly's extensors going quiet, not a
+  gait; no alternation anywhere (antagonist -0.3 is the shared 20 Hz line, lag read earlier). seeds 12 / 13 and the graded labelling
+  are beside this. the same senses go onto the body next (`--senses v2`).
