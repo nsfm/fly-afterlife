@@ -18,6 +18,7 @@ sys.path.insert(0, "ref/flybrain/scripts"); sys.path.insert(0, "world"); sys.pat
 from flysim import Params
 from fastlif import FastFlyBrain, SYN_TAU_HELP, SYN_REV_HELP, SYN_REV_HOLD_HELP
 from fly_afterlife.receptors import Registry, ReceptorClass, Scaled, Transducer, tonic_floor
+from fly_afterlife.size import add_size_args, apply_size
 import mujoco as mj
 from flygym.utils.math import Rotation3D
 from flygym.compose import NeuroMechFly, FlatGroundWorld, ActuatorType, KinematicPosePreset
@@ -51,6 +52,7 @@ ap.add_argument("--syn-rev", default="", help="as in world/cord.py: " + SYN_REV_
 ap.add_argument("--syn-rev-hold", default="ach", help="as in world/cord.py: " + SYN_REV_HOLD_HELP)
 ap.add_argument("--log-v", default="", help="as in world/cord.py: comma-separated types whose mean membrane (mV re rest) is logged per ms as v_ms / v_types in <out>.cells.npz; off by default")
 ap.add_argument("--graded", default="", help="graded (non-spiking) units as in world/cord.py: PREFIXES:GAIN[:V1] or random:N:GAIN")
+add_size_args(ap)   # --size-gain --size-thr --size-noise --size-clip --size-from, as in world/cord.py (src/fly_afterlife/size.py, one block for both)
 ap.add_argument("--slow-init", type=float, default=0.0, help="set him down standing: for this many seconds after the warm-up the load term is clamped to at least standing (F_stand) on every leg, so the load reflex and the stand-in start engaged; then the body's own load. an initial condition, labelled (0 = off)")
 ap.add_argument("--gain", type=float, default=42.0); ap.add_argument("--sat", type=float, default=10.0); ap.add_argument("--alpha", type=float, default=1.2); ap.add_argument("--stiffness", type=float, default=None)
 ap.add_argument("--tethered", action="store_true", help="the tethered preparation (nate, 09-22: propped up): the thorax fixed in space, the legs free, no floor and no load; the position loop still closes"); ap.add_argument("--gravity", type=float, default=1.0, help="scale on gravity (0.1 = a tenth of his weight; a graded prop-up, diagnostic)")
@@ -162,6 +164,7 @@ SLOW_BY_LEG = {leg: np.array([j for j in SLOW if legof[j] == leg], np.int64) for
 SWING = ("Tr flexor MN", "Acc. tr flexor MN", "Ti flexor MN", "Acc. ti flexor MN", "Tergopleural/Pleural promotor MN", "Sternal anterior rotator MN")
 SWING_BY_LEG = {leg: np.array([j for j in LEGMN if mty[j] in SWING and legof[j] == leg], np.int64) for leg in LEG6}
 if args.slow_mv > 0: print(f"standing tonus as a current: {sum(len(v) for v in SLOW_BY_LEG.values())} stance MNs at {args.slow_mv} mV x load" + (f"; co-contraction: the swing MNs at {args.cocon} x that" if args.cocon > 0 else ""))
+apply_size(M, args)   # (campaign item 3, 09-23) as in world/cord.py; here after insyn is read above, so the motor force weights (f_w) and the slow set stay the file's synapse counts and the size terms change excitability only
 M.driven[:] = False
 for cl in M.SENSORY_CLASSES: M.driven[M.cls == cl] = True
 for rc in REG.classes: M.driven[rc.cells] = True
