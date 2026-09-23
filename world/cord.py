@@ -29,6 +29,7 @@ ap.add_argument("--std-tau", type=float, default=None, help="override the engine
 ap.add_argument("--floor", dest="floor", action="store_true", default=True); ap.add_argument("--no-floor", dest="floor", action="store_false")
 ap.add_argument("--leg-load-hz", type=float, default=15.0, help="the floor's rate on the leg proprioceptors (standing load)")
 ap.add_argument("--silence", default="", help="comma-separated types whose threshold is put out of reach (no effect on driven cells)")
+ap.add_argument("--log-ms", action="store_true", help="also log the logged cells per engine step (1 ms) as ms_counts in <out>.cells.npz (a 25 Hz rhythm is 4 bins at the 10 ms frame)")
 ap.add_argument("--log-types", default="", help="comma-separated types to log per frame (default: every leg motor neuron type)")
 ap.add_argument("--warmup", type=float, default=2.0, help="seconds before the walking command comes on (the cord at rest under the floor)")
 ap.add_argument("--pulse", default="", help="the command with a time course: HZ[:DUTY] square-wave gating of the walking command (e.g. 3:0.5); in life the command is never a steady rate; a diagnostic")
@@ -131,6 +132,7 @@ else:
 LC = np.flatnonzero(np.isin(mty, _lt)); print(f"logging {len(LC)} cells of {len(_lt)} types")
 
 n_frames = int(round(args.seconds * fps)); FR = np.zeros((n_frames, len(LC)), np.int16); ALL = np.zeros(n_frames, np.int32)
+MSC = np.zeros((n_frames * SPF, len(LC)), np.int8) if args.log_ms else None
 state = {"walk_gain": 0.0}
 for f in range(n_frames):
     t = f / fps; state["walk_gain"] = 1.0 if t >= args.warmup else 0.0
@@ -139,14 +141,16 @@ for f in range(n_frames):
     if args.shock: state["shock_gain"] = 1.0 if args.warmup <= t < args.warmup + float(args.shock.split(":")[0]) else 0.0
     REG.apply(M, state, t, 1.0 / fps)
     acc = np.zeros(M.N, np.int32)
-    for _ in range(SPF): M.step(); acc[M.last_idx] += 1
+    for k_ in range(SPF):
+        M.step(); acc[M.last_idx] += 1
+        if MSC is not None and M.last_idx.size: MSC[f * SPF + k_, np.searchsorted(LC, M.last_idx[np.isin(M.last_idx, LC)])] += 1
     FR[f] = acc[LC]; ALL[f] = acc.sum()
     if f % (10 * fps) == 0 and f: print(f"t={t:5.1f}s  cord {ALL[f - 10 * fps:f].mean() * fps / M.N:.2f} Hz/cell  leg MN {FR[f - 10 * fps:f].mean() * fps:.2f} Hz/cell  ({time.time() - t0:.0f}s)")
 
 nc = n_frames // CH; counts = FR[:nc * CH].reshape(nc, CH, -1).sum(1)
 os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)
 np.savez_compressed(args.out.replace(".npz", "") + ".cells.npz", cells=LC, bodyId=M.bodyId[LC], type=mty[LC], side=mns[LC], counts=counts.astype(np.int32),
-                    pose_chunk=np.zeros((nc, 3), np.float32), frames=FR, pose_frame=np.zeros((n_frames, 3), np.float32), cord_hz=ALL.astype(np.int32))
+                    pose_chunk=np.zeros((nc, 3), np.float32), frames=FR, pose_frame=np.zeros((n_frames, 3), np.float32), cord_hz=ALL.astype(np.int32), **({'ms_counts': MSC} if MSC is not None else {}))
 np.savez_compressed(args.out, fps=fps, chunk=CH, cord_spikes=ALL, args=np.array(str(vars(args))))
 w = FR[int(args.warmup * fps):]; print(f"done in {time.time() - t0:.0f}s: after the warm-up, cord {ALL[int(args.warmup * fps):].mean() * fps / M.N:.2f} Hz/cell, leg MN {w.mean() * fps:.2f} Hz/cell, {int((w.mean(0) * fps > 1).sum())} of {len(LC)} leg MNs above 1 Hz")
 print("wrote", args.out.replace(".npz", "") + ".cells.npz")

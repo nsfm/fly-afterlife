@@ -5638,3 +5638,47 @@ cord's negative results stand; the body loop's are remade.** fixes, in the revie
   checked against a planted 10-15 Hz oscillation. **the burden is on the engine, not the wiring.**
 
 **oracle (18:34 PDT), the engine with graded units present and off: PASS, v1 + v2, eight configurations, none differing (read from the log). committed.**
+
+## the loop rings (18:40 PDT; the review's item 5: "the loop cells at Pugliese's LIF weight alone")
+
+**the published rhythm cells under DNg100 in our cord, as they are:** IN17A001 17.8 Hz per cell, INXXX466 20.3, IN16B036 5.2, IN19A007 21.7,
+IN03A006 15.6, INXXX464 10.8, IN12B003 37.8, IN09A002 40.5 (the reviewer's prediction: IN09A002, the motif's sink, loudest). their pooled
+autocorrelations have the refractory trough at 20-30 ms and nothing after it: active, not ringing. the coxa rescored at rhythm lags
+(`experiments/coxa_rhythm.py`: promotor vs remotor pools per leg, cross-correlation over +-150 ms, autocorrelation lobes, spectra against a
+phase-shuffled null): no lobe, no antiphase, the spectral peaks at the null's level. **the cord at 0.185 mV does not ring.**
+
+**size-scaled excitability** (`--size-gain A`: synapses onto cell i x (S_med / S_i)^A; `--size-thr B`: v_th = 7 x (S_i / S_med)^B; S = input
+synapses, the size proxy this file has): at the record's constant it starves the large cells that carry the cord's activity (leg MNs
+1.65 / 0.45 / 0.40 Hz at A 0.25 / 0.5 / 1.0; the threshold form the same) and no rhythm; with the constant raised to 0.275-0.37 the cord
+comes back tonic (leg MNs 2-12 Hz), no lobe anywhere. Pugliese's necessary ingredient, in this LIF at these exponents, is not sufficient.
+
+**the loop's own synapses** (`--edge-scale DNg100,IN17A001,INXXX466,IN16B036:F`: the 44 synapses among the four types scaled by F; 1.49 = the
+published LIF weight 0.275 on the loop with the rest at 0.185):
+
+| loop weight x | DNg100 | IN17A001 / INXXX466 / IN16B036 Hz | their autocorrelation at 70 / 140 / 210 ms | spectral peak |
+|---|---|---|---|---|
+| 1 (the record) | 100 Hz | 18 / 20 / 5 | -0.30 / -0.12 / -0.02 (the refractory trough only) | none |
+| 1.49 | 100 | 23 / 28 / 10 | -0.21 / +0.05 / - | none |
+| **3** | 100 | 35 / 52 / 28 | **-0.29 / +0.10 / -0.04** | 22 Hz x44 |
+| 5 / 8 / 12 | 100 | 41-47 / 67-71 / 52-91 | -0.25 / +0.05-0.09 / 0 | 22-23 Hz x50-86 |
+| 3 | 200 | 48 / 69 / 34 | -0.30 / -0.07 / +0.19 | 24 Hz x133 |
+| **3** | **400** | **63 / 87 / 40** | **-0.15 / -0.45 / +0.18** | **25.0 Hz x270** |
+| 5 | 400 | 67 / 97 / 70 | +0.14 / -0.28 / -0.28 | 26 Hz x363 |
+
+- **at three times the constant on its own 44 synapses, under the high dose, the published loop rings.** logged at 1 ms (`--log-ms`): a
+  25.0 Hz oscillation in IN17A001 (x480 the band median), INXXX466 (x702), IN16B036 (x288), with IN19A007 (x232) and **IN09A002, the flexor
+  inhibitor, ringing with them (x368)**; the autocorrelation -0.18 at 20 ms, +0.19 at 40 ms, -0.15 at 60, +0.16 at 80: a clean 40 ms period.
+  **seeds 10 and 12: 24.9 Hz, x393 and x386.** the first oscillation-shaped autocorrelation in this cord in two days, on the cells the field
+  named, by the change the review ranked.
+- the period is the loop's: three synapses at the engine's 3 ms effective delay plus the membrane's rise, ~40 ms round the ring, hence
+  25 Hz, above Pugliese's 7-15 (a rate model with tau 20 ms; their linearised minimal circuit gave 14).
+- **what reaches the muscles:** the left front leg's promotor pool carries the 25 Hz (x104 the median at 1 ms; the right front x23, the mid
+  legs nothing) at 28 Hz per cell, but its promotor and remotor pools do not alternate (cross-correlation within +-0.03 at every lag): the
+  rhythm arrives on both sides of the coxa in phase. the flexors stay at 0.04. on the body (`body_six`, a replay on flygym's springs) the
+  coxa torque's spectrum peaks at 5 Hz: the twitch kernel (decay 20 ms) low-passes a 25 Hz drive to a flutter, and he turns 92 deg on the
+  spot as before.
+- so: the rhythm generator the field found is in this file and rings in this engine once its own synapses are strong enough; at the
+  uniform constant it does not, which is the narrow negative the review asked for. what it does not yet do is alternate the coxa or reach
+  the knee, and at 25 Hz it is faster than a leg can follow. next, in the cord: the ring's frequency against the delay and the membrane
+  constant (a 1.8 ms delay at a finer tick will make it faster still; a slower loop needs what Pugliese's tau gives), and the second ring
+  (INXXX464 <-> IN19A007) at the same scaling; and the body loop's three fixes so a ringing cord has legs to reach.
