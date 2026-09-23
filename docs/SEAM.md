@@ -7234,3 +7234,26 @@ other legs; 30 spikes minimum)
   hertz, where the hold side's 13A cells lock at 15-50 Hz. the asymmetry is gain, not absence. that is the most specific thing the week
   has said about the gap: the excitation that would time a step exists, phase-correct, at a hundredth of the rate it would need.
   one seed, one labelling (swapped), the interneurons read against one leg's cycle; the per-leg read and the as-printed labelling follow.
+
+## the claw pinned (15:31 PDT, 09-23; `docs/physiology/claw_and_13A.md`, agent; the second of tonight's reads)
+
+**SNpp50 is the flexion-tuned claw and SNpp51 the extension-tuned one: the `50flex` labelling, the arms in which he stood.** no paper names
+the SNpp types (Marin 2024 calls both "FeCO claw"); the call is from the file's own wiring against two FANC papers that identified the
+claw-flexion and claw-extension axons: Lee 2025's rule (flexion-sensing claw axons excite the tibia extensor motor neurons and inhibit
+the flexors) holds in our file only with SNpp50 as flexion (SNpp50 -> Ti extensor 470 synapses, -> Ti flexor 18; SNpp51 -> flexor 360, ->
+extensor 5), and Syed 2026's 13A version holds the same way (SNpp50 -> IN13A002 4,612 -> the flexors 900; SNpp51 -> IN13A006 906 -> the
+extensor 2,261), with Marin's effective connectivity and the cell counts (1.9 : 1 here, 1.6 : 1 in FANC) agreeing; the one contrary sign
+(13B) dissolves because the 13B cells SNpp50 feeds reach no tibia motor neuron. **confidence 85-90 %, from wiring alone** (no SNpp cell has
+been recorded; the motif is assumed the same in the male file and FANC's female front legs). nobody has recorded a 13A cell in a walking
+fly; the inference (13A flexor-inhibitors fire in the leg's extension phase: stance in the hind legs, late stance in the middle, swing in
+the front; the stick insect's flexors are inhibited while its extensor bursts, Schmidt 2001) matches the listening arm's stance lock
+under `50flex`. **`50ext` is positive feedback at every knee** (the extensors ran away at 13-16 Hz and he splayed): those arms are a sign
+error, kept as a control. what would settle it: the SNpp50 / 51 axons against Mamiya 2018's sub-branches or NBLAST against Lee 2025's
+FANC claw axons; a recording. **ledger row 1 is pinned at 85-90 %.**
+
+**corrected in place (the cord arms of 09-22 22:48-23:20, "the standing leg's own senses"):** those arms drove SNpp51 at 40 Hz as "the
+flexion claw of a flexed tibia"; SNpp51 is the extension-tuned class, so they were an EXTENDED tibia's senses. what they showed still
+stands as measured (SNpp51 wakes IN13A006 and the flexion side; SNpp50 wakes IN13A002 and the extension side), and now reads as the knee's
+negative feedback in both directions: an extended knee's claw inhibits the extensor and wakes the flexor side; a flexed knee's claw
+inhibits the flexors. the labels in those entries ("flexion claw" for SNpp51) are wrong; the physiology they describe is right and is the
+resistance reflex. the body arms ran `50flex` throughout and are right. ledger row 7's rate stays a choice.
