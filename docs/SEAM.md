@@ -7180,3 +7180,37 @@ rolled-train null (20 draws, 95th percentile); 30 s, seed 11; five arms: (a) DNg
   holds the leg down, and not on the side that lifts it, at the file's weights. the same asymmetry as the levators' wiring (a tenth on the
   front and hind) and the flexors' drive (fourteen to one), seen a third way. one seed; the clip's 2 s loop repeats fourteen times, so the
   steps are not independent; the pools' phases are quantised to 10 ms.
+
+## completeness by cell size (15:19 PDT, 09-23; the first of tonight's reads: input synapses per cell in `brain_cord.npz` against Pugliese's
+cell volumes for the 3,693 front-leg cells with both; log-log fit and residuals by pool)
+
+log10(inputs) = 0.64 log10(volume) - 3.37, residual sd 0.70 dex; the volume quintiles' mean residuals -0.12 / +0.03 / +0.12 / +0.09 /
+-0.11 (small to large): **no drop for small cells.** by pool, residual as a factor on the fit:
+
+| pool | n | volume median (Mvox) | inputs per cell | against the fit |
+|---|---|---|---|---|
+| levators (Tr flexor + acc) | 20 | 994 | 193 | x0.94 |
+| Ti flexor MN | 10 | 1,703 | 335 | x0.98 |
+| Acc. ti flexor MN | 18 | 1,094 | 275 | x0.87 |
+| depressors (Tr extensor + sternotrochanter) | 8 | 2,827 | 3,973 | **x6.5** |
+| Ti extensor MN | 4 | 3,203 | 3,640 | **x8.0** |
+| promotors | 12 | 3,593 | 6,892 | **x11.0** |
+| remotors | 10 | 2,063 | 4,246 | **x8.8** |
+| 13A interneurons | 133 | 740 | 425 | x1.6 |
+| 21A (the flexor excitors' lineage) | 121 | 564 | 307 | x2.1 |
+| IN21A010 | 2 | 2,864 | 3,113 | x6.7 |
+| IN17A001 | 2 | 4,832 | 6,925 | x10.7 |
+| the lift side, named (levators, flexors, their excitors) | 65 | 1,244 | 451 | x1.4 |
+| the hold side, named (extensors, depressors, 13A, 12B, 19A004, 16B016, 19A008) | 26 | 3,203 | 3,686 | **x5.7** |
+
+**the lift side is wired as its size predicts; the hold side is wired six to eleven times beyond its size.** so "small cells under-traced"
+is not what the file shows: the levators and the tibia flexors carry the synapse count a cell of their volume carries across the whole
+cord, and it is the extensors, depressors, promotors and remotors (and the subnet's IN17A001, and IN21A010 itself) that are extraordinary,
+at three to seven thousand inputs on cells that the fit would give a few hundred. two readings remain and this read cannot split them:
+the fly's postural motor neurons really are innervated an order of magnitude more densely than its swing motor neurons (a tonic
+posture is the default and the lift is a small, sparse thing switched on), or dense large neurites are reconstructed more completely
+than sparse ones. either way the argument for item 7 on the lift side's INPUTS (scale the small cells because they are under-traced)
+does not hold: they are not under-traced relative to their size. what is left of item 7 is a claim about the hold side being
+over-represented, which no source makes. the imbalance is the file's, and it is by pool, not by size. (IN21A010: 6.7x its size and
+silent, because its excitation and inhibition are balanced; the hold-side density and the lift-side balance are the two halves of the
+lid.) one table, the front leg only (the volumes exist for it alone).
