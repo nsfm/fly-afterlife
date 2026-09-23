@@ -39,6 +39,12 @@ per muscle, CHOSEN (E), one rule each, printed at startup:
        the other legs promote with the sternal anterior rotator, leg_biomech.md A3).
   (E6) the hind cells --hind-map v2 names (leg_biomech.md A2): MNhl62 -> the sternal anterior rotator (cos 0.79), MNhl29 -> the sternal
        posterior rotator (cos 0.69), MNhl01 / MNhl02 -> the sterno-tergo-trochanter extensors (their named match, Sternotrochanter MN).
+  (F) force scale (--hill-force-scale, 09-23): one multiplier on every muscle's peak isometric force F_max (gainprm[2] and biasprm[2]: in
+       MuJoCo's muscle the passive force is a fraction fpmax of the same F_max, so it scales with it). 1 = FlyMimic as fitted. a CHOICE in the
+       span between two sources that disagree: FlyMimic's tibia flexor at full activation, 68.1 uN x its 15.2 um arm about the tibia hinge
+       = 1.04 nN.m (a tip force of 2.5 uN at Azevedo's 417 um lever); Azevedo 2020 (eLife 9:e56754, fig 1F / 4): one fast spike ~10 uN at
+       the tip x 417 um = 4.2 nN.m (4x FlyMimic's whole muscle), the whole joint ~90-100 uN x 417 um = 38-42 nN.m (36-40x). the like-for-like
+       comparison is maximum to maximum (FlyMimic's full activation is its tetanus), so the span is 1 to ~40; 4 = one fast spike's peak.
 not transplanted (no FlyMimic muscle): the tarsal levator / depressor pools (they stay on the torque kernel, labelled), the grip (the pads'
 ltm, unchanged), the femur reductor and the jump muscle (unmapped, as in the torque path).
 """
@@ -92,7 +98,7 @@ def flymimic_table():
     return out, str(DEFAULT_MUSCULOSKELETAL_XML), dict(zip(jn, np.round(q0[:len(jn)], 4)))
 
 
-def build(spec, jm, dof_name, neutral_of, roles, types_on_leg, arm_rule="hinge", print=print):
+def build(spec, jm, dof_name, neutral_of, roles, types_on_leg, arm_rule="hinge", force_scale=1.0, print=print):
     """add the muscles to the fly's MjSpec before the world compiles. jm: {JointDOF: MjsJoint}; roles: body_loop.py's per-leg role table
     (with --hind-map applied); types_on_leg: {leg: set of motor-neuron types with a role on that leg}. returns the muscle list (dicts)."""
     FM, xml, pose = flymimic_table(); jel = {dof_name(k): v for k, v in jm.items()}; mus = []
@@ -101,6 +107,11 @@ def build(spec, jm, dof_name, neutral_of, roles, types_on_leg, arm_rule="hinge",
     print(f"  activation dynamics (the model's): tau_act {FM['LFTibia_flex_93434']['dynprm'][0] * 1e3:.1f} ms, tau_deact {FM['LFTibia_flex_93434']['dynprm'][1] * 1e3:.1f} ms, MuJoCo's muscle dynamics; FL on [lmin, lmax] = [0, 2], vmax 10 L0/s, fvmax 1.4")
     ARM = {n: (abs(FM[n]["arm"][ROLE_HINGE[r]]) if arm_rule == "hinge" else float(np.linalg.norm([FM[n]["arm"][h] for h in JOINT_HINGES[r]]))) for n, (r, _) in MUSCLE_ROLE.items()}
     print(f"  moment arm rule --hill-arm {arm_rule}: " + ("|arm| about the front leg's hinge for the role (E1)" if arm_rule == "hinge" else "the norm of the arm over the joint's hinges, placed on the role's DOF (E1 variant)"))
+    _tf = FM["LFTibia_flex_93434"]; _tT = _tf["gainprm"][2] * abs(_tf["arm"]["joint_LFTibia_pitch"])
+    print(f"  (F) --hill-force-scale {force_scale:g}: every F_max (and the passive force, a fraction of it) x {force_scale:g}. a CHOICE in the span of two sources: "
+          f"FlyMimic (Ozdil et al. 2026, fitted to kinematics) = 1, its tibia flexor {_tf['gainprm'][2]:.1f} uN x {abs(_tf['arm']['joint_LFTibia_pitch']) * 1e3:.1f} um = {_tT:.2f} nN.m at full activation; "
+          f"Azevedo et al. 2020 (eLife 9:e56754, measured at the tibia tip, lever 417 um) one fast spike 10 uN = 4.2 nN.m (x{4.17 / _tT:.1f}), the whole joint 90-100 uN = 38-42 nN.m (x{37.5 / _tT:.0f}-{41.7 / _tT:.0f}); "
+          f"here the tibia flexor peaks at {_tT * force_scale:.2f} nN.m" + (" (FlyMimic as fitted)" if force_scale == 1.0 else ""))
     print("  muscle                                  role       F_max uN  L0 mm   lnorm@pose  fpmax  arm about the role's hinge, mm   used |arm|  FlyMimic's sign agrees  F_max x |arm| nN.m")
     for n, (role, ag) in MUSCLE_ROLE.items():
         f = FM[n]; h = ROLE_HINGE[role]; a = f["arm"][h]
@@ -117,6 +128,7 @@ def build(spec, jm, dof_name, neutral_of, roles, types_on_leg, arm_rule="hinge",
             act = spec.add_actuator(); act.name = f"hill-{leg}-{SHORT[n]}"; act.trntype = mj.mjtTrn.mjTRN_JOINT; act.target = jel[dn].name
             act.gear[0] = gear; act.dyntype = mj.mjtDyn.mjDYN_MUSCLE; act.gaintype = mj.mjtGain.mjGAIN_MUSCLE; act.biastype = mj.mjtBias.mjBIAS_MUSCLE
             act.dynprm[:10] = f["dynprm"]; act.gainprm[:10] = f["gainprm"]; act.biasprm[:10] = f["biasprm"]; act.lengthrange[:] = lr
+            if force_scale != 1.0: act.gainprm[2] = f["gainprm"][2] * force_scale; act.biasprm[2] = f["biasprm"][2] * force_scale   # (F)
             act.ctrllimited = 1; act.ctrlrange[:] = f["ctrlrange"]; act.forcelimited = 0
             mus.append(dict(name=act.name, leg=leg, muscle=n, role=role, ag=ag, dof=dn, gear=gear, q0=q0)); built.append(SHORT[n])
         print(f"  {leg}: {len(built)} muscles: {', '.join(built)}")
