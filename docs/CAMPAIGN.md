@@ -25,13 +25,15 @@ this is the plan and the ledger of what we changed on the fly to get there.
 
 1. **put the weak edges back.** DONE 09-22: the floor was ours (`--min-weight 5` in the build), the release has every edge; rebuilt as
    `brain_cord_all.npz` (3.5x the edges, 25 % more synapses); the cord baseline does not move on it. `docs/physiology/weak_edges.md`.
-2. **synaptic kinetics per transmitter.** one decay for every synapse now; ACh is fast, GABA and glutamate (inhibitory here) are slower and
-   measured. one engine term, off by default, oracle. the bet for why the subnet runs at 20 Hz and not 7-15. *(agent C builds; agent B sources)*
-3. **intrinsic properties per type.** thresholds and membrane time constants for slow / intermediate / fast motor neurons from Azevedo 2020,
-   with a floor so no cell pins; the tibia flexors (37 small cells, 1,386 synapses each against the extensors' 5,674, silent at every dose under
-   one uniform threshold) are the test. *(agent B sources; then one arm)*
+2. **synaptic kinetics per transmitter.** one decay for every synapse now. SOURCED 09-22 (`knobs.md`): ACh 4.5-6.7 ms and GABA-A 3.7-6 ms are the
+   SAME speed in the fly; only glutamate (GluCl) has a slow number, ~300 ms, one larval trace, an upper bound. the term is built (agent C, oracle)
+   and kept labelled; the "20 Hz drops to 7-15" bet is withdrawn before the test. a kinetics term must hold peak or charge and say which.
+3. **intrinsic properties per type.** SOURCED 09-22: Azevedo 2020 gives the tibia flexor pool rest -48 / -60 / -68 mV and input resistance
+   700 / 300 / 150 MOhm for slow / intermediate / fast, and **the slow cells fire ~30 Hz at rest** (ours 0.00). thresholds and taus unmeasured
+   for any leg MN; extensors never recorded. the arm: per-type rest and PSP scale for the flexor pool, the 30 Hz at rest as the check. NEXT.
 4. **plateau potentials and rebound on named cells.** rebound is in the engine (off); plateaus are not. stick-insect walking runs on them.
-5. **neuromodulation as a state.** octopamine on the walking circuits, from the VNC's own modulatory cells, as a gain on targeted synapses.
+5. **neuromodulation as a state.** SOURCED 09-22: 50 octopaminergic cells in the cord, the leg ones EN00B008 (one per segment), and DNg100 /
+   DNp68 synapse onto them; no chemical output onto leg cells. a state from their firing, stick-insect sign, no fly magnitude.
 6. **finish the senses.** hair plates and campaniform fields as populations where the file's afferents are thin; FANC where MaleCNS is incomplete.
 7. **add connections.** gap junctions; the flexor motor neurons' inputs where tracing is thin. a reason each time.
 8. **the fitter,** bounded by 2-5's ranges, aimed at measured targets.

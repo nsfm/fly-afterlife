@@ -6115,3 +6115,29 @@ tuned-until-it-worked (Kakaria, Pisokas), fitted to measured activity (Churgin, 
 studies (Lappalainen 2024), and Huang 2018, a whole-brain LIF that ran away as ours does and needed short-term depression. **two facts for
 our files:** Shiu's connectivity has no synapse floor (82 % of its edges under 5); and with Shiu's kinetics one synapse gives a 0.157 mV
 bump, not 0.275, so ~45 coincident synapses reach threshold, not the 26 in `docs/physiology/vision_motor_courtship.md` (to correct there).
+
+**the knobs, sourced (agent B; `docs/physiology/knobs.md`, 22:52 PDT):** what the literature actually licenses, and it corrects one of my bets.
+- **inhibition is not slower than excitation in the fly.** nicotinic ACh decays in 4.5-6.7 ms in adult Kenyon cells in the intact brain
+  (1.4-2.1 in culture); GABA-A (Rdl) 3.7-6 ms, culture only. the only slow inhibitory number is a larval GluCl current onto motor neurons,
+  ~300 ms after a train, an upper bound from one trace; GABA-B exists in the adult antennal lobe with no numbers. so **campaign item 2's
+  bet ("GABA and glutamate are slower, the 20 Hz drops to 7-15") rests on glutamate alone,** and glutamate is a fifth of the cord's inhibition
+  at most. the term stays worth having (labelled), the prediction is withdrawn before it is tested. both inhibitory channels reverse near
+  rest in larval motor neurons: real inhibition is shunting, the engine's is unbounded hyperpolarisation. and the engine's decay is a
+  strength: charge = weight x tau, so a kinetics term must say whether it holds peak or charge.
+- **the tibia flexors have a measured resting state and ours is wrong.** Azevedo 2020: slow / intermediate / fast tibia flexor motor
+  neurons rest at -48 / -60 / -68 mV with input resistances 700 / 300 / 150 MOhm, and **the slow cells fire ~30 Hz at rest,** partly from
+  cholinergic input (blocking nicotinic receptors lowers it). ours: one rest (-52), one threshold (-45), one resistance, and the flexors
+  at 0.00 Hz. thresholds and membrane time constants were never measured for any leg motor neuron; the extensors have never been
+  recorded. **this is campaign item 3 with a measured target:** per-type rest and input resistance for the flexor pool from Azevedo, the
+  slow cells' 30 Hz at rest as the physiological check, never the step.
+- per-synapse size: measured adult central connections give 0.1-0.27 mV at the soma; response size tracks synapses per unit membrane
+  area (Liu 2022), which is Pugliese's real source for size scaling.
+- plateaus and rebound: no fly leg cell has either measured; cockroach calcium plateaus, locust plateaus only under octopamine (50-75 ms
+  bursts at 4-16 Hz), a <= 5 mV tonic depolarisation in walking stick-insect motor neurons. borrowed if used.
+- **octopamine has cells in the file:** 50 octopaminergic cells in the cord, all efferent; the leg ones EN00B008, one per segment, and
+  **DNp68 and DNg100 synapse onto them** (the walking command reaches the modulators); they make no chemical synapses onto leg motor or
+  premotor cells, so a state computed from their firing comes from real cells; what it does is stick-insect sign only (suppresses the
+  resistance reflex, supports the active state), no fly magnitude.
+- gap junctions: the only adult VNC coupling measured is between flight motor neurons (Hurkey 2023, coefficient 0.01-0.02, ShakB), weak
+  and desynchronising. senses: no adult leg proprioceptor has a recorded spike rate (all imaging); the front leg's femoral chordotonal
+  organ keeps 16 of ~152 cells in the file, the middle and hind legs near complete.
