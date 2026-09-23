@@ -272,3 +272,102 @@ do not describe the cord.
 
 not reviewed: pair.py and the whole-fly configuration, the mirror normalisation (`wiring.py`), leg_loop.py beyond its claw centre,
 and the physiology of the muscle-role vocabulary beyond checking that each type moves its joint in the direction its name says.
+
+## second pass (09-22 evening): the fixes, and "he stands on his feet and the left front leg steps at 9 Hz"
+
+read: SEAM from "## the review" to the end; `git diff d078f04 HEAD` of experiments/body_loop.py, world/cord.py, world/fastlif.py.
+re-ran the record arm and three controls, 20 s each, seed 11, no video (scratchpad `p2/run.sh`; analysis `p2an.py`, `lifts.py`).
+every arm uses flygym's springs, pads (contact, gain 20), claw labels 50flex and the 12 ms cell delay on IN17A001 / INXXX466 / IN16B036:
+
+| arm | body on floor (% weight) | thorax z | lf coxa pitch: sd, spectral peak | autocorr 60 / 110 ms | lf promotor pool: Hz/cell, peak | coherence (promotor - remotor count, coxa angle) at the peak | lf foot lifts > 50 ms (by foot height) | forward during lifts |
+|---|---|---|---|---|---|---|---|---|
+| **B: the record** (DNg100 100 Hz, loop x8, position+load) | 1.9 | 0.68 | 14.6 deg, **8.9 Hz x123** | -0.20 / +0.42 | 15.9, 8.9 Hz x115 | **0.95** | 124 | 0.65 |
+| A: loop x1 (the ring removed), else the same | **50** | 0.73 | 13.0, 2.6 Hz (wander) | +0.45 / +0.16 | 4.3, no peak | (0.86 at 2.3 Hz) | 19 | 0.53 |
+| C: no command (`--walk 0`), loop x8 | **3.8** | **0.92** | **0.3**, none | | 0.0 | | 0 | |
+| D: x8, **sensory loop off** (`--loop off`; the pads never engage either, F reads 0) | 8.2 | 0.66 | 16.0, **9.5 Hz x247** | -0.27 / +0.39 | 14.6, 9.5 Hz x205 | **0.98** | 107 | 0.74 |
+
+B reproduces the saved `ld_100_x8_springs` to the digit (deterministic). the saved seeds 10 / 12 give the same picture (coherence
+0.97 / 0.96, peak 9.6 / 9.1 Hz).
+
+### Q1. the standing judgement: the statistic is right; the standing is the springs'
+
+- the F2 statistic is read correctly: `get_bodysegment_contact_forces(...)[NONLEG, 2]` is the world-z column; the sign is thrown
+  away by `abs` per segment, which is fine for a magnitude; NONLEG is every segment not prefixed by a leg (thorax, abdomen, head, and
+  segments that never touch). it agrees with my own per-segment log from the first pass.
+- but **C, no command at all, stands better than the record: 3.8 % on the body, thorax 0.92.** flygym's joint springs (stiffness 10,
+  ~70x the measured passive stiffness) hold NeuroMechFly's neutral pose with no muscle; my first-pass static test gave the same (feet
+  9.9 of 10.05 uN with zero torque). the command lowers him (0.92 -> 0.68) and, without the ring (A), puts half his weight on the
+  floor. so "1-2 % on the body" is honest as a number and is not the cord's achievement: it is the springs, which the cord's ring
+  happens not to knock over. on measured springs with the tonus current the same arm is 77 % on the floor (SEAM 19:34). the record
+  should say "on springs that stand him with no drive".
+
+### Q2. the step: cord-generated, not a mechanical resonance; but it is one pool pulsing against a spring, and the loop is not in it
+
+- **not a resonance.** remove the ring (A: loop x1) and the 9 Hz is gone (2.6 Hz wander, 19 lifts); remove the command (C) and the
+  leg does not move (sd 0.3 deg). the frequency also follows the delay the author set (SEAM: 8 ms -> 11.1 Hz on the body, 12 ms -> 8.8),
+  which a body resonance would not. the promotor pool's spike count per 10 ms leads the coxa angle with coherence 0.95-0.98 at the
+  peak, and (promotor - remotor) correlates -0.76 with the coxa's pitch velocity (negative pitch = forward, below). the 9 Hz is
+  the cord's ring arriving at the muscle.
+- **the sensory loop, the claw labels and the pads are not part of it.** D, the same arm with `--loop off` (no claw, no hook, no load,
+  and so no pads), steps at 9.5 Hz x247, 107 lifts, forward 0.74, coherence 0.98, and the right front coxa joins it (9.5 Hz x165).
+  so the SEAM's "the swap matters, and it is the review's F1 in action" does not apply to this arm: at 100 Hz x8 the ring drives the
+  front coxa feed-forward. (the swap may matter in the 400 Hz x3 arm; I did not re-run that.)
+- **what the step is, mechanically.** the promotor pool (6 cells, 15.9 Hz/cell) carries the cycle at x115; the remotor pool (5.0 Hz/cell)
+  barely (x13), and promotor vs remotor counts correlate only -0.14 at +20 ms, +0.09 at +60 ms (10 ms bins): a weak counter-phase, not
+  a half-centre. in this body the front leg's coxa protraction also *lifts* the foot (first-pass `h1b.py`: lf promotor torque moves
+  the tarsus +0.09 mm forward and +0.12 mm up; the trochanter levators stay at 0 Hz), so "lifted and forward in the air" is one pool's
+  twitch train, and "back on the ground" is the spring (stiffness 10) returning the coxa. the foot is off the ground 67 % of the time
+  (reconstructed foot height from the saved joint angles and thorax pose: 10th percentile 0.027 mm, 124 lifts > 0.05 mm for > 50 ms;
+  the F_net = 0 mask used by the record agrees on 92 % of frames): a leg mostly in the air. three of the six coxae move (lf, and rf in
+  D) and the mid and hind legs wander at 2-3 Hz.
+- verdict: the rhythm is real, cord-generated and replicated; calling it "a leg steps" oversells it. it is "the tuned ring drives the
+  left front promotor pool at 9 Hz, and against flygym's springs that swings the foot up and forward and lets it fall back". no
+  swing / stance alternation of antagonists, no levator, no coordination with another leg, and the frequency is set by a delay chosen
+  for the band (the author says so).
+
+### Q3. the sign of "forward": right
+
++x is anterior in this model (lf coxa at x = +0.34, lh coxa -0.29, abdomen segments increasingly negative), and setting lf coxa pitch
+-0.3 rad moves the tarsus 1.14 mm ahead of the coxa against 0.67 at +0.3 (scratchpad `fwd.py`). so a negative pitch change is
+protraction, as the json says. by foot height the lifts carry the coxa forward 65 % (B) / 70 % (seed 10) / 74 % (D) of the time,
+mean -5 to -8 deg; the record's 0.80-0.83 used a different lift mask and window, same direction.
+
+### Q4. the new code
+
+- **F0 fix: right.** the stand-in is now `M._ext[cells] = slow_mv x ld` on the membrane path; the cells are no longer in any registry
+  row, so not driven; the cord's synapses reach them. one footgun: `--slow-mv` uses `SLOW`, which defaults to `--slow-set size` (the
+  93 smallest cells, the accessory flexors); every saved tonus arm passed `stance_all`, so no run is affected, but the default should
+  change.
+- **F1 fix: right.** `knee = (angle - neutral) x sign`, so the claw code is centred on the neutral pose (FT angle ~77-102), both claw
+  types can fire, and `--claw-labels` swaps which one gets the extension rate. the hooks are unchanged (velocity, labels still
+  unsourced).
+- **F2 fix: right** (Q1).
+- **F3 fix: works in the mean, chatters in time.** `F = max(F_raw - gain x pad_on, 0)` and `pad_on = F > 0.05` on that same net force:
+  whenever the adhesion is not fully expressed in the contact (on landing, while peeling) the net force clips to 0, the pad turns
+  off, the raw force drops, and the pad turns back on. the lf pad toggles 1,313 times in 18 s in the record (349 in A): ~70 switches
+  a second. harmless to this result (D steps without pads), but it is a half-duty, kilohertz-flickering adhesion, not a pad. fix:
+  switch the pad from the raw force with hysteresis, or subtract the adhesion actuator's actual force (`d.actuator_force`).
+- **`--cell-delay` (fastlif.py:144-154): the bookkeeping is right.** a three-source test network (scratchpad): default cells arrive 3
+  steps after the spike with or without `delay_on`; a 12 ms cell arrives 13 steps after (so "12 ms" is 13 effective where the rest is
+  3: an extra 10); with depression on, the delivered scales are identical with and without the delay (7.57 then 3.97, below); a graded
+  cell with a 12 ms delay arrives 13 steps after its emission as a spike would. scale arrays stay the same length as their index arrays
+  in every slot.
+- **`--edge-scale`: right, and wider than its name.** it scales all 44 synapses among the four types, including DNg100's onto all three
+  loop cells, so x8 is also an 8-fold command into the ring. labelled in the SEAM; worth saying at every use.
+- **new, pre-existing, both engines: depression under-delivers the first spike by U.** in the toy test with u 0.5 a fresh synapse
+  delivered 7.57 instead of 15.15 (x0.5): the release scale is read from `_std_x` at the top of the step *after* the spike, and the
+  spike's own decrement was applied at the end of the spiking step. flysim.py:860 has the same order despite the comment above
+  `_dly_scale` saying it avoids exactly this. every `--std` arm ran with release x(1 - u) (8 % less at the engine's u 0.08; 50 % at the
+  0.5 sweeps). it does not touch tonight's result (std off). fix: capture `_std_x[last_idx]` before the decrement, at the end of the
+  spiking step.
+
+### second-pass verdict
+
+the four fixes are correct (F3 with a chatter to fix), the delay-line change is correct, and nothing in the new code fakes the
+result. the result survives as **a cord rhythm**: the published loop, with its synapses x8 and a 13 ms delay, rings at 9 Hz and
+drives the left front promotor pool hard enough to swing the coxa and lift the foot, three seeds of three, gone without the ring or
+without the command, and **independent of the sensory loop** (it steps with `--loop off`). it does not survive as "he stands and a leg
+steps": the standing is flygym's springs (the fly stands better with no command at all), and the "step" is one pool's twitch train
+lifting the foot through the front coxa's geometry, with the spring doing the return. what would make it a step: the same arm on
+measured springs with the additive tonus (currently 77 % on the floor), and a stance phase that is driven (remotor or depressor
+bursts in antiphase) rather than passive.

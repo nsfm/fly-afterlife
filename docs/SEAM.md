@@ -5829,3 +5829,31 @@ loop closed, 20 s, seed 11):**
 - **seeds (19:39 PDT), the standing-and-stepping arm (DNg100 100 Hz, loop x8, delay 12 ms, claw labels swapped, springs, pads, the loop closed):** three of three. body on the floor 2 / 2 / 1 % of his weight; the left front coxa at 8.9 / 9.6 / 9.1 Hz (x220 / x222 / x173), autocorrelation -0.20 / -0.27 / -0.22 at 60 ms and +0.42 / +0.42 / +0.46 at 110; 125 / 123 / 116 lifts, interval cv 0.50 / 0.51 / 0.50; the coxa pitch changes -14 / -15 / -13 deg during a lift with sign agreement 0.81 / 0.80 / 0.83. by the measured joint roles (`results/body_dof_signs.json`: the left front leg protracts on coxa pitch with sign -1) a negative pitch change is the foot swinging FORWARD: **protraction in the air, three seeds of three, at 0.8 agreement.** (the 400 Hz arm above swung the other way on one seed; at the record's dose the direction is the cord's.) so, on springs: he stands on his feet and his left front leg takes steps, forward in the air and back on the ground, nine a second, at the frequency of a headless fly's.
 
 **the fling at two seconds (19:42 PDT; nate: "he holds a standing posture, abdomen up, for two seconds ... and then flings himself at that 2 s mark"):** the two seconds are the warm-up: the cord under its floor with no command, and the body in NeuroMechFly's micro-CT neutral pose held by the springs at 0.97 of height (the package's posture, not his). at 2.000 s the walking neuron steps from 0 to 100 Hz in one millisecond, the ring lights, and the transient is the fling: thorax speed 0.2 mm/s in the second before, 4.7 in the second after. `--walk-ramp`: the command rising over 1 s cuts the onset to 1.9 mm/s, over 3 s to 1.3, and the steady state is the same either way: he sags from 0.97 to 0.67 of height under the command, shuffles and turns at 4 mm/s on his feet (1-2 % of his weight on the body), and the left front leg steps at 9-9.5 Hz (82-96 lifts in the last 14 s). so the fling is the step in drive, gone with a ramp; the crouch is the command's steady state, and a fly walking is lower than a fly standing, which is also true of the animal.
+
+## the second pass (19:56 PDT; nate: "bring back those two agents ... see if they think you did them some justice"; `docs/REVIEW_BODY_LOOP.md`
+"## second pass": the same reviewer, the repairs and the result; the record arm re-run and three controls, 20 s each)
+
+- **the repairs are right and nothing in the new code fakes the result.** the tonus as an added current, the knee centred, the standing
+  check (the right column and sign), the pad's pull subtracted (right on average, flickering ~1,300 times in 18 s; immaterial here), the
+  delay line's bookkeeping including scales and graded cells. two traps noted: `--slow-mv` defaults to `--slow-set size` (the flexors;
+  every saved run passed `stance_all`); `--edge-scale x8` also scales DNg100's own synapses onto the ring cells.
+- **the 9 Hz is the cord's, not a resonance.** without the ring (its synapses back to x1): 2.6 Hz wander, 19 lifts; without the command:
+  the coxa barely moves; the frequency tracks the delay; the promotor pool's spike counts are coherent with the coxa angle at 0.95-0.98.
+- **the standing is the springs.** withdrawn in place as his: with the command off he carries 3.8 % on the body at 0.92 of height, better
+  than the record's arm; the command lowers him to 0.68; without the ring half his weight is on the floor. "the springs hold him up while
+  a leg moves" is what is true.
+- **the sensory loop has no part in this arm.** with `--loop off` (no claw, hook or load; the pads never engage) he steps at 9.5 Hz, 107
+  lifts, the right front coxa joining. **"the swap is the review's F1 in action" (19:20) is withdrawn for this arm:** the labels did not
+  make the difference here. (they did change the 400 Hz arm from wander to rhythm; that arm is not the record arm.)
+- **it is not yet a step:** the promotor pool carries the rhythm and the remotors only faintly (-0.14 at +20 ms); the trochanter levators
+  are silent; in this body pulling the front coxa forward also lifts the foot, and "back on the ground" is the spring returning the coxa,
+  not a muscle; the foot is in the air 67 % of the time (foot heights rebuilt from the saved joint angles); no other leg is coordinated
+  with it. **"forward" has the right sign** (+x is the front; a negative coxa pitch moves the foot forward), with the coxa moving forward
+  during 65-74 % of lifts by the reviewer's lift criterion (the record's 0.8 was a different criterion). so: one muscle pool's twitches,
+  at the cord's rhythm, ridden by a spring. the reviewer's next: the same arm on the measured springs with the added-current tonus (77 %
+  on the floor there now), and a stance phase that muscles drive.
+- **a bug older than tonight, in both engines:** short-term depression cuts every spike's delivery by (1 - u) even on a fresh synapse
+  (the scale pushed onto the delay line is read after the decrement that the same spike caused): in a two-cell test with u 0.5 a fresh
+  synapse delivered 7.57 instead of 15.15. **every `--std` arm in this record ran that way**, including the run of record's `--std pair`
+  (u 0.08: the pair's synapses at 0.92 of nominal). tonight's stepping arm has depression off and stands. fixed below with its oracle; the
+  run of record's pair to be re-measured.

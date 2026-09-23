@@ -523,3 +523,12 @@ item in §2a and should come before the taste path is judged.
    **[measured 09-22 17:55]** graded 13A / 13B / 21A / all / random, gains 0.05-0.2, in the cord and on the standing body: no stepping, no
    inter-leg structure beyond the random control. the switch is not a graded unit at these gains. what is left: bistable graded units
    (plateau potentials, Büschges 1995), electrical synapses (unmapped), the tracing. the leg row's negative results are its result for now.
+
+4i. **[queued 09-22 19:56] the depression fix's consequences**: `--std` delivered (1 - u) of a fresh synapse in every arm before tonight (the review's
+   second pass); fixed in `world/fastlif.py` (the scale is read before the spike's own decrement; the two-cell test delivers the full weight);
+   oracle running (the oracle pins `--std off`, so it tests only that the fix is silent there). to re-measure: the run of record's `--std pair`
+   (the DNg33 pair at 0.92 of nominal before the fix: does the pair still unlock at the true u 0.08?), the `--std all` and inhibitor-pool arms
+   of 09-21/22 (all at 0.92-0.5 of nominal), and the flysim reference engine has the same bug (ref/, untracked; note for its author).
+4j. **[queued 09-22 19:56] what the second pass leaves for the stepping leg**: the springs stand him (withdrawn as his); the remotors and the
+   trochanter levators do not join the promotors' rhythm; the return stroke is the spring's. next: the same arm on the measured springs with the
+   added-current tonus; the loop's synapses onto the remotor side; the levators. and the other five legs.
