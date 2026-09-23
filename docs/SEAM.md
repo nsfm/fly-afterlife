@@ -6184,3 +6184,26 @@ standing still), untyped 88, claw_50 62, unclassified chordotonal 41, hair plate
 numbers). so IN13A002's 52 Hz is the floor driving the vibration- and movement-sensing cells of a motionless leg at 15 Hz. ledger row 6. the
 floor is trimmed from the command line (`--drive TYPE:0` overrides it on named types) to the cells that fire standing still: campaniform,
 hair plates, the claw; the club, hook and unclassified chordotonal cells at 0. arms below.
+
+**the floor trimmed (23:14 PDT; `--drive TYPE:0` over the floor's cells; DNg100 100 Hz unless "rest"; seed 11):** club + hook + unclassified
+chordotonal at 0 (the cells silent in a motionless leg): IN13A002 52 -> 39 Hz, flexors 0.00. those and the extension-tuned claw (SNpp50) at
+0: **IN13A002 0.0 Hz**, IN13A006 1.4, the flexor excitor IN03A004 3.3, tibia flexors 0.20. campaniform + hair plates only (both claw classes
+off too): IN13A002 0.0, flexors 0.18. campaniform + untyped only: IN13A002 0.0, IN13B019 0.2, IN03A004 4.9, **flexors 0.50**, extensors 4.3.
+at rest on campaniform + hair plates: the cord at 0.26 Hz per cell, the leg motor neurons 0.15 (eleven active), IN13A002 0. **so the
+winner's 52 Hz was the stand-in's choice of cells:** the floor at 15 Hz on 207 club, 61 hook and 62 extension-claw cells is what drove
+IN13A002, and with the floor on the cells that fire standing still it is silent. **which corrects tonight's "the winner locks":** under
+an honest standing floor the half-centre is not locked, it is quiet on both sides, and the flexors sit at 0.2-0.5 Hz because nothing
+excites them enough, not because IN13A002 holds them. the flexor excitors wake a little (IN03A004 3-5 Hz), the releasers barely
+(IN13B019 0.2). the switch question stands, reframed: with the winner quiet, what lifts the flexor side to Azevedo's 30 Hz at rest; item
+2b is still the mechanism aimed at it (the inhibition they do get, from 13A003 at 17 Hz and 12B003 / 19A004 at 40, still hyperpolarises
+without bound). the floor's default is changed in the ledger, not yet in the code (`world/cord.py` is under an engine agent's edit).
+
+**item 5, octopamine, designed and parked (agent E; `docs/physiology/octopamine_state.md`, `experiments/oa_census.py`):** 50 octopaminergic
+cells in the cord, all unpaired midline efferents, three on the leg nerves (EN00B008, one per segment); the engine gives them sign 0 and
+their 208 outputs go to other octopamine cells. **DNg100 sends them 62 synapses (0.3 % of its output; mostly T3 / T2), DNp68 716,** and
+under DNg100 at 100 Hz EN00B008 sits at +1.45 mV and fires 0 Hz (0.33 at 400 Hz; 59 Hz with DNp68 driven too). so a state computed from
+the real cells is zero in the headless walking arm as we run it, and item 5 is a DNp68 question (arousal / aggression input in the
+female brain). the fly biology: no adult leg measurement; larval RP2 motor neurons show no effect at 1-10 uM (Schutzler 2019); flies
+without octopamine walk; clearance half-life 1.4 s in the larval cord. borrowed effects cut both ways (locust: extension-tuned sensors
+up strengthens our 13A side). the design (a low-passed EN00B008 rate, saturating, applied as gains on named targets, no 13A target, three
+controls including the cells silenced) is on file; not built. two count errors in `knobs.md` section 4a are flagged there (T1 / T3 swapped).
