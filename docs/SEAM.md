@@ -5636,3 +5636,5 @@ cord's negative results stand; the body loop's are remade.** fixes, in the revie
   the positive control; **size-scaled excitability in the LIF**; settle the claw labels. a fair negative has a narrow scope: "a LIF at Shiu
   2024's uniform constants fails where a rate model on the same table oscillates", and needs the positive control and a rhythm measure
   checked against a planted 10-15 Hz oscillation. **the burden is on the engine, not the wiring.**
+
+**oracle (18:34 PDT), the engine with graded units present and off: PASS, v1 + v2, eight configurations, none differing (read from the log). committed.**

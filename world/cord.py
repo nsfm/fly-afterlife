@@ -34,6 +34,10 @@ ap.add_argument("--warmup", type=float, default=2.0, help="seconds before the wa
 ap.add_argument("--pulse", default="", help="the command with a time course: HZ[:DUTY] square-wave gating of the walking command (e.g. 3:0.5); in life the command is never a steady rate; a diagnostic")
 ap.add_argument("--shock", default="", help="the frankenstein arm (nate, 09-22): SECONDS:HZ, every descending neuron driven at HZ for SECONDS after the warm-up, then the command alone; does the jolt leave the cord elsewhere")
 ap.add_argument("--graded", default="", help="graded (non-spiking) units: TYPE-PREFIXES:GAIN[:V1], e.g. IN13A,IN13B:0.1 : the named cells never spike; each ms they deliver GAIN x clip(v / V1, 0, 1) of a spike to their targets (V1 default = the threshold, 7 mV). non-spiking local interneurons are the substrate of insect leg pattern generation (Buschges 1995; Bassler & Buschges 1998); which fly hemilineages are graded is not established (E): a sweep, with a random set as the control. 'random:N:GAIN' grades N random cord interneurons")
+ap.add_argument("--size-gain", type=float, default=0.0, help="size-scaled excitability, the input-resistance form (the review of 09-22; Pugliese 2026: gain and threshold scaled by cell size were necessary for the rhythm; Azevedo 2020: Rin 150 / 300 / 700 MOhm for fast / intermediate / slow MNs): every synapse onto cell i is scaled by (S_med / S_i)^A, S_i the cell's total input synapses (the size proxy this file has), S_med the median over the cord's neurons; a small cell gets a bigger PSP per synapse. 0 = off (E; sweep A)")
+ap.add_argument("--size-thr", type=float, default=0.0, help="size-scaled excitability, the threshold form: v_th_i = 7 mV x (S_i / S_med)^B; a small cell sits closer to threshold (Azevedo 2020: slow MNs rest 20 mV nearer threshold than fast). 0 = off (E; sweep B)")
+ap.add_argument("--size-clip", type=float, default=4.0, help="clip on both size factors")
+ap.add_argument("--edge-scale", default="", help="scale the synapses among a named set of types: TYPES:FACTOR (e.g. DNg100,IN17A001,INXXX466,IN16B036:1.49 = the published rhythm loop at Pugliese 2026's LIF weight, 0.275 mV, the rest of the cord at 0.185; the review's item 5; a labelled stand-in with a source)")
 ap.add_argument("--mirror", default="off", help="mirror normalisation of bilateral pairs' input weights (src/fly_afterlife/wiring.py; the labelled tracing correction of 09-19): off | all | vnc (motor, IN, AN, SN types) | a comma-separated type list")
 ap.add_argument("--treadmill", type=float, default=0.0, help="the headless treadmill (a labelled stand-in, 09-21): step frequency in Hz at which each leg's proprioceptors (world/legs.npz, by bodyId) are loaded in stance (--leg-load-hz) and UNLOADED (0 Hz) in swing, in two alternating tripods (L1 R2 L3 / R1 L2 R3), --treadmill-duty of the cycle in stance; 0 = off (the floor's constant load). asks whether unloading alone releases swing")
 ap.add_argument("--treadmill-duty", type=float, default=0.5)
@@ -67,6 +71,18 @@ if args.graded:
     v1 = float(parts[-1]) if len(parts) > (3 if parts[0] == "random" else 2) else float(M.p.v_thresh)
     M.graded_on = True; M._graded_cells = gc.astype(np.int64); M.graded_gain = g_; M.graded_v0 = 0.0; M.graded_v1 = v1; M._graded_idx = np.zeros(0, np.int64); M._graded_scale = np.zeros(0, np.float32); M.v_th[gc] = np.float32(1e6)
     print(f"graded units: {len(gc)} cells ({label}), gain {g_} per ms at v = {v1} mV")
+if args.size_gain > 0 or args.size_thr > 0:
+    _S = np.bincount(M._out_tgt, weights=np.abs(M._out_w), minlength=M.N) / M.p.mv_per_synapse; _neur = ~np.isin(M.sc.astype(str), ["vnc_sensory", "sensory_ascending", "sensory_descending", "vnc_sensory_tbc", "sensory_ascending_tbc"]) & (_S > 0)
+    _Smed = float(np.median(_S[_neur])); _ratio = np.where(_S > 0, _S / _Smed, 1.0)
+    if args.size_gain > 0:
+        _f = np.clip(_ratio ** (-args.size_gain), 1.0 / args.size_clip, args.size_clip).astype(np.float32); M._out_w *= _f[M._out_tgt]
+        print(f"size gain: synapses onto each cell scaled by (S_med / S)^{args.size_gain} (S_med {_Smed:.0f}); factors {np.round(np.quantile(_f[_neur], [0.05, 0.5, 0.95]), 2)}")
+    if args.size_thr > 0:
+        _t = np.clip(_ratio ** args.size_thr, 1.0 / args.size_clip, args.size_clip); M.v_th[_neur] = (np.float32(M.p.v_thresh) * _t[_neur]).astype(np.float32)
+        print(f"size threshold: v_th = 7 x (S / S_med)^{args.size_thr}; thresholds {np.round(np.quantile(M.v_th[_neur], [0.05, 0.5, 0.95]), 2)} mV")
+if args.edge_scale:
+    _et, _ef = args.edge_scale.rsplit(":", 1); _em = np.isin(mty, _et.split(",")); _src = np.repeat(np.arange(M.N), np.diff(M._out_ptr)); _sel = _em[_src] & _em[M._out_tgt]
+    M._out_w[_sel] *= np.float32(float(_ef)); print(f"edge scale: {int(_sel.sum())} synapses among {_et} x {_ef}")
 REG = Registry()
 if args.shock:
     _ss, _sh = (float(x) for x in args.shock.split(":")); _alldn = np.flatnonzero(M.sc.astype(str) == "descending_neuron")

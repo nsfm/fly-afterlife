@@ -134,8 +134,11 @@ class FastFlyBrain(FlyBrain):
     def step(self):
         p, dt = self.p, self.p.dt
         arrived = self._dly.pop(0); arrived_scale = self._dly_scale.pop(0)
-        if getattr(self, "std_on", False):
-            self._dly_scale.append(self._std_x[self.last_idx].copy() if self.last_idx.size else None)
+        if getattr(self, "graded_on", False) or getattr(self, "std_on", False):   # per-emission scales: depression (09-21) and graded units (09-22)
+            sc_ = self._std_x[self.last_idx].copy() if getattr(self, "std_on", False) else np.ones(self.last_idx.size, np.float32)
+            if getattr(self, "graded_on", False) and self._graded_scale.size:
+                sc_ = np.concatenate([sc_, self._graded_scale]).astype(np.float32); self.last_idx = np.concatenate([self.last_idx, self._graded_idx])
+            self._dly_scale.append(sc_ if self.last_idx.size else None)
         else:
             self._dly_scale.append(None)
         self._dly.append(self.last_idx)
@@ -171,6 +174,9 @@ class FastFlyBrain(FlyBrain):
             r = self.rng.random(n_live) if n_live else self._empty_f64
             _drive_gate(di, self.drive_hz, r, free, spk, np.float32(dt))
         self.last_idx = np.flatnonzero(spk); _reset(self.last_idx, self.v, self.refrac, np.float32(p.v_reset), np.float32(p.refractory))
+        if getattr(self, "graded_on", False):   # graded (non-spiking) units, 09-22: never reset (their threshold is out of reach), and each step they emit onto their targets a fraction of a spike = gain x clip((v - v0) / (v1 - v0), 0, 1); a labelled engine change (docs/SEAM.md "graded premotor interneurons")
+            gv = self.v[self._graded_cells]; gs = np.clip((gv - np.float32(self.graded_v0)) / np.float32(self.graded_v1 - self.graded_v0), 0.0, 1.0) * np.float32(self.graded_gain)
+            on = gs > 0; self._graded_idx = self._graded_cells[on]; self._graded_scale = gs[on].astype(np.float32)
         self.last_spikes = spk.astype(np.float32)
         if getattr(self, "adapt_on", False):   # spike-frequency adaptation: a (mV) decays with tau_a, jumps by b per spike, subtracted from the drive (an AdEx-style w in voltage units)
             self._adapt_a *= np.float32(1.0 - dt / self.adapt_tau)
