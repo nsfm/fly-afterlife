@@ -7139,3 +7139,44 @@ swing; a finer lift rule (5 ms smoothing, off >= 10 ms) beside the standard one 
 - **the right hind barely lifts even with the fly's own angles** (61 um clearance, 9 % off the ground, against 376 um for the left hind): the
   body's, though this fly was turning right and its own right hind moved least, so the share is not clean.
 - clips: `kin_replay.mp4`, `kin_replay_slow.mp4` (a fifth speed), `puppet2_11_sw50.mp4` and `_slow.mp4`.
+
+## the cord listens to a walking leg (15:00 PDT, 09-23; `--kin-drive` in `experiments/body_loop.py`, commit 2d7c6a2; the living fly's recorded
+angles move the body by the replay's position law (identical to `kin_replay.py`'s body, checked on every array), the senses are read
+from that moving body as `--senses v2` reads them, the cord runs under its command, and its motor output is logged and never applied;
+the imposed swing per leg from the foot's forward velocity relative to the thorax (fractions 0.35-0.42 at 11-12 Hz); the read: each
+motor pool's and each cited premotor cell's rate in the imposed swing vs stance, the phase histogram, and the vector strength against a
+rolled-train null (20 draws, 95th percentile); 30 s, seed 11; five arms: (a) DNg100 100 Hz, (b) at rest, (c) the recorded population,
+(d) DNg100 with the claw labels as printed, (e) DNg100 with the senses off: the deaf control, whose cord is bit for bit a plain
+`--loop off` run)
+
+| row | (a) DNg100 | (b) rest | (c) recorded pop. | (d) claw as printed | (e) deaf |
+|---|---|---|---|---|---|
+| lm levators | not locked, swing/stance 0.9 | no, 0.3 | no, 1.0 | locked, swing, 3.6 (50 spikes; VS 0.50 vs null 0.41) | too few |
+| rm levators | no, 1.05 | no | no | at the null | a false lock (1.3) |
+| lh / rh depressors | locked, swing, 1.3 / 2.5 | swing, 2.3 / 3.3 | no | stance, 0.7 / 0.6 | no |
+| lm promotors | locked, swing, 1.4 | stance, 0.8 | stance, 0.9 | stance, 0.75 | no |
+| tibia flexors, every leg | not locked, ~1.0 | ~1.0 | ~1.0 | ~1.0 | - |
+| **IN13A002 (lh, lm, rh, rm)** | **locked, stance, 0.5-0.7, VS 0.2-0.44** | the same | the same | **locked, SWING, 1.5-4.8, VS to 0.81** | silent |
+| IN13A006 (lm) | locked, swing, 11 | swing, 42 | swing, 2.4 | no | silent |
+| IN19A008 | locked, swing, 1.2-12 | mixed | swing, 3-6 | stance, 0.5-0.7 | no |
+| IN17A001 / INXXX466 | locked, stance, 0.5-0.9 | stance, 0.1-0.3 | stance, 0.5-0.8 | mixed | no |
+| IN21A010 | silent | silent | silent | silent | silent |
+| IN07B002 | silent | silent | locked (c only) | silent | silent |
+
+- **the null is lenient:** the deaf control still flags 12 of 63 rows (10 with 200 draws), all weak (VS 0.01-0.15 at the null), so 16-19 % of
+  "locked" is noise; the hearing arms flag 44-55 % of rows and their strong locks sit at two to three times the null (VS 0.2-0.8). a lock
+  near the null is unproven; the rows above that matter are the strong ones.
+- **the cord hears the step through its inhibitors.** the 13A cells (IN13A002 on four legs, VS to 0.44) lock to the imposed stance under
+  every command and at rest, vanish when the cord is deaf, and **flip to the swing when the claw labelling flips** (VS to 0.81): the
+  flexion-side reflex arc from the femoral chordotonal claw to the 13A premotor inhibitors is in the file and works, and its sign is the
+  claw's labelling (ledger 1, now with a phase attached). IN13A006 locks to the swing; the subnet cells (IN17A001, INXXX466) lock weakly
+  to stance.
+- **and the step does not reach the motor side.** the tibia flexors are unlocked in every arm (swing/stance ~1.0); the middle legs'
+  levators do not burst in the imposed swing under DNg100, at rest or under the recorded population (the one lock, in (d), is 50 spikes
+  at the null's edge); IN21A010 is silent in all five arms with a real step's afferents feeding it; IN07B002 wakes only under the recorded
+  population and locks then. **the lid on the levator chain holds with a walking leg's own senses on it.**
+- so, in one sentence: the file's cord shapes a step's inhibition (the 13A arc, phase-locked, sign by the claw) and does not shape its
+  excitation (the levators, the flexors, IN21A010: unmoved by a real step). the reflexes that would time a step exist on the side that
+  holds the leg down, and not on the side that lifts it, at the file's weights. the same asymmetry as the levators' wiring (a tenth on the
+  front and hind) and the flexors' drive (fourteen to one), seen a third way. one seed; the clip's 2 s loop repeats fourteen times, so the
+  steps are not independent; the pools' phases are quantised to 10 ms.

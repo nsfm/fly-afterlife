@@ -102,7 +102,8 @@ pulling. the central legs are also pushing back and sweep a broad range... the f
 walking to drive the cord's senses and watch the motor neurons. built as `--kin-drive`: the living fly's kinematics move the body by
 position control, every sense is computed from that moving body, the cord runs under its command, and its motor output is logged and
 not applied. the read is phase-locking of each motor pool and each cited premotor cell to the imposed step, against a deaf control.
-if the levators burst in the imposed swing, the cord shapes a step it cannot make; if nothing locks, the reflexes are not there either.
+RESULT: the 13A inhibitors phase-lock to the imposed stance (and to the swing when the claw labels flip), vanish when the cord is
+deaf; the levators, the tibia flexors and IN21A010 do not lock. the cord shapes a step's inhibition and not its excitation.
 
 ## working habits
 
