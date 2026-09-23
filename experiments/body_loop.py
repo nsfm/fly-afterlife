@@ -30,7 +30,7 @@ ap.add_argument("--log-x", default="", help="extra cell types logged at 1 ms int
 ap.add_argument("--freeze-mn", type=float, default=0.0, help="hold every muscle activation (torque and grip) at its value at this many seconds, and stop feeding spikes into it (09-23, the control for the per-leg five-hertz bouts: the cord out of the loop); 0 = off")
 ap.add_argument("--silence", default="", help="comma-separated types whose threshold is put out of reach (no effect on driven cells); as in world/cord.py")
 ap.add_argument("--mn-poisson", default="", help="the review's control (09-23): feed the muscle map Poisson spike trains at each leg motor neuron's own mean rate taken from this run's .cells.npz (after its warm-up), instead of the cord's spikes; the cord still runs and is logged, the body never sees it. if the lifts survive, the body sets the rhythm")
-ap.add_argument("--puppet", default="", help="THE PUPPET BASELINE (nate 09-23, TODO 4o; a labelled puppet, NEVER a result): tripod:F_HZ:DUTY. the muscle map ignores the cord (which still runs and is logged, as --mn-poisson) and is fed scripted Poisson spike trains on each leg's own mapped motor neurons: tripod groups lf rm lh / rf lm rh in antiphase at F_HZ, DUTY the stance fraction (phase 0..DUTY stance, then swing), from the warm-up's end (nothing before it); in swing the levators (levate +) and promotors (protract +) at --puppet-swing-hz, in stance the depressors (levate -), remotors (protract -) and tibia extensors (flex -) at --puppet-stance-hz, every spike through the same f_w, K, --mn-force and actuator clip as a cord spike. every printed line and the saved args carry PUPPET; '' = off")
+ap.add_argument("--puppet", default="", help="THE PUPPET BASELINE (nate 09-23, TODO 4o; a labelled puppet, NEVER a result): tripod:F_HZ:DUTY. the muscle map ignores the cord (which still runs and is logged, as --mn-poisson) and is fed scripted Poisson spike trains on each leg's own mapped motor neurons: tripod groups lf rm lh / rf lm rh in antiphase at F_HZ, DUTY the stance fraction (phase 0..DUTY stance, then swing), from the warm-up's end (nothing before it); in swing the levators (levate +) and promotors (protract +) at --puppet-swing-hz, in stance the depressors (levate -), remotors (protract -) and tibia extensors (flex -) at --puppet-stance-hz, every spike through the same f_w, K, --mn-force and actuator clip as a cord spike. every printed line and the saved args carry PUPPET; '' = off. tripod2:F_HZ:DUTY:OFFSET (09-23, refined once against the KINEMATIC REPLAY, experiments/kin_replay.py): the same tripod groups (B at +0.5) with a per-segment phase offset inside the group, OFFSET = F/M/H in cycles (leg phase = t x F_HZ + group + offset), and the stance duty per leg, DUTY = one value, F/M/H, or lf/lm/lh/rf/rm/rh; within each leg's swing the tibia flexors (flex +) and the levators fire in the first 40 %% of swing, the protractors in the middle 60 %% (20-80 %%), and in stance the depressors, remotors and tibia extensors, as tripod")
 ap.add_argument("--puppet-swing-hz", type=float, default=100.0, help="--puppet: the scripted rate per swing-set motor neuron during its leg's swing (a chosen number)")
 ap.add_argument("--puppet-stance-hz", type=float, default=50.0, help="--puppet: the scripted rate per stance-set motor neuron during its leg's stance (a chosen number)")
 ap.add_argument("--out", required=True); ap.add_argument("--seconds", type=float, default=20.0); ap.add_argument("--seed", type=int, default=11)
@@ -83,8 +83,16 @@ if args.puppet:   # (TODO 4o) the puppet must be impossible to mistake for a res
         s = (k.get("sep") if k.get("sep") is not None else " ").join(str(x) for x in a)
         _bprint("\n".join("PUPPET | " + ln for ln in s.split("\n")), **{kk: vv for kk, vv in k.items() if kk != "sep"})
     builtins.print = _pprint
-    _pk, _pf, _pd = args.puppet.split(":"); assert _pk == "tripod", "--puppet: only tripod:F_HZ:DUTY"; PUP_F = float(_pf); PUP_DUTY = float(_pd)
-    args.PUPPET = f"PUPPET: a scripted tripod at {PUP_F:g} Hz, duty {PUP_DUTY:g}, swing {args.puppet_swing_hz:g} Hz / stance {args.puppet_stance_hz:g} Hz per MN; the cord does NOT drive the body; not a result"
+    _pk = args.puppet.split(":")[0]; assert _pk in ("tripod", "tripod2"), "--puppet: tripod:F_HZ:DUTY or tripod2:F_HZ:DUTY:OFFSET"
+    if _pk == "tripod":
+        _pk, _pf, _pd = args.puppet.split(":"); PUP_F = float(_pf); PUP_DUTY = float(_pd)
+        args.PUPPET = f"PUPPET: a scripted tripod at {PUP_F:g} Hz, duty {PUP_DUTY:g}, swing {args.puppet_swing_hz:g} Hz / stance {args.puppet_stance_hz:g} Hz per MN; the cord does NOT drive the body; not a result"
+    else:   # (09-23) tripod2: per-leg duty, per-segment offset, the swing split flexors + levators (first 40 %) / protractors (middle 60 %)
+        _pk, _pf, _pd, _po = args.puppet.split(":"); PUP_F = float(_pf); _dv = [float(x) for x in _pd.split("/")]; _ov = [float(x) for x in _po.split("/")]
+        assert len(_dv) in (1, 3, 6) and len(_ov) == 3, "tripod2:F_HZ:DUTY:OFFSET, DUTY one value, F/M/H or six legs, OFFSET F/M/H"
+        PUP_DUTY6 = np.array(_dv * 6 if len(_dv) == 1 else _dv * 2 if len(_dv) == 3 else _dv); PUP_OFF3 = dict(zip("fmh", _ov)); PUP_DUTY = float(PUP_DUTY6.mean())
+        args.PUPPET = (f"PUPPET: a scripted tripod2 at {PUP_F:g} Hz, stance duty lf lm lh rf rm rh {'/'.join(f'{x:g}' for x in PUP_DUTY6)}, segment offsets F/M/H {_po} cycles, swing = flexors + levators 0-40 % then protractors 20-80 %, "
+                       f"swing {args.puppet_swing_hz:g} Hz / stance {args.puppet_stance_hz:g} Hz per MN; the cord does NOT drive the body; not a result")
     print(args.PUPPET)
 
 # ---- the cord
@@ -352,7 +360,18 @@ if args.puppet:   # (TODO 4o) the scripted tripod's cells: each leg's own mapped
                 _pc += js; _pl += [LEG6.index(leg)] * len(js); _pk2 += [kind] * len(js)
                 if js: print(f"  {leg} {'swing ' if kind == 0 else 'stance'} {hz_:5.0f} Hz  {ro:8s} {ag:+d} -> {_dofn2[roles[leg][ro]['k']]:36s} {len(js):2d} cells: " + ", ".join(f"{t_} x{int(sum(mty[j] == t_ for j in js))}" for t_ in sorted(set(mty[js]))) + f"; f_w {min(f_w[j] for j in js):.3f}-{max(f_w[j] for j in js):.3f}")
                 else: print(f"  {leg} {'swing ' if kind == 0 else 'stance'} {hz_:5.0f} Hz  {ro:8s} {ag:+d} -> no mapped cells")
+    if _pk == "tripod2":   # (09-23) rebuild the sets: kind 0 = flexors + levators (swing 0-40 %), 2 = protractors (swing 20-80 %), 1 = stance, as tripod
+        _pc, _pl, _pk2 = [], [], []; _W2 = ((0, (("flex", +1), ("levate", +1)), args.puppet_swing_hz, "swing 0-40 %"), (2, (("protract", +1),), args.puppet_swing_hz, "swing 20-80 %"), (1, _ST, args.puppet_stance_hz, "stance"))
+        print(f"  tripod2 (replaces the lines above): stance duty " + " ".join(f"{l} {d_:g}" for l, d_ in zip(LEG6, PUP_DUTY6)) + ", offsets " + " ".join(f"{g_.upper()} {v_:g}" for g_, v_ in PUP_OFF3.items()) + f" cycles; per leg swing {np.round((1 - PUP_DUTY6) / PUP_F * 1000).astype(int).tolist()} ms")
+        for leg in LEG6:
+            for kind, sel, hz_, lab in _W2:
+                for ro, ag in sel:
+                    js = sorted(groups.get((leg, ro, ag), []))
+                    _pc += js; _pl += [LEG6.index(leg)] * len(js); _pk2 += [kind] * len(js)
+                    print(f"  {leg} {lab:13s} {hz_:5.0f} Hz  {ro:8s} {ag:+d} -> {_dofn2[roles[leg][ro]['k']]:36s} {len(js):2d} cells" + (": " + ", ".join(f"{t_} x{int(sum(mty[j] == t_ for j in js))}" for t_ in sorted(set(mty[js]))) + f"; f_w {min(f_w[j] for j in js):.3f}-{max(f_w[j] for j in js):.3f}" if js else ""))
+        _TRI = {l: _TRI[l] + PUP_OFF3[l[1]] for l in LEG6}
     PUP = dict(cells=np.array(_pc, np.int64), leg=np.array(_pl, np.int64), kind=np.array(_pk2, np.int64), off=np.array([_TRI[l] for l in LEG6]), rng=np.random.default_rng([args.seed, 88]))
+    if _pk == "tripod2": PUP["duty"] = PUP_DUTY6
     PUPSW = np.zeros((n_ms, 6), np.int8)   # 1 = the leg's scripted swing this ms
     print(f"{len(PUP['cells'])} motor neurons scripted; the cord's own motor spikes are logged, never felt")
 LOGX = np.flatnonzero(np.isin(mty, [x for x in args.log_x.split(',') if x])) if args.log_x else np.zeros(0, np.int64); XMS = np.zeros((n_ms + 1, len(LOGX)), np.int16) if len(LOGX) else None; xpos = np.full(M.N, -1, np.int64); xpos[LOGX] = np.arange(len(LOGX))
@@ -412,8 +431,13 @@ for ms in range(n_ms):
         hit = np.zeros(0, np.int64)
     elif PUP is not None:   # (TODO 4o) the PUPPET: the scripted tripod, the cord's spikes logged only
         if t >= args.warmup:
-            sw = ((((t - args.warmup) * PUP_F + PUP["off"]) % 1.0) >= PUP_DUTY); PUPSW[ms] = sw
-            pon_ = np.where(PUP["kind"] == 0, sw[PUP["leg"]], ~sw[PUP["leg"]]); rate_ = np.where(PUP["kind"] == 0, args.puppet_swing_hz, args.puppet_stance_hz) * pon_ / 1000.0
+            if "duty" not in PUP:
+                sw = ((((t - args.warmup) * PUP_F + PUP["off"]) % 1.0) >= PUP_DUTY); PUPSW[ms] = sw
+                pon_ = np.where(PUP["kind"] == 0, sw[PUP["leg"]], ~sw[PUP["leg"]]); rate_ = np.where(PUP["kind"] == 0, args.puppet_swing_hz, args.puppet_stance_hz) * pon_ / 1000.0
+            else:   # tripod2: the swing's own clock s in [0, 1)
+                ph_ = ((t - args.warmup) * PUP_F + PUP["off"]) % 1.0; sw = ph_ >= PUP["duty"]; PUPSW[ms] = sw; s_ = np.where(sw, (ph_ - PUP["duty"]) / (1.0 - PUP["duty"]), -1.0)
+                sl_ = s_[PUP["leg"]]; pon_ = np.where(PUP["kind"] == 0, (sl_ >= 0) & (sl_ < 0.4), np.where(PUP["kind"] == 2, (sl_ >= 0.2) & (sl_ < 0.8), sl_ < 0))
+                rate_ = np.where(PUP["kind"] == 1, args.puppet_stance_hz, args.puppet_swing_hz) * pon_ / 1000.0
             hit = PUP["cells"][PUP["rng"].random(len(PUP["cells"])) < rate_]
         else: hit = np.zeros(0, np.int64)
         if idx.size:
