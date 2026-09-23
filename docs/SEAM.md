@@ -6263,3 +6263,18 @@ things). with the standing senses (flexion claw 40 + bristles 20): the flexors a
 it lacks now is drive, which shunting inhibition cannot supply. so 2b matters for the cells the winner holds down (the 13B side at -5, the
 excitors at -6.5, where a shunt would leave them near rest instead), and item 3's threshold matters once they are near rest; neither is
 the drive. the drive is the 95 % of central excitation onto the flexion side that a tonic command does not wake.
+
+**the body's senses, read before editing (23:26 PDT; `experiments/body_loop.py` lines 91-107, 206-217):** on the body the whole 580-cell floor
+runs at `--leg-load-hz` (15 Hz) as a tonic set (line 93) AND each leg's "load" row (everything in `legs.npz` that is not claw or hook: club,
+hair plates, untyped, campaniform) is driven at 15 x load on top. so the body loop has been driving a standing leg's vibration cells at
+15 Hz throughout, the same fault as the cord's floor (ledger 6). the claw rows (SNpp50 / 51) are driven by the knee angle FROM THE MODEL'S
+NEUTRAL POSE (78 deg front, 103 middle, 101 hind, as the model measures the femur-tibia joint) at `--claw-hz` x |angle| / 60 deg, which
+zeroes the claw at the standing posture. Mamiya's claw cells are tonic in angle and **silent near 90 deg**, not near the model's neutral:
+at the standing pose the front knees sit 12 deg to the flexion side of the claw's null and the middle and hind 11-13 deg to the extension
+side, so a standing fly's claw is not silent, it is a small flexion signal in front and a small extension signal behind (a fifth of the
+60-deg range), and which class carries which is ledger row 1. the hooks are velocity cells (right as built, silent standing), the
+bristles are not driven at all, the hair plates are inside the load row. **the edit, once the engine agent's hands are off the file:**
+`--senses v2`: the floor and the load row on campaniform + untyped only (`world/leg_senses.npz`), club / hook / unclassified at 0, the
+claw from |angle - 90 deg| by class, hair plates from coxa angle near its limits (a stand-in, rate unsourced), the leg's tactile cells at
+a rate while its foot's contact force is above the pads' threshold (onset burst, then tonic; rates unsourced, ledger 7). every row
+labelled; the default stays as it was so every run of record reproduces.
