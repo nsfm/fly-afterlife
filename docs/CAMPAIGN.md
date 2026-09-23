@@ -56,6 +56,18 @@ lets IN13B019 / IN13A006 / AN06B002 and the flexor excitors IN21A004 / IN03A004 
 order: 1 tonight, 2 and 3 this week, then look. if the flexors wake and the 20 Hz drops toward 10 on sourced changes, the rest is earned.
 if not, 4-7 are a claim about what the file is missing, and we say so.
 
+## day two (09-23, opened 10:16 PDT)
+
+nate, on the reversal clip: "still a bit twitchy but less chaotic, and he doesn't totally flip himself over. seems like progress." and on the
+methods dig: "the field is less shy than we are." agreed, with the edit that the wrong answer still exists (fit until he walks). two threads:
+
+- **4 (running).** the small flexors' own tone: a persistent inward current on the small third, borrowed parameters named, Azevedo's 30 Hz at
+  rest as the check, three values of g reported and none tuned to hit it. engine term, oracle, one arm.
+- **the command (running).** one tonic DN drives the extension side and knocks the honest body over. the walking command as a population,
+  sourced (which DNs, what rates, tonic or phasic, which premotor side each favours); meanwhile the recorded whole-fly DN population
+  (`--dn-playback world/record/dn_census_0922`) replayed on the honest body beside the tonic command and rest, both labellings.
+- then both together on the body, both labellings, with clips.
+
 ## working habits
 
 one change per run, controls beside every arm, both claw labellings beside every body result, the oracle before any engine commit, agents
