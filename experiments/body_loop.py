@@ -59,7 +59,13 @@ ap.add_argument("--log-v", default="", help="as in world/cord.py: comma-separate
 ap.add_argument("--graded", default="", help="graded (non-spiking) units as in world/cord.py: PREFIXES:GAIN[:V1] or random:N:GAIN")
 add_size_args(ap)   # --size-gain --size-thr --size-noise --size-clip --size-from, as in world/cord.py (src/fly_afterlife/size.py, one block for both)
 ap.add_argument("--slow-init", type=float, default=0.0, help="set him down standing: for this many seconds after the warm-up the load term is clamped to at least standing (F_stand) on every leg, so the load reflex and the stand-in start engaged; then the body's own load. an initial condition, labelled (0 = off)")
-ap.add_argument("--gain", type=float, default=42.0); ap.add_argument("--sat", type=float, default=10.0); ap.add_argument("--alpha", type=float, default=1.2); ap.add_argument("--stiffness", type=float, default=None)
+STIFF_SOURCED = 2e-8 / 1e-9   # 2e-8 N.m/rad in the model's torque unit (g.mm^2/s^2 = 1e-3 kg x 1e-6 m^2 / s^2 = 1e-9 N.m = nN.m): 20 nN.m/rad
+def _stiffness(x): return STIFF_SOURCED if x == "sourced" else float(x)
+ap.add_argument("--gain", type=float, default=42.0); ap.add_argument("--sat", type=float, default=10.0); ap.add_argument("--alpha", type=float, default=1.2)
+ap.add_argument("--stiffness", type=_stiffness, default=None, help="the joints' passive spring in nN.m/rad (the model's unit: g.mm^2/s^2 = nN.m). default None = flygym's 10, the number every clip of record ran on (it does not hold NeuroMechFly's neutral pose: he sinks onto his hind coxae, docs/REVIEW_PHYSICS.md P2). 'sourced' = 20: leg_biomech.md B5 (Wang et al. 2025 bioRxiv 2025.04.29.651225, the T1 femur-tibia, the smaller reading of their ambiguous unit, uncertain to ~50x) gives 2 x 10^-8 N.m/rad; 1 nN.m = 10^-9 N.m, so 2e-8 N.m/rad = 2e-8 / 1e-9 = 20 nN.m/rad = 20 model units. on this body 20 stands him on his feet with no muscle (the review's sweep), against the paper's headline that passive force cannot (P3); so 'sourced' is the printed number, not a check of it. 0.14 = 10 / 70 is derived (E), not measured")
+ap.add_argument("--load-from", default="leg", choices=["leg", "tarsi"], help="the per-leg force the load rows, the tactile rows and the pads read (09-23, docs/REVIEW_PHYSICS.md P1): leg (the runs of record: flygym's per-leg contact sensor, the whole leg's subtree from the coxa down, a vector norm with friction, so a coxa on the floor reads as a loaded foot) | tarsi (the vertical ground reaction on tarsus1-5 only, summed per leg; tarsus5 carries the claw and pad, the model has no pretarsus segment). either way net of the pad's pull; leg_force in the .npz stays the leg sensor's")
+ap.add_argument("--hind-map", default="v1", choices=["v1", "v2"], help="the hind legs' motor-neuron-to-DOF table (09-23, the review's P4 / P5): v1 (the runs of record: the front leg's type map on the measured roles; the hind 'protract' role is coxa yaw, the hind coxa pitch gets no cord torque; MNhl01/02/29/59/60/62/64/87/88 unmapped) | v2: the hind 'protract' role (every promotor / remotor / rotator class) moves to the hind coxa PITCH, sign by its measured fore-aft action (results/body_dof_signs.json: + pitch moves the foot 0.367 mm back and 0.505 mm up per unit, so protraction = - pitch, which also presses the foot down), and the unnamed hind cells get leg_biomech.md A2's recommended action: MNhl62 promotor (high), MNhl29 remotor (high), MNhl01 / MNhl02 trochanter depressors (medium-high), MNhl60 / MNhl64 tarsus depressors (low, (E)); MNhl59 (low: anterior rotator by cos 0.36 only), MNhl87 / 88 (none), Tergotr. and Fe reductor stay unmapped, as A2 says. the adductor stays on coxa yaw. printed at startup")
+ap.add_argument("--start-pose", default="neutral", choices=["neutral", "feet"], help="where the run starts (09-23, the review's P2): neutral (the runs of record: spawned in NeuroMechFly's neutral pose, which is not a six-foot stance: the hind feet lowest, the middle 0.155 mm and the front ~0.30 mm up; he falls and settles during the warm-up with the cord already driving) | feet: before the warm-up, 0.5 s of physics under gravity on the arm's own springs with no muscle and no pad, then the run starts from that settled pose. (lowering the spawn cannot put six feet down: the neutral feet are not level)")
 ap.add_argument("--mn-force", default="uniform", choices=["uniform", "azevedo"], help="force per spike by motor neuron class (09-23; docs/physiology/force_per_spike.md): uniform (the runs of record: every mapped MN's spike scaled by the size proxy f_w = (S / S_max of its leg-role group)^--alpha) | azevedo (Azevedo et al. 2020 eLife 9:e56754, fig 4, the female front-leg tibia flexor: ~10 / ~1 / 0.013 uN per spike for fast / intermediate / slow, so 1 : 0.1 : 0.0013 with fast at today's --gain; the class from the input-synapse third of the 'Ti flexor MN' pool, the same thirds as --pic smallflex and the graded size CSV, small = slow; the measured factor REPLACES f_w on those cells; every other mapped MN keeps f_w x 1.0, a stated default, counted at startup). the slow class's own slow kinetics (no twitch, force still rising at 500 ms) are not modelled: same kernel, measured gain")
 ap.add_argument("--tethered", action="store_true", help="the tethered preparation (nate, 09-22: propped up): the thorax fixed in space, the legs free, no floor and no load; the position loop still closes"); ap.add_argument("--gravity", type=float, default=1.0, help="scale on gravity (0.1 = a tenth of his weight; a graded prop-up, diagnostic)")
 ap.add_argument("--walk-ramp", type=float, default=0.0, help="the command rises linearly over this many seconds after the warm-up instead of stepping on in one ms (nate 09-22: the fling at the 2 s mark; a walking bout's descending drive ramps in life, Aymanns 2022, Sapkal 2024 ramped their light)");
@@ -186,6 +192,14 @@ ROLE = {"Tergopleural/Pleural promotor MN": ("protract", +1), "Sternal anterior 
         "Ta levator MN": ("tarsus_levate", +1), "MNml81": ("tarsus_levate", +1), "MNhl65": ("tarsus_levate", +1), "Ta depressor MN": ("tarsus_levate", -1),
         "Sternal adductor MN": ("adduct", +1), "ltm MN": ("grip", +1), "ltm1-tibia MN": ("grip", +1), "ltm2-femur MN": ("grip", +1)}
 roles = json.load(open("results/body_dof_signs.json"))["roles"]
+HIND = ("lh", "rh"); ROLE_H = ROLE
+if args.hind_map == "v2":   # (09-23, the review's P4) the hind protract role on the coxa pitch by its measured fore-aft action; A2's unnamed hind cells added
+    _meas = json.load(open("results/body_dof_signs.json"))["measured"]
+    for _l in HIND:
+        _d = f"c_thorax->{_l}_coxa:pitch"; _mm = _meas[_d]; roles[_l]["protract"] = dict(dof=_d, k=_mm["k"], sign=float(np.sign(_mm["delta"]["fwd"])), size=abs(_mm["delta"]["fwd"]), up=_mm["delta"]["up"])
+    ROLE_H = dict(ROLE, **{"MNhl62": ("protract", +1), "MNhl29": ("protract", -1), "MNhl01": ("levate", -1), "MNhl02": ("levate", -1), "MNhl60": ("tarsus_levate", -1), "MNhl64": ("tarsus_levate", -1)})
+    HIND_SRC = {"MNhl62": "A2 promotor, high", "MNhl29": "A2 remotor, high", "MNhl01": "A2 Tr depressor, med-high", "MNhl02": "A2 Tr depressor, med-high", "MNhl60": "A2 Ta depressor, low (E)", "MNhl64": "A2 Ta depressor, low (E)",
+                "MNhl59": "unmapped: A2 low (ant. rotator by cos 0.36)", "MNhl87": "unmapped: A2 none", "MNhl88": "unmapped: A2 none", "Tergotr. MN": "unmapped (as v1)", "Fe reductor MN": "unmapped (as v1)"}
 def limit_joints(jm, neutral_of):
     """joint ranges about the neutral pose, (E): knee +-70 deg, trochanter pitch +-50, coxa +-45, tarsus +-40 (the brief's C gives measured
     ranges per joint from Karashchuk 2021; these are the coarse first cut). the body ships its hinges unlimited, and a torqued unlimited hinge winds up."""
@@ -221,14 +235,27 @@ if args.senses == "v2":   # (campaign item 6, 09-22) the claw's null and the hai
     print("--senses v2: femur-tibia at neutral " + ", ".join(f"{l} {180 - knee_neutral[l]:.0f}" for l in LEG6) + " deg (claw null 90); coxa pitch neutral / limits " + ", ".join(f"{l} {np.degrees(cx_n[l]):.0f} [{np.degrees(cx_rng[l][0]):.0f}, {np.degrees(cx_rng[l][1]):.0f}]" for l in LEG6) + " deg")
 cell_dof = {}; cell_sgn = {}; grip_of = {}; groups = {}
 for j in LEGMN:
-    if mty[j] not in ROLE: continue
-    role, ag = ROLE[mty[j]]
+    _R = ROLE_H if legof[j] in HIND else ROLE
+    if mty[j] not in _R: continue
+    role, ag = _R[mty[j]]
     if role == "grip": grip_of[j] = legof[j]; continue
     r = roles[legof[j]][role]; cell_dof[j] = r["k"]; cell_sgn[j] = r["sign"] * ag; groups.setdefault((legof[j], role, ag), []).append(j)
 f_w = {}
 for key, js in groups.items():
     smax = max(insyn[js]) or 1.0
     for j in js: f_w[j] = (insyn[j] / smax) ** args.alpha if insyn[j] > 0 else 0.1
+if args.hind_map == "v2":
+    _dofn = [dof_name(x) for x in dofs]
+    print("--hind-map v2: the hind legs' motor neurons -> DOF (sign: the torque sign on the DOF = the measured role sign x agonist / antagonist; f_w before --mn-force)")
+    print("  leg  type                            n  role           DOF                                   sign  f_w          source")
+    for _l in HIND:
+        for _t in sorted(set(mty[[j for j in LEGMN if legof[j] == _l]])):
+            _js = [j for j in LEGMN if legof[j] == _l and mty[j] == _t]
+            if _t in ROLE_H and ROLE_H[_t][0] != "grip":
+                _ro, _ag = ROLE_H[_t]; _r = roles[_l][_ro]
+                print(f"  {_l}   {_t:30s} {len(_js):2d}  {_ro:14s} {_dofn[_r['k']]:37s} {int(_r['sign'] * _ag):+d}   {min(f_w[j] for j in _js):.3f}-{max(f_w[j] for j in _js):.3f}  {HIND_SRC.get(_t, 'as v1' if _ro != 'protract' else 'v1 class, moved to pitch')}")
+            elif _t in ROLE_H: print(f"  {_l}   {_t:30s} {len(_js):2d}  grip (the pads' ltm, as v1)")
+            else: print(f"  {_l}   {_t:30s} {len(_js):2d}  -              no torque                                         {HIND_SRC.get(_t, 'unmapped')}")
 MNF = {"slow": 0.013 / 10.0, "intermediate": 1.0 / 10.0, "fast": 1.0}   # (09-23) Azevedo 2020 fig 4: uN per spike over the fast spike's ~10 uN
 if args.mn_force == "azevedo":   # the tibia flexor pool by input-synapse third (the file's counts, as --pic smallflex ranks it), the measured factor in place of the size proxy
     _tp = np.flatnonzero(mty == "Ti flexor MN"); _tp = _tp[np.argsort(insyn[_tp], kind="stable")]; MN_CLASS = {}
@@ -248,8 +275,20 @@ if args.mn_force == "azevedo":   # the tibia flexor pool by input-synapse third 
 KL = 120; tk = np.arange(KL); K = np.exp(-tk / 20.0) - np.exp(-tk / 7.0); K /= K.max()
 weight = m.body_mass.sum() * abs(m.opt.gravity[2]); F_stand = max(weight / 6.0, 1e-6); print(f"gravity x{args.gravity}: weight {weight:.2f} uN, F_stand {F_stand:.2f}")
 segs = [s.name for s in fly.get_bodysegs_order()]; thorax = segs.index("c_thorax")
+TARS = [np.array([segs.index(f"{l}_tarsus{i}") for i in range(1, 6)]) for l in LEG6]   # (09-23, P1) the feet: tarsus1-5 (tarsus5 carries the claw and pad; no pretarsus segment in the model)
+OTHL = [np.array([i for i, s_ in enumerate(segs) if s_.startswith(l + "_") and "_tarsus" not in s_]) for l in LEG6]   # coxa, trochanter-femur, tibia
 if not args.no_video: sim.set_renderer([c for c in [mj.mj_id2name(m, mj.mjtObj.mjOBJ_CAMERA, i) for i in range(m.ncam)] if "trackcam" in c][0], camera_res=(480, 640), playback_speed=1.0, output_fps=args.fps)
 sim.reset(); steps_per_ms = int(round(0.001 / m.opt.timestep))
+if args.start_pose == "feet":   # (09-23, P2) settle on the springs with no muscle, then start from there
+    sim.set_actuator_inputs("nmf", ActuatorType.MOTOR, np.zeros(len(dofs)))
+    if adh: sim.set_leg_adhesion_states("nmf", np.zeros(6, bool))
+    _z = []
+    for _s in range(int(round(0.5 / m.opt.timestep))):
+        sim.step()
+        if _s % 10 == 0: _z.append(float(sim.get_body_positions("nmf")[thorax][2]))
+    _cf0 = np.asarray(sim.get_bodysegment_contact_forces("nmf", segs))
+    print(f"--start-pose feet: settled 0.5 s on the springs ({'flygym default 10' if args.stiffness is None else args.stiffness}) with no muscle: thorax z {_z[-1]:.3f} mm (moved {abs(_z[-1] - _z[-50]) * 1000:.1f} um in the last 50 ms); "
+          f"tarsi per leg {np.round([_cf0[TARS[i], 2].sum() for i in range(6)], 2)} uN, other leg segments {np.round([_cf0[OTHL[i], 2].sum() for i in range(6)], 2)} uN (lf lm lh rf rm rh)")
 def leg_forces():
     """ground contact force magnitude per leg (model force units = uN), legs ordered lf lm lh rf rm rh (fly.get_legs_order())."""
     if args.tethered: return np.zeros(6)
@@ -259,6 +298,7 @@ def leg_forces():
 n_ms = int(args.seconds * 1000); torque = np.zeros((len(dofs), n_ms + KL)); grip = {l: np.zeros(n_ms + KL) for l in LEG6}
 P = np.zeros((n_ms, 3), np.float32); Q = np.zeros((n_ms, 4), np.float32); FL = np.zeros((n_ms, 6), np.float32); KA = np.zeros((n_ms, 6), np.float32)
 JA = np.zeros((n_ms // 10 + 1, len(all_dofs)), np.float32)
+FT = np.zeros((n_ms, 6)); FO = np.zeros((n_ms, 6)); FB = np.zeros(n_ms); FTN = np.zeros((n_ms, 6), np.float32)   # (09-23, P1) tarsal / other-leg vertical reaction per leg, body; FTN = tarsal net of the pads
 spk = np.zeros((n_ms // 10 + 1, len(LEGMN)), np.int16); lpos = {int(j): i for i, j in enumerate(LEGMN)}
 MNP = None
 if args.mn_poisson:
@@ -277,9 +317,17 @@ for ms in range(n_ms):
     if PB is not None:
         ch = int((args.playback_start + max(t - args.warmup, 0.0)) * 10) if t >= args.warmup else -1; state["dn_hz"] = PB["hz"][min(ch, PB["n"] - 1)] if ch >= 0 else np.zeros(len(PB["cells"]), np.float32)
     ang = sim.get_joint_angles("nmf"); knee = np.array([(np.degrees(ang[knee_idx[l]]) - knee_neutral[l]) * knee_sign[l] for l in LEG6]); om = np.zeros(6) if prev_knee is None else (knee - prev_knee) * 1000.0; prev_knee = knee   # signed flexion FROM NEUTRAL (the review's F1: the centre was lost in the port from leg_loop.py)
-    F = leg_forces()   # always read (09-23, review R1: with load out of the loop the feet's force was never read, so 'no lifts' in those arms was zero by construction and the pads never engaged; the position+load path is unchanged)
+    F = FLEG = leg_forces()   # always read (09-23, review R1: with load out of the loop the feet's force was never read, so 'no lifts' in those arms was zero by construction and the pads never engaged; the position+load path is unchanged)
     if adh and args.adhesion == "contact": F = np.maximum(F - args.adhesion_gain * pad_on, 0.0)   # the review's F3: the contact reading includes the pad's pull while it is on
     if np.isnan(F).any(): F = np.zeros(6); force_ok = False
+    FLEG = F   # the leg sensor's reading, net of the pads: leg_force and ground keep this meaning whatever --load-from says
+    if not args.tethered:   # (09-23, P1) the vertical ground reaction on the feet (tarsus1-5) and on the rest of each leg, per ms
+        try:
+            _cf = np.asarray(sim.get_bodysegment_contact_forces("nmf", segs)); FT[ms] = [_cf[TARS[i], 2].sum() for i in range(6)]; FO[ms] = [_cf[OTHL[i], 2].sum() for i in range(6)]; FB[ms] = np.abs(_cf[NONLEG, 2]).sum()
+        except Exception: FT[ms] = FO[ms] = FB[ms] = np.nan
+    Ftar = np.maximum(FT[ms] - args.adhesion_gain * pad_on, 0.0) if (adh and args.adhesion == "contact") else np.maximum(FT[ms], 0.0)
+    FTN[ms] = Ftar
+    if args.load_from == "tarsi": F = np.nan_to_num(Ftar)
     Fsm = F if ms == 0 else 0.8 * Fsm + 0.2 * F; dF = (Fsm - prevF) * 1000.0 if ms else np.zeros(6); prevF = Fsm.copy()
     for i, leg in enumerate(LEG6):
         k = knee[i] if args.senses == "v1" else knee[i] + knee90[leg]   # v2: flexion past the claw's null at 90 deg femur-tibia (Mamiya 2018), not past the model's neutral
@@ -298,7 +346,7 @@ for ms in range(n_ms):
         if args.slow_mv > 0:
             if len(SLOW_BY_LEG[leg]): M._ext[SLOW_BY_LEG[leg]] = np.float32(args.slow_mv * ld)
             if args.cocon > 0 and len(SWING_BY_LEG[leg]): M._ext[SWING_BY_LEG[leg]] = np.float32(args.cocon * args.slow_mv * ld)
-    KA[ms] = knee; FL[ms] = F
+    KA[ms] = knee; FL[ms] = FLEG
     if ms % 10 == 0: JA[ms // 10] = np.degrees(ang)
     REG.apply(M, state, t, 0.001); M.step(); idx = M.last_idx
     if VMS is not None: VMS[ms] = np.bincount(_vg, weights=M.v[_vi], minlength=len(_vt)) / _vn
@@ -329,19 +377,21 @@ for ms in range(n_ms):
     for _ in range(steps_per_ms): sim.step()
     P[ms] = sim.get_body_positions("nmf")[thorax]; Q[ms] = sim.get_body_rotations("nmf")[thorax]
     if ms % 10 == 0:
-        try: _cf = np.asarray(sim.get_bodysegment_contact_forces("nmf", segs)); BODYF[ms // 10] = (float(F.sum()), float(np.abs(_cf[NONLEG, 2]).sum()))   # the feet's load, and the vertical ground reaction on the NON-leg segments (thorax, abdomen, head): a standing fly has none of the second (the review's F2)
-        except Exception: BODYF[ms // 10] = (float(F.sum()), np.nan)
+        try: _cf = np.asarray(sim.get_bodysegment_contact_forces("nmf", segs)); BODYF[ms // 10] = (float(FLEG.sum()), float(np.abs(_cf[NONLEG, 2]).sum()))   # the feet's load, and the vertical ground reaction on the NON-leg segments (thorax, abdomen, head): a standing fly has none of the second (the review's F2)
+        except Exception: BODYF[ms // 10] = (float(FLEG.sum()), np.nan)
     if not args.no_video: sim.render_as_needed()
-    if ms % 5000 == 0 and ms: print(f"t={t:5.1f}s thorax z {P[ms, 2]:.2f}  legs F {np.round(F, 1)}  knees {np.round(knee, 0)}  ({time.time() - t0:.0f}s)")
+    if ms % 5000 == 0 and ms: print(f"t={t:5.1f}s thorax z {P[ms, 2]:.2f}  legs F {np.round(FLEG, 1)}  knees {np.round(knee, 0)}  ({time.time() - t0:.0f}s)")
 os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)
 nfr = n_ms // 10; frames = spk[:nfr]
 _x = dict(x_ms=XMS[:n_ms], x_type=mty[LOGX], x_bodyId=mbid[LOGX]) if XMS is not None else {}
 np.savez_compressed(args.out + ".cells.npz", cells=LEGMN, bodyId=mbid[LEGMN], type=mty[LEGMN], side=mns[LEGMN], counts=frames[: (nfr // 10) * 10].reshape(nfr // 10, 10, -1).sum(1).astype(np.int32), pose_chunk=np.zeros((nfr // 10, 3), np.float32), frames=frames, **_x, pose_frame=np.zeros((nfr, 3), np.float32), **({'v_ms': VMS, 'v_types': np.array(_vt)} if VMS is not None else {}))
 w_, x_, y_, z_ = Q[:, 0], Q[:, 1], Q[:, 2], Q[:, 3]; yaw = np.degrees(np.arctan2(2 * (w_ * z_ + x_ * y_), 1 - 2 * (y_ ** 2 + z_ ** 2)))
-np.savez_compressed(args.out + ".npz", thorax=P, quat=Q, leg_force=FL, knee=KA, ground=BODYF[: n_ms // 10], joints=JA[: n_ms // 10], joint_names=np.array([dof_name(x) for x in all_dofs]), args=np.array(str(vars(args))))
+np.savez_compressed(args.out + ".npz", thorax=P, quat=Q, leg_force=FL, knee=KA, ground=BODYF[: n_ms // 10], tarsal_force=FTN, other_leg_force=FO.astype(np.float32), body_force=FB.astype(np.float32), stand3=np.stack([FTN.sum(1), FO.sum(1), FB], 1)[::10][: n_ms // 10].astype(np.float32), joints=JA[: n_ms // 10], joint_names=np.array([dof_name(x) for x in all_dofs]), args=np.array(str(vars(args))))
 w0 = int(args.warmup * 1000); v = np.linalg.norm(np.diff(P[w0:, :2], axis=0), axis=1) * 1000; hz = frames[w0 // 10:].mean(0) * 100
 flex = np.array([("Ti flexor" in t_) or ("Acc. ti flexor" in t_) for t_ in mty[LEGMN]]); ext = mty[LEGMN] == "Ti extensor MN"
-gb = BODYF[w0 // 10: n_ms // 10]; body_on_floor = float(np.nanmean(gb[:, 1])); print(f"standing? the body (thorax / abdomen / head) rests on the floor with {body_on_floor:.1f} uN of {weight:.1f} ({body_on_floor / weight * 100:.0f} % of his weight; 0 = standing on his feet); the feet carry {gb[:, 0].mean():.1f} uN net of the pads")
+gb = BODYF[w0 // 10: n_ms // 10]; body_on_floor = float(np.nanmean(gb[:, 1])); _ft = FTN[w0:].sum(1).mean(); _fo = np.nanmean(FO[w0:].sum(1)); _fb = np.nanmean(FB[w0:])
+print(f"standing? feet (tarsus1-5, net of the pads) {_ft:.2f} uN, other leg segments (coxa / trochanter-femur / tibia) {_fo:.2f} uN ({_fo / weight * 100:.0f} %: the coxa share), body (thorax / abdomen / head) {_fb:.2f} uN of {weight:.2f}; per-leg tarsal load {np.round(FTN[w0:].mean(0), 2)}, other leg segments {np.round(np.nanmean(FO[w0:], 0), 2)} (lf lm lh rf rm rh); load rows from {args.load_from}, hind map {args.hind_map}, start {args.start_pose}")
+print(f"standing? the body (thorax / abdomen / head) rests on the floor with {body_on_floor:.1f} uN of {weight:.1f} ({body_on_floor / weight * 100:.0f} % of his weight; 0 = standing on his feet); the feet carry {gb[:, 0].mean():.1f} uN net of the pads")
 print(f"done in {time.time() - t0:.0f}s ({args.seconds / (time.time() - t0):.2f}x real time); contact forces {'read' if force_ok else 'UNAVAILABLE (load rows got 0)'}; after the warm-up: leg MN {hz.mean():.2f} Hz/cell, flexors {hz[flex].mean():.2f}, extensors {hz[ext].mean():.2f}; "
       f"thorax height mean {P[w0:, 2].mean():.2f} (min {P[w0:, 2].min():.2f}), speed {v.mean():.1f} mm/s, net turn {((yaw[-1] - yaw[w0] + 180) % 360) - 180:+.0f} deg; leg forces mean {np.round(FL[w0:].mean(0), 1)} (F_stand {F_stand:.2f}); knee sd {np.round(KA[w0:].std(0), 0)}")
 if not args.no_video: sim.renderer.save_video(args.out + ".mp4"); print("video", args.out + ".mp4")
