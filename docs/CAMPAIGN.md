@@ -50,7 +50,8 @@ this is the plan and the ledger of what we changed on the fly to get there.
    from coxa angle, campaniform from rising load, clubs and hooks from motion, in the body loop.
 7. **add connections.** OPENED 09-23 on the 19B -> 19A pathway (ledger 26): weight and drive sweeps on the cord and the honest body.
    also queued (nate): a puppet gait as a baseline, so the connectome's attempt has a "working" body to be measured against.
-   original: gap junctions; the flexor motor neurons' inputs where tracing is thin. a reason each time.
+   nate (09-23): no full-brain runs until the cord steps on its own; "we know the body should have a walking reflex without the brain; we
+   haven't provided it yet." the gap is the cord's. original: gap junctions; the flexor motor neurons' inputs where tracing is thin. a reason each time.
 8. **the fitter,** bounded by 2-5's ranges, aimed at measured targets.
 
 **the target, named 09-22 night (`docs/SEAM.md` "the campaign opens"):** the tibia flexors are silent because the 13A / 12B / 19A premotor
