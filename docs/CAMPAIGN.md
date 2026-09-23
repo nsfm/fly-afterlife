@@ -88,7 +88,9 @@ across legs; no gait yet. the coupling between legs is now the question.
 **named (09-23 afternoon):** the load reflex. campaniform rows alone make the bouts; position and movement senses alone make none
 (he holds all six feet up); no single sense is necessary, the load is sufficient. the stick insect's stance-swing transition on the fly's wiring.
 the hinted middle-leg exclusion did not replicate (one seed); he leans right and the left legs co-lift. coupling: central in the fly
-(Mendes 2013, Sapkal 2026's 19B commissurals onto 19A locals), to be logged and silenced next.
+(Mendes 2013, Sapkal 2026's 19B commissurals onto 19A locals). LOGGED AND SILENCED: present, wired as described, nearly silent under
+the recorded command (0.4 / 3.5 Hz), 3 / 12 Hz under DNg100 at 100; silencing them or their targets changes nothing. **item 7 now has a
+named circuit and a source:** the 19B commissural -> 19A local pathway, underdriven at the file's weights. nate's call.
 
 ## working habits
 

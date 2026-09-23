@@ -6725,3 +6725,13 @@ the circuit the field names for left-right alternation is present, wired as desc
 recorded standing command; Pugliese found the same cells "insufficient to couple the phase" in their model with the command at its
 walking rate. what drives them in the fly is the next census (their inputs, below), and the arm that follows is the tonic command at
 60-100 Hz with the commissurals logged: if they wake under a walking-rate command, the coupling test is theirs to fail or pass.
+
+**the commissurals under a walking-rate command (12:07 PDT; logged on the full stack, seed 11):** AN19B009 / IN19B005 at 0.4 / 3.5 Hz under
+the recorded standing command, 2.0 / 7.3 under DNg100 at 60 Hz, 3.1 / 12.3 at 100, 2.1 / 8.1 under the five-DN population; their 19A
+targets 15-20 / 7-10 Hz throughout. so the command wakes them a little (their inputs: IN17A001 622 synapses, INXXX468 605, DNg100 366,
+IN03A006 364; inhibited by their own targets IN19A011 477, IN19A020 346, IN19A001 293; E and I one to one, 2,936 synapses per cell), and
+at 3 and 12 Hz they are not the strong commissural drive Sapkal describes; and at those doses only one middle leg steps on two of three
+seeds, so there is no second leg to couple. the sourced coupling circuit is present, wired as described, weakly driven by the command
+and the subnet, and balanced by its own targets. **where day two ends on coupling:** the fly's circuit needs, in this file at these
+weights, either more drive than the command gives it or more weight on its synapses than the file carries, and the second is item 7
+with, for the first time, a named circuit and a paper that names it. not built today.
