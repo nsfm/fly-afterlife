@@ -6058,3 +6058,60 @@ edges, 25 % more synapses, at each cell's existing E/I ratio; the tibia flexors 
 IN17A001 16.9 Hz with its line at 19.8 / 20.0 Hz (x37 / x42). inside the seed spread. the floor is a removed compromise, not a fix; the
 files stay beside the originals (untracked, like them) for anything that wants the full graph. a second filter remains: only traced, typed
 cells (211,577 -> 162,517), and the synapses onto untyped fragments are not counted.
+
+**the 13B side (22:42 PDT; the seven silent releasers' 30 largest inputs logged):** the cells that would inhibit the inhibitors are themselves
+inhibited 3.5 to 1 (I 215,605 vs E 61,096), and **the largest input onto them is IN13A002, 2,279 synapses at 52 Hz: the winner inhibits its
+own releasers.** with it IN13A003 (1,040, 28 Hz), IN26X001 (511, 47 Hz), IN13B001 (529, 33 Hz), IN19A005. their excitors are the same
+sensory stand-in (SNpp51, 2,084 synapses at 14 Hz), DNg100 (168), IN21A018 (6 Hz), and a row of silent ones (IN12A001 1,207 synapses,
+IN20A.22A007, IN01A012 / 025 / 042, IN03A071, IN17A019 / 017, all 0.0). so the half-centre is on record from inside: 13A002 is woken by the
+load and the command, inhibits the flexors, the flexor excitors and the 13B cells that would inhibit it, and holds, because nothing in
+our physiology tires it and nothing on the other side is woken by anything but the same two tonic signals. the fly switches this at
+7-15 Hz. the targeted test is on the winning cell: depression on 13A002's output (the engine's depression fixed tonight), adaptation on
+13A002, rebound on the 13B side, each alone, at physiological values, with IN13A002 / IN13B019 / the tibia flexors / the loop line read.
+
+**fatigue, global, read on the half-centre (22:47 PDT; `--std all` u 0.08 / u 0.3 tau 300, `--adapt` 1:200 / 3:500, `--rebound` 1:100, the load
+off, the load off + adapt 3:500; seed 11):** IN13A002 52 -> 34 / 21 / 30 / 9 / 52 / 0 / 0 Hz across the arms, and **IN13B019 never rises above
+0.2 Hz in any of them**, not even with IN13A002 at 0.0 (the load off). the tibia flexors' best is 0.42 (the load off, no fatigue); every
+global mechanism dims the whole cord (leg MNs 9.6 -> 2.3 / 1.3 / 6.7 / 2.5 / 10.7 / 7.6 / 1.9) and the 13B side with it. so the 13B side is not
+only held down by 13A002: **with 13A002 silent it still has nothing waking it.** its excitors in the file (IN12A001 1,207 synapses, IN20A.22A007,
+IN01A012 / 025 / 042, IN03A071, IN17A019 / 017) are at 0.0 under the command, and its only live excitation is the same sensory stand-in
+(SNpp51) that wakes its opponent. tiring the winner is necessary and not sufficient; the loser needs a source. the layer above the 13B
+side's excitors is next, and the sensory classes onto both sides (what the floor stand-in drives, and what it does not).
+
+**the sense we never gave him (22:48 PDT):** the file's leg sensory classes: SNpp 928 cells (mechanosensory_proprioceptive: chordotonal and
+campaniform), **SNta 2,573 cells (mechanosensory_tactile: the leg's bristles)**, SNxx 903 unknown, SNch 124 chemosensory. the floor stand-in
+(`floor_leg_proprio`, 580 cells) and the body loop drive proprioceptors only. **the 13B side's silent excitors (IN12A001, IN20A.22A007,
+IN01A012 / 025 / 042, IN17A019 / 017) take 27 % of their excitatory synapses from tactile afferents** (SNta29 276, SNta20 221, SNta37 179,
+SNta28 109, SNta38 101, SNta26 61), against 16 % sensory onto the 13A winners (SNpp50 / 39 / 45 / 52, the proprioceptors we DO drive) and 4 %
+onto the flexor excitors. so the two sides of the half-centre listen to two different senses, we drive the winner's and not the loser's,
+and the loser's has a plain biological story: a standing fly's tarsi are on the ground and its bristles fire on contact (Tuthill &
+Wilson 2016: leg bristle afferents; a touch to the leg evokes flexion). the six tactile types are driven at 15 and 40 Hz beside the floor,
+with the load off, and at rest; IN13B019 and the tibia flexors are the read. a labelled sensory stand-in, ledger row 4 if it does anything.
+
+**the bristles driven (22:51 PDT; the six tactile types onto the 13B side's excitors at 15 / 40 Hz beside the floor, at 40 with the load off, at
+40 at rest):** IN13B019 0.1 / 0.6 / 2.5 / 0.1 Hz (control 0.0; the load off alone 0.1), the tibia flexors 0.06 / 0.02 / 0.61 / 0.00 (the load off
+alone 0.42); IN13A002 untouched by it (54 / 58 / 0 / 57). the tactile drive wakes the winner's side as much as the loser's (the extensors 11.1
+at 15 Hz, the cord 1.1 -> 2.2-3.2 Hz per cell). **a sense we had left at zero, now on, and not the switch either:** the releaser reaches 2.5 Hz
+only with the load off, and the flexors 0.6. ledger row 4 (tactile stand-in) is a diagnostic, not a default. what the four layers say
+together: the loser's side of the half-centre has no live excitation in this file under a tonic command and tonic senses; its excitors
+(IN12A001, IN20A.22A007, IN01A012) stay silent under tactile drive too (read below). the switch needs either a phasic input we do not have
+or an intrinsic property that lets the loser escape (rebound on the 13B side specifically, plateau on the flexor excitors), which is
+campaign item 4 with a named target now: IN13B019 / IN13A006 / AN06B002 and the flexor excitors IN21A004 / IN03A004.
+
+**parameter provenance (agent D; `docs/physiology/parameter_provenance.md`; nate: "how did Shiu et al produce their numbers?"):** none of
+Shiu 2024's biophysical constants was measured for the cells simulated; all inherited, most through Kakaria & de Bivort 2017 ("generic
+neuronal properties consistent with various Drosophila measurements"): rest -52 and threshold -45 mV from larval central neurons and
+adult clock neurons (Rohrbough & Broadie 2002; Sheeba 2008); membrane R and C from compartmental fits to adult antennal-lobe DM1
+projection neurons (Gouwens & Wilson 2009), the 20 ms tau being R x C, never written as 20 by either paper; the 1.8 ms delay measured at a
+larval glutamatergic NMJ at 18 C (Paul 2015); the 5 ms synaptic decay from a neuromorphic larval mushroom-body model with no measurement
+behind it (Jurgensen 2021; that model used 10 ms for inhibition); the 2.2 ms refractory's trail breaks (Lazar 2021 cites Kakaria, which has
+only a 2 ms template); reset-to-rest is Shiu's own. **the weight, 0.275 mV, is their one declared free parameter, set by simulation so that
+100 Hz of sugar input gives ~80 % of the model's own maximum MN9 rate** (an internal target, not a measured rate); varied +-30 %, the I/E
+ratio +-50 %, glutamate flipped, a shuffled connectome. their validation is not fitting: 164 held-out predictions, 91 % correct, a 106-type
+optogenetic screen run after the predictions, a grooming circuit that played no part in setting any value. Pugliese 2026: tau 20 ms and
+the 200 Hz cap "reasonable ranges"; gain and threshold "have no direct biological analogs", chosen by grid search on a test network; size
+scaling by argument (input resistance falls with area) and necessary; the DNg100 drive the one value tuned toward the result. the field:
+tuned-until-it-worked (Kakaria, Pisokas), fitted to measured activity (Churgin, Zarin), fitted to a task then checked against 26 recorded
+studies (Lappalainen 2024), and Huang 2018, a whole-brain LIF that ran away as ours does and needed short-term depression. **two facts for
+our files:** Shiu's connectivity has no synapse floor (82 % of its edges under 5); and with Shiu's kinetics one synapse gives a 0.157 mV
+bump, not 0.275, so ~45 coincident synapses reach threshold, not the 26 in `docs/physiology/vision_motor_courtship.md` (to correct there).
