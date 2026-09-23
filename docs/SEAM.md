@@ -6714,3 +6714,14 @@ and the map give it (111 cells; rate chosen, ledger row 3 / 6). the position sen
 down; the claw and hooks change the gaps by 20-60 ms) and cannot make it. **campaign: the reflex is named.** next: the fly's central
 coupling (the commissural 19B cells onto the 19A locals, Sapkal 2026; Mendes 2013 says the tripod survives without proprioception), logged
 and silenced on this arm.
+
+**the fly's coupling circuit, on this arm (12:02 PDT; Sapkal 2026's commissural 19B cells AN19B009 (4 cells) and IN19B005 (2), both
+excitatory in the file, their largest targets IN19A011 (813 synapses), IN19A012 (561), IN19B010, IN09A006, IN19B003, IN17A025, IN19A001;
+logged at 1 ms in the bouts arm and silenced on seeds 11 / 12, their four 19A targets silenced on seed 11):** **the commissurals are silent
+in this arm** (AN19B009 0.4 Hz per cell, IN19B005 near 0) while their 19A targets fire 9-17 Hz from other sources; silencing the
+commissurals changes nothing (lm 72 / rm 77 lifts on seed 11, 55 / 65 on 12; the both-off statistic at independence before and after:
+29.6 vs 32.2 -> 33.7 vs 35.2; 40.1 vs 39.1 -> 27.7 vs 29.3), and silencing their 19A targets changes nothing (65 / 54; 20.6 vs 22.7). so
+the circuit the field names for left-right alternation is present, wired as described, and not driven in a headless fly under his own
+recorded standing command; Pugliese found the same cells "insufficient to couple the phase" in their model with the command at its
+walking rate. what drives them in the fly is the next census (their inputs, below), and the arm that follows is the tonic command at
+60-100 Hz with the commissurals logged: if they wake under a walking-rate command, the coupling test is theirs to fail or pass.
