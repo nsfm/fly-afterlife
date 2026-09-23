@@ -30,7 +30,11 @@ this is the plan and the ledger of what we changed on the fly to get there.
    and kept labelled; the "20 Hz drops to 7-15" bet is withdrawn before the test. a kinetics term must hold peak or charge and say which.
 3. **intrinsic properties per type.** SOURCED 09-22: Azevedo 2020 gives the tibia flexor pool rest -48 / -60 / -68 mV and input resistance
    700 / 300 / 150 MOhm for slow / intermediate / fast, and **the slow cells fire ~30 Hz at rest** (ours 0.00). thresholds and taus unmeasured
-   for any leg MN; extensors never recorded. the arm: per-type rest and PSP scale for the flexor pool, the 30 Hz at rest as the check. NEXT.
+   for any leg MN; extensors never recorded. RUN 09-22: every flexor at the slow rest (3 mV to threshold, x2.3 input): 0.14 Hz under the
+   command, 2.7 with the load off; the cells sit far under rest because inhibition here hyperpolarises without bound. the target needs 2b.
+2b. **reversal potentials.** GABA-A and GluCl reverse near rest in the fly (`knobs.md`): inhibition is a shunt, not a current. the engine
+   subtracts inhibitory current without limit, which is why fourteen-to-one inhibition parks the flexors where no threshold reaches them.
+   an engine term: inhibitory (and excitatory) conductances to reversal potentials, off by default, oracle. NEXT, after item 2 lands.
 4. **plateau potentials and rebound on named cells.** rebound is in the engine (off); plateaus are not. stick-insect walking runs on them.
 5. **neuromodulation as a state.** SOURCED 09-22: 50 octopaminergic cells in the cord, the leg ones EN00B008 (one per segment), and DNg100 /
    DNp68 synapse onto them; no chemical output onto leg cells. a state from their firing, stick-insect sign, no fly magnitude.
@@ -60,4 +64,5 @@ the reads and the record stay mine.
 | 1 | 09-22 | claw labels reported both ways (as printed / swapped) | the file's label may be inverted for the tibia joint | a measured sign |
 | 2 | 09-22 | edges under 5 synapses dropped at the build (brain_whole.npz / brain_cord.npz) | a build default of ours; the release has them | removed: `brain_*_all.npz` beside the originals; every run of record is on the floored file, and the cord baseline is the same on both |
 | 4 | 09-22 | the leg's tactile afferents (SNta, 2,573 cells) driven at a rate as a stand-in for ground contact | the file's 13B-side excitors take 27 % of their excitation from them and nothing drives them; a standing fly's tarsi are on the ground | a contact model on the body; as a cord diagnostic it wakes the releaser to 2.5 Hz, not the switch |
+| 5 | 09-22 | tibia flexor thresholds set per type from Azevedo 2020's resting potentials (slow 3 mV, intermediate 15, fast 23 to threshold), the slow / intermediate / fast labelling by size rank within the pool | measured rest per class; the labelling of which cell is which is inferred | a per-cell identity; and it did not wake them (see 2b) |
 | 3 | 09-21 | the standing load as a tonic 15 Hz on the leg proprioceptors (`--leg-load-hz`) | the cord alone has no body to unload | the body loop (position + load) replaces it; on the body the load never lifts because the flexors never fire |

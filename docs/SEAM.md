@@ -6141,3 +6141,16 @@ bump, not 0.275, so ~45 coincident synapses reach threshold, not the 26 in `docs
 - gap junctions: the only adult VNC coupling measured is between flight motor neurons (Hurkey 2023, coefficient 0.01-0.02, ShakB), weak
   and desynchronising. senses: no adult leg proprioceptor has a recorded spike rate (all imaging); the front leg's femoral chordotonal
   organ keeps 16 of ~152 cells in the file, the middle and hind legs near complete.
+
+**campaign item 3, the flexors at Azevedo's rest (23:00 PDT; the tibia flexor motor neurons' threshold set through the size path from a CSV
+of explicit factors, every other cell at 1.0; seed 11, 30 s):** Azevedo 2020 rests the slow / intermediate / fast tibia flexors at -48 / -60 /
+-68 mV; the model rests every cell at -52 with threshold -45, so the slow cells' 7 mV becomes 3 mV (factor 3/7). **every tibia flexor at 3
+mV:** 0.00 Hz at rest, 0.01 under the command. with their synapses scaled by their input resistance too (700 vs ~300 MOhm, factor 2.3,
+`--size-gain 1`): 0.14. the load off as well: 2.69 (the load off alone gave 0.42). a graded labelling by size rank (smallest third at 3 mV,
+largest at 23; the normalisation put the slow third at 1.4 mV, more extreme than intended): 0.16 at rest, 0.32 under the command.
+**a cell that will not cross a 1.4 mV threshold is being held far below rest.** Azevedo's slow flexors fire ~30 Hz at rest; ours cannot be
+brought to fire at any threshold, because the inhibition onto them (fourteen to one) hyperpolarises without bound in this engine, where
+in the cell GABA-A and GluCl reverse near rest (`knobs.md`: shunting, not driving). so item 3's measured target cannot be reached by the
+threshold, and the gap it exposes is the form of inhibition: **campaign item 2b, reversal potentials per transmitter class (inhibition
+as a conductance to a reversal near rest), an engine term, off by default, oracle.** the membrane of the flexors is to be logged directly
+(`--log-v`) once the engine's current edit lands. ledger row 5.
