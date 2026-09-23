@@ -6682,3 +6682,14 @@ the reflex is redundant across the leg's afferents, which is what a leg's reflex
 movement can time the transition). the load is the one whose removal lowers the front leg's lifts (30 -> 23) and raises the middle's
 time in the air least; touch and the hair plates, removed, raise the front leg's lifts (55, 60): they hold the foot down. which single
 sense is SUFFICIENT is the next arm (`--loop position` = claw, hook, hair plates only; `--loop load` = load and touch only).
+
+**withdrawn before it was claimed (11:51 PDT): "the first sign of coupling."** the seeds: at 60 Hz the right middle leg lifts 17 times on seed
+11 and 1 / 0 times on seeds 12 / 13; at 100 Hz, 13 / 0 / 0. with one middle leg still there is nothing to exclude, and the both-off statistic
+sits at independence (0.9 vs 1.5 %, 1.1 vs 1.2, 2.4 vs 2.4, 2.3 vs 2.4). seed 11 was the one run in which both middle legs stepped, and its
+deficit (0.8 vs 2.5, 1.3 vs 7.1) is one seed. **not claimed.** what does replicate is the other way round: the left front and left middle
+feet are off the ground together MORE than independence on every seed where both lift (12.6 vs 5.5 %; 78 vs 73; 87 vs 83; 61 vs 49; 73 vs
+57; 95 vs 93; 97 vs 95): the ipsilateral neighbours co-lift, where a fly's are antiphase. and the asymmetry underneath it: the left legs
+are off the ground 20-97 % of the time and the right legs 0-13 % in every dose arm. he leans right, the left side hangs, and the left
+legs lift together because they are the unloaded side. that is a posture, not a coordination. the record's line on coupling stands as
+it was before noon: six oscillators, uncoupled, and the fly's coupling is central (Mendes 2013: proprioceptive silencing leaves the
+tripod intact; Sapkal 2026: the commissural 19B cells onto the 19A locals), which is the read that comes next.
