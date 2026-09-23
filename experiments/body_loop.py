@@ -76,6 +76,9 @@ ap.add_argument("--start-pose", default="neutral", choices=["neutral", "feet"], 
 ap.add_argument("--mn-force", default="uniform", choices=["uniform", "azevedo"], help="force per spike by motor neuron class (09-23; docs/physiology/force_per_spike.md): uniform (the runs of record: every mapped MN's spike scaled by the size proxy f_w = (S / S_max of its leg-role group)^--alpha) | azevedo (Azevedo et al. 2020 eLife 9:e56754, fig 4, the female front-leg tibia flexor: ~10 / ~1 / 0.013 uN per spike for fast / intermediate / slow, so 1 : 0.1 : 0.0013 with fast at today's --gain; the class from the input-synapse third of the 'Ti flexor MN' pool, the same thirds as --pic smallflex and the graded size CSV, small = slow; the measured factor REPLACES f_w on those cells; every other mapped MN keeps f_w x 1.0, a stated default, counted at startup). the slow class's own slow kinetics (no twitch, force still rising at 500 ms) are not modelled here: same kernel, measured gain (--twitch azevedo gives them their own)")
 ap.add_argument("--twitch", default="uniform", choices=["uniform", "azevedo"], help="the muscle's time course per spike by motor neuron class (09-23; docs/physiology/force_per_spike.md): uniform (the runs of record: every motor neuron's spike adds the one twitch kernel, K = e^-t/20 - e^-t/7, peak 1, 120 ms) | azevedo: the slow class gets the slow unit's time course (Azevedo 2020 fig 4C: no resolvable twitch, force still rising at 500 ms), a first-order low-pass of its spike train with tau --slow-tau; the intermediate and fast classes keep the sourced twitch (fast and intermediate share it, fig 4A/B). NORMALISATION: a slow spike's force-time integral = the cell's per-spike factor (under --mn-force azevedo the class's 0.0013; under uniform its f_w) x the twitch's integral (sum K = 35.05 ms of peak), so the mean force at a given rate is today's and only its time course changes: a slow cell at 30 Hz gives a smooth, small, sustained pull instead of a train of 20 ms twitches. which cells are slow: the --mn-force azevedo rule (the small input-synapse third of the 'Ti flexor MN' pool, pooled over the cord); every pool without a class keeps the twitch, counted at startup. built as one low-pass state per DOF, updated per ms (exact by linearity: every slow cell shares tau), no per-spike cost")
 ap.add_argument("--slow-tau", type=float, default=300.0, help="--twitch azevedo: the slow unit's low-pass time constant in ms (E; bracketed 200-500 from fig 4C: force not peaked at 500 ms, release ~100 ms; force_per_spike.md section 1)")
+ap.add_argument("--muscles", default="torque", choices=["torque", "hill"], help="the muscle model (09-23, ledger row 27): torque (the runs of record: every mapped motor neuron's spike adds f_w x the twitch kernel K / --sat to its joint, x --gain nN.m per unit, clipped at +-60 on a MOTOR actuator per DOF) | hill: FlyMimic's Hill-type muscles (Ozdil et al. 2026, vendored in flygym 2.1, which ships them for the LEFT FRONT LEG ONLY) transplanted onto all six legs of this body by the rule in experiments/hill_legs.py (E1-E6: one joint transmission per muscle on the torque path's DOF for its pool, FlyMimic's moment arm about the matching front-leg hinge, its length at our neutral = its length in FlyMimic's default pose, the front leg's parameters on every leg); each mapped spike adds f_w x K / --sat (the same increment and --mn-force classes as the torque path) to its muscles' EXCITATION, clipped to FlyMimic's ctrlrange [1e-4, 1], and MuJoCo's muscle dynamics with FlyMimic's tau_act 0.1 ms / tau_deact 0.4 ms make the activation; force = F_max x FL x FV x activation + passive, from the model. pools with no FlyMimic muscle (the tarsal levators / depressors) stay on the torque kernel; the grip is unchanged. not with --kin-drive or --twitch azevedo")
+ap.add_argument("--hill-drive", default="spike", choices=["spike", "twitch"], help="--muscles hill: how a motor neuron's spike becomes its muscles' excitation (the MuJoCo muscle's control u; FlyMimic's first-order dynamics, tau_act 0.1 ms / tau_deact 0.4 ms, make the activation from it): spike (the model's own dynamics carry the spike: each spike adds f_w x sum(K) / --sat, the twitch's activation-time integral (3.5 ms at f_w 1), to u for the 1-ms control step it falls in, u clipped to [1e-4, 1], so a fast spike saturates the muscle for 1 ms and keeps 0.29 of the twitch's integral; no kernel) | twitch (the torque path's time course kept: u = the summed twitch kernel K (Azevedo 2020: 7 / 20 ms), f_w x K / --sat per spike, clipped; FlyMimic's dynamics then follow it within a physics step; leg_replay.py's form)")
+ap.add_argument("--hill-arm", default="hinge", choices=["hinge", "norm"], help="--muscles hill: the moment-arm rule (E1, experiments/hill_legs.py): hinge = |d length / d angle| of FlyMimic's tendon about the front leg's hinge for the role (coxa pitch, coxa roll, trochanter pitch, tibia pitch) | norm = the norm over the joint's hinges (the muscle's whole leverage at the joint), for the middle and hind legs whose coxa axes are not the front leg's")
 ap.add_argument("--tethered", action="store_true", help="the tethered preparation (nate, 09-22: propped up): the thorax fixed in space, the legs free, no floor and no load; the position loop still closes"); ap.add_argument("--gravity", type=float, default=1.0, help="scale on gravity (0.1 = a tenth of his weight; a graded prop-up, diagnostic)")
 ap.add_argument("--walk-ramp", type=float, default=0.0, help="the command rises linearly over this many seconds after the warm-up instead of stepping on in one ms (nate 09-22: the fling at the 2 s mark; a walking bout's descending drive ramps in life, Aymanns 2022, Sapkal 2024 ramped their light)");
 ap.add_argument("--warmup", type=float, default=2.0); ap.add_argument("--no-video", action="store_true"); ap.add_argument("--fps", type=int, default=25); ap.add_argument("--playback-speed", type=float, default=1.0, help="native slow motion (09-23, nate): the renderer samples a frame every (1 / fps) x playback_speed of simulated time, so 0.25 at 30 fps is a frame every 8.3 ms and the clip plays at a quarter speed; 1.0 = real time (the default)")
@@ -255,6 +258,12 @@ _pl = fly.get_pose_lookup(KinematicPosePreset.NEUTRAL) if hasattr(fly, 'get_pose
 neutral_of = {"{}->{}:{}".format(*k.split("-")): float(v) for k, v in (_pl.items() if isinstance(_pl, dict) else []) if k.count("-") == 2}
 limit_joints(jm, neutral_of)
 fly.add_actuators(dofs, ActuatorType.MOTOR, forcerange=(-60.0, 60.0)); adh = fly.add_leg_adhesion(gain=args.adhesion_gain)
+MUS = None
+if args.muscles == "hill":   # (09-23, ledger row 27) FlyMimic's Hill muscles on six legs, experiments/hill_legs.py; added to the spec before the world compiles
+    assert not args.kin_drive and args.twitch == "uniform", "--muscles hill: not with --kin-drive or --twitch azevedo"
+    import hill_legs
+    _tol = {l: set(mty[j] for j in LEGMN if legof[j] == l and mty[j] in (ROLE_H if l in HIND else ROLE) and (ROLE_H if l in HIND else ROLE)[mty[j]][0] != "grip") for l in LEG6}
+    MUS = dict(list=hill_legs.build(fly.mjcf_root, jm, lambda x: f"{x.parent.name}->{x.child.name}:{x.axis.value}", neutral_of, roles, _tol, arm_rule=args.hill_arm, print=print))
 if not args.no_video: fly.add_tracking_camera("trackcam")
 from flygym.compose import TetheredWorld
 world = TetheredWorld() if args.tethered else FlatGroundWorld(); world.add_fly(fly, (0.0, 0.0, 2.0 if args.tethered else 0.5), Rotation3D(format="quat", values=(1, 0, 0, 0))); sim = Simulation(world); m = sim.mj_model; d = sim.mj_data
@@ -317,6 +326,18 @@ if args.mn_force == "azevedo":   # the measured factor in place of the size prox
     _dflt = [j for j in cell_dof if j not in MN_CLASS]
     print(f"  no measurement: {len(_dflt)} mapped leg MNs keep f_w x 1.0 (the stated default; types {len(set(mty[_dflt]))}, e.g. Acc. ti flexor {sum(mty[j] == 'Acc. ti flexor MN' for j in _dflt)}, Ti extensor {sum(mty[j] == 'Ti extensor MN' for j in _dflt)}); {len(grip_of)} grip MNs unchanged")
 KL = 120; tk = np.arange(KL); K = np.exp(-tk / 20.0) - np.exp(-tk / 7.0); K /= K.max()
+KSUM = float(K.sum())
+if MUS is not None:   # (--muscles hill) each mapped cell -> its muscles on its leg; the actuators' ids and activation state addresses in the compiled model
+    _an = [mj.mj_id2name(m, mj.mjtObj.mjOBJ_ACTUATOR, i) for i in range(m.nu)]
+    MUS["ids"] = np.array([next(i for i, a_ in enumerate(_an) if a_ is not None and a_.endswith(x["name"])) for x in MUS["list"]], np.int64); MUS["actadr"] = m.actuator_actadr[MUS["ids"]]
+    _mk = {(x["leg"], x["muscle"]): k for k, x in enumerate(MUS["list"])}; MUS["of"] = {}
+    for j in cell_dof:
+        _ks = [_mk[(legof[j], n_)] for n_ in hill_legs.MUSCLES_OF_TYPE.get(mty[j], []) if (legof[j], n_) in _mk]
+        if _ks: MUS["of"][j] = _ks
+    MUS["lo"] = m.actuator_ctrlrange[MUS["ids"], 0].copy(); MUS["hi"] = m.actuator_ctrlrange[MUS["ids"], 1].copy()
+    _left = sorted(set(mty[j] for j in cell_dof if j not in MUS["of"]))
+    print(f"--muscles hill: {len(MUS['list'])} muscle actuators; {len(MUS['of'])} mapped motor neurons drive them (--hill-drive {args.hill_drive}: per spike " + (f"f_w x K / --sat {args.sat:g} of excitation (the twitch)" if args.hill_drive == "twitch" else f"f_w x {KSUM:.2f} / --sat {args.sat:g} of excitation for 1 ms (the twitch's integral), clipped at 1") + "; the torque path's f_w and --mn-force classes); "
+          f"{sum(1 for j in cell_dof if j not in MUS['of'])} mapped cells stay on the torque kernel ({', '.join(_left)}: no FlyMimic muscle); {len(grip_of)} grip cells unchanged")
 TW = None
 if args.twitch == "azevedo":   # (09-23) the slow class on a first-order low-pass: per spike a jump of A_j, decaying by D per ms, so its force-time integral is A_j / (1 - D) = f_w[j] x sum(K) / sat, the twitch's
     _tp2, _cls2 = mn_classes(); _D = float(np.exp(-1.0 / args.slow_tau)); _slow = sorted(j for j, c_ in _cls2.items() if c_ == "slow")
@@ -366,6 +387,7 @@ def leg_forces():
 
 # ---- the loop
 n_ms = int(args.seconds * 1000); torque = np.zeros((len(dofs), n_ms + KL)); grip = {l: np.zeros(n_ms + KL) for l in LEG6}
+if MUS is not None: EXC = np.zeros((len(MUS["list"]), n_ms + KL)); MLOG = np.zeros((n_ms // 10 + 1, 3, len(MUS["list"])), np.float32)   # (--muscles hill) excitation per ms; logged per 10 ms: excitation, activation, force (uN)
 P = np.zeros((n_ms, 3), np.float32); Q = np.zeros((n_ms, 4), np.float32); FL = np.zeros((n_ms, 6), np.float32); KA = np.zeros((n_ms, 6), np.float32)
 JA = np.zeros((n_ms // 10 + 1, len(all_dofs)), np.float32)
 FT = np.zeros((n_ms, 6)); FO = np.zeros((n_ms, 6)); FB = np.zeros(n_ms); FTN = np.zeros((n_ms, 6), np.float32)   # (09-23, P1) tarsal / other-leg vertical reaction per leg, body; FTN = tarsal net of the pads
@@ -452,6 +474,8 @@ for ms in range(n_ms):
         if xh.size: np.add.at(XMS[ms], xh, 1)
     if TW is not None: TW["s"] *= TW["D"]; torque[:, ms] += TW["s"]   # (--twitch azevedo) the slow cells' low-pass, from the spikes before this ms
     if args.freeze_mn > 0 and ms >= int(args.freeze_mn * 1000):
+        if ms == int(args.freeze_mn * 1000) and MUS is not None: _hold_e = EXC[:, ms].copy()
+        if MUS is not None: EXC[:, ms] = _hold_e
         if ms == int(args.freeze_mn * 1000): _hold_t = torque[:, ms].copy(); _hold_g = {l: float(grip[l][ms]) for l in LEG6}; print(f"muscles frozen at {args.freeze_mn:.1f} s: torque {np.round(np.abs(_hold_t).max(), 3)} max, grip {np.round(list(_hold_g.values()), 2)}")
         torque[:, ms] = _hold_t
         for l in LEG6: grip[l][ms] = _hold_g[l]
@@ -485,8 +509,15 @@ for ms in range(n_ms):
         j = int(j)
         if j in grip_of: grip[grip_of[j]][ms: ms + KL] += f_w.get(j, 0.1) * K / args.sat
         elif TW is not None and j in TW["A"]: a_ = cell_sgn[j] * TW["A"][j]; TW["s"][cell_dof[j]] += a_; torque[cell_dof[j], ms] += a_   # a slow spike: a jump in the low-pass, felt from this ms
+        elif MUS is not None and j in MUS["of"]:   # (--muscles hill) a spike adds the torque path's increment to its muscles' excitation: as a twitch, or its integral in this ms
+            for k_ in MUS["of"][j]:
+                if args.hill_drive == "twitch": EXC[k_, ms: ms + KL] += f_w[j] * K / args.sat
+                else: EXC[k_, ms] += f_w[j] * KSUM / args.sat
         elif j in cell_dof: torque[cell_dof[j], ms: ms + KL] += cell_sgn[j] * f_w[j] * K / args.sat
     if KD is None: tq = np.clip(args.gain * torque[:, ms], -60, 60); sim.set_actuator_inputs("nmf", ActuatorType.MOTOR, tq)
+    if MUS is not None:
+        d.ctrl[MUS["ids"]] = np.clip(EXC[:, ms], MUS["lo"], MUS["hi"])
+        if ms % 10 == 0: MLOG[ms // 10] = (d.ctrl[MUS["ids"]], d.act[MUS["actadr"]], -d.actuator_force[MUS["ids"]])
     if adh and args.adhesion == "ltm": sim.set_leg_adhesion_states("nmf", np.array([grip[l][ms] > 0.05 for l in LEG6]))
     elif adh and args.adhesion == "contact": pad_on = F > 0.05; sim.set_leg_adhesion_states("nmf", pad_on)
     elif adh: sim.set_leg_adhesion_states("nmf", np.zeros(6, bool))
@@ -520,7 +551,7 @@ if KD is not None:   # KIN-DRIVE: the imposed swing from the feet's own motion r
     _cof = (FTN[_w0:] <= 0.05).mean(0)
     print("the imposed swing (foot forward relative to the thorax): fraction " + " ".join(f"{l} {v:.2f}" for l, v in zip(LEG6, KSW[_w0:].mean(0))) + "; swings " + " ".join(f"{l} {int((np.diff(KSW[_w0:, i].astype(int)) == 1).sum())}" for i, l in enumerate(LEG6))
           + "; beside it, the foot off the ground (tarsal force <= 0.05 uN) " + " ".join(f"{l} {v:.2f}" for l, v in zip(LEG6, _cof)))
-np.savez_compressed(args.out + ".npz", thorax=P, quat=Q, leg_force=FL, knee=KA, ground=BODYF[: n_ms // 10], tarsal_force=FTN, other_leg_force=FO.astype(np.float32), body_force=FB.astype(np.float32), stand3=np.stack([FTN.sum(1), FO.sum(1), FB], 1)[::10][: n_ms // 10].astype(np.float32), joints=JA[: n_ms // 10], joint_names=np.array([dof_name(x) for x in all_dofs]), args=np.array(str(vars(args))), **({"puppet_swing": PUPSW} if PUP is not None else {}), **(KDSAVE if KD is not None else {}))
+np.savez_compressed(args.out + ".npz", thorax=P, quat=Q, leg_force=FL, knee=KA, ground=BODYF[: n_ms // 10], tarsal_force=FTN, other_leg_force=FO.astype(np.float32), body_force=FB.astype(np.float32), stand3=np.stack([FTN.sum(1), FO.sum(1), FB], 1)[::10][: n_ms // 10].astype(np.float32), joints=JA[: n_ms // 10], joint_names=np.array([dof_name(x) for x in all_dofs]), args=np.array(str(vars(args))), **({"puppet_swing": PUPSW} if PUP is not None else {}), **(KDSAVE if KD is not None else {}), **(dict(muscle_names=np.array([x["name"] for x in MUS["list"]]), muscle_exc=MLOG[: n_ms // 10, 0], muscle_act=MLOG[: n_ms // 10, 1], muscle_force=MLOG[: n_ms // 10, 2]) if MUS is not None else {}))
 w0 = int(args.warmup * 1000); v = np.linalg.norm(np.diff(P[w0:, :2], axis=0), axis=1) * 1000; hz = frames[w0 // 10:].mean(0) * 100
 flex = np.array([("Ti flexor" in t_) or ("Acc. ti flexor" in t_) for t_ in mty[LEGMN]]); ext = mty[LEGMN] == "Ti extensor MN"
 gb = BODYF[w0 // 10: n_ms // 10]; body_on_floor = float(np.nanmean(gb[:, 1])); _ft = FTN[w0:].sum(1).mean(); _fo = np.nanmean(FO[w0:].sum(1)); _fb = np.nanmean(FB[w0:])
@@ -528,5 +559,9 @@ print(f"standing? feet (tarsus1-5, net of the pads) {_ft:.2f} uN, other leg segm
 print(f"standing? the body (thorax / abdomen / head) rests on the floor with {body_on_floor:.1f} uN of {weight:.1f} ({body_on_floor / weight * 100:.0f} % of his weight; 0 = standing on his feet); the feet carry {gb[:, 0].mean():.1f} uN net of the pads")
 print(f"done in {time.time() - t0:.0f}s ({args.seconds / (time.time() - t0):.2f}x real time); contact forces {'read' if force_ok else 'UNAVAILABLE (load rows got 0)'}; after the warm-up: leg MN {hz.mean():.2f} Hz/cell, flexors {hz[flex].mean():.2f}, extensors {hz[ext].mean():.2f}; "
       f"thorax height mean {P[w0:, 2].mean():.2f} (min {P[w0:, 2].min():.2f}), speed {v.mean():.1f} mm/s, net turn {((yaw[-1] - yaw[w0] + 180) % 360) - 180:+.0f} deg; leg forces mean {np.round(FL[w0:].mean(0), 1)} (F_stand {F_stand:.2f}); knee sd {np.round(KA[w0:].std(0), 0)}")
+if MUS is not None:   # (--muscles hill) per role and side of the joint, pooled over legs, after the warm-up: mean activation, mean and p99 torque (force x |gear|)
+    _ml = MLOG[w0 // 10: n_ms // 10]; _tq = _ml[:, 2] * np.abs([x["gear"] for x in MUS["list"]])
+    print("--muscles hill, after the warm-up (pooled over legs; torque = tension x |arm|, nN.m): " + "; ".join(f"{r_}{'+' if a_ > 0 else '-'} act {_ml[:, 1, _k].mean():.3f} torque {_tq[:, _k].sum(1).mean() / len(set(MUS['list'][k]['leg'] for k in _k)):.2f} per leg (p99 {np.percentile(_tq[:, _k].sum(1), 99) / len(set(MUS['list'][k]['leg'] for k in _k)):.2f})"
+          for r_, a_ in (("protract", 1), ("protract", -1), ("levate", 1), ("levate", -1), ("flex", 1), ("flex", -1), ("adduct", 1)) for _k in [[k for k, x in enumerate(MUS["list"]) if x["role"] == r_ and x["ag"] == a_]] if _k))
 if not args.no_video: sim.renderer.save_video(args.out + ".mp4"); print("video", args.out + ".mp4")
 print("wrote", args.out + ".npz")
