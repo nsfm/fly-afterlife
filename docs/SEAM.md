@@ -6309,3 +6309,18 @@ logged)
   accessory flexors stay at 0.00 in every arm; the extensors fall to 1.6-2.7 Hz, which is a standing fly's extensors going quiet, not a
   gait; no alternation anywhere (antagonist -0.3 is the shared 20 Hz line, lag read earlier). seeds 12 / 13 and the graded labelling
   are beside this. the same senses go onto the body next (`--senses v2`).
+
+**withdrawn in place (23:46 PDT): "within a factor of two to three of Azevedo's 30."** the 14.2 Hz (13.8 / 14.0 on seeds 12 / 13) is the LARGEST third
+of the tibia flexor pool at 38.7 Hz per cell with the small third at 0.0 and the middle at 1.9. Azevedo's slow cells are the small ones, and
+the large ones are the fast cells that rest at -68 mV; the arm gave every flexor the slow rest and the fast cells took it. **the graded
+labelling (small third at 3 mV and x2.3, middle at 15, large at 23): 0.00 Hz under the command, 0.01 at rest, every third at 0.** so the
+sourced arm does not reach the target, and the all-slow arm reached the wrong cells. what stands from the table above: the senses wake
+the flexion side (that was measured on the pooled rate and holds: 2.3 Hz is the large cells too, to be re-read by third), Azevedo's
+rest and resistance on the right cells do nothing, and the reason is in the wiring: **the small tibia flexors carry 13 to 111 input
+synapses each in this file** (the pool's inputs by cell, ascending: 13, 35, 47, 51, 69, 75, 93, 111, 151, ... 8,167), against 1,569-8,167 for
+the large third. a cell with fifty synapses cannot be brought to 30 Hz by its inputs at any threshold. Azevedo's slow flexors fire ~30 Hz
+at rest partly on cholinergic input and partly on their own (blocking nicotinic receptors lowers, does not abolish, the rate): so the
+gap is either the tracing (small cells' inputs missing: item 7 with a reason) or the cell's own excitability (a depolarised rest with
+its own noise: item 3 done properly, the membrane noise scaled with input resistance the way the synapses were, which the engine cannot
+do per cell yet). both are on the table; the noise term is the cheaper and the more honest first. the rates by size third are added to
+the read from here on.
