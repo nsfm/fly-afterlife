@@ -191,7 +191,14 @@ SYN_REV_HELP = ("reversal potentials per transmitter class, ACH:GABA:GLU in mV r
                 "PSP x |E_GABA| / E_ACH (5 / 70: 14x SMALLER than the record's inhibition at rest), growing as the cell depolarises (x2 at "
                 "+5 mV) and reversing below E: inhibition becomes a shunt that cannot hold a cell below its reversal. the other cells (histamine, "
                 "modulators, unclear) stay currents. implies the per-class rows (--syn-tau; at the engine's 5 ms if not given). a labelled "
-                "engine term (campaign item 2b), off by default ('' or off = the record, bit for bit)")
+                "engine term (campaign item 2b), off by default ('' or off = the record, bit for bit). the scale is --syn-rev-hold (default ach, "
+                "as above)")
+SYN_REV_HOLD_HELP = ("which PSP the reversal term holds at today's size at rest (09-22, campaign item 2b): ach (the default) = kap = sign / E_ACH for "
+                     "every class, so one ACh synapse at rest gives today's EPSP and an inhibitory one |E| / E_ACH of today's IPSP (5 / 70; the cord "
+                     "runs away, 1.1 -> 38 Hz/cell); each = kap_c = sign_c / |E_c| per class, so ONE SYNAPSE OF ANY CLASS AT REST GIVES TODAY'S PSP "
+                     "(an EPSP of today's size toward E_ACH, an IPSP of today's size toward E_GABA), the IPSP still growing with depolarisation "
+                     "(x2 at +5 mV re rest for E_GABA -5) and vanishing at E_GABA; the conductance per inhibitory synapse is then mv_per_synapse / "
+                     "|E_GABA| of the leak's (0.185 / 5 = 0.037, 14x the excitatory one). only read with --syn-rev")
 
 
 @njit(cache=True, fastmath=False, nogil=True)
@@ -302,27 +309,31 @@ class FastFlyBrain(FlyBrain):
         return (f"per-transmitter synaptic decay: ACh {taus[0]:g} ms ({n[1]} cells), GABA {taus[1]:g} ms ({n[2]}), glutamate {taus[2]:g} ms ({n[3]}), "
                 f"other {self.p.tau_syn:g} ms ({n[0]}); signs as the file has them")
 
-    def set_syn_rev(self, spec):
+    def set_syn_rev(self, spec, hold="ach"):
         """reversal potentials per transmitter class (09-22, campaign item 2b): spec 'ACH:GABA:GLU' in mV re rest (SYN_REV_HELP), or None / '' / 'off'.
         the one parser for world/cord.py and experiments/body_loop.py; call after set_syn_tau (it turns the per-class rows on at the engine's tau_syn
         if they are off). returns a line for the log."""
         if spec is None or str(spec).strip() in ("", "off"): self.syn_rev_on = False; return "reversal potentials: off"
+        hold = str(hold or "ach").strip().lower()
+        if hold not in ("ach", "each"): raise ValueError(f"--syn-rev-hold wants ach | each; got {hold!r}")
         f = [x.strip() for x in str(spec).split(":")]
         if len(f) != 3: raise ValueError(f"--syn-rev wants ACH:GABA:GLU in mV re rest; got {spec!r}")
         e = [None if x.lower() in ("off", "x", "") else float(x) for x in f]
         if e[0] is None or not e[0] > float(self.p.v_thresh): raise ValueError(f"--syn-rev: ACh sets the scale and must reverse above threshold ({self.p.v_thresh:g} mV re rest); got {spec!r}")
+        if hold == "each" and any(x is not None and abs(x) < 1e-6 for x in e[1:]): raise ValueError(f"--syn-rev-hold each: a reversal at rest has no PSP to hold (|E| = 0); got {spec!r}")
         pre = ""
         if not getattr(self, "syn_tau_on", False): t_ = float(self.p.tau_syn); pre = self.set_syn_tau(f"{t_:g}:{t_:g}:{t_:g}") + "; "
         csign = np.array([0.0, 1.0, -1.0, -1.0])   # the class's sign as the file gives it (ACh +, GABA and glutamate -)
         self._has_rev = np.array([False, True, e[1] is not None, e[2] is not None], np.bool_)
         self._e_rev = np.array([0.0] + [x if x is not None else 0.0 for x in e], np.float32)
-        self._kap = np.where(self._has_rev, csign / e[0], 0.0).astype(np.float32)   # conductance per mV of the row, re the leak: g kap (E - v); one ACh synapse at rest = g
+        e_scale = np.array([1.0] + [abs(x) if (hold == "each" and x is not None) else e[0] for x in e])   # ach: every class on E_ach's scale; each (09-22): every class on its own |E|, so each class's PSP at rest is today's
+        self._kap = np.where(self._has_rev, csign / e_scale, 0.0).astype(np.float32)   # conductance per mV of the row, re the leak: g kap (E - v); one synapse at rest = g (ACh; every class under each)
         sg = np.asarray(self.sign, np.float64); odd = [int(((self._pre_cls == c) & (np.sign(sg) != csign[c]) & (sg != 0)).sum()) for c in (1, 2, 3)]
         self.syn_rev_on = True
         lab = lambda x: "off (a current)" if x is None else f"{x:+g} mV"
-        return (pre + f"reversal potentials (re rest): ACh {lab(e[0])}, GABA {lab(e[1])}, glutamate {lab(e[2])}, other a current; conductance per synapse "
-                f"{self.p.mv_per_synapse:g} / {e[0]:g} = {self.p.mv_per_synapse / e[0]:.4g} of the leak's; an inhibitory synapse at rest drives "
-                f"{(abs(e[1]) / e[0]) if e[1] is not None else float('nan'):.3g} of today's" + (f"; WARNING cells whose sign is not their class's: ACh {odd[0]}, GABA {odd[1]}, glu {odd[2]} (their conductance is negative)" if any(odd) else ""))
+        return (pre + f"reversal potentials (re rest): ACh {lab(e[0])}, GABA {lab(e[1])}, glutamate {lab(e[2])}, other a current; held at rest: {hold}; conductance per "
+                f"synapse (of the leak's) ACh {self.p.mv_per_synapse / e_scale[1]:.4g}, GABA {self.p.mv_per_synapse / e_scale[2]:.4g}, glu {self.p.mv_per_synapse / e_scale[3]:.4g}; "
+                f"an inhibitory synapse at rest drives {(abs(e[1]) / e_scale[2]) if e[1] is not None else float('nan'):.3g} of today's" + (f"; WARNING cells whose sign is not their class's: ACh {odd[0]}, GABA {odd[1]}, glu {odd[2]} (their conductance is negative)" if any(odd) else ""))
 
     def reset(self):
         super().reset()

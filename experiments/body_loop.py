@@ -16,7 +16,7 @@ arms: --loop off | position | load | position+load; --slow-hz for the stand-in; 
 import os, sys, json, argparse, time, numpy as np
 sys.path.insert(0, "ref/flybrain/scripts"); sys.path.insert(0, "world"); sys.path.insert(0, "src")
 from flysim import Params
-from fastlif import FastFlyBrain, SYN_TAU_HELP, SYN_REV_HELP
+from fastlif import FastFlyBrain, SYN_TAU_HELP, SYN_REV_HELP, SYN_REV_HOLD_HELP
 from fly_afterlife.receptors import Registry, ReceptorClass, Scaled, Transducer, tonic_floor
 import mujoco as mj
 from flygym.utils.math import Rotation3D
@@ -44,6 +44,7 @@ ap.add_argument("--edge-scale", default="", help="as in world/cord.py: TYPES:FAC
 ap.add_argument("--cell-delay", default="", help="as in world/cord.py: TYPES:MS, a per-cell conduction delay on the named cells (the ring slows from 25 Hz to 10 with 12 ms on the loop's three cells)")
 ap.add_argument("--syn-tau", default="", help="as in world/cord.py: " + SYN_TAU_HELP)
 ap.add_argument("--syn-rev", default="", help="as in world/cord.py: " + SYN_REV_HELP)
+ap.add_argument("--syn-rev-hold", default="ach", help="as in world/cord.py: " + SYN_REV_HOLD_HELP)
 ap.add_argument("--log-v", default="", help="as in world/cord.py: comma-separated types whose mean membrane (mV re rest) is logged per ms as v_ms / v_types in <out>.cells.npz; off by default")
 ap.add_argument("--graded", default="", help="graded (non-spiking) units as in world/cord.py: PREFIXES:GAIN[:V1] or random:N:GAIN")
 ap.add_argument("--slow-init", type=float, default=0.0, help="set him down standing: for this many seconds after the warm-up the load term is clamped to at least standing (F_stand) on every leg, so the load reflex and the stand-in start engaged; then the body's own load. an initial condition, labelled (0 = off)")
@@ -61,7 +62,7 @@ if args.mirror != "off":
 if args.std != "off":
     _mask = np.ones(M.N, bool) if args.std == "all" else (mty == "DNg33") if args.std == "pair" else np.isin(mty, args.std.split(",")); M._std_mask = _mask; M._std_x = np.ones(M.N, np.float32); M.std_on = True
 if args.syn_tau: print(M.set_syn_tau(args.syn_tau))   # (09-22, campaign item 2)
-if args.syn_rev: print(M.set_syn_rev(args.syn_rev))   # (09-22, campaign item 2b; after --syn-tau)
+if args.syn_rev: print(M.set_syn_rev(args.syn_rev, args.syn_rev_hold))   # (09-22, campaign item 2b; after --syn-tau)
 if args.cell_delay:
     _dt_, _dms = args.cell_delay.rsplit(":", 1); _dsteps = max(1, int(round(float(_dms) / M.p.dt))); _base = max(1, int(round(M.p.syn_delay_ms / M.p.dt)))
     M._cell_delay = np.full(M.N, _base, np.int64); M._cell_delay[np.isin(mty, _dt_.split(","))] = _dsteps; M._dly_max = int(M._cell_delay.max()); M.delay_on = True; print(f"cell delay: {_dt_} at {_dms} ms")
