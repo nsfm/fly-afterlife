@@ -6373,3 +6373,10 @@ mostly not in this file's wiring for these cells (13-111 synapses) and mostly no
 remainder is the cell's own excitability (a persistent inward current, a lower threshold than the population's, or synaptic noise the
 file cannot carry), which is campaign item 4 with the small flexors as the named target and Azevedo's 30 Hz as the measured check. one
 seed; the k = 1 row is replicated before it is cited. the oracle for the noise term is running; nothing here is a default.
+
+**replicated (23:58 PDT):** the small third at rest, k = 1: 1.15 / 1.18 / 1.30 Hz on seeds 11 / 12 / 13, the large third 0.0 / 0.0 / 0.0, the
+extensors 0.0 on all three, IN13A006 25 Hz on all three; every one of the twelve small cells fires (0.4-3.1 Hz). **three of three.** with the
+claw classes swapped (claw_50 at 40 instead of claw_51, touch the same): the small third 0.67, the extensors 6.6, IN13A002 86 Hz, IN13A006
+0.0; so about 0.7 Hz of the small cells' rate is their own noise at the measured resistance regardless of the senses, and about 0.5 is the
+flexion side's senses under the labels as printed. the caveat stands in both directions: the noise term is an assumption made explicit,
+and the labelling of which claw class is which decides whether the standing leg adds to it or not.
