@@ -6324,3 +6324,13 @@ gap is either the tracing (small cells' inputs missing: item 7 with a reason) or
 its own noise: item 3 done properly, the membrane noise scaled with input resistance the way the synapses were, which the engine cannot
 do per cell yet). both are on the table; the noise term is the cheaper and the more honest first. the rates by size third are added to
 the read from here on.
+
+**the flexors by size third, every arm re-read (23:47 PDT; small / middle / large third of the 37 tibia flexors by input synapses):** the senses
+alone under the command 0.00 / 0.00 / 6.5 Hz (pool 2.3); at rest 0.00 / 0.01 / 13.1 (pool 4.6); senses + rev + Azevedo-all-slow at rest 0.01 /
+0.54 / 33.2 (pool 11.9); Pugliese's true volumes at 0.275 (the pinned arm, withdrawn) 0.27 / 18.8 / 61.1. **the small third has never fired in
+any arm of the night.** every flexion result so far is the large cells. the standing senses wake the big flexors, which in Azevedo are the
+fast ones and should be silent at rest; the small ones, which should carry the tone, have 13-111 input synapses and nothing to fire on.
+the engine gets a per-cell membrane-noise scale (`world/fastlif.py`, off unless set, oracle running): the same current noise on a 700
+MOhm cell is a larger voltage noise than on a 300 MOhm one, so the noise follows the synaptic scale; with the small cells' rest 3 mV
+under threshold that is the cell's own excitability, sourced the same way the synapses were, and it is the honest test of whether
+Azevedo's tone can come from the cell rather than from wiring the file does not have.
