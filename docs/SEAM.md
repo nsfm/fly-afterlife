@@ -5568,3 +5568,37 @@ premotor cells' own dynamics beyond a LIF or a graded unit (plateau potentials, 
 which nothing here has: a bistable graded unit is a different engine term, and the last one on the list I can source). the honest next
 move is not another arm tonight. it is to write the row up as it stands, with the negative results as the result, and let the body row's
 stand-ins (the tonus, co-contraction, the pads) go to nate for the default decision while the switch waits on (3) or on a better map.
+
+## the review (18:27 PDT; nate: "should we set off a pair of opus agents to have a look at our hookups, physics, etc and see if our baseline
+was indeed sound?"; `docs/REVIEW_BODY_LOOP.md`, an independent code-and-physics read of the whole body pipeline)
+
+**three hookup errors in the body loop, each on its own enough to void "the loop is closed and nothing steps":**
+
+- **F0. the standing stand-in replaced the cord instead of adding to it.** `experiments/body_loop.py` marked the stance (and, with `--cocon`,
+  the swing) motor neurons as *driven* cells, and a driven cell fires from its assigned rate only: every synapse the cord sends it is
+  ignored. so from 09:08 on, in every standing-body arm (the seeds, the flexion set, MDN, the unloading term, the pads, the descending
+  playback, the graded pools on the body), 234 of the 259 joint-mapped motor neurons were Poisson sources scaled by load and the cord
+  drove only the tarsi and the adductors. the tables above show it: the flexor and extensor rates did not move across no command, 100 Hz,
+  400 Hz and the brain's own output, and I read that as robustness. **every standing-body result above, from "he stands" onward, is
+  withdrawn as a result about the cord.** (the arms before the stand-in, lying down and tumbling, had no driven motor neurons and stand.)
+- **F1. the knee-to-claw mapping lost its centre** in the move from `leg_loop.py` (which had the 90 deg centre) to `body_loop.py`: the knee
+  angle is always positive in the body's coordinates, so the extension claw never fired in any loop arm and the flexion claw fired at 50-60
+  Hz on straight knees. with SNpp51 driving flexion, the knee loop was positive feedback, and so were the hooks; positive feedback pins a
+  joint at its limit, which is where the knees sat. and the SNpp50 / SNpp51 extension / flexion labels (`E_table_male.md`) have no source:
+  both assignments have to be run.
+- **F2. "standing" at 0.70 mm was the fly resting on his thorax:** per-segment ground force in the co-contraction arm: thorax 5.7 uN,
+  abdomen 1.0, all six feet 3.3, of 10.05. the load rows never saw a loaded leg to unload. standing must be defined by weight on the feet.
+- **F3.** under `--adhesion contact` the foot force includes the pad's pull (~20 uN), so the load term sits at its clip up to 94 % of the time
+  on a stuck foot and the switch latches. **F7.** the "load" row also drives hair plates and vibration cells, and the floor holds claws of
+  both tunings and hooks of both directions at 15 Hz together.
+- **two engine-level facts for the refreeze day:** a driven cell loses ~3 ms after each spike (the refractory gate), so a nominal 100 / 400
+  Hz is 81 / 182 measured (the playback under-delivers the loud descending cells); and the synaptic delay is 3 ms at the 1 ms tick, not
+  1.8 (measured on a two-cell network). both were true of every run in this record.
+- (a credit corrected: the 576 claw synapses onto IN21A004 are SNpp51's, not SNpp50's; the SNpp51 arm was run and was null.)
+
+**clean:** the muscle-to-joint map and its signs (a synthetic push per role moves every antagonist pair oppositely on all six legs);
+actuator, joint-angle and leg orders; the cord cut (every excitatory synapse onto the flexors' premotor cells kept; 1-6 % of their
+excitation from driven sensory cells); the graded emission's timing and scale (no double counting); the sensory-class marking (no
+interneurons silenced); the units (uN, nN m); the gait measures (a synthetic tripod scores antag -0.73, legs -0.81). **so the headless
+cord's negative results stand; the body loop's are remade.** fixes, in the reviewer's order: F0 (the stand-in as an added current), F1
+(the centre restored, both claw labellings run), F2 (standing = weight on the feet), F3, F7.
