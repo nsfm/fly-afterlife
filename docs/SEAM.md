@@ -7483,3 +7483,21 @@ through real muscle dynamics that push is a shove. the speed is sliding, not ste
 the lift gain needs the clip to survive, and the muscles need the lift to be a lift and not a push. **the week's last arm says what the
 first said: at any gain we have named, the file's drive onto the lift side arrives with more drive onto the push side, and no muscle
 model changes that ratio.** one seed. the solver (row 31) is the tool that can search that ratio honestly, and it is queued next.
+
+## the solver, launched (16:39 PDT, 09-23; `experiments/solver/`, `docs/SOLVER.md`, commit 6409b8c; ledger 31; run `s1`, 14 hours, the fine lift
+rule (5 ms smoothing, off >= 10 ms: the one under which the kinematic replay scores 0.98, the 5 Hz puppet 0.87 and the connectome's arms
+0.35-0.45; the coarse rule cannot see a 40 ms swing and would aim the search at the puppet's slow gait))
+
+nine parameters, not sixteen (the named sets add up to nine): seven input gains on a log scale 0.25-16 (the lift excitors, the
+releasers, the 13A hold, the command's inhibitors, the levators' other inhibitors, the rhythm subnet, the levator motor neurons), the
+small flexors' plateau strength 0-1, and DNg100's rate 30-150 Hz. a gain through the size path scales a cell's inputs, threshold and noise
+together (as rows 28-30 did; not a pure synaptic weight, and the doc says so). the objective, per seed (11 and 12) and averaged: 0.20
+standing + 0.25 stepping (per-leg lift rate, full at 5-11 Hz) + 0.30 coordination (both-off against independence and the antiphase
+share, the middle and front pairs) + 0.25 progress (forward speed / 2 mm/s), penalties for a body on the floor, motor neurons outside
+0.5-60 Hz and any type over 200, a fall at 0.02 of the raw; a 5 s cord prefilter rejects a runaway or a dead cord. cost measured: 106 s
+per evaluation with the two seeds in parallel; 1,000 evaluations in ~14-18 h on this box (four slots, four threads each). the smoke test
+(four candidates, one generation): the file's own values 0.206 (stands; the right middle lifts); the best candidate 0.230 (lift x3.9,
+levator MNs x4.3, subnet x0.28, the command's inhibitors x0.41: every leg lifts 0.4-3.6 times a second at +1 mm/s with the body brushing
+the floor at 1 uN); one candidate falls. every line it writes is marked SOLVER; nothing it produces is a result; what it is for is the
+best vector as a map of where the file's weights are farthest from a walk, and, if it finds nothing in a thousand evaluations on
+these nine, the sharpest wall the week can name. the base CSV moved into the repo (`world/flex_graded.csv`, ledger 22 closed).
