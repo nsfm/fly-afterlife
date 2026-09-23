@@ -6154,3 +6154,20 @@ in the cell GABA-A and GluCl reverse near rest (`knobs.md`: shunting, not drivin
 threshold, and the gap it exposes is the form of inhibition: **campaign item 2b, reversal potentials per transmitter class (inhibition
 as a conductance to a reversal near rest), an engine term, off by default, oracle.** the membrane of the flexors is to be logged directly
 (`--log-v`) once the engine's current edit lands. ledger row 5.
+
+**campaign item 2, the engine side landed (23:01 PDT; commit 6d4c5b4, agent C; `--syn-tau ACH:GABA:GLU` in `world/cord.py` and
+`experiments/body_loop.py`, off by default; oracle PASS, v1 + v2, eight configs; `experiments/syn_tau_test.py`: the six-cell PSPs match the
+closed form to 1e-6 mV, IPSP / EPSP area 4.00 at 5:20:20):** one conductance row per presynaptic transmitter class (ACh 13,491 cord cells,
+GABA 5,915, glutamate 2,648, other 1,020 = the six histamine cells and the edgeless modulators). **a slower tau is a stronger synapse in this
+term** (charge = weight x tau; the IPSP peak -1.01 mV against the EPSP's +0.43 at 5:20), so a kinetics arm is also a strength arm and is
+read as both. the help's 5:20:20 is an illustration, not a sourced value: the sourced ranges (`knobs.md`) are ACh 4.5-6.7 ms, GABA-A
+3.7-6 ms, glutamate (GluCl) one larval trace at ~300 ms as an upper bound. the arms below use those.
+
+**the time constants swept (23:03 PDT; `--syn-tau` ACh:GABA:Glu = 5:5:5 (bit for bit the control), 5:5:20, 5:5:100, 5:5:300, 2:4:5, 7:6:300;
+seed 11, DNg100 100 Hz):** slowing glutamate (a fifth of the cord's inhibition, and a stronger synapse at every longer tau) dims the cord
+(leg MNs 9.6 -> 5.4 / 3.3 / 2.3 Hz per cell; the extensors 8.0 -> 2.6 / 0.5 / 1.1), leaves IN13A002 nearly where it was (52 -> 51 / 48 / 43: its
+drive is cholinergic and sensory), **wakes no flexor (0.00 in every arm) and no releaser (IN13B019 <= 0.5)**, and pulls the 20 Hz line down
+and thin: 19.7 x45 -> 16.3 x45 / 16.0 x16 / 13.6 x10, and 7.8 Hz x10 at 7:6:300. faster synapses all round (2:4:5) halve the cord (0.52 Hz per
+cell) and take the line to 23 Hz x21. so the sourced kinetics move the subnet's frequency in the direction of Pugliese's, at the cost of the
+rhythm's strength and of the cord's activity, and touch the half-centre not at all. item 2 is a labelled knob, not the switch; item 2b
+(the form of inhibition) is the one aimed at the flexors, and its engine term is being built.
