@@ -6530,3 +6530,27 @@ shunt a cell held up by its own current is shunted, not silenced, so both sides 
 recipe (plateaus + fatigue on a reciprocally inhibiting pair) does not alternate here under shunting inhibition.** the same arms with
 current-based inhibition, and with slow fatigue (tau 2 s), and the lag structure out to +-2 s, are running: if there is a slow
 alternation the 10 ms zero-lag read would miss it.
+
+**the pair under current-based inhibition and slow fatigue (10:51 PDT; the same stack without the shunt; plateaus on both; fatigue u 0.5 at
+500 ms and at 2 s; the plateau at the large borrowed size; the lag structure of the winners' pool against the releasers' pool out to +-2 s):**
+
+| arm | IN13A002 | IN13A003 | IN13B019 | IN13A006 | extensors | xcorr at 0 (min, lag) | winners' autocorr 0.1 / 0.5 / 1 / 2 s |
+|---|---|---|---|---|---|---|---|
+| plateaus, shunt (S7) | 5.9 | 20.0 | 21.7 | 21.1 | 0.5 | +0.18 (-0.05 at +1.1 s) | +0.01 / +0.01 / +0.02 / 0.00 |
+| plateaus, no shunt | 6.6 | 33.2 | 23.9 | 35.1 | 0.7 | +0.26 (-0.03 at -0.9 s) | +0.01 / -0.01 / 0.00 / 0.00 |
+| + fatigue u 0.5 / 500 ms, no shunt | 12.4 | 44.1 | 24.6 | 45.4 | 3.7 | +0.33 (-0.08 at -100 ms) | -0.04 / -0.04 / 0.00 / -0.02 |
+| + fatigue u 0.5 / 2 s, no shunt | 13.0 | 45.8 | 24.8 | 47.2 | 4.6 | +0.36 (-0.12 at -100 ms) | -0.07 / +0.03 / 0.00 / -0.01 |
+| + fatigue u 0.5 / 2 s, shunt | 11.8 | 35.9 | 24.2 | 38.7 | 1.8 | +0.31 (-0.04 at -1.5 s) | +0.05 / -0.02 / +0.01 / -0.02 |
+| the large plateau (g 0.95), fatigue 2 s, no shunt | 32.2 | 61.1 | 44.6 | 62.5 | 4.6 | +0.19 (-0.06 at +200 ms) | -0.03 / -0.02 / -0.01 / +0.02 |
+
+**the two sides of the half-centre are positively correlated at zero lag in every arm (+0.18 to +0.36) and nowhere anti-correlated at any
+lag out to two seconds; both pools carry the subnet's line (the winners' spectrum peaks at 16-19 Hz, x17-29).** with or without the
+shunt, with fatigue fast or slow, with the plateau at the medium or the large borrowed size, they fire together. so the file's 13A / 13B
+pair, reciprocally wired as it is, is not a half-centre at these weights: its common drive (the 20 Hz subnet, the senses, the command)
+outweighs its mutual inhibition, and every release mechanism the engine has makes both sides louder together. the wiring's reciprocity
+is real (the one-sided plateau arms show it); the switching is not a property of these cells with these synapses. **item 4 on the pair:
+closed, negative, on one seed.** what would make it a switch: stronger mutual inhibition than the file's (item 7, a claim about
+missing synapses, with no source yet), or a phasic input that neither side shares, which in a headless fly is the leg's own movement
+senses (hook / club / campaniform in swing), silent in every cord arm because nothing moves, and driven on the body only by a leg that
+already moves. the campaign's line for today: the switch is not in the premotor pair's intrinsic properties. next: the body with the
+full stack, both labellings, clips; and the movement senses read on the body's own lifts.

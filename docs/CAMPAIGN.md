@@ -41,7 +41,8 @@ this is the plan and the ledger of what we changed on the fly to get there.
    an engine term: inhibitory (and excitatory) conductances to reversal potentials, off by default, oracle. NEXT, after item 2 lands.
 4. **plateau potentials and rebound on named cells.** LANDED 09-23 (2aa78b7, `--pic`): a borrowed persistent inward current on the small tibia flexors
    gives 12 / 36 / 62 Hz at rest at three borrowed sizes with everything else at zero; Azevedo's 30 falls between the first two. ledger 9.
-   next: the same kind of term on the 13A / 13B pair (the switch), with per-cell fatigue and rebound.
+   the pair (09-23): plateaus + fatigue on both sides, with and without the shunt: the two sides fire TOGETHER (+0.2 to +0.4 at zero lag),
+   no alternation at any lag to 2 s. the file's 13A / 13B pair is not a half-centre at its weights; the switch is not in its intrinsic properties.
 5. **neuromodulation as a state.** DESIGNED AND PARKED 09-22 (`octopamine_state.md`): the leg octopamine cells EN00B008 get 62 synapses from
    DNg100 and 716 from DNp68; under DNg100 alone they are silent (0 Hz), so the state is zero in our arm. a DNp68 question; no fly magnitude.
 6. **finish the senses.** MAPPED 09-22 (`world/leg_senses.npz`, `leg_senses_map.md`): every leg sensory cell by leg and modality. the floor and the
