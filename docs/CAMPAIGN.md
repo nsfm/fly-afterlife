@@ -80,6 +80,10 @@ not the flexors' force; the fast-spike claim was wrong). **where the sourced mov
 leg's movement senses closing on the body's own lifts, which is a read, not a term, and (b) stronger mutual inhibition than the file
 has, which is item 7 and needs a source. nothing else on the list has a paper behind it.
 
+**the lift read (09-23 afternoon):** done. lifts come in five-hertz bouts per leg, uncoupled across legs, present in every arm with an
+unloaded leg including rest and the old fit; the hooks lead each lift because the leg is already moving, the subnet fires with the
+unloading. neural or mechanical is undecided until `--freeze-mn` exists. no gait.
+
 ## working habits
 
 one change per run, controls beside every arm, both claw labellings beside every body result, the oracle before any engine commit, agents

@@ -6590,3 +6590,33 @@ the knees at 1-3 deg sd. one seed each; the 55 -> 8 could be chaos on a 0.2 nN.m
 1.5 uN resting-force drop implies ~10x the fitted slope; bracketed in the doc). so the slow flexors' tone on the body, at either force
 scale, neither holds him nor folds him: the standing is the springs' and the tone is a few hundredths of a nanonewton-metre.
   (correction to the correction: `knobs.md` already cites eLife 9:e56754; the 'Nature' was in my brief to the agent, not in the doc.)
+
+## the movement senses on his own lifts (11:27 PDT, 09-23; `--log-x` in `experiments/body_loop.py` (named types at 1 ms, off by default),
+`experiments/lift_read.py`; the full stack (the standing senses, the graded tone with the small flexors' current, the shunt, Azevedo's force
+per spike) under the recorded whole-fly DN population, 30 s, seeds 11 / 12 (labels swapped) and 11 (as printed); a lift = the foot's
+smoothed contact force at or under 0.05 for 50 ms or more)
+
+- **lifts come in bouts.** left front: 30 / 47 / 22 lifts in 28 s; inter-lift intervals cv 1.45 / 1.62 / 1.63 (a Poisson process gives 1) with
+  serial correlation +0.35 / +0.39 / +0.68; after a lift ends the next begins within 300 ms 0.59 / 0.72 of the time where Poisson at the
+  same rate gives 0.27 / 0.40. **inside a bout the gap is 160-200 ms with a cv of 0.25-0.46: five hertz, regular.** the middle legs more so:
+  lm 72 / 63 lifts and rm 69 / 76, ten bouts of three or more per leg, in-bout gaps 190-200 ms at cv 0.24-0.32; the hind legs never lift.
+- **who leads a lift (the 100 ms before onset against the run's baseline, 20 ms bins):** the hooks (SNpp39 / 41, the velocity cells) rise
+  first, 40-100 ms before the foot unloads, because the leg is already moving; the flexion claw (SNpp51) with them; the trochanter
+  extensor motor neurons (the levators) up from 0.8 to 1.2-1.7 Hz over the preceding 200 ms; **the 20 Hz subnet bursts in the 20 ms at
+  onset** (INXXX466 20 vs 10 Hz base, IN09A002 51 vs 33, IN17A001 15 vs 9), coincident with it (cross-correlation with the onset train
+  peaks at +20 ms), not before; IN13A002 falls (0.85-0.88 of base) under the labels swapped and RISES (1.23) with them as printed, where
+  SNpp50 leads instead; the releaser IN13B019 never fires; the clubs never fire (v2 holds them at 0: they have no motion drive). so a lift
+  in this body is: the leg moves, the movement senses say so, the subnet fires with the unloading, and the next lift follows more often
+  than chance. sensory-motor, per leg.
+- **the legs do not talk to each other.** onset-train cross-correlations between the middle legs, and front to middle, are 0.02-0.12 at
+  their best lags; the right middle's lifts fall uniformly across the left middle's in-bout cycle (histograms 5 / 8 / 1 / 1, 6 / 4 / 3 / 2,
+  3 / 3 / 3 / 2 in quarters); both middle feet are off the ground together exactly as often as independence predicts (29.6 vs 32.2 %,
+  40.1 vs 39.1, 23.7 vs 27.0). **six oscillators, uncoupled.** no tripod, no antiphase, no gait.
+- **and the five hertz is not the command's and not new:** the same 150-240 ms in-bout gap at cv 0.2-0.4 appears in every arm with an
+  unloaded leg: at rest (rm 19 lifts, 228 ms), under the tonic neuron (rm 200, lh 238), under the shunt (lf 179), and in the 09-22 fit
+  (`ld_100_x8_ramp1`: lf 154, rf 184, rm 199). what the command changes is how much of the time a leg is off the ground (the middle legs 50-75 %
+  under the population, 2-9 % at rest). so the per-leg five hertz is a property of the leg-ground-spring-pad system with the cord in the
+  loop; whether the cord is in it at all (a reflex bounce) or the leg would bounce with its motor output frozen (a mechanical bounce) is
+  the control this read needs and the body script cannot yet run (`--freeze-mn S`: hold every muscle activation at its value at S seconds).
+  until that control is run, the bouts are a per-leg oscillation of unknown origin at the frequency of a slow step, uncoupled across legs,
+  and the record claims no more.
