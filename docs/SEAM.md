@@ -6436,3 +6436,31 @@ the shunt. what it changes: the extensors 2.1 -> 3.4 Hz and the lifts 10 -> 17 i
 springs' (rest: 0 %, leg MNs 0.12 Hz). one seed; the sourced population (agent) will say which DNs in the recording carry walking and at
 what rate, and whether the playback's 3.9 Hz mean is a standing fly's or a walking one's (the recording was the whole fly in its garden,
 mostly standing).
+
+**the walking command, sourced (agent; `docs/physiology/walking_command.md`, 10:33 PDT):** no spike rate exists for any forward-walking DN
+during walking (DNa02's stride-locked ripple of ~15 spikes/s is the only number, and its lock comes from ascending input the cut removes;
+DNg13 >100 Hz under current injection); the population imaging (Aymanns 2022) has ~60 % of imaged DNs encoding walking and never saw the
+gnathal DNs (DNg100, DNg97). **the command is tonic at the step timescale; a headless fly steps in a tripod under steady light, so a
+step-locked envelope on the DNs is a puppet.** DNg100 favours the extension side at two synapses (IN09A002 1,026, IN17A001 818, IN12B003
+771), and so do DNg97, DNg75, DNa13, DNb08, DNg13; the flexion-side DNs in the file are DNg95 (strongly), DNge038 / 035, DNg16, DNa01 (mildly),
+none with a walking record but DNa01. DNp09 hardly reaches the cord (it drives DNa11, DNg100, DNg75, DNg97). Pugliese's combinatorial
+screen found the rhythm LESS likely when the drive is spread over many DNs. every absolute rate in any population arm is chosen.
+
+**the population arms on the cord (10:33 PDT; the standing senses, the graded tone, the shunt; seed 11, 30 s; DN rates matched to DNg100's
+synaptic drive at 100 Hz as the doc sets them):**
+
+| arm | leg MN Hz | extensors | IN13A006 | IN03A004 | promotors | IN17A001 (line) | flexors small / mid / large |
+|---|---|---|---|---|---|---|---|
+| A0 DNg100 alone, 100 Hz | 4.77 | 1.8 | 10.1 | 7.4 | 2.7 | 15.8 (22.7 Hz x31) | 1.53 / 0.03 / 0.0 |
+| A1 DNg100 + DNg97 + DNg75 + DNa01 + DNa02 at 38.2 | 3.37 | 0.4 | 12.5 | 8.9 | 1.2 | 9.8 (x19) | 1.14 / 0.05 / 0.0 |
+| A2 the same without DNg100 / DNg97, 79.3 | 1.89 | 0.1 | 14.8 | 11.2 | 0.0 | 3.4 (x15) | 0.97 / 0.09 / 0.0 |
+| A3 A1 + the flexion set, 22.9 | 3.05 | 0.4 | 13.0 | 9.7 | 1.9 | 8.5 (x36) | 1.24 / 0.02 / 0.0 |
+| the flexion set alone, 100 | 3.21 | 0.6 | 15.5 | 10.0 | 6.4 | 8.2 (x24) | 1.44 / 0.01 / 0.0 |
+| rest | 1.28 | 0.0 | 16.2 | 9.3 | 0.0 | 2.0 (x17) | 1.06 / 0.09 / 0.0 |
+
+spreading the command quiets the extension side (extensors 1.8 -> 0.4 -> 0.1, the subnet's line x31 -> x19 -> x15) and leaves the flexion
+side where rest has it (IN13A006 10-16 Hz, the small flexors 1-1.5 Hz in every arm); the flexion-side DNs wake the promotors (6.4 Hz) and
+nothing else. **no arm switches anything.** the command decides how hard the extension side is pushed and that is all it decides; the
+rhythm is not in the command, which is what the sourced doc and Pugliese's screen both say, and the subnet's 20 Hz is loudest under the
+one neuron. the doc's prediction for the body (the population still lies him down) is being tested with the shunt on, which stood him
+under DNg100 this morning.
