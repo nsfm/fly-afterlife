@@ -6566,3 +6566,5 @@ of the fast ones' (Azevedo 2020 measured the tibia's force per spike by type; th
 slow tone holds a posture, it does not fold the leg. so the next body change is sourced and on the muscle side: force per spike by motor
 neuron class, from Azevedo's measurements, in the muscle map. until then the small flexors' current stays a cord result. (the pair's
 current on the body is running for completeness; `body_loop.py` takes `--std TYPES` without u / tau overrides.)
+
+**the pair's current on the body (10:55 PDT; plateaus + depression on the winners and the releasers, the full stack, DNg100 100 Hz, labels swapped):** he stands (0 % on the floor, the feet carrying 10.7 uN), leg MNs 1.13 Hz, extensors 1.41, flexors 0.36 (no small-flexor current in this arm); 8 lifts of the left front foot in 18 s, the coxa forward on all of them (-10 deg). the pair's cells are not in the body's default log; on the cord they co-fire (above). for completeness: a standing fly with a few forward lifts, as before.
