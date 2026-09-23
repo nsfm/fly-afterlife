@@ -50,6 +50,7 @@ ap.add_argument("--adhesion-gain", type=float, default=1.0, help="adhesion force
 ap.add_argument("--dn-playback", default="", help="drive the cord's descending neurons with the brain's own descending output as a recording: a whole-fly run's <run>.cells.npz with every DN type logged per chunk (100 ms); each DN cell in the cord is held at its own measured rate in that chunk, chunk by chunk (the headless preparation with the real channels; nate 09-22: not a head, a recording of one). replaces --walk / --walk-dn")
 ap.add_argument("--playback-start", type=float, default=2.0, help="seconds into the recording to start (after its warm-up)")
 ap.add_argument("--edge-scale", default="", help="as in world/cord.py: TYPES:FACTOR, the synapses among the named types scaled (the published rhythm loop DNg100,IN17A001,INXXX466,IN16B036:3 rings at 25 Hz under the 400 Hz dose)")
+ap.add_argument("--drive", default="", help="as in world/cord.py: TYPE:HZ,TYPE:HZ, named types held at a rate; rows after the floor and the body's senses, so they override on those cells; the driven cells' membranes are gated (driven); printed. a labelled diagnostic (09-23, campaign item 7: the commissurals AN19B009 / IN19B005 driven beyond the command)")
 ap.add_argument("--cell-delay", default="", help="as in world/cord.py: TYPES:MS, a per-cell conduction delay on the named cells (the ring slows from 25 Hz to 10 with 12 ms on the loop's three cells)")
 ap.add_argument("--syn-tau", default="", help="as in world/cord.py: " + SYN_TAU_HELP)
 ap.add_argument("--syn-rev", default="", help="as in world/cord.py: " + SYN_REV_HELP)
@@ -179,6 +180,11 @@ SLOW_BY_LEG = {leg: np.array([j for j in SLOW if legof[j] == leg], np.int64) for
 SWING = ("Tr flexor MN", "Acc. tr flexor MN", "Ti flexor MN", "Acc. ti flexor MN", "Tergopleural/Pleural promotor MN", "Sternal anterior rotator MN")
 SWING_BY_LEG = {leg: np.array([j for j in LEGMN if mty[j] in SWING and legof[j] == leg], np.int64) for leg in LEG6}
 if args.slow_mv > 0: print(f"standing tonus as a current: {sum(len(v) for v in SLOW_BY_LEG.values())} stance MNs at {args.slow_mv} mV x load" + (f"; co-contraction: the swing MNs at {args.cocon} x that" if args.cocon > 0 else ""))
+if args.drive:   # (09-23, campaign item 7) as in world/cord.py: after every other row, so it overrides; gated below with every REG row
+    from fly_afterlife.receptors import Hold
+    for item in args.drive.split(","):
+        t_, hz_ = item.split(":"); cells_ = np.flatnonzero(mty == t_)
+        REG.add(ReceptorClass(f"drive_{t_}", cells_, Hold(float(hz_)), lambda st: True, source="body_loop.py --drive: a named type held at a rate (diagnostic)")); print(f"drive: {t_} ({len(cells_)} cells) at {hz_} Hz")
 apply_size(M, args)   # (campaign item 3, 09-23) as in world/cord.py; here after insyn is read above, so the motor force weights (f_w) and the slow set stay the file's synapse counts and the size terms change excitability only
 M.driven[:] = False
 for cl in M.SENSORY_CLASSES: M.driven[M.cls == cl] = True
