@@ -7008,3 +7008,34 @@ the antiphase share 0.42-0.48 (the controls 0.39 / 0.51), the promotor pools co-
 -0.05 at any lag. the front pair is unreadable (the right front never lifts). **row 26, closed: on the cord and on the body, the fly's
 left-right coupling pathway at thirty times its weight and fifty hertz of drive couples nothing, because there is nothing per leg to
 couple.** the gap is upstream of it: the per-leg generator does not make stance and swing at the file's weights.
+
+## the puppet baseline (14:00 PDT, 09-23; queue 4o, nate's; `--puppet tripod:F:DUTY` with `--puppet-swing-hz` / `--puppet-stance-hz` in
+`experiments/body_loop.py`, commit c34ed8c, default bit for bit; A LABELLED PUPPET, every line and the saved args marked PUPPET; the cord
+runs and is logged and never reaches the body; each leg's own levator + protractor motor neurons fire Poisson at the swing rate during
+its scripted swing and its depressor + retractor + tibia extensor at the stance rate during stance, through the same f_w, kernel, force
+classes and actuator limits as the cord's spikes; the honest stack; seed 11, 20 s)
+
+| run | feet / other / body, uN | thorax z (sd) | displacement along heading; speed | lifts lf lm lh rf rm rh | all three off, tripod A / B | lm-rm both-off vs independence; antiphase share (n) |
+|---|---|---|---|---|---|---|
+| puppet 5 Hz, duty 0.6, swing 100 / stance 50 Hz | 2.7 / 0.1 / **7.3 (flipped onto his back at 4 s)** | 0.68 (0.23) | +1.3 mm | 89 89 86 89 89 3 | 38 / 52 % | x0.70; 1.00 (176) |
+| puppet 8 Hz, 100 / 50 (`puppet_8.mp4`) | 6.2 / 2.0 / 1.7 | 0.93 (0.29) | +6.4 mm; 2.2 mm/s | 62 82 53 110 111 2 | 19 / 5 % | x0.53; 0.75 (163) |
+| puppet 11 Hz, 0.55, 100 / 50 | 4.2 / 4.4 / 1.4 | 0.77 (0.18) | +1.1 mm | 47 30 47 58 59 7 | 20 / 9 % | x0.84; 0.65 (31) |
+| **puppet 5 Hz, 50 / 25** | 7.8 / 1.2 / 0.8 | 0.93 (0.21) | **+29.3 mm; 1.6 mm/s** | 89 89 24 87 87 0 | 15 / 1 % | **x0.13; 0.97 (172)** |
+| puppet 8 Hz, 50 / 25 | 6.7 / 2.7 / 0.6 | 0.80 (0.15) | +29.2 mm; 1.7 mm/s | 61 64 54 133 94 1 | 19 / 1 % | x0.26; 0.65 (110) |
+| puppet 11 Hz, 50 / 25 | 4.7 / 4.9 / 0.4 | 0.72 (0.10) | +23.9 mm; 1.4 mm/s | 32 21 42 112 87 3 | 20 / 4 % | x0.58; 0.61 (18) |
+| the connectome, the recorded population (`h_pop_flex`) | 9.65 / 0.29 / 0.03 | 0.81 (0.11) | +2.2 mm; 0.1 mm/s | 5 83 0 0 74 0 | 0 / 0 % | x1.04; 0.39 (72) |
+| the connectome, DNg100 100 Hz (`i7_x1_s11`) | 10.01 / 0.02 / 0.00 | 0.86 (0.09) | +3.2 mm; 0.1 mm/s | 0 7 13 1 71 1 | 0 / 0 % | x0.75; - (1) |
+
+- **the yardstick.** at 5 Hz with 50 Hz on the swing motor neurons and 25 on the stance ones, the honest body walks: 29 mm forward in 18 s
+  (1.6 mm/s; a fly walks 10-30), the middle and front pairs in clean antiphase (both feet off together at 0.13-0.20 of independence,
+  antiphase share 0.97-0.99), the in-bout gap on the scripted 200 ms. that is what stance and swing look like in every read we have,
+  and the connectome's arms are at independence, 0.1 mm/s, one middle leg bouncing.
+- **what the puppet exposes about the body:** (1) the rates matter more than the pattern: 100 / 50 pins the trochanter at both limits and
+  flips him at 5 Hz; 50 / 25 walks; 100 / 0 (no stance drive) leaves him on his coxae; (2) **11 Hz cannot be carried:** the foot lifts ~30 ms
+  behind the script and swing lasts ~41 ms, so at 11 Hz no leg follows (gaps 104-230, antiphase at chance): the 120 ms twitch kernel on
+  these springs has a ceiling near 8 Hz, and a headless fly air-steps at 11 (Sapkal); (3) **the right hind leg never lifts under the puppet
+  either** (0-7 lifts) and the right front is in the air 54-91 % of the time: a right-side asymmetry in the map or the pose, not in the cord;
+  (4) his weight moves onto coxae and femora while he steps (1.2-4.9 uN against 0.3 standing). one seed; the forward axis assumed +x.
+- **so the connectome's target, in its own motor neurons:** per leg, a swing burst of ~50 Hz on the levator and protractor motor neurons for
+  ~40 % of a 125-200 ms cycle, alternating with ~25 Hz on the depressors, retractors and extensors, the two tripods in antiphase. the
+  cord's arms give the levators 0.8-2 Hz and no burst. that is the gap, measured in the same units on both sides.
