@@ -6393,3 +6393,23 @@ no step, no rhythm, no flexor tone on the body yet (the small flexors' rest of t
 scale on the body, which `body_loop.py` does not take yet).
 
 **the noise term, oracle (00:05 PDT, 09-23):** `scripts/oracle_check.sh` v1 + v2, all eight configs bit for bit with the per-cell membrane-noise scale unset (`M._noise_scale`, `world/fastlif.py`; `--size-noise K` in the size path). committed.
+
+**the small flexors' rest on the body (00:06 PDT, 09-23; the size path as one helper, `src/fly_afterlife/size.py`, shared by `world/cord.py` and
+`experiments/body_loop.py`, defaults bit for bit (body: every saved array, max difference 0; cord: with the flags off and on); the standing
+senses, the graded flexor labelling, synapses and noise scaled by the resistance ratio; 20 s, seed 11):**
+
+| arm | on the floor | leg MN Hz | extensors | Ti flexors small / middle / large |
+|---|---|---|---|---|
+| labels swapped, at rest | 0 % (the feet carry 10.7 uN) | 0.67 | 0.74 | **0.68** / 0.00 / 0.00 |
+| labels swapped, command | 86 % | 2.41 | 6.90 | **1.61** / 0.00 / 0.00 |
+| labels as printed, at rest | 2 % | 1.16 | 0.04 | **0.75** / 0.00 / 0.00 |
+| labels as printed, command | 91 % | 2.62 | 14.27 | **1.28** / 0.00 / 0.00 |
+
+Azevedo's ordering holds on the body under both labellings: all thirteen small cells fire at rest (0.17-1.22 Hz), the middle and large
+thirds at 0. the two labellings differ little on the body at rest (0.68 / 0.75) where the cord gave 1.15 / 0.67: on the body the claw
+signal at the standing pose is a fifth of the range (the knees 11-13 deg from Mamiya's null) where the cord arm drove it at 40 Hz, so
+on the body the rest is nearly all the cell's own noise at its measured resistance. he stands at rest and lies down under the command
+in both; the flexor tone at this rate changes neither. the small cells sit at -0.5 to -0.7 mV re rest on the body (sd 0.2-0.3). **where
+the campaign's first night ends:** the slow flexors fire at rest, on the body, in the right order, from three sourced changes and one
+stated assumption, at a fortieth of Azevedo's rate; the rest of the tone is the cell's own and is item 4's; the standing is the springs';
+the command as one tonic neuron knocks him down; no step, no rhythm, no claim about walking.
