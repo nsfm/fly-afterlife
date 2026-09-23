@@ -118,9 +118,7 @@ jm = fly.add_joints(skel, KinematicPosePreset.NEUTRAL, **({} if args.stiffness i
 _pl = fly.get_pose_lookup(KinematicPosePreset.NEUTRAL) if hasattr(fly, 'get_pose_lookup') else {}
 neutral_of = {"{}->{}:{}".format(*k.split("-")): float(v) for k, v in (_pl.items() if isinstance(_pl, dict) else []) if k.count("-") == 2}
 limit_joints(jm, neutral_of)
-fly.add_actuators(dofs, ActuatorType.MOTOR, forcerange=(-60.0, 60.0)); adh = fly.add_leg_adhesion()
-if args.adhesion_gain != 1.0:
-    for _l, _a in adh.items(): _a.gain = (args.adhesion_gain, 0.0, 0.0)
+fly.add_actuators(dofs, ActuatorType.MOTOR, forcerange=(-60.0, 60.0)); adh = fly.add_leg_adhesion(gain=args.adhesion_gain)
 if not args.no_video: fly.add_tracking_camera("trackcam")
 from flygym.compose import TetheredWorld
 world = TetheredWorld() if args.tethered else FlatGroundWorld(); world.add_fly(fly, (0.0, 0.0, 2.0 if args.tethered else 0.5), Rotation3D(format="quat", values=(1, 0, 0, 0))); sim = Simulation(world); m = sim.mj_model; d = sim.mj_data

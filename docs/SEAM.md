@@ -5450,3 +5450,30 @@ the thorax moves at 1.1 mm/s (a fly walks 10-20), sliding. the other three moonw
 the controls). one leg on one seed: real, kept, not called a gait.
 
 **the tick (17:17 PDT; nate: "is it possible different behavior would emerge from a finer tick rate?"; the cord, DNg100 100 Hz, 20 s, seed 11, `--dt`, the membrane noise scaled by sqrt(dt)):** dt 1.0 / 0.5 / 0.25 / 0.1 ms: cord 1.13 / 1.23 / 1.32 / 1.35 Hz per cell, leg MNs 1.99 / 2.12 / 2.29 / 2.36, active 54 / 53 / 61 / 62, extensors 9.4 / 10.2 / 11.6 / 11.5, flexors 0.00 at all four, no inter-leg phase at any. a millisecond tick delays every threshold crossing by up to a step and rounds the 1.8 ms delay and the 2.2 ms refractory to whole steps, and that costs about 18 % of the rate against a tenth-of-a-millisecond tick (Shiu 2024 ran Brian2 at 0.1 ms); the shape of the output does not move. the membrane is exact at any tick (the analytic integrator since 09-19); the events are what the tick quantises. so: a rate correction worth knowing, no behaviour hiding under it. the whole fly at 0.1 ms would run ten times slower, which is the reason it is 1.0.
+
+**the pads (17:24 PDT; `--adhesion contact --adhesion-gain 20`: a loaded foot sticks with 20 uN, an unloaded one releases; the standing
+body, the loop closed, 20 s):**
+
+| arm | height | along his heading | turn | flexors | extensors | feet on the ground (%) | lf-lm / lm-rf |
+|---|---|---|---|---|---|---|---|
+| DNg100, no pads (the control) | 0.71 | 2.5 mm | +9 | 0.44 | 24.8 | 59 24 18 64 10 19 | +0.07 / +0.22 |
+| DNg100, pads | 0.70 | 0.3 | +76 | 0.16 | 40.6 | 58 52 33 59 8 38 | +0.03 / +0.01 |
+| DNg100, pads + co-contraction 0.2 | 0.65 | 0.2 | -7 | 11.7 | 49.1 | 59 11 32 83 95 32 | -0.02 / -0.07 |
+| no command, pads + 0.2 | 0.66 | 0.8 | -56 | 12.0 | 50.1 | 61 11 25 80 93 37 | |
+| 400 Hz, pads + 0.2 | 0.65 | 1.1 | -40 | 10.3 | 44.4 | 42 11 16 85 96 32 | |
+| MDN, no pads | 0.71 | 4.8 | -30 | 2.98 | 27.6 | 54 23 9 66 19 25 | **-0.39 / +0.35** |
+| MDN, pads | 0.71 | 5.0 | **-175** | 2.72 | 35.2 | 55 21 24 59 12 32 | -0.13 / +0.19 |
+| MDN, pads + 0.2, seeds 11 / 10 | 0.65 / 0.68 | 1.0 / -0.5 | -59 / +87 | 10.1 / 9.4 | 43.9 / 39.3 | | -0.01 / -0.18 |
+| the flexion population, pads + 0.2 | 0.65 | 2.9 | -76 | 10.7 | 45.1 | 38 10 19 82 93 38 | +0.12 / -0.16 |
+
+- **the pads make him stick, and the sliding goes:** 0.2-1 mm of travel where there was 2.5-5. the feet that are down stay down (the
+  right mid 93-96 % of the time with co-contraction) and the loop pushes harder against feet that cannot move: the flexors run at 10-12 Hz
+  and the extensors at 40-50 under the pads and the fifth of co-contraction, a body straining against its own grip. no knee oscillates
+  in any arm (no autocorrelation lobe under a second anywhere).
+- **the moonwalker's structure was a sliding pattern.** with the pads its left-front / left-mid anti-phase falls from -0.39 to -0.13 and
+  with co-contraction to zero; on sticky feet MDN spins him half a turn on the spot (-175 deg) instead of drifting. the coordination that
+  replicated on four seeds was a reflex pattern of a body sliding on its front legs.
+- so, with feet that grip, legs that co-contract, a tonus that stands him and a loop that answers: he stands, he grips, he strains,
+  and nothing steps. every lever on the body's side has now been pulled once. what has not been tried is the command as the brain
+  makes it: the descending population at its own rates. a whole-fly run with every descending type logged is in flight, to play the
+  brain's descending output into the headless cord and body as a recording (the same headless preparation, the real channels).

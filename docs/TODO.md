@@ -92,6 +92,10 @@ one change per run, its control, the measurement that decides it. status: queued
    **[09-22 09:20]** done: seeds (robust), the flexion DNs and MDN (MDN reorganises the legs the same way on four seeds, forward-right drift, not
    backward), the unloading term (more independence, no rhythm). **next: the walking DN population at the whole fly's own rates on the standing
    body with the loop (`--walk-dn` list + per-type rates), then the whole fly in the body (brain + cord + body in one process).** the stand-in
+   **[09-22 17:24]** co-contraction 0.2 (`--cocon`) takes the front legs off their limits; pad adhesion (`--adhesion contact`) stops the
+   sliding and kills the moonwalker's pattern (it was a sliding reflex); the tick (`--dt`) is a rate correction, not a behaviour. nothing
+   steps. **running: the whole fly's descending census (every DN type, 60 s) to drive the headless cord + body with the brain's own descending
+   rates as a recording.**
    as default: nate's call (docs/ASK.md).
    **[hunted 09-21 22:49]** the half-centre is in the table (flexor exciters -> extensor inhibitors +13.5k, the reverse +10k, inhibitors mutually
    -13k / -15k) and none of four release mechanisms switches it (depression everywhere / on the inhibitors alone, adaptation, rebound: 40 arms),
