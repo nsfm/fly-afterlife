@@ -38,7 +38,9 @@ this is the plan and the ledger of what we changed on the fly to get there.
 4. **plateau potentials and rebound on named cells.** rebound is in the engine (off); plateaus are not. stick-insect walking runs on them.
 5. **neuromodulation as a state.** SOURCED 09-22: 50 octopaminergic cells in the cord, the leg ones EN00B008 (one per segment), and DNg100 /
    DNp68 synapse onto them; no chemical output onto leg cells. a state from their firing, stick-insect sign, no fly magnitude.
-6. **finish the senses.** hair plates and campaniform fields as populations where the file's afferents are thin; FANC where MaleCNS is incomplete.
+6. **finish the senses.** MAPPED 09-22 (`world/leg_senses.npz`, `leg_senses_map.md`): every leg sensory cell by leg and modality. the floor and the
+   body's load row were driving club / hook cells that are silent at rest (ledger 6). next: the floor by subtype; tactile on contact, hair plates
+   from coxa angle, campaniform from rising load, clubs and hooks from motion, in the body loop.
 7. **add connections.** gap junctions; the flexor motor neurons' inputs where tracing is thin. a reason each time.
 8. **the fitter,** bounded by 2-5's ranges, aimed at measured targets.
 
@@ -65,4 +67,5 @@ the reads and the record stay mine.
 | 2 | 09-22 | edges under 5 synapses dropped at the build (brain_whole.npz / brain_cord.npz) | a build default of ours; the release has them | removed: `brain_*_all.npz` beside the originals; every run of record is on the floored file, and the cord baseline is the same on both |
 | 4 | 09-22 | the leg's tactile afferents (SNta, 2,573 cells) driven at a rate as a stand-in for ground contact | the file's 13B-side excitors take 27 % of their excitation from them and nothing drives them; a standing fly's tarsi are on the ground | a contact model on the body; as a cord diagnostic it wakes the releaser to 2.5 Hz, not the switch |
 | 5 | 09-22 | tibia flexor thresholds set per type from Azevedo 2020's resting potentials (slow 3 mV, intermediate 15, fast 23 to threshold), the slow / intermediate / fast labelling by size rank within the pool | measured rest per class; the labelling of which cell is which is inferred | a per-cell identity; and it did not wake them (see 2b) |
+| 6 | 09-16 | the standing floor (`floor_leg_proprio`, 580 cells at 15 Hz) drives every leg proprioceptor alike: 207 club and 61 hook cells that are silent in a motionless leg, and only 12 campaniform | there was no per-subtype map | `world/leg_senses.npz` (09-22): the floor on campaniform + hair plates + claw only; the body loop's load row on campaniform + untyped |
 | 3 | 09-21 | the standing load as a tonic 15 Hz on the leg proprioceptors (`--leg-load-hz`) | the cord alone has no body to unload | the body loop (position + load) replaces it; on the body the load never lifts because the flexors never fire |

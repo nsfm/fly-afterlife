@@ -6171,3 +6171,16 @@ and thin: 19.7 x45 -> 16.3 x45 / 16.0 x16 / 13.6 x10, and 7.8 Hz x10 at 7:6:300.
 cell) and take the line to 23 Hz x21. so the sourced kinetics move the subnet's frequency in the direction of Pugliese's, at the cost of the
 rhythm's strength and of the cord's activity, and touch the half-centre not at all. item 2 is a labelled knob, not the switch; item 2b
 (the form of inhibition) is the one aimed at the flexors, and its engine term is being built.
+
+**the senses mapped (agent F; `scripts/build_leg_senses.py` -> `world/leg_senses.npz` / `.csv`, `docs/physiology/leg_senses_map.md`; 23:14 PDT):**
+3,567 of the cord file's 6,146 sensory cells belong to a leg, 3,566 placed by the release's own annotation (entry nerve ProLN / MesoLN /
+MetaLN and root side; the wiring agrees for 97 % of tactile and 88 % of proprioceptive cells). per leg (lf / lm / lh / rf / rm / rh): tactile
+169 / 372 / 388 / 156 / 426 / 413 (1,924 on the legs; the rest of the 2,573 SNta are wing, notum, haltere), proprioceptors 48 / 129 / 132 / 31 /
+133 / 139, of which claw (SNpp50 / 51), hook (SNpp39 / 41), club, hair plates (SNpp45 / 52), campaniform (2-3 per leg named), unclassified
+chordotonal and untyped. **the front legs are thin in the file** (48 and 31 proprioceptors, one and zero extension-tuned claw cells).
+**and the standing-load stand-in is the wrong cells:** the floor's 580 are club 207 (the femoral chordotonal organ's vibration cells, silent
+standing still), untyped 88, claw_50 62, unclassified chordotonal 41, hair plates 78, hook 61 (movement cells, silent at rest), claw_51 31,
+**campaniform 12.** the body loop's "load" row (426 cells) is 49 % club, 21 % untyped, 18 % hair plate, 3 % campaniform (the review's F7 with
+numbers). so IN13A002's 52 Hz is the floor driving the vibration- and movement-sensing cells of a motionless leg at 15 Hz. ledger row 6. the
+floor is trimmed from the command line (`--drive TYPE:0` overrides it on named types) to the cells that fire standing still: campaniform,
+hair plates, the claw; the club, hook and unclassified chordotonal cells at 0. arms below.
