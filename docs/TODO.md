@@ -538,6 +538,9 @@ item in §2a and should come before the taste path is judged.
   synapses to threshold, not the 26 in `docs/physiology/vision_motor_courtship.md` section 5. verify the integral before correcting the doc.
 - **4n. `--freeze-mn S` in body_loop.py:** hold every muscle activation at its value at S seconds so the per-leg five-hertz bouts can be tested
   with the cord out of the loop (mechanical bounce vs reflex). the control the lift read needs.
+- **4o. the puppet baseline (nate, 09-23):** drive the honest body with a scripted tripod (a labelled puppet, never a result) to get the
+  "working" body's numbers (per-leg lifts, gaps, pair coupling, speed, standing) in the same reads as the connectome's arms, as the
+  yardstick for how far the connectome's attempt is from a walk.
 - **4l. the cut, v2.** `scripts/build_cord.py` drops edges onto descending neurons from descending / ascending cells (a labelled approximation of
   vncRoisOnly). nearly inert in the LIF (the drive gate), decisive in the rate model. the 09-21 arms stand as run; re-run only what is cited.
 4j. **[queued 09-22 19:56] what the second pass leaves for the stepping leg**: the springs stand him (withdrawn as his); the remotors and the

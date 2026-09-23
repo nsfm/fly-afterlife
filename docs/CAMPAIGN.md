@@ -48,7 +48,9 @@ this is the plan and the ledger of what we changed on the fly to get there.
 6. **finish the senses.** MAPPED 09-22 (`world/leg_senses.npz`, `leg_senses_map.md`): every leg sensory cell by leg and modality. the floor and the
    body's load row were driving club / hook cells that are silent at rest (ledger 6). next: the floor by subtype; tactile on contact, hair plates
    from coxa angle, campaniform from rising load, clubs and hooks from motion, in the body loop.
-7. **add connections.** gap junctions; the flexor motor neurons' inputs where tracing is thin. a reason each time.
+7. **add connections.** OPENED 09-23 on the 19B -> 19A pathway (ledger 26): weight and drive sweeps on the cord and the honest body.
+   also queued (nate): a puppet gait as a baseline, so the connectome's attempt has a "working" body to be measured against.
+   original: gap junctions; the flexor motor neurons' inputs where tracing is thin. a reason each time.
 8. **the fitter,** bounded by 2-5's ranges, aimed at measured targets.
 
 **the target, named 09-22 night (`docs/SEAM.md` "the campaign opens"):** the tibia flexors are silent because the 13A / 12B / 19A premotor
@@ -123,6 +125,7 @@ the reads and the record stay mine.
 | 25 | 09-23 (an option: `--hind-map v2`; the hind levators stay silent, the cord's) | the hind coxa pitch has no motor neuron; MNhl62 / MNhl59 unmapped | the joint-role table was built from the front leg's map | a muscle on the hind coxa pitch from the hind leg's own motor neurons |
 | 22 | 09-22 | the size CSV lives in the session scratchpad (`flex_graded_abs.csv`) | built ad hoc | `world/flex_graded.csv` in the repo (to do) |
 | 23 | 09-23 | the noise scale, the plateau current and the thresholds together make the small flexors fire; an isolated cell at that threshold and noise fires 0.8 Hz alone (review R4) | the rest is a construction | a fly measurement of the slow MN's intrinsic rate |
+| 26 | 09-23 | **item 7, approved by nate (13:35):** the synapses among Sapkal 2026's left-right coupling pathway (AN19B009, IN19B005 -> IN19A011 / 012 / 001 / 016, IN19B003) scaled x3-x30 by `--edge-scale`, and/or the commissurals driven at 20-50 Hz by `--drive`; on the cord and on the honest body | the pathway is named by a paper and present in the file, wired as described, and nearly silent under any command we give (0.4-12 Hz); Pugliese found it "insufficient to couple" at the file's weights; no fly measurement of its synaptic weight or its drive exists | a measurement of either; every number produced under this row is a fit and is reported as one |
 | 9 | 09-23 | a persistent inward current on the small tibia flexors (`--pic smallflex:G:3:3:50`), parameters from cockroach / locust motor neurons | Azevedo's slow cells fire ~30 Hz at rest partly on their own; no fly leg cell has the current measured; the file gives them 13-111 synapses | a fly measurement of the current; g is bracketed, not pinned |
 | 7 | 09-22 | in the cord alone, the standing leg's afferents driven at chosen rates: the flexion-tuned claw class (as labelled) at 40 Hz, the six tactile types feeding the flexion side at 20 Hz | a standing fly's tibia is flexed and its feet touch the ground; no adult recording gives the rates | the body loop driving claw by angle (exists) and tactile by contact (to build) |
 | 6a | 09-22 | the floor trimmed to campaniform + hair plates (+ claw) by `--drive TYPE:0` in the arms; the default in the code still drives all 580 | the engine agent holds `world/cord.py` | change the default once the edit lands; re-baseline |
