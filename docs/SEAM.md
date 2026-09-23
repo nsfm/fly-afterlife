@@ -5887,3 +5887,5 @@ code, github.com/smpuglie/Pugliese_cpg_2025)
 - **the revised order:** log all six loops; run their rate code on their table and on ours to find why ours is dense; hold the loop at
   x1.49 and remove named surround cells one at a time (IN19A002 / 005 / 008, IN26X001, IN09A002) to see which lets it ring; measure the
   ring against the dose; both claw labellings beside every body result.
+
+**the surround, one cell at a time (20:02 PDT; the loop at the published x1.49, DNg100 100 Hz, `--silence` on IN19A002 / IN19A005 / IN19A008 / IN26X001 / IN09A002 singly and all five together; 1 ms logs):** no ring in any arm. IN17A001 at 22-23 Hz per cell and IN16B036 at 9-14 with spectral peaks at 19-22 Hz of x38-66 the median and autocorrelations within +-0.05 at 40 and 70 ms (the ring proper had -0.18 / +0.19); silencing all five raises IN16B036 to 13.6 Hz and nothing else. so the five cells the reviewer named are not what holds the loop below threshold at its own weight in this engine; the density of the surround is (their runs: 0-7 motor neurons active; ours: 100+), and that is the next question, with their code on their table beside ours.
