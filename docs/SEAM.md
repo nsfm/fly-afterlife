@@ -5725,3 +5725,28 @@ our file has no volumes, so input-synapse count stands in, stated):**
   a size per body that the flat files do not). **in this engine the loop rings when its own synapses dominate the surround (x3); in
   theirs the loop rings alone and the surround smothers it. the two engines agree on where the problem is: not the loop, the balance
   around it.**
+
+**the ringing cord on film (19:00 PDT; flygym's springs, the pads, the loop closed, 20 s; standing now judged by the ground reaction on
+the non-leg segments, 0 = on his feet):**
+
+| arm | body on the floor (% of his weight) | thorax height | flexors | extensors | lf coxa pitch (sd) / knee (sd) | joint spectra |
+|---|---|---|---|---|---|---|
+| DNg100 400 Hz (control) | 64 | 0.58 | 0.08 | 39.7 | 12 / - | |
+| **the ringing cord** (400 Hz, loop x3) | 54 | 0.55 | 0.07 | 42.4 | 13.2 / 13.7 deg | peaks at 1.1-1.6 Hz, nothing at 25 |
+| the ringing cord, claw labels swapped | **20** | 0.64 | 0.22 | 22.3 | 9 / 14 | |
+| the ringing cord, measured springs, tonus 13.6 mV | 94 (on the floor) | 0.40 | 0.12 | 53.4 | | |
+| DNg100 100 Hz, measured springs, tonus 13.6 mV | 33 | 0.86 | 0.04 | 42.6 | | |
+
+- **the legs move, and the ring is not in them.** under the ringing cord the left front coxa swings 13 deg and the knee 14 (sd), the mid
+  coxa 17, but the joint-angle spectra peak at 1.1-1.6 Hz with smooth autocorrelations: the 25 Hz that the promotor pool carries is
+  filtered out by the twitch kernel (20 ms decay) and the leg's own inertia, and what remains is slow wander at the size of the
+  control's. `world/body/loop/ring_springs.mp4` is the film nate asked for: a fly held by springs whose front legs stir at the ring's
+  dose; nothing you would call a step.
+- **standing, judged honestly, is not yet achieved in any arm:** the best is the swapped-claw arm on springs at 20 % of his weight on the
+  body; the current tonus at 13.6 mV under the record's dose leaves a third of him on the floor (the earlier "0.86 of height" was the
+  abdomen up and the thorax down); under the 400 Hz dose the extensors at 47-53 Hz drive him flat regardless.
+- so the ring is real in the cord and lost at the body, for two reasons the record can name: its period (40 ms, the loop's three
+  delays) is two to three times too short for a leg, and it reaches the coxa's antagonists in phase. the two engines' controls agree
+  the loop's surround is the problem and name the same sink (IN09A002). next, in the cord: a conduction delay on the loop's cells (a
+  per-cell output delay in the engine; axonal delays in the cord are real and unmeasured, (E)) to see whether the ring slows to the
+  band, and depression on the sink itself.
