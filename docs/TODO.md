@@ -520,3 +520,6 @@ item in §2a and should come before the taste path is judged.
    single variable: the premotor hemilineages that are non-spiking in life (13A, 13B, 21A: Büschges 1995, Bässler & Büschges 1998) run as graded
    units (a labelled engine change with a source, the seam's own move for the optic lobe), in the cord first, then on the standing body with the
    loop. controls: the same cells spiking (the record), and a graded set chosen at random.
+   **[measured 09-22 17:55]** graded 13A / 13B / 21A / all / random, gains 0.05-0.2, in the cord and on the standing body: no stepping, no
+   inter-leg structure beyond the random control. the switch is not a graded unit at these gains. what is left: bistable graded units
+   (plateau potentials, Büschges 1995), electrical synapses (unmapped), the tracing. the leg row's negative results are its result for now.

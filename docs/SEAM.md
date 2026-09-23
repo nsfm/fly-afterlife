@@ -5513,3 +5513,58 @@ graded optic lobe was the seam's fix for vision); (2) electrical synapses (absen
 lean on them); (3) the slow units and the front legs' sensory tracing, which this file lacks and no model change supplies. (1) is the one
 the record's own history points at, and it is the next single variable: a graded-unit engine for named premotor hemilineages, in the
 cord, on the standing body.
+
+## graded premotor interneurons (17:48 PDT; §Q 4h; nate: "if this is the biology, it's a fair move")
+
+**the engine change** (`world/fastlif.py`, off by default; `--graded PREFIXES:GAIN[:V1]` in `world/cord.py` and `experiments/body_loop.py`):
+a graded unit never spikes (its threshold is put out of reach and it is never reset) and each millisecond delivers to its targets a
+fraction of a spike, GAIN x clip(v / V1, 0, 1), through the delay line's per-emission scale (the depression rule's machinery). the
+source: non-spiking local interneurons are the substrate of insect leg pattern generation (Büschges 1995, stick insect; Bässler &
+Büschges 1998); which fly hemilineages are graded is not established, (E), so the pools are swept (13A + 13B, the GABAergic premotor
+inhibitors; 21A, the glutamatergic flexor-side pool; all three) against a random set of the same size, and the gain (0.05-0.2 of a spike
+per ms: a graded cell at threshold delivers what a spiker at 50-200 Hz would).
+
+**the cord, DNg100 100 Hz, 30 s, seed 11:**
+
+| graded | cells | gain | leg MN Hz | active | flexors | extensors | antag | legs | beat |
+|---|---|---|---|---|---|---|---|---|---|
+| none (the record) | | | 1.96 | 52 | 0.00 | 9.3 | -0.16 | +0.00 | 4.3 |
+| 13A + 13B | 871 | 0.05 / 0.1 / 0.2 | 1.41 / 1.29 / 1.22 | 47 / 41 / 34 | 0.00 | 6.9 / 9.3 / 9.7 | -0.12 / -0.08 / -0.13 | +0.00 | 4-5 |
+| 21A | 409 | 0.1 / 0.2 | 3.99 / 4.83 | 58 / 67 | 0.00 / 0.04 | 9.9 / 10.8 | -0.19 / -0.15 | +0.00 | 17 / **44 (L3, 1.6 Hz)** |
+| all three | 1,280 | 0.1 / 0.2 | 2.40 / 2.43 | 49 / 52 | 0.00 | 8.6 / 8.7 | -0.21 | +0.00 | 12 / 17 (L3, 2-3.5 Hz) |
+| random 1,280 (control) | 1,280 | 0.1 / 0.2 | 3.34 / **13.7** | 56 / 78 | 0.00 / **10.7** | 10.2 / 8.1 | -0.31 / -0.42 | -0.06 | 3.7 / 15.5 |
+
+- **graded inhibitors quieten the cord, graded 21A doubles its leg output, and a random graded set at the higher gain wakes the flexors
+  to 10.7 Hz** (a tonic-excitation effect: graded cholinergic cells drive continuously); no leg anti-phases another in any arm. the hind
+  legs' "beat" at 1.6-3.5 Hz under graded 21A and all-three is being read before it is believed (the next block); the same arms are
+  running on the standing body with the loop.
+
+- **the hind legs' "beat" under graded 21A, read (17:49 PDT):** no autocorrelation lobe of the leg's summed rate at any lag under 750 ms; the loudest cells are two sternal posterior rotators and a femur reductor at 120-155 Hz each, tonic. the beat measure's blind spot (two cells at one rate) once more; a tonic drive on the hind coxa's retractors, not a rhythm. graded 21A makes the flexor-side pool a continuous source, and what it feeds most, through the cord, is the hind legs' stance muscles.
+
+**the graded pools on the standing body (17:55 PDT; the tonus, co-contraction 0.2, the pads, the loop; DNg100 100 Hz; 20 s, seed 11):**
+
+| graded | flexors | extensors | height | along | turn | feet on the ground (%) | inter-leg min | knee lobes |
+|---|---|---|---|---|---|---|---|---|
+| none (the control) | 11.7 | 49.1 | 0.65 | 0.2 mm | -7 | 59 11 32 83 95 32 | -0.07 | none |
+| 13A + 13B, 0.1 | 11.9 | 49.7 | 0.65 | 2.3 | -63 | 64 10 19 82 95 44 | -0.16 | none |
+| 21A, 0.1 / 0.2 | 11.8 / 12.9 | 49.3 / 51.9 | 0.65 | 1.6 / 1.1 | -26 / -96 | 73 12 21 82 94 32 | -0.14 / -0.12 | none |
+| all three, 0.2 | 12.0 | 50.6 | 0.65 | 1.2 | -47 | 79 11 17 81 97 36 | -0.14 | none |
+| random 1,280, 0.2 (control) | 9.9 | 43.1 | 0.65 | 1.4 | -88 | 39 22 4 84 95 11 | -0.19 | none |
+
+- **graded premotor pools do not make him step,** at these gains, on this body, with this loop: the same push-up, the same feet, no knee
+  oscillates, and the inter-leg structure of the biological pools (-0.12 to -0.16) sits inside the random control's (-0.19). the graded
+  units change what the cord does (13A / 13B graded quietens it, 21A graded doubles the leg output and drives the hind coxae) and not
+  whether it alternates.
+
+**the switch, at the end of 09-22.** in two days the leg row has tried, each once and labelled: fatigue (everywhere, on the inhibitors,
+on the exciters), adaptation, rebound, the constant, the dose, noise, a jolt, a gated command, the load (constant, tripod-timed, with
+a derivative), the claw, a flexion-biased population, the moonwalker, the brain's own descending output as a recording, a body that
+stands, grips and co-contracts, the loop closed through the mid and hind legs, and now graded premotor units. every one changed what
+the cord does; none made it alternate. the half-centre is in the wiring and its inhibitors do not reach the opposing exciters, and no
+engine-level property tried so far substitutes for whatever closes that loop in life. what is left, honestly: (1) electrical synapses,
+which no chemical connectome maps and which insect pattern generators use (a stand-in would be a guess about where they are); (2) the
+tracing: the front legs' sensory set, the thin right mid extensor, the slow units, none of which a model change supplies; (3) the
+premotor cells' own dynamics beyond a LIF or a graded unit (plateau potentials, which stick-insect non-spiking interneurons have, and
+which nothing here has: a bistable graded unit is a different engine term, and the last one on the list I can source). the honest next
+move is not another arm tonight. it is to write the row up as it stands, with the negative results as the result, and let the body row's
+stand-ins (the tonus, co-contraction, the pads) go to nate for the default decision while the switch waits on (3) or on a better map.

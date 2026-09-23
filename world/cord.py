@@ -33,6 +33,7 @@ ap.add_argument("--log-types", default="", help="comma-separated types to log pe
 ap.add_argument("--warmup", type=float, default=2.0, help="seconds before the walking command comes on (the cord at rest under the floor)")
 ap.add_argument("--pulse", default="", help="the command with a time course: HZ[:DUTY] square-wave gating of the walking command (e.g. 3:0.5); in life the command is never a steady rate; a diagnostic")
 ap.add_argument("--shock", default="", help="the frankenstein arm (nate, 09-22): SECONDS:HZ, every descending neuron driven at HZ for SECONDS after the warm-up, then the command alone; does the jolt leave the cord elsewhere")
+ap.add_argument("--graded", default="", help="graded (non-spiking) units: TYPE-PREFIXES:GAIN[:V1], e.g. IN13A,IN13B:0.1 : the named cells never spike; each ms they deliver GAIN x clip(v / V1, 0, 1) of a spike to their targets (V1 default = the threshold, 7 mV). non-spiking local interneurons are the substrate of insect leg pattern generation (Buschges 1995; Bassler & Buschges 1998); which fly hemilineages are graded is not established (E): a sweep, with a random set as the control. 'random:N:GAIN' grades N random cord interneurons")
 ap.add_argument("--mirror", default="off", help="mirror normalisation of bilateral pairs' input weights (src/fly_afterlife/wiring.py; the labelled tracing correction of 09-19): off | all | vnc (motor, IN, AN, SN types) | a comma-separated type list")
 ap.add_argument("--treadmill", type=float, default=0.0, help="the headless treadmill (a labelled stand-in, 09-21): step frequency in Hz at which each leg's proprioceptors (world/legs.npz, by bodyId) are loaded in stance (--leg-load-hz) and UNLOADED (0 Hz) in swing, in two alternating tripods (L1 R2 L3 / R1 L2 R3), --treadmill-duty of the cycle in stance; 0 = off (the floor's constant load). asks whether unloading alone releases swing")
 ap.add_argument("--treadmill-duty", type=float, default=0.5)
@@ -59,6 +60,13 @@ if args.rebound:
     g_, tau_ = (float(x) for x in args.rebound.split(":")); M.rebound_on = True; M.rebound_g = g_; M.rebound_tau = tau_; M._reb_r = np.zeros(M.N, np.float32); print(f"rebound: g {g_}, tau {tau_} ms")
 if args.mirror != "off":
     from fly_afterlife.wiring import mirror_normalise; print("mirror normalisation:", mirror_normalise(M, scope=(args.mirror.split(",") if "," in args.mirror else args.mirror)))
+if args.graded:
+    parts = args.graded.split(":")
+    if parts[0] == "random": n_ = int(parts[1]); g_ = float(parts[2]); rng_ = np.random.default_rng(args.seed + 7); cand = np.flatnonzero(np.char.startswith(mty, "IN")); gc = np.sort(rng_.choice(cand, n_, replace=False)); label = f"random {n_}"
+    else: pref = parts[0].split(","); g_ = float(parts[1]); gc = np.flatnonzero(np.any([np.char.startswith(mty, p_) for p_ in pref], axis=0)); label = ",".join(pref)
+    v1 = float(parts[-1]) if len(parts) > (3 if parts[0] == "random" else 2) else float(M.p.v_thresh)
+    M.graded_on = True; M._graded_cells = gc.astype(np.int64); M.graded_gain = g_; M.graded_v0 = 0.0; M.graded_v1 = v1; M._graded_idx = np.zeros(0, np.int64); M._graded_scale = np.zeros(0, np.float32); M.v_th[gc] = np.float32(1e6)
+    print(f"graded units: {len(gc)} cells ({label}), gain {g_} per ms at v = {v1} mV")
 REG = Registry()
 if args.shock:
     _ss, _sh = (float(x) for x in args.shock.split(":")); _alldn = np.flatnonzero(M.sc.astype(str) == "descending_neuron")
