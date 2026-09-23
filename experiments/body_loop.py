@@ -16,7 +16,7 @@ arms: --loop off | position | load | position+load; --slow-hz for the stand-in; 
 import os, sys, json, argparse, time, numpy as np
 sys.path.insert(0, "ref/flybrain/scripts"); sys.path.insert(0, "world"); sys.path.insert(0, "src")
 from flysim import Params
-from fastlif import FastFlyBrain, SYN_TAU_HELP
+from fastlif import FastFlyBrain, SYN_TAU_HELP, SYN_REV_HELP
 from fly_afterlife.receptors import Registry, ReceptorClass, Scaled, Transducer, tonic_floor
 import mujoco as mj
 from flygym.utils.math import Rotation3D
@@ -43,6 +43,8 @@ ap.add_argument("--playback-start", type=float, default=2.0, help="seconds into 
 ap.add_argument("--edge-scale", default="", help="as in world/cord.py: TYPES:FACTOR, the synapses among the named types scaled (the published rhythm loop DNg100,IN17A001,INXXX466,IN16B036:3 rings at 25 Hz under the 400 Hz dose)")
 ap.add_argument("--cell-delay", default="", help="as in world/cord.py: TYPES:MS, a per-cell conduction delay on the named cells (the ring slows from 25 Hz to 10 with 12 ms on the loop's three cells)")
 ap.add_argument("--syn-tau", default="", help="as in world/cord.py: " + SYN_TAU_HELP)
+ap.add_argument("--syn-rev", default="", help="as in world/cord.py: " + SYN_REV_HELP)
+ap.add_argument("--log-v", default="", help="as in world/cord.py: comma-separated types whose mean membrane (mV re rest) is logged per ms as v_ms / v_types in <out>.cells.npz; off by default")
 ap.add_argument("--graded", default="", help="graded (non-spiking) units as in world/cord.py: PREFIXES:GAIN[:V1] or random:N:GAIN")
 ap.add_argument("--slow-init", type=float, default=0.0, help="set him down standing: for this many seconds after the warm-up the load term is clamped to at least standing (F_stand) on every leg, so the load reflex and the stand-in start engaged; then the body's own load. an initial condition, labelled (0 = off)")
 ap.add_argument("--gain", type=float, default=42.0); ap.add_argument("--sat", type=float, default=10.0); ap.add_argument("--alpha", type=float, default=1.2); ap.add_argument("--stiffness", type=float, default=None)
@@ -59,6 +61,7 @@ if args.mirror != "off":
 if args.std != "off":
     _mask = np.ones(M.N, bool) if args.std == "all" else (mty == "DNg33") if args.std == "pair" else np.isin(mty, args.std.split(",")); M._std_mask = _mask; M._std_x = np.ones(M.N, np.float32); M.std_on = True
 if args.syn_tau: print(M.set_syn_tau(args.syn_tau))   # (09-22, campaign item 2)
+if args.syn_rev: print(M.set_syn_rev(args.syn_rev))   # (09-22, campaign item 2b; after --syn-tau)
 if args.cell_delay:
     _dt_, _dms = args.cell_delay.rsplit(":", 1); _dsteps = max(1, int(round(float(_dms) / M.p.dt))); _base = max(1, int(round(M.p.syn_delay_ms / M.p.dt)))
     M._cell_delay = np.full(M.N, _base, np.int64); M._cell_delay[np.isin(mty, _dt_.split(","))] = _dsteps; M._dly_max = int(M._cell_delay.max()); M.delay_on = True; print(f"cell delay: {_dt_} at {_dms} ms")
@@ -189,6 +192,10 @@ n_ms = int(args.seconds * 1000); torque = np.zeros((len(dofs), n_ms + KL)); grip
 P = np.zeros((n_ms, 3), np.float32); Q = np.zeros((n_ms, 4), np.float32); FL = np.zeros((n_ms, 6), np.float32); KA = np.zeros((n_ms, 6), np.float32)
 JA = np.zeros((n_ms // 10 + 1, len(all_dofs)), np.float32)
 spk = np.zeros((n_ms // 10 + 1, len(LEGMN)), np.int16); lpos = {int(j): i for i, j in enumerate(LEGMN)}
+if args.log_v:   # the membrane logger (09-22, campaign item 2b), as in world/cord.py
+    _vt = [x for x in args.log_v.split(",") if x]; _vc = [np.flatnonzero(mty == t_) for t_ in _vt]; _vi = np.concatenate(_vc).astype(np.int64); _vg = np.repeat(np.arange(len(_vt)), [len(c_) for c_ in _vc]); _vn = np.maximum(np.bincount(_vg, minlength=len(_vt)), 1)
+    VMS = np.zeros((n_ms, len(_vt)), np.float32); print(f"logging the membrane of {len(_vi)} cells of {len(_vt)} types: " + ", ".join(f"{t_} {len(c_)}" for t_, c_ in zip(_vt, _vc)))
+else: VMS = None
 state = {"walk_gain": 0.0}; prev_knee = None; force_ok = True; Fsm = np.zeros(6); prevF = np.zeros(6)
 NONLEG = np.array([i for i, s_ in enumerate(segs) if not any(s_.startswith(l + "_") for l in LEG6)]); pad_on = np.zeros(6, bool); BODYF = np.zeros((n_ms // 10 + 1, 2), np.float32)   # the feet's and the whole body's ground reaction, per 10 ms (F2)
 for ms in range(n_ms):
@@ -213,6 +220,7 @@ for ms in range(n_ms):
     KA[ms] = knee; FL[ms] = F
     if ms % 10 == 0: JA[ms // 10] = np.degrees(ang)
     REG.apply(M, state, t, 0.001); M.step(); idx = M.last_idx
+    if VMS is not None: VMS[ms] = np.bincount(_vg, weights=M.v[_vi], minlength=len(_vt)) / _vn
     if idx.size:
         hit = idx[np.isin(idx, LEGMN)]
         for j in hit:
@@ -232,7 +240,7 @@ for ms in range(n_ms):
     if ms % 5000 == 0 and ms: print(f"t={t:5.1f}s thorax z {P[ms, 2]:.2f}  legs F {np.round(F, 1)}  knees {np.round(knee, 0)}  ({time.time() - t0:.0f}s)")
 os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)
 nfr = n_ms // 10; frames = spk[:nfr]
-np.savez_compressed(args.out + ".cells.npz", cells=LEGMN, bodyId=mbid[LEGMN], type=mty[LEGMN], side=mns[LEGMN], counts=frames[: (nfr // 10) * 10].reshape(nfr // 10, 10, -1).sum(1).astype(np.int32), pose_chunk=np.zeros((nfr // 10, 3), np.float32), frames=frames, pose_frame=np.zeros((nfr, 3), np.float32))
+np.savez_compressed(args.out + ".cells.npz", cells=LEGMN, bodyId=mbid[LEGMN], type=mty[LEGMN], side=mns[LEGMN], counts=frames[: (nfr // 10) * 10].reshape(nfr // 10, 10, -1).sum(1).astype(np.int32), pose_chunk=np.zeros((nfr // 10, 3), np.float32), frames=frames, pose_frame=np.zeros((nfr, 3), np.float32), **({'v_ms': VMS, 'v_types': np.array(_vt)} if VMS is not None else {}))
 w_, x_, y_, z_ = Q[:, 0], Q[:, 1], Q[:, 2], Q[:, 3]; yaw = np.degrees(np.arctan2(2 * (w_ * z_ + x_ * y_), 1 - 2 * (y_ ** 2 + z_ ** 2)))
 np.savez_compressed(args.out + ".npz", thorax=P, quat=Q, leg_force=FL, knee=KA, ground=BODYF[: n_ms // 10], joints=JA[: n_ms // 10], joint_names=np.array([dof_name(x) for x in all_dofs]), args=np.array(str(vars(args))))
 w0 = int(args.warmup * 1000); v = np.linalg.norm(np.diff(P[w0:, :2], axis=0), axis=1) * 1000; hz = frames[w0 // 10:].mean(0) * 100

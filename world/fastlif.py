@@ -172,6 +172,89 @@ def exact_kg(tau_s, tau_m, dt):
     return e_s, (tau_s / (tau_s - tau_m)) * (e_s - e_m)
 
 
+# ---- reversal potentials per transmitter class (09-22, campaign item 2b; off by default, and when off none of this runs) ----
+# the engine is current-based: a synapse adds g to dv whatever the membrane is doing, so fourteen-to-one inhibition holds a cell on the floor
+# and no threshold reaches it (docs/SEAM.md "campaign item 3"). in the fly GABA-A (Rdl) and GluCl are Cl- channels that reverse near rest
+# (Rohrbough & Broadie 2002, larval MNs; knobs.md 1): a shunt, not a current. this term puts each class's row on a conductance to its own
+# reversal E_c (mV re rest, the engine's convention: rest 0, threshold 7): dv gets g_c kap_c (E_c - v) in place of g_c, kap_c = sign_c / E_ach.
+# the scale: one ACh synapse at rest drives E_ach / E_ach = today's current, so the EPSP at rest is today's (to first order in the PSP / E_ach),
+# and the conductance per synapse is mv_per_synapse / E_ach of the leak's (0.185 / 70 = 0.0026 at 70:-5:-5). a GABA or glutamate synapse at
+# rest then drives |E_c| / E_ach of today's (5 / 70: the IPSP is 14x smaller than the 0.185 mV-scale pull of the record), grows as the cell
+# depolarises, and reverses below E_c. v in the driving force is the step's start (frozen over dt), and the summed synaptic conductance x
+# (in units of the step) enters as phi(x) = (1 - e^-x) / x, the exact relaxation of v toward the reversals over the step, so a big
+# conductance lands on E_c instead of overshooting it (phi -> 1 as x -> 0: far reversals reduce to the current step, experiments/syn_rev_test.py).
+# class 0 (histamine, the modulators, unclear) stays a current. the rows are the per-class ones of item 2 (_gc); the term implies them.
+SYN_REV_HELP = ("reversal potentials per transmitter class, ACH:GABA:GLU in mV relative to rest (e.g. 70:-5:-5: ACh reverses 70 mV above rest, "
+                "GABA and glutamate 5 below, Cl- near rest as knobs.md 1 has it; GABA or GLU may be 'off' to stay a current). a synapse of a class "
+                "with a reversal drives the membrane toward it: dv += g (E - v) / E_ACH in place of dv += g, so the conductance per synapse is "
+                "mv_per_synapse / E_ACH of the leak's and ONE ACh SYNAPSE AT REST GIVES TODAY'S PSP; an inhibitory synapse at rest gives today's "
+                "PSP x |E_GABA| / E_ACH (5 / 70: 14x SMALLER than the record's inhibition at rest), growing as the cell depolarises (x2 at "
+                "+5 mV) and reversing below E: inhibition becomes a shunt that cannot hold a cell below its reversal. the other cells (histamine, "
+                "modulators, unclear) stay currents. implies the per-class rows (--syn-tau; at the engine's 5 ms if not given). a labelled "
+                "engine term (campaign item 2b), off by default ('' or off = the record, bit for bit)")
+
+
+@njit(cache=True, fastmath=False, nogil=True)
+def _phi(x):
+    """(1 - e^-x) / x, the fraction of the frozen-force step a conductance x (in units of the step) delivers; the series near 0."""
+    if x < 1e-3 and x > -1e-3: return np.float32(1.0) - x * np.float32(0.5) + x * x / np.float32(6.0)
+    return np.float32((1.0 - np.exp(-x)) / x)
+
+
+@njit(cache=True, fastmath=False, parallel=True, nogil=True)
+def _membrane_nt_rev(v, gc, kdec, has_rev, e_rev, kap, refrac, ext, noise, v_th, free, dt, tau_m, v_floor, spk):
+    """_membrane_nt with the rows of has_rev[c] on a conductance to e_rev[c]: syn = (sum of current rows) dt/tau_m + sum_c g_c kap_c (E_c - v) dt/tau_m phi."""
+    n = v.shape[0]; k = dt / tau_m
+    for i in prange(n):
+        vi = v[i]; gs = np.float32(0.0); gr = np.float32(0.0); x = np.float32(0.0)
+        for c in range(gc.shape[0]):
+            gc[c, i] -= gc[c, i] * kdec[c]
+            if gc[c, i] < 1e-20 and gc[c, i] > -1e-20: gc[c, i] = 0.0
+            if has_rev[c]:
+                gg = gc[c, i] * kap[c]; gr += gg * (e_rev[c] - vi); x += gg
+            else: gs += gc[c, i]
+        syn = gs * k + gr * k * _phi(x * k)
+        dv = (-vi / tau_m) * dt + syn + ext[i] * k + noise[i]
+        if refrac[i] <= 0.0:
+            free[i] = True
+            v[i] += dv
+            if v[i] < -v_floor: v[i] = -v_floor
+            spk[i] = v[i] >= v_th[i]
+        else:
+            free[i] = False
+            refrac[i] -= dt
+            if v[i] < -v_floor: v[i] = -v_floor
+            spk[i] = False
+
+
+@njit(cache=True, fastmath=False, parallel=True, nogil=True)
+def _membrane_exact_nt_rev(v, gc, e_s, k_g, has_rev, e_rev, kap, refrac, ext, noise, v_th, free, e_m, one_m_em, dt, v_floor, spk, freeze_g):
+    """_membrane_exact_nt with the rows of has_rev[c] on a conductance to e_rev[c]: a row contributes g_c k_g,c kap_c (E_c - v) phi in place of g_c k_g,c."""
+    n = v.shape[0]
+    for i in prange(n):
+        vi = v[i]; gk = np.float32(0.0); gr = np.float32(0.0); x = np.float32(0.0)
+        for c in range(gc.shape[0]):
+            gi = gc[c, i]
+            if gi < 1e-20 and gi > -1e-20: gi = 0.0
+            gc[c, i] = gi
+            if has_rev[c]:
+                gg = gi * k_g[c] * kap[c]; gr += gg * (e_rev[c] - vi); x += gg
+            else: gk += gi * k_g[c]
+        if refrac[i] <= 0.0:
+            free[i] = True
+            v[i] = vi * e_m + ext[i] * one_m_em + gk + gr * _phi(x) + noise[i]
+            if v[i] < -v_floor: v[i] = -v_floor
+            spk[i] = v[i] >= v_th[i]
+        else:
+            free[i] = False
+            refrac[i] -= dt
+            if v[i] < -v_floor: v[i] = -v_floor
+            spk[i] = False
+            if freeze_g: continue
+        for c in range(gc.shape[0]):
+            gc[c, i] = gc[c, i] * e_s[c]
+
+
 @njit(cache=True, nogil=True)
 def _count_live(di, drive_hz):
     c = 0
@@ -218,6 +301,28 @@ class FastFlyBrain(FlyBrain):
         n = np.bincount(self._pre_cls, minlength=4)
         return (f"per-transmitter synaptic decay: ACh {taus[0]:g} ms ({n[1]} cells), GABA {taus[1]:g} ms ({n[2]}), glutamate {taus[2]:g} ms ({n[3]}), "
                 f"other {self.p.tau_syn:g} ms ({n[0]}); signs as the file has them")
+
+    def set_syn_rev(self, spec):
+        """reversal potentials per transmitter class (09-22, campaign item 2b): spec 'ACH:GABA:GLU' in mV re rest (SYN_REV_HELP), or None / '' / 'off'.
+        the one parser for world/cord.py and experiments/body_loop.py; call after set_syn_tau (it turns the per-class rows on at the engine's tau_syn
+        if they are off). returns a line for the log."""
+        if spec is None or str(spec).strip() in ("", "off"): self.syn_rev_on = False; return "reversal potentials: off"
+        f = [x.strip() for x in str(spec).split(":")]
+        if len(f) != 3: raise ValueError(f"--syn-rev wants ACH:GABA:GLU in mV re rest; got {spec!r}")
+        e = [None if x.lower() in ("off", "x", "") else float(x) for x in f]
+        if e[0] is None or not e[0] > float(self.p.v_thresh): raise ValueError(f"--syn-rev: ACh sets the scale and must reverse above threshold ({self.p.v_thresh:g} mV re rest); got {spec!r}")
+        pre = ""
+        if not getattr(self, "syn_tau_on", False): t_ = float(self.p.tau_syn); pre = self.set_syn_tau(f"{t_:g}:{t_:g}:{t_:g}") + "; "
+        csign = np.array([0.0, 1.0, -1.0, -1.0])   # the class's sign as the file gives it (ACh +, GABA and glutamate -)
+        self._has_rev = np.array([False, True, e[1] is not None, e[2] is not None], np.bool_)
+        self._e_rev = np.array([0.0] + [x if x is not None else 0.0 for x in e], np.float32)
+        self._kap = np.where(self._has_rev, csign / e[0], 0.0).astype(np.float32)   # conductance per mV of the row, re the leak: g kap (E - v); one ACh synapse at rest = g
+        sg = np.asarray(self.sign, np.float64); odd = [int(((self._pre_cls == c) & (np.sign(sg) != csign[c]) & (sg != 0)).sum()) for c in (1, 2, 3)]
+        self.syn_rev_on = True
+        lab = lambda x: "off (a current)" if x is None else f"{x:+g} mV"
+        return (pre + f"reversal potentials (re rest): ACh {lab(e[0])}, GABA {lab(e[1])}, glutamate {lab(e[2])}, other a current; conductance per synapse "
+                f"{self.p.mv_per_synapse:g} / {e[0]:g} = {self.p.mv_per_synapse / e[0]:.4g} of the leak's; an inhibitory synapse at rest drives "
+                f"{(abs(e[1]) / e[0]) if e[1] is not None else float('nan'):.3g} of today's" + (f"; WARNING cells whose sign is not their class's: ACh {odd[0]}, GABA {odd[1]}, glu {odd[2]} (their conductance is negative)" if any(odd) else ""))
 
     def reset(self):
         super().reset()
@@ -273,7 +378,15 @@ class FastFlyBrain(FlyBrain):
         free = self._free_buf   # refrac <= 0 before the update, as in flysim: gates the Poisson receptors below
         if getattr(self, "adapt_on", False) or getattr(self, "rebound_on", False):   # 09-21 night: two labelled intrinsic currents, off by default (docs/SEAM.md "the switch"); as a current on the ext path so the compiled membrane kernels are untouched
             ext = ext - (self._adapt_a if getattr(self, "adapt_on", False) else 0.0) + (self._reb_r if getattr(self, "rebound_on", False) else 0.0); ext = np.ascontiguousarray(ext, dtype=np.float32)
-        if nt_on and getattr(self, "integrate", "euler") == "exact":
+        rev_on = nt_on and getattr(self, "syn_rev_on", False)   # reversal potentials (09-22, campaign item 2b): the per-class rows on conductances
+        if rev_on and getattr(self, "integrate", "euler") == "exact":
+            e_m = np.exp(-dt / p.tau_m); ek = [exact_kg(t_, p.tau_m, dt) for t_ in self._syn_taus]
+            _membrane_exact_nt_rev(self.v, self._gc, np.array([e for e, _ in ek], np.float32), np.array([k for _, k in ek], np.float32), self._has_rev, self._e_rev, self._kap, self.refrac, ext,
+                                   np.ascontiguousarray(noise, dtype=np.float32), self.v_th, free, np.float32(e_m), np.float32(1.0 - e_m), np.float32(dt), np.float32(p.v_thresh), spk, bool(getattr(self, "refrac_freeze", False)))
+        elif rev_on:
+            _membrane_nt_rev(self.v, self._gc, np.float32(dt) / self._syn_taus.astype(np.float32), self._has_rev, self._e_rev, self._kap, self.refrac, ext, np.ascontiguousarray(noise, dtype=np.float32), self.v_th, free,
+                             np.float32(dt), np.float32(p.tau_m), np.float32(p.v_thresh), spk)
+        elif nt_on and getattr(self, "integrate", "euler") == "exact":
             e_m = np.exp(-dt / p.tau_m); ek = [exact_kg(t_, p.tau_m, dt) for t_ in self._syn_taus]
             _membrane_exact_nt(self.v, self._gc, np.array([e for e, _ in ek], np.float32), np.array([k for _, k in ek], np.float32), self.refrac, ext, np.ascontiguousarray(noise, dtype=np.float32), self.v_th, free,
                                np.float32(e_m), np.float32(1.0 - e_m), np.float32(dt), np.float32(p.v_thresh), spk, bool(getattr(self, "refrac_freeze", False)))

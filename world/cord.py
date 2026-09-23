@@ -10,7 +10,7 @@ to sweep the variables of the leg row (depression, the constant, the dose) befor
 import os, sys, argparse, time, numpy as np
 sys.path.insert(0, "ref/flybrain/scripts"); sys.path.insert(0, "world"); sys.path.insert(0, "src")
 from flysim import Params
-from fastlif import FastFlyBrain, SYN_TAU_HELP
+from fastlif import FastFlyBrain, SYN_TAU_HELP, SYN_REV_HELP
 from fly_afterlife.receptors import Registry, ReceptorClass, Scaled, tonic_floor, select
 
 ap = argparse.ArgumentParser()
@@ -47,6 +47,8 @@ ap.add_argument("--treadmill-duty", type=float, default=0.5)
 ap.add_argument("--adapt", default="", help="spike-frequency adaptation on every cell, B:TAU (mV per spike, ms), e.g. 1:200; off by default. an intrinsic current the LIF lacks (docs/SEAM.md \"the switch\"), constants (E) swept, labelled")
 ap.add_argument("--rebound", default="", help="post-inhibitory rebound on every cell, G:TAU (mV of push per mV of hyperpolarisation, ms), e.g. 1:100; off by default; labelled")
 ap.add_argument("--syn-tau", default="", help=SYN_TAU_HELP)
+ap.add_argument("--syn-rev", default="", help=SYN_REV_HELP)
+ap.add_argument("--log-v", default="", help="comma-separated types whose mean membrane (mV re rest, after the step's reset: a spiking cell counts at 0) is logged per engine step as v_ms (steps x types) and v_types in <out>.cells.npz; off by default (09-22, campaign item 2b: read the flexors' resting membrane directly)")
 ap.add_argument("--drive", default="", help="drive named sensory / descending types at a rate: TYPE:HZ,TYPE:HZ (e.g. SNpp50:50, the extension-tuned FeCO claw cells); rows after the floor and the treadmill, so they override on those cells; a labelled diagnostic")
 args = ap.parse_args()
 fps, CH = 100, 10; SPF = int(round(1000 / fps / args.dt)); t0 = time.time()
@@ -67,6 +69,7 @@ if args.adapt:
 if args.rebound:
     g_, tau_ = (float(x) for x in args.rebound.split(":")); M.rebound_on = True; M.rebound_g = g_; M.rebound_tau = tau_; M._reb_r = np.zeros(M.N, np.float32); print(f"rebound: g {g_}, tau {tau_} ms")
 if args.syn_tau: print(M.set_syn_tau(args.syn_tau))   # (09-22, campaign item 2)
+if args.syn_rev: print(M.set_syn_rev(args.syn_rev))   # (09-22, campaign item 2b; after --syn-tau, whose rows it puts on conductances)
 if args.mirror != "off":
     from fly_afterlife.wiring import mirror_normalise; print("mirror normalisation:", mirror_normalise(M, scope=(args.mirror.split(",") if "," in args.mirror else args.mirror)))
 if args.graded:
@@ -150,6 +153,10 @@ LC = np.flatnonzero(np.isin(mty, _lt)); print(f"logging {len(LC)} cells of {len(
 
 n_frames = int(round(args.seconds * fps)); FR = np.zeros((n_frames, len(LC)), np.int16); ALL = np.zeros(n_frames, np.int32)
 MSC = np.zeros((n_frames * SPF, len(LC)), np.int8) if args.log_ms else None
+if args.log_v:   # the membrane logger (09-22, campaign item 2b): one masked mean per type per step
+    _vt = [x for x in args.log_v.split(",") if x]; _vc = [np.flatnonzero(mty == t_) for t_ in _vt]; _vi = np.concatenate(_vc).astype(np.int64); _vg = np.repeat(np.arange(len(_vt)), [len(c_) for c_ in _vc]); _vn = np.maximum(np.bincount(_vg, minlength=len(_vt)), 1)
+    VMS = np.zeros((n_frames * SPF, len(_vt)), np.float32); _vsp = np.zeros(len(_vt)); print(f"logging the membrane of {len(_vi)} cells of {len(_vt)} types: " + ", ".join(f"{t_} {len(c_)}" for t_, c_ in zip(_vt, _vc)))
+else: VMS = None
 state = {"walk_gain": 0.0}
 for f in range(n_frames):
     t = f / fps; state["walk_gain"] = 1.0 if t >= args.warmup else 0.0
@@ -160,14 +167,21 @@ for f in range(n_frames):
     acc = np.zeros(M.N, np.int32)
     for k_ in range(SPF):
         M.step(); acc[M.last_idx] += 1
+        if VMS is not None: VMS[f * SPF + k_] = np.bincount(_vg, weights=M.v[_vi], minlength=len(_vt)) / _vn
         if MSC is not None and M.last_idx.size: MSC[f * SPF + k_, np.searchsorted(LC, M.last_idx[np.isin(M.last_idx, LC)])] += 1
     FR[f] = acc[LC]; ALL[f] = acc.sum()
+    if VMS is not None and t >= args.warmup: _vsp += np.bincount(_vg, weights=acc[_vi], minlength=len(_vt))
     if f % (10 * fps) == 0 and f: print(f"t={t:5.1f}s  cord {ALL[f - 10 * fps:f].mean() * fps / M.N:.2f} Hz/cell  leg MN {FR[f - 10 * fps:f].mean() * fps:.2f} Hz/cell  ({time.time() - t0:.0f}s)")
 
 nc = n_frames // CH; counts = FR[:nc * CH].reshape(nc, CH, -1).sum(1)
 os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)
 np.savez_compressed(args.out.replace(".npz", "") + ".cells.npz", cells=LC, bodyId=M.bodyId[LC], type=mty[LC], side=mns[LC], counts=counts.astype(np.int32),
-                    pose_chunk=np.zeros((nc, 3), np.float32), frames=FR, pose_frame=np.zeros((n_frames, 3), np.float32), cord_hz=ALL.astype(np.int32), **({'ms_counts': MSC} if MSC is not None else {}))
+                    pose_chunk=np.zeros((nc, 3), np.float32), frames=FR, pose_frame=np.zeros((n_frames, 3), np.float32), cord_hz=ALL.astype(np.int32), **({'ms_counts': MSC} if MSC is not None else {}), **({'v_ms': VMS, 'v_types': np.array(_vt)} if VMS is not None else {}))
 np.savez_compressed(args.out, fps=fps, chunk=CH, cord_spikes=ALL, args=np.array(str(vars(args))))
 w = FR[int(args.warmup * fps):]; print(f"done in {time.time() - t0:.0f}s: after the warm-up, cord {ALL[int(args.warmup * fps):].mean() * fps / M.N:.2f} Hz/cell, leg MN {w.mean() * fps:.2f} Hz/cell, {int((w.mean(0) * fps > 1).sum())} of {len(LC)} leg MNs above 1 Hz")
+if VMS is not None:
+    _w0 = int(args.warmup * fps) * SPF
+    for j_, t_ in enumerate(_vt):
+        _hz = _vsp[j_] / _vn[j_] / max(n_frames / fps - args.warmup, 1e-9)
+        print(f"  {t_}: {len(_vc[j_])} cells, membrane after the warm-up {VMS[_w0:, j_].mean():+.2f} mV re rest (sd over time {VMS[_w0:, j_].std():.2f}), rate {_hz:.2f} Hz/cell")
 print("wrote", args.out.replace(".npz", "") + ".cells.npz")
