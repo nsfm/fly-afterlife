@@ -6645,3 +6645,22 @@ is bit for bit the control, because the hooks are driven rows and the threshold 
 senses are removed by their own rates instead (`--hook-hz 0`, `--claw-hz 0`, `--leg-load-hz 0`, `--tactile-hz 0`), running next. what
 stands: the reflex runs through the leg's senses and the cord's motor side without the rhythm subnet and without the premotor
 inhibitors the campaign spent two days on.
+
+## the legs on the ground (11:42 PDT, 09-23; the tonic DNg100 dosed 30 / 60 / 100 / 150 Hz on the full stack, ramp 1 s, 30 s, seed 11; the
+question: do the bouts survive with weight on the legs, and do the legs then avoid each other)
+
+| DNg100 Hz | on the floor | lf off / lifts / gap | lm off / lifts / gap | rm off / lifts / gap | both middle feet off: seen vs independent |
+|---|---|---|---|---|---|
+| 30 | 0 % | 8 % / 11 | 1 % / 2 | 4 % / 6 | 0.2 vs 0.1 % |
+| 60 | 1 % | 25 % / 36 / 207 ms | 22 % / 38 / 194 | 11 % / 17 / 170 | **0.8 vs 2.5 %** |
+| 100 | 10 % | 77 % / 11 | 74 % / 13 / 153 | 10 % / 13 / 178 | **1.3 vs 7.1 %** |
+| 150 | 87 % | 98 % / 2 | 96 % / 3 | 85 % / 4 | 83.5 vs 81.9 % (down) |
+| the recorded population | 7 % | 22 % / 30 / 163 | 69 % / 72 / 191 | 46 % / 69 / 182 | 29.6 vs 32.2 % |
+
+at 60 Hz the bouts run with every leg on the ground three quarters of the time or more (lf 36 lifts, lm 38, at the same 170-207 ms gaps),
+and **the two middle feet are off the ground together a third as often as independence predicts (0.8 vs 2.5 %); at 100 Hz a fifth as
+often (1.3 vs 7.1 %).** under the recorded population, where the middle legs hang in the air half the time, the same statistic is at
+independence (29.6 vs 32.2). so when the legs carry him, one middle leg up means the other stays down: the first sign of coupling
+between legs in this project, and it appears exactly where mechanics would put it (a loaded body) and disappears where a leg is not
+loading the other. the onset cross-correlations stay small (0.03-0.07 at their best lag), so it is exclusion, not a phase lock. small
+counts (13-38 lifts); seeds 12 / 13 at 60 and 100 Hz and 80 Hz are running before the word "coupling" is used without a hedge.
