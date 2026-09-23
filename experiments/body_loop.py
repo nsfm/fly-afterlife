@@ -31,6 +31,8 @@ ap.add_argument("--walk", type=float, default=100.0); ap.add_argument("--walk-dn
 ap.add_argument("--leg-load-hz", type=float, default=15.0); ap.add_argument("--loop", default="position+load", help="off | position | load | position+load")
 ap.add_argument("--claw-hz", type=float, default=100.0); ap.add_argument("--hook-hz", type=float, default=100.0); ap.add_argument("--hook-vel", type=float, default=300.0)
 ap.add_argument("--slow-hz", type=float, default=0.0, help="the standing-tonus stand-in: the 93 smallest leg MNs held at this rate x their leg's load (0 = off)")
+ap.add_argument("--slow-mv", type=float, default=0.0, help="the standing-tonus stand-in as an ADDED CURRENT (the review's F0 fix, 09-22): the stance muscles' motor neurons get a tonic current of this many mV x their leg's load on the engine's ext path, on top of every synapse the cord sends them (13.6 mV ~ 60 Hz alone). --slow-hz is the withdrawn form (it marked the cells driven and REPLACED the cord); kept for the record, do not use")
+ap.add_argument("--claw-labels", default="50ext", help="which claw type is extension-tuned: 50ext (SNpp50, the E_table label) | 50flex (SNpp51 extension-tuned, the review's reading of the wiring: Lee 2025's rule); unsourced either way, so both are run")
 ap.add_argument("--slow-set", default="size", help="which cells the standing-tonus stand-in holds: stance_all (every motor neuron of the stance muscles regardless of size: the load-scaled tonus of docs/ASK.md (a), a stand-in for the slow-unit reflex on cells the size rule calls fast, labelled) | size (the 93 smallest leg MNs: measured to be the accessory flexors, a flexion tonus) | extensor (the stance muscles' motor neurons below the median input size, per leg: sternotrochanter, trochanter extensor, tibia extensor, pleural remotor, sternal posterior rotator; the standing tonus as life has it, on the slow members of the anti-gravity muscles (E))")
 ap.add_argument("--load-deriv", type=float, default=0.0, help="a rate-sensitive term on the load signal (the campaniform brief, Szczecinski 2021: campaniforms report dF/dt as well as F): the load rows and the stance tonus get clip(F/F_stand + G x dF/dt x 50 ms / F_stand, 0, 2), so unloading a leg cuts its stance drive before the load is gone and loading it adds; 0 = off (E)")
 ap.add_argument("--cocon", type=float, default=0.0, help="co-contraction: the swing muscles' motor neurons (trochanter flexors, tibia flexors, promotors, anterior rotators) held at this fraction of the stance tonus rate x load, so each joint is stiff mid-range instead of driven to its limit (standing in life is co-contraction; nate 09-22: the front legs are struts); 0 = extensors only")
@@ -38,6 +40,7 @@ ap.add_argument("--adhesion", default="ltm", help="how the feet grip: ltm (the l
 ap.add_argument("--adhesion-gain", type=float, default=1.0, help="adhesion force per foot in the model's uN (flygym's default actuator gain 1; a fly's pads hold several body weights)")
 ap.add_argument("--dn-playback", default="", help="drive the cord's descending neurons with the brain's own descending output as a recording: a whole-fly run's <run>.cells.npz with every DN type logged per chunk (100 ms); each DN cell in the cord is held at its own measured rate in that chunk, chunk by chunk (the headless preparation with the real channels; nate 09-22: not a head, a recording of one). replaces --walk / --walk-dn")
 ap.add_argument("--playback-start", type=float, default=2.0, help="seconds into the recording to start (after its warm-up)")
+ap.add_argument("--edge-scale", default="", help="as in world/cord.py: TYPES:FACTOR, the synapses among the named types scaled (the published rhythm loop DNg100,IN17A001,INXXX466,IN16B036:3 rings at 25 Hz under the 400 Hz dose)")
 ap.add_argument("--graded", default="", help="graded (non-spiking) units as in world/cord.py: PREFIXES:GAIN[:V1] or random:N:GAIN")
 ap.add_argument("--slow-init", type=float, default=0.0, help="set him down standing: for this many seconds after the warm-up the load term is clamped to at least standing (F_stand) on every leg, so the load reflex and the stand-in start engaged; then the body's own load. an initial condition, labelled (0 = off)")
 ap.add_argument("--gain", type=float, default=42.0); ap.add_argument("--sat", type=float, default=10.0); ap.add_argument("--alpha", type=float, default=1.2); ap.add_argument("--stiffness", type=float, default=None)
@@ -52,6 +55,9 @@ if args.mirror != "off":
     from fly_afterlife.wiring import mirror_normalise; print("mirror:", mirror_normalise(M, scope=args.mirror))
 if args.std != "off":
     _mask = np.ones(M.N, bool) if args.std == "all" else (mty == "DNg33") if args.std == "pair" else np.isin(mty, args.std.split(",")); M._std_mask = _mask; M._std_x = np.ones(M.N, np.float32); M.std_on = True
+if args.edge_scale:
+    _et, _ef = args.edge_scale.rsplit(":", 1); _em = np.isin(mty, _et.split(",")); _src = np.repeat(np.arange(M.N), np.diff(M._out_ptr)); _sel = _em[_src] & _em[M._out_tgt]
+    M._out_w[_sel] *= np.float32(float(_ef)); print(f"edge scale: {int(_sel.sum())} synapses among {_et} x {_ef}")
 if args.graded:
     parts = args.graded.split(":")
     if parts[0] == "random": n_ = int(parts[1]); g_ = float(parts[2]); rng_ = np.random.default_rng(args.seed + 7); cand = np.flatnonzero(np.char.startswith(mty, "IN")); gc = np.sort(rng_.choice(cand, n_, replace=False)); label = f"random {n_}"
@@ -107,12 +113,16 @@ if args.slow_hz > 0:
         cells = np.array([j for j in SLOW if legof[j] == leg], np.int64)
         if len(cells): REG.add(ReceptorClass(f"slow_{leg}", cells, Rate("slow"), (lambda kk: (lambda st: st[kk]))(f"slow_{leg}"), source="the standing-tonus stand-in (docs/ASK.md a): slow units held at a load-scaled rate; labelled"))
     print(f"standing-tonus stand-in ({args.slow_set}): {len(SLOW)} leg MNs at {args.slow_hz} Hz x load; types {sorted(set(mty[SLOW]))}")
-    if args.cocon > 0:
+    if args.cocon > 0 and args.slow_mv == 0:
         SWING = ("Tr flexor MN", "Acc. tr flexor MN", "Ti flexor MN", "Acc. ti flexor MN", "Tergopleural/Pleural promotor MN", "Sternal anterior rotator MN")
         for leg in LEG6:
             cells = np.array([j for j in LEGMN if mty[j] in SWING and legof[j] == leg], np.int64)
             if len(cells): REG.add(ReceptorClass(f"cocon_{leg}", cells, Rate("cocon"), (lambda kk: (lambda st: st[kk]))(f"cocon_{leg}"), source="co-contraction stand-in (09-22): the swing muscles at a fraction of the stance tonus; labelled"))
         print(f"co-contraction: the swing muscles at {args.cocon} x the stance tonus")
+SLOW_BY_LEG = {leg: np.array([j for j in SLOW if legof[j] == leg], np.int64) for leg in LEG6}
+SWING = ("Tr flexor MN", "Acc. tr flexor MN", "Ti flexor MN", "Acc. ti flexor MN", "Tergopleural/Pleural promotor MN", "Sternal anterior rotator MN")
+SWING_BY_LEG = {leg: np.array([j for j in LEGMN if mty[j] in SWING and legof[j] == leg], np.int64) for leg in LEG6}
+if args.slow_mv > 0: print(f"standing tonus as a current: {sum(len(v) for v in SLOW_BY_LEG.values())} stance MNs at {args.slow_mv} mV x load" + (f"; co-contraction: the swing MNs at {args.cocon} x that" if args.cocon > 0 else ""))
 M.driven[:] = False
 for cl in M.SENSORY_CLASSES: M.driven[M.cls == cl] = True
 for rc in REG.classes: M.driven[rc.cells] = True
@@ -146,6 +156,7 @@ m.opt.gravity[2] *= args.gravity
 m.jnt_solref[:, 0] = 0.002; m.jnt_solimp[:, 0] = 0.99; m.jnt_solimp[:, 1] = 0.999   # stiff joint limits: the defaults (20 ms, 0.95) let a full torque spin a knee through 1,600 deg (09-22); this holds it within ~8 deg. a solver setting, not physiology
 all_dofs = fly.get_jointdofs_order(); dof_name = lambda x: f"{x.parent.name}->{x.child.name}:{x.axis.value}"; all_idx = {dof_name(x): i for i, x in enumerate(all_dofs)}
 knee_idx = {leg: all_idx[roles[leg]["flex"]["dof"]] for leg in LEG6}; knee_sign = {leg: roles[leg]["flex"]["sign"] for leg in LEG6}
+knee_neutral = {leg: float(np.degrees(neutral_of.get(roles[leg]["flex"]["dof"], 0.0))) for leg in LEG6}
 cell_dof = {}; cell_sgn = {}; grip_of = {}; groups = {}
 for j in LEGMN:
     if mty[j] not in ROLE: continue
@@ -172,20 +183,26 @@ P = np.zeros((n_ms, 3), np.float32); Q = np.zeros((n_ms, 4), np.float32); FL = n
 JA = np.zeros((n_ms // 10 + 1, len(all_dofs)), np.float32)
 spk = np.zeros((n_ms // 10 + 1, len(LEGMN)), np.int16); lpos = {int(j): i for i, j in enumerate(LEGMN)}
 state = {"walk_gain": 0.0}; prev_knee = None; force_ok = True; Fsm = np.zeros(6); prevF = np.zeros(6)
+NONLEG = np.array([i for i, s_ in enumerate(segs) if not any(s_.startswith(l + "_") for l in LEG6)]); pad_on = np.zeros(6, bool); BODYF = np.zeros((n_ms // 10 + 1, 2), np.float32)   # the feet's and the whole body's ground reaction, per 10 ms (F2)
 for ms in range(n_ms):
     t = ms / 1000.0; state["walk_gain"] = 1.0 if t >= args.warmup else 0.0
     if PB is not None:
         ch = int((args.playback_start + max(t - args.warmup, 0.0)) * 10) if t >= args.warmup else -1; state["dn_hz"] = PB["hz"][min(ch, PB["n"] - 1)] if ch >= 0 else np.zeros(len(PB["cells"]), np.float32)
-    ang = sim.get_joint_angles("nmf"); knee = np.array([np.degrees(ang[knee_idx[l]]) * knee_sign[l] for l in LEG6]); om = np.zeros(6) if prev_knee is None else (knee - prev_knee) * 1000.0; prev_knee = knee
-    F = leg_forces() if (use_load or args.slow_hz > 0) else np.zeros(6)
+    ang = sim.get_joint_angles("nmf"); knee = np.array([(np.degrees(ang[knee_idx[l]]) - knee_neutral[l]) * knee_sign[l] for l in LEG6]); om = np.zeros(6) if prev_knee is None else (knee - prev_knee) * 1000.0; prev_knee = knee   # signed flexion FROM NEUTRAL (the review's F1: the centre was lost in the port from leg_loop.py)
+    F = leg_forces() if (use_load or args.slow_hz > 0 or args.slow_mv > 0) else np.zeros(6)
+    if adh and args.adhesion == "contact": F = np.maximum(F - args.adhesion_gain * pad_on, 0.0)   # the review's F3: the contact reading includes the pad's pull while it is on
     if np.isnan(F).any(): F = np.zeros(6); force_ok = False
     Fsm = F if ms == 0 else 0.8 * Fsm + 0.2 * F; dF = (Fsm - prevF) * 1000.0 if ms else np.zeros(6); prevF = Fsm.copy()
     for i, leg in enumerate(LEG6):
-        k = knee[i]; state[f"claw_e_{leg}"] = args.claw_hz * float(np.clip((-k) / 60.0, 0, 1)); state[f"claw_f_{leg}"] = args.claw_hz * float(np.clip(k / 60.0, 0, 1))   # + = flexion by the measured sign
+        k = knee[i]; ext_rate = args.claw_hz * float(np.clip((-k) / 60.0, 0, 1)); flex_rate = args.claw_hz * float(np.clip(k / 60.0, 0, 1))   # + = flexion from neutral by the measured sign
+        state[f"claw_e_{leg}"], state[f"claw_f_{leg}"] = (ext_rate, flex_rate) if args.claw_labels == "50ext" else (flex_rate, ext_rate)   # the rows are named by TYPE (claw_e = SNpp50); the labels say which rate each type gets
         state[f"hook_f_{leg}"] = args.hook_hz * float(np.clip(om[i] / args.hook_vel, 0, 1)); state[f"hook_e_{leg}"] = args.hook_hz * float(np.clip(-om[i] / args.hook_vel, 0, 1))
         ld = float(np.clip(F[i] / F_stand + args.load_deriv * dF[i] * 0.05 / F_stand, 0, 2))
         if args.slow_init > 0 and t < args.warmup + args.slow_init: ld = max(ld, 1.0)
         state[f"load_{leg}"] = args.leg_load_hz * ld; state[f"slow_{leg}"] = args.slow_hz * ld; state[f"cocon_{leg}"] = args.cocon * args.slow_hz * ld
+        if args.slow_mv > 0:
+            if len(SLOW_BY_LEG[leg]): M._ext[SLOW_BY_LEG[leg]] = np.float32(args.slow_mv * ld)
+            if args.cocon > 0 and len(SWING_BY_LEG[leg]): M._ext[SWING_BY_LEG[leg]] = np.float32(args.cocon * args.slow_mv * ld)
     KA[ms] = knee; FL[ms] = F
     if ms % 10 == 0: JA[ms // 10] = np.degrees(ang)
     REG.apply(M, state, t, 0.001); M.step(); idx = M.last_idx
@@ -197,19 +214,23 @@ for ms in range(n_ms):
             elif j in cell_dof: torque[cell_dof[j], ms: ms + KL] += cell_sgn[j] * f_w[j] * K / args.sat
     tq = np.clip(args.gain * torque[:, ms], -60, 60); sim.set_actuator_inputs("nmf", ActuatorType.MOTOR, tq)
     if adh and args.adhesion == "ltm": sim.set_leg_adhesion_states("nmf", np.array([grip[l][ms] > 0.05 for l in LEG6]))
-    elif adh and args.adhesion == "contact": sim.set_leg_adhesion_states("nmf", F > 0.05)
+    elif adh and args.adhesion == "contact": pad_on = F > 0.05; sim.set_leg_adhesion_states("nmf", pad_on)
     elif adh: sim.set_leg_adhesion_states("nmf", np.zeros(6, bool))
     for _ in range(steps_per_ms): sim.step()
     P[ms] = sim.get_body_positions("nmf")[thorax]; Q[ms] = sim.get_body_rotations("nmf")[thorax]
+    if ms % 10 == 0:
+        try: _cf = np.asarray(sim.get_bodysegment_contact_forces("nmf", segs)); BODYF[ms // 10] = (float(F.sum()), float(np.abs(_cf[NONLEG, 2]).sum()))   # the feet's load, and the vertical ground reaction on the NON-leg segments (thorax, abdomen, head): a standing fly has none of the second (the review's F2)
+        except Exception: BODYF[ms // 10] = (float(F.sum()), np.nan)
     if not args.no_video: sim.render_as_needed()
     if ms % 5000 == 0 and ms: print(f"t={t:5.1f}s thorax z {P[ms, 2]:.2f}  legs F {np.round(F, 1)}  knees {np.round(knee, 0)}  ({time.time() - t0:.0f}s)")
 os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)
 nfr = n_ms // 10; frames = spk[:nfr]
 np.savez_compressed(args.out + ".cells.npz", cells=LEGMN, bodyId=mbid[LEGMN], type=mty[LEGMN], side=mns[LEGMN], counts=frames[: (nfr // 10) * 10].reshape(nfr // 10, 10, -1).sum(1).astype(np.int32), pose_chunk=np.zeros((nfr // 10, 3), np.float32), frames=frames, pose_frame=np.zeros((nfr, 3), np.float32))
 w_, x_, y_, z_ = Q[:, 0], Q[:, 1], Q[:, 2], Q[:, 3]; yaw = np.degrees(np.arctan2(2 * (w_ * z_ + x_ * y_), 1 - 2 * (y_ ** 2 + z_ ** 2)))
-np.savez_compressed(args.out + ".npz", thorax=P, quat=Q, leg_force=FL, knee=KA, joints=JA[: n_ms // 10], joint_names=np.array([dof_name(x) for x in all_dofs]), args=np.array(str(vars(args))))
+np.savez_compressed(args.out + ".npz", thorax=P, quat=Q, leg_force=FL, knee=KA, ground=BODYF[: n_ms // 10], joints=JA[: n_ms // 10], joint_names=np.array([dof_name(x) for x in all_dofs]), args=np.array(str(vars(args))))
 w0 = int(args.warmup * 1000); v = np.linalg.norm(np.diff(P[w0:, :2], axis=0), axis=1) * 1000; hz = frames[w0 // 10:].mean(0) * 100
 flex = np.array([("Ti flexor" in t_) or ("Acc. ti flexor" in t_) for t_ in mty[LEGMN]]); ext = mty[LEGMN] == "Ti extensor MN"
+gb = BODYF[w0 // 10: n_ms // 10]; body_on_floor = float(np.nanmean(gb[:, 1])); print(f"standing? the body (thorax / abdomen / head) rests on the floor with {body_on_floor:.1f} uN of {weight:.1f} ({body_on_floor / weight * 100:.0f} % of his weight; 0 = standing on his feet); the feet carry {gb[:, 0].mean():.1f} uN net of the pads")
 print(f"done in {time.time() - t0:.0f}s ({args.seconds / (time.time() - t0):.2f}x real time); contact forces {'read' if force_ok else 'UNAVAILABLE (load rows got 0)'}; after the warm-up: leg MN {hz.mean():.2f} Hz/cell, flexors {hz[flex].mean():.2f}, extensors {hz[ext].mean():.2f}; "
       f"thorax height mean {P[w0:, 2].mean():.2f} (min {P[w0:, 2].min():.2f}), speed {v.mean():.1f} mm/s, net turn {((yaw[-1] - yaw[w0] + 180) % 360) - 180:+.0f} deg; leg forces mean {np.round(FL[w0:].mean(0), 1)} (F_stand {F_stand:.2f}); knee sd {np.round(KA[w0:].std(0), 0)}")
 if not args.no_video: sim.renderer.save_video(args.out + ".mp4"); print("video", args.out + ".mp4")

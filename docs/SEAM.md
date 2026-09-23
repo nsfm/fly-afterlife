@@ -5682,3 +5682,28 @@ published LIF weight 0.275 on the loop with the rest at 0.185):
   the knee, and at 25 Hz it is faster than a leg can follow. next, in the cord: the ring's frequency against the delay and the membrane
   constant (a 1.8 ms delay at a finer tick will make it faster still; a slower loop needs what Pugliese's tau gives), and the second ring
   (INXXX464 <-> IN19A007) at the same scaling; and the body loop's three fixes so a ringing cord has legs to reach.
+
+**the body loop repaired (18:53 PDT; the review's fixes F0-F3 in `experiments/body_loop.py`: the stand-ins as an ADDED CURRENT on the engine's
+ext path (`--slow-mv`, 13.6 mV ~ 60 Hz alone; the driven form `--slow-hz` kept as the withdrawn one), the knee centred on its neutral angle,
+`--claw-labels 50ext|50flex`, the pad's pull removed from the load, and standing judged by the ground reaction on the non-leg segments):**
+
+| arm (20 s, seed 11, measured springs, pads, co-contraction 0.2) | thorax height | flexors | extensors | feet on the ground (%) | lf coxa peak |
+|---|---|---|---|---|---|
+| no command, tonus 13.6 mV | 0.85 | 0.00 | 36.3 | 60 1 17 62 2 2 | none |
+| DNg100 100 Hz, tonus 13.6 | 0.86 | 0.04 | 42.6 | 49 1 14 54 2 17 | none |
+| DNg100 100 Hz, tonus 8 | 0.41 (on the floor) | 0.00 | 29.0 | 47 9 23 28 5 3 | none |
+| DNg100 100 Hz, tonus 13.6, claw labels swapped | 0.72 | **0.62** | 17.3 | 36 12 14 36 7 10 | 18 Hz x18 |
+| **the ringing cord** (400 Hz, loop x3), tonus 13.6 | 0.40 (on the floor) | 0.12 | 53.4 | 19 2 3 8 3 7 | **25 Hz x34** |
+| the ringing cord, tonus 8 | 0.40 | 0.09 | 47.7 | | 25 Hz x26 |
+| the ringing cord, tonus 13.6, claw labels swapped | 0.62 | 0.49 | 36.2 | 15 42 3 20 3 8 | **25 Hz x118** |
+
+- **with the tonus as a current the cord drives the muscles and the current sits under it:** the extensors run at 36-43 Hz (the cord's own
+  9 plus the current), the flexors move with the claw labels (0.04 -> 0.62 when SNpp51 is taken as extension-tuned, the review's reading),
+  and he holds 0.72-0.86 of height at 13.6 mV, the floor at 8. the first "standing" judged by the feet is the next batch (the statistic
+  was wrong in this one: the body's own ground reaction is the number, fixed).
+- **the ringing cord reaches the body's coxa** (the left front promotor pool at 25 Hz, x34-118 the median) and at the high dose the
+  extensors run at 47-53 Hz and he sinks to the floor: the ring's command is the 400 Hz that lights it, and that dose pushes the whole cord
+  hard. no knee oscillates below 25 Hz; nothing steps. the twitch kernel low-passes a 25 Hz coxa to a flutter.
+- so the rhythm is in the cord and reaches a muscle, and it is too fast for a leg by a factor of two or three, in phase across the coxa's
+  antagonists, and absent at the knee. running: the ringing cord on flygym's springs with film (nate: "i wanna see some leg motion"), and
+  the standing checks with the repaired statistic.
