@@ -6380,3 +6380,14 @@ claw classes swapped (claw_50 at 40 instead of claw_51, touch the same): the sma
 0.0; so about 0.7 Hz of the small cells' rate is their own noise at the measured resistance regardless of the senses, and about 0.5 is the
 flexion side's senses under the labels as printed. the caveat stands in both directions: the noise term is an assumption made explicit,
 and the labelling of which claw class is which decides whether the standing leg adds to it or not.
+
+**the body on the standing senses (00:00 PDT, 09-23; `--senses v2`, 20 s, seed 11, springs, pads, the loop closed, ramp 1 s):** under the command
+(DNg100 100 Hz) he lies down in both labellings: 88 % of his weight on the floor with the labels swapped (extensors 6.7 Hz, flexors 0.06),
+94 % as printed (extensors 13.4, flexors 0.24). **at rest, no command: 0 % on the floor, the feet carrying all of him** (extensors 0.74, leg
+MNs 0.65 Hz per cell): the springs' standing, as recorded on 09-22 ("the standing is the springs'"), now on senses that a standing leg
+makes. under the command with shunting inhibition on (`--syn-rev 70:-5:-5 --syn-rev-hold each`): 8 % on the floor, extensors 2.2, leg MNs
+1.13. so with the honest senses the command as we give it knocks him down (the tonic extension drive splays the legs), less command-driven
+output leaves the springs holding him, and the 580-cell floor's 1 % of 09-22 was the vibration cells' 15 Hz supplying a tone that kept the
+legs under him. the honest body: stands on its springs at rest, falls under a tonic walking neuron, stands again when inhibition shunts.
+no step, no rhythm, no flexor tone on the body yet (the small flexors' rest of the cord arms needs the graded thresholds and the noise
+scale on the body, which `body_loop.py` does not take yet).

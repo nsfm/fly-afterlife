@@ -31,7 +31,9 @@ this is the plan and the ledger of what we changed on the fly to get there.
 3. **intrinsic properties per type.** SOURCED 09-22: Azevedo 2020 gives the tibia flexor pool rest -48 / -60 / -68 mV and input resistance
    700 / 300 / 150 MOhm for slow / intermediate / fast, and **the slow cells fire ~30 Hz at rest** (ours 0.00). thresholds and taus unmeasured
    for any leg MN; extensors never recorded. RUN 09-22: every flexor at the slow rest (3 mV to threshold, x2.3 input): 0.14 Hz under the
-   command, 2.7 with the load off; the cells sit far under rest because inhibition here hyperpolarises without bound. the target needs 2b.
+   command, 2.7 with the load off (WITHDRAWN: those were the large, fast cells). DONE RIGHT 09-22 late: the graded labelling (small third
+   slow), synapses AND membrane noise scaled by the resistance ratio (a new engine term), the standing senses: the small third fires at rest
+   (1.2 Hz, three of three), the large third and the extensors do not. Azevedo's ordering; his 30 Hz is 25x away and is the cell's own (item 4).
 2b. **reversal potentials.** LANDED 09-22 (44a16b8, dcfbf9f; `--syn-rev 70:-5:-5 --syn-rev-hold each`). the as-built `ach` hold loses inhibition
    fourteen-fold and runs the cord away; `each` holds every PSP at rest and shunts. it lifts the cells the winner held deep by 2-3 mV and halves
    the flexors when the senses are on; not the flexors' lever. **original note:** GABA-A and GluCl reverse near rest in the fly (`knobs.md`): inhibition is a shunt, not a current. the engine
