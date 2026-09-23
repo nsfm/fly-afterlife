@@ -6350,3 +6350,26 @@ tactile cells (42-106 per leg) at `--tactile-hz` 20 with a 30 ms onset burst whi
 (unsourced). the 8 s smoke (50flex, no reversal): 63 % of his weight on the floor against v1's 1 %, flexors 0.08 / 0.18 (Ti), extensors 6.0:
 **the honest senses take away the standing** the 580-cell floor was giving him (its 15 Hz on the vibration cells was tone). the 20 s
 arms on both labellings follow. ledger rows 3 and 6 are answered by this option; the rates in it are row 7's.
+
+**the slow flexors from the cell (23:56 PDT; the graded labelling (small third slow: rest 3 mV under threshold, synapses x2.3), the standing
+senses, and the engine's new per-cell noise scale following the synaptic scale; seed 11, 30 s; flexors read by size third small / middle /
+large):**
+
+| arm | small | middle | large | extensors | IN13A006 |
+|---|---|---|---|---|---|
+| senses + graded thresholds + gain, at rest (no noise scale) | 0.02 | 0.00 | 0.0 | 0.0 | 25.0 |
+| + noise scale k = 1 (x2.33 on the small cells: 700 / 300 MOhm), at rest | **1.15** | 0.09 | 0.0 | 0.0 | 25.0 |
+| the same under the command | 1.58 | 0.01 | 0.0 | 3.0 | 21.3 |
+| + noise scale k = 2 (x5.4, a fit), at rest | 14.05 | 1.24 | 0.0 | 0.0 | 25.0 |
+| k = 1 with the floor as built, at rest | 0.80 | 0.09 | 0.0 | 0.6 | 0.2 |
+| k = 1 with `--floor standing` (no claw, no touch), at rest | 0.80 | 0.09 | 0.0 | 0.0 | 2.2 |
+
+**the right cells, for the first time.** with their measured rest, their measured resistance on both the synapses and the membrane noise,
+and the standing leg's senses, the small tibia flexors fire at rest and the large ones do not, which is Azevedo's ordering; the rate is
+1.2 Hz against his ~30, a factor of twenty-five. the noise scale is the one term here without a direct measurement behind it: it follows
+from the resistance ratio if the cell's current noise is the same across sizes (an assumption, stated), and the engine's noise is white
+per millisecond where a cell's is synaptic and coloured. k = 2 is a fit and is reported as one. what the row says: Azevedo's tone is
+mostly not in this file's wiring for these cells (13-111 synapses) and mostly not reachable from a white noise at the sourced scale; the
+remainder is the cell's own excitability (a persistent inward current, a lower threshold than the population's, or synaptic noise the
+file cannot carry), which is campaign item 4 with the small flexors as the named target and Azevedo's 30 Hz as the measured check. one
+seed; the k = 1 row is replicated before it is cited. the oracle for the noise term is running; nothing here is a default.
