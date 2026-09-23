@@ -6241,3 +6241,25 @@ IN13A006 0.0. the labelling picks the side, wholesale. the antagonist column rea
 the flexor-extensor lag structure is read above. Azevedo's 30 Hz at rest for the slow flexors is still six times away, and the 95 % of the
 flexors' central excitation is still silent; what has changed is that the flexion side of the file is now awake enough to be studied.
   (the lag read: flexor-extensor cross-correlation min -0.15 at +10 ms, max +0.08 at -60, no lobe in the flexors' autocorrelation (-0.04 / 0.00 / -0.04 at 30 / 70 / 140 ms); the flexors carry the subnet's line at 19.9 Hz x11. no alternation: the -0.27 is the flexors and extensors sharing the line out of phase at one lag, not a rhythm of their own.)
+
+**campaign item 2b landed (23:25 PDT; commit 44a16b8, agent; `--syn-rev ACH:GABA:GLU` in mV re rest and `--log-v TYPES` in `world/cord.py` and
+`experiments/body_loop.py`, off by default; oracle PASS, v1 + v2, eight configs; `experiments/syn_rev_test.py`: far reversals reproduce the
+current-based PSPs to 5e-7 mV, the IPSP at rest is 5/70 of today's and doubles at +5 mV, twenty thousand GABA synapses stop at E_GABA where
+the current-based cell sits on the engine's -7 mV floor).** as built the scale holds the ACh EPSP (kappa = sign / E_ach for every class), so an
+inhibitory synapse at rest is fourteen times weaker than today and the cord runs away: 1.10 -> 42.0 Hz per cell, the flexors 93 Hz, the
+extensors 209, IN17A001 246. that is inhibition lost everywhere, not the flexors released; a `--syn-rev-hold each` option (kappa = sign /
+|E_c| per class: every synapse keeps today's PSP at rest, inhibition still shunting) is being added with its own oracle before any arm of
+record.
+
+**withdrawn in place (23:25 PDT): "held far below rest."** the membrane logged (`--log-v`, 20 s, seed 11, after the warm-up): under the
+control the tibia flexors sit at **-1.53 mV re rest with a standard deviation over time of 0.24 mV**, the accessory flexors at -1.11, the
+extensors at -1.09 (sd 1.04, firing 8 Hz), IN13A002 at +2.07 (52 Hz), IN13A006 at -5.09, IN03A004 at -6.56, IN21A004 at -4.08. the engine
+cannot sit a cell below -7. so the flexors are not parked deep; they are held a little under rest **and almost nothing moves them** (a
+quarter-millivolt of fluctuation against a 7 mV threshold): the item 3 arms failed at 3 mV and at 1.4 mV because the input is too small
+and too steady, not because the cell is too deep. the 13B side and the flexor excitors ARE deep (-4 to -6.6 mV, on the floor's side of
+things). with the standing senses (flexion claw 40 + bristles 20): the flexors at -0.05 mV (sd 0.44, 2.3 Hz), the extensors -3.38, IN13A002
+-1.14 (silent), IN13A006 +1.23 (21.6 Hz), IN13B019 +1.91, IN21A004 -0.25, IN03A004 -2.75; at rest with the same senses the flexors at +0.57
+(4.5 Hz), IN21A004 +1.69, IN03A004 +2.21. the flexion side moved from six millivolts under to around rest by the senses alone, and what
+it lacks now is drive, which shunting inhibition cannot supply. so 2b matters for the cells the winner holds down (the 13B side at -5, the
+excitors at -6.5, where a shunt would leave them near rest instead), and item 3's threshold matters once they are near rest; neither is
+the drive. the drive is the 95 % of central excitation onto the flexion side that a tonic command does not wake.
