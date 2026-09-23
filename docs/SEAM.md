@@ -6882,3 +6882,28 @@ N.m/rad = 20); the standing line now reads feet / other leg segments / body, sav
 **where the day ends.** he stands on his feet on the sourced springs with the connectome setting his posture; his middle legs twitch in
 bouts the body makes; his hind legs never lift because the cord never drives their levators; nothing rhythmic is the connectome's yet.
 the rhythm goes back to the cord with the body honest for the first time: the next arms are the cord's own, on this body.
+
+## the levators, by leg (13:06 PDT, 09-23; nate: "bouncing... back and front legs fairly firmly planted, bit of a palsy"; the file's input
+synapses per motor neuron by pool and leg, `brain_cord.npz` with `world/legmn.npz`)
+
+| pool | front (cells / synapses per cell) | middle | hind |
+|---|---|---|---|
+| **Tr flexor MN (the levators)** | **15 / 486** | **14 / 4,938** | **6 / 1,494** |
+| Acc. tr flexor MN | 6 / 151 | 4 / 589 | 12 / 163 |
+| Tr extensor MN (depressors) | 4 / 2,491 | 4 / 1,920 | 3 / 1,471 |
+| Sternotrochanter MN | 4 / 5,287 | 4 / 9,032 | 6 / 10,560 |
+| Ti flexor MN | 10 / 773 | 10 / 2,327 | 17 / 1,192 |
+| Ti extensor MN | 4 / 4,766 | 4 / 6,982 | 4 / 5,276 |
+| all leg motor neurons | 133 / 1,916 | 116 / 3,219 | 124 / 3,056 |
+
+the hind legs as a whole are wired like the middle legs (3,056 vs 3,219 synapses per motor neuron; 379 k vs 373 k synapses onto them),
+so "the hind legs are underwired" is not it. **the levators are:** the middle legs' trochanter flexors carry 4,938 synapses per cell where
+the front's carry 486 and the hind's 1,494 (from the same input types: IN21A010 +, IN19A008 -, IN21A015 -, IN19B012 +, IN13A010 -), and the
+accessory levators 589 against 151 / 163. ten times the levator wiring in T2. **that is why the middle legs are the ones that lift and the
+front and hind stay planted, in every arm since 09-21:** the file gives the middle leg's levators the drive and the others a tenth of it.
+whether that asymmetry is the fly's (Harris 2015: activating the 19A hemilineage in headless flies made the T2 legs wave, and only T2)
+or the tracing's (T1 and T3 leg neuropils less complete for these small cells) is not decidable from the file; it is the file's, and it is
+what he does. the front and hind legs' levators have 6-15 cells each with a few hundred synapses: the depressors out-wire them three
+to five to one, which is a planted leg. **the palsy is the middle legs' levators under a noisy drive on springs; the planted legs are
+the file's wiring.** the honest-body arms (both labellings, the recorded population, DNg100 60 / 100, the five-DN population, rest, and
+the Poisson drive at stiffness 20 and 50 as the bounce's characterisation) are running.
