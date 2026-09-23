@@ -141,7 +141,17 @@ class FastFlyBrain(FlyBrain):
             self._dly_scale.append(sc_ if self.last_idx.size else None)
         else:
             self._dly_scale.append(None)
-        self._dly.append(self.last_idx)
+        if getattr(self, "delay_on", False):   # per-cell conduction delays (09-22): the delay line is Dmax long; a cell's emission is inserted at its own delay
+            self._dly.append(np.zeros(0, np.int64)); sc_all = self._dly_scale.pop(); self._dly_scale.append(None)
+            while len(self._dly) < int(self._dly_max): self._dly.append(np.zeros(0, np.int64)); self._dly_scale.append(None)   # reset() rebuilds the line at the engine's length; keep it Dmax long
+            idx = self.last_idx
+            if idx.size:
+                dl = self._cell_delay[idx]; sc_all = sc_all if sc_all is not None else np.ones(idx.size, np.float32)
+                for d in np.unique(dl):
+                    m_ = dl == d; k = int(d) - 1; self._dly[k] = np.concatenate([self._dly[k], idx[m_]])
+                    prev = self._dly_scale[k]; self._dly_scale[k] = np.concatenate([prev if prev is not None else np.ones(self._dly[k].size - int(m_.sum()), np.float32), sc_all[m_]]).astype(np.float32)
+        else:
+            self._dly.append(self.last_idx)
         if arrived.size:
             if self.engine == "dense": self.g += self._propagate(arrived, arrived_scale)
             else:
