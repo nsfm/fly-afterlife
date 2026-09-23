@@ -7347,3 +7347,29 @@ fly's steps moving the legs, and (ii) the free-running body; seed 11, 30 s):**
   the next named thing is on the hold side: what turns the 13A cells' stance lock into a swing silence (a swing-phase inhibition of the
   13A inhibitors: the 13B cells, which Syed 2026 and the file both put as the 13A cells' opponents, and which the listening arm found
   unlocked). that is a read first, on the listening rig: do any 13B cells lock to the imposed swing, and what drives them.
+
+## the muscles (15:53 PDT, 09-23; `--muscles torque|hill` with `--hill-drive spike|twitch` and `--hill-arm hinge|norm` in `experiments/body_loop.py`,
+`experiments/hill_legs.py`; commit 47a2614; default bit for bit on every array, two ways)
+
+flygym 2.1's musculoskeletal fly is FlyMimic's (Ozdil et al., ICLR 2026): the LEFT FRONT LEG only, 7 hinges and 15 Hill muscles on spatial
+tendons, the right front locked, the middle and hind legs jointless, the thorax fixed, no adhesion; peak forces 10.6-303.9 uN per muscle
+(the model's g-mm-s units); OpenSim's mammalian force-length and force-velocity curves (the paper says no fly curve exists); activation
+dynamics first-order with FlyMimic's own 0.1 ms rise and 0.4 ms fall. the agent built the muscles onto our six-leg body by rule (E1-E6,
+printed at startup: one joint per muscle with FlyMimic's moment arm about the matching front-leg hinge, the torque path's role sign,
+the front leg's parameters mirrored and copied to the middle and hind legs, a muscle only where the file has a motor neuron, the hind
+cells by A2), 78 muscles on 248 motor neurons, each spike adding the torque path's increment to its muscles' excitation; the tarsal
+pools and the grip on the torque path. **peak torque at full activation, nN.m: promotion 2.3, remotion 7.1, levation 3.9, depression 8.9,
+tibia flexion 1.0, extension 10.1** on the front leg (the middle and hind legs' promotion 0.06 by the hinge rule).
+- **on the sourced springs (20 nN.m/rad) the muscles cannot move the legs:** the refined puppet at 11 Hz through them, at 50 / 25, 100 / 25,
+  200 / 25, 200 / 100, twitch drive, the other arm rule, and at 5 Hz: zero swings on every leg, joint sd 0.5-2 deg (the torque path's 8-13),
+  p99 muscle torque 0.3-3.6 nN.m per leg. the connectome's recorded population through the muscles: 10.04 uN on the feet, 0 lifts,
+  knee sd 0-1 deg: the springs hold him and the muscles barely register.
+- **on FlyMimic's own joint stiffness (0.4, fifty times softer) the muscles move the legs and the foot follows the script with a 5 ms
+  lag** (the torque path's 25): contraction speed is not the limit. but he cannot hold himself up on those springs (feet 0.5 uN, coxae 6.0,
+  body 3.4) and the feet clear tens of micrometres.
+- **so ledger row 27 changes from fusion to force scale:** FlyMimic's tibia flexor peaks near 1 nN.m where Azevedo 2020 measured ~42 at
+  that joint (the number the torque path's gain is built on): two sources forty times apart, and the sourced springs sit between them.
+  either FlyMimic's fitted forces are an order of magnitude under the fly's for this purpose, or the springs that let the body stand
+  are too stiff for muscles that size, and this arm cannot say which. what would: a fly leg's force-frequency curve, or FlyMimic's
+  own standing test (its thorax is fixed; it never stood). the torque path stays the path of record; the Hill option stays as built.
+- clips: `hill_puppet_11.mp4` and `_slow.mp4` (a fly standing still while the script runs). one seed.
