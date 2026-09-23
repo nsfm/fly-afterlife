@@ -6006,3 +6006,55 @@ decapitated fly's wiring and the rate model needs it. **"v1 had it at x23" corre
 read** (autocorrelation at 30 / 70 / 140 ms, coxa lags) that cannot see a 20 Hz line, and tonight's 1 ms spectral read can. a new read, not a
 new cut. and the twelve percent: with all eight cited cells silent the leg motor neurons fall 1.84 -> 1.67 Hz per cell (52 -> 42 active), so
 the subnet carries about a tenth of the motor output at this dose and the tonic posture is not its.
+
+## the campaign opens (22:38 PDT; `docs/CAMPAIGN.md`: the line moved on purpose, the action list, the ledger)
+
+**why the flexors are silent, one layer up (the cord, v2, DNg100 100 Hz, seed 11; the tibia flexors' 24 largest presynaptic types logged at
+1 ms):** the tibia flexor motor neurons (37 cells) receive 1,386 synapses per cell against the extensors' 5,674, and under the walking
+command what they receive is **fourteen parts inhibition to one part excitation** (synapses x rate over the 24: I 100,650, E 7,058). the
+inhibition is the 13A premotor cells: IN13A002 at 52 Hz per cell (875 synapses onto the flexors), IN13A005 at 29 (1,008), IN13A001 at 16
+(831), with INXXX471 at 15 and IN19A015 at 4. the excitation that exists in the file does not fire: IN21A004 (3,442 synapses onto the
+flexors, six cells) 0.0 Hz, IN03A004 (1,679) 0.1, IN20A.22A009 (1,468, eighteen cells) 0.0, IN03A031 (1,428) 0.0, IN20A.22A010, IN03A039,
+IN17A016, IN21A020 all 0.0; the only excitors awake are IN19B012 at 4.7 Hz and DNg100's own 32 synapses. **so the silence is not the
+flexors' threshold alone: the command wakes the cells that hold them down and none of the cells that would lift them.** the file has a
+flexor-excitor layer and the walking neuron does not reach it, or reaches it through cells that our uniform physiology leaves under
+threshold. the layer above the excitors is logged next.
+
+**the layer above (22:38 PDT; the six flexor-excitor types' 30 largest inputs logged):** the excitors are held down the same way, eight to one
+(I 364,285 vs E 43,033 in synapses x rate), by the same cells: IN13A002 (2,145 synapses onto the six, 52 Hz), IN12B003 (1,968, 38 Hz),
+IN13A005 (1,976, 29 Hz), IN19A004 (993, 47 Hz), IN19A002 (2,004, 12 Hz), IN13A001, IN21A003. their own excitors are silent too (IN17A016,
+2,864 synapses, 0.0 Hz; IN17A028 0.0) except IN19B003 (1,191, 21 Hz) and the sensory SNpp51 (1,026, 14 Hz). **the walking command, delivered
+as one tonic DN at 100 Hz, is an extension command in this file:** it wakes the 13A / 12B / 19A premotor inhibitors and they fire tonically at
+30-50 Hz, holding the flexor motor neurons and their excitors under threshold together. in the fly the 13A cells are phasic (Sapkal 2026;
+the 13A-13B reciprocal inhibition already on record, 09-21: "the half-centre is in the table and four release mechanisms do not switch
+it"). so the flexor problem is the switch problem seen from the flexors' side: nothing in our physiology lets 13B win a half-cycle from 13A.
+this is where campaign items 2-4 aim (slower inhibition, per-type excitability, rebound/plateau on the 13A-13B pair), and the read is fixed:
+IN13A002's rate and the flexor motor neurons' rate, beside the 20 Hz line.
+
+**the layer above that (22:40 PDT; the four tonic inhibitors' 30 largest inputs logged):** the inhibitors are driven eleven to one (E 286,831
+vs I 24,896). the largest input is **SNpp50, the leg-load sensory cells: 5,517 synapses onto the four, at 14.2 Hz, which is the cord's own
+tonic load stand-in (`--leg-load-hz 15`)**; then DNg100 directly (780 synapses at 78 Hz); IN07B001 (1,886, 22 Hz); SNpp48 (2,281, 15 Hz,
+the same stand-in); IN19A009; and IN17A001, the loop cell, exciting the inhibitors with 1,031 synapses at 17 Hz. the cells that would
+inhibit the inhibitors are silent: IN13A006 (1,893 synapses, 0.1 Hz), AN06B002 (1,826, 0.3), IN13A015 (1,637, 0.2), IN13B019 (1,496, 0.0),
+IN14A008, IN14A018, IN14B005 all 0. so, top to bottom: **a load signal that never lifts and a command that never pauses drive the 13A / 12B /
+19A inhibitors tonically; they hold the flexor motor neurons and the flexor excitors down together; the 13B side, which would release
+them, has nothing waking it.** in the cord alone the load is a constant by construction; on the body it is the loop we closed, and the foot
+never lifts because the flexors never fire because the load never lifts. the load sweep (0 / 5 / 15 / 30 Hz) is beside this.
+
+**the load sweep (22:41 PDT; `--leg-load-hz` 0 / 5 / 15 / 30, DNg100 100 Hz, seed 11):** IN13A002 0.0 / 14.2 / 52.0 / 86.3 Hz and IN13A005
+4.0 / 10.5 / 29.0 / 53.4: **the 13A pair's tonic rate is the load stand-in's, almost entirely.** IN12B003 (40 / 40 / 38 / 37) and IN19A004
+(40 / 44 / 47 / 47) do not move: theirs is the command's. with the load off the tibia flexors reach 0.42 Hz per cell (from 0.00) and the
+flexor excitor IN03A004 4.4 Hz (from 0.1); the 13B side stays silent at every load (IN13B019 / IN13A006 / IN13A015 all under 0.2 Hz). the
+extensors 4.3 / 4.5 / 8.0 / 16.7. so the standing load is half of what holds the flexors, the command is the other half, and removing the
+load alone does not release them (the treadmill's finding of 09-21, seen from inside). the 20 Hz line is at every load (17.8 / 18.5 / 19.7 /
+23.0 Hz, x38-48), rising with it.
+
+**campaign item 1, the weak edges (agent A; `docs/physiology/weak_edges.md`):** the five-synapse floor was ours (`ref/flybrain/scripts/
+build_creature.py --min-weight 5`), not the release's: `connectome-weights-male-cns-v1.0-minconf-0.5.feather` carries every edge down to one
+synapse (151.9 M edges, 311.8 M synapses; the 0.5 is a detection confidence). rebuilt without it as `brain_whole_all.npz` (25.1 M edges,
+122.2 M synapses between typed cells) and `brain_cord_all.npz` (3.78 M edges against 1.07 M; 23.7 M synapses against 18.9 M: 3.5x the
+edges, 25 % more synapses, at each cell's existing E/I ratio; the tibia flexors 1,386 -> 1,578 per cell, the extensors 5,674 -> 6,078).
+**the cord does not move on it:** leg MNs (373) 1.80 / 1.72 Hz per cell on seeds 11 / 12 (v2: 1.84 / 1.78), 52 / 53 active, flexors 0.00,
+IN17A001 16.9 Hz with its line at 19.8 / 20.0 Hz (x37 / x42). inside the seed spread. the floor is a removed compromise, not a fix; the
+files stay beside the originals (untracked, like them) for anything that wants the full graph. a second filter remains: only traced, typed
+cells (211,577 -> 162,517), and the synapses onto untyped fragments are not counted.

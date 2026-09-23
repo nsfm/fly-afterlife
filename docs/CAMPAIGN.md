@@ -23,8 +23,8 @@ this is the plan and the ledger of what we changed on the fly to get there.
 
 ## the action list, least to most drastic
 
-1. **put the weak edges back.** the file has no edge under 5 synapses; find where the floor came from (ours or the release's), rebuild without
-   it as a separate file, rerun the cord baseline and the 20 Hz read on it. *(running: agent A)*
+1. **put the weak edges back.** DONE 09-22: the floor was ours (`--min-weight 5` in the build), the release has every edge; rebuilt as
+   `brain_cord_all.npz` (3.5x the edges, 25 % more synapses); the cord baseline does not move on it. `docs/physiology/weak_edges.md`.
 2. **synaptic kinetics per transmitter.** one decay for every synapse now; ACh is fast, GABA and glutamate (inhibitory here) are slower and
    measured. one engine term, off by default, oracle. the bet for why the subnet runs at 20 Hz and not 7-15. *(agent C builds; agent B sources)*
 3. **intrinsic properties per type.** thresholds and membrane time constants for slow / intermediate / fast motor neurons from Azevedo 2020,
@@ -51,3 +51,5 @@ the reads and the record stay mine.
 |---|------|------|-----|--------------|
 | 0 | 09-21 | the headless cut keeps the descending neurons as driven inputs | a decapitated fly's DNs can be driven (Bidaye 2020) | a brain |
 | 1 | 09-22 | claw labels reported both ways (as printed / swapped) | the file's label may be inverted for the tibia joint | a measured sign |
+| 2 | 09-22 | edges under 5 synapses dropped at the build (brain_whole.npz / brain_cord.npz) | a build default of ours; the release has them | removed: `brain_*_all.npz` beside the originals; every run of record is on the floored file, and the cord baseline is the same on both |
+| 3 | 09-21 | the standing load as a tonic 15 Hz on the leg proprioceptors (`--leg-load-hz`) | the cord alone has no body to unload | the body loop (position + load) replaces it; on the body the load never lifts because the flexors never fire |
