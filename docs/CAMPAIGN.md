@@ -95,6 +95,15 @@ the hinted middle-leg exclusion did not replicate (one seed); he leans right and
 the recorded command (0.4 / 3.5 Hz), 3 / 12 Hz under DNg100 at 100; silencing them or their targets changes nothing. **item 7 now has a
 named circuit and a source:** the 19B commissural -> 19A local pathway, underdriven at the file's weights. nate's call.
 
+**the yardstick and the listening cord (14:45 PDT, 09-23).** nate on the kinematic replay: "a natural fly, walking at varied paces,
+turning, pausing... the back legs genuinely do not lift much if at all, but do provide a push. the front legs... contribute a lot of the
+pulling. the central legs are also pushing back and sweep a broad range... the fly is standing much more upright." on the refined puppet:
+"no legs are providing enough backwards push, and he's hanging lower to the ground than the true fly." and his move: use the imposed
+walking to drive the cord's senses and watch the motor neurons. built as `--kin-drive`: the living fly's kinematics move the body by
+position control, every sense is computed from that moving body, the cord runs under its command, and its motor output is logged and
+not applied. the read is phase-locking of each motor pool and each cited premotor cell to the imposed step, against a deaf control.
+if the levators burst in the imposed swing, the cord shapes a step it cannot make; if nothing locks, the reflexes are not there either.
+
 ## working habits
 
 one change per run, controls beside every arm, both claw labellings beside every body result, the oracle before any engine commit, agents
