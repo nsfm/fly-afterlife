@@ -75,7 +75,7 @@ ap.add_argument("--twitch", default="uniform", choices=["uniform", "azevedo"], h
 ap.add_argument("--slow-tau", type=float, default=300.0, help="--twitch azevedo: the slow unit's low-pass time constant in ms (E; bracketed 200-500 from fig 4C: force not peaked at 500 ms, release ~100 ms; force_per_spike.md section 1)")
 ap.add_argument("--tethered", action="store_true", help="the tethered preparation (nate, 09-22: propped up): the thorax fixed in space, the legs free, no floor and no load; the position loop still closes"); ap.add_argument("--gravity", type=float, default=1.0, help="scale on gravity (0.1 = a tenth of his weight; a graded prop-up, diagnostic)")
 ap.add_argument("--walk-ramp", type=float, default=0.0, help="the command rises linearly over this many seconds after the warm-up instead of stepping on in one ms (nate 09-22: the fling at the 2 s mark; a walking bout's descending drive ramps in life, Aymanns 2022, Sapkal 2024 ramped their light)");
-ap.add_argument("--warmup", type=float, default=2.0); ap.add_argument("--no-video", action="store_true"); ap.add_argument("--fps", type=int, default=25)
+ap.add_argument("--warmup", type=float, default=2.0); ap.add_argument("--no-video", action="store_true"); ap.add_argument("--fps", type=int, default=25); ap.add_argument("--playback-speed", type=float, default=1.0, help="native slow motion (09-23, nate): the renderer samples a frame every (1 / fps) x playback_speed of simulated time, so 0.25 at 30 fps is a frame every 8.3 ms and the clip plays at a quarter speed; 1.0 = real time (the default)")
 args = ap.parse_args(); t0 = time.time(); use_pos = "position" in args.loop; use_load = "load" in args.loop
 if args.puppet:   # (TODO 4o) the puppet must be impossible to mistake for a result: every printed line carries PUPPET, and the saved args say so
     import builtins; _bprint = builtins.print
@@ -312,7 +312,7 @@ weight = m.body_mass.sum() * abs(m.opt.gravity[2]); F_stand = max(weight / 6.0, 
 segs = [s.name for s in fly.get_bodysegs_order()]; thorax = segs.index("c_thorax")
 TARS = [np.array([segs.index(f"{l}_tarsus{i}") for i in range(1, 6)]) for l in LEG6]   # (09-23, P1) the feet: tarsus1-5 (tarsus5 carries the claw and pad; no pretarsus segment in the model)
 OTHL = [np.array([i for i, s_ in enumerate(segs) if s_.startswith(l + "_") and "_tarsus" not in s_]) for l in LEG6]   # coxa, trochanter-femur, tibia
-if not args.no_video: sim.set_renderer([c for c in [mj.mj_id2name(m, mj.mjtObj.mjOBJ_CAMERA, i) for i in range(m.ncam)] if "trackcam" in c][0], camera_res=(480, 640), playback_speed=1.0, output_fps=args.fps)
+if not args.no_video: sim.set_renderer([c for c in [mj.mj_id2name(m, mj.mjtObj.mjOBJ_CAMERA, i) for i in range(m.ncam)] if "trackcam" in c][0], camera_res=(480, 640), playback_speed=args.playback_speed, output_fps=args.fps)
 sim.reset(); steps_per_ms = int(round(0.001 / m.opt.timestep))
 if args.start_pose == "feet":   # (09-23, P2) settle on the springs with no muscle, then start from there
     sim.set_actuator_inputs("nmf", ActuatorType.MOTOR, np.zeros(len(dofs)))
