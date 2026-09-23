@@ -7105,3 +7105,37 @@ is a documented chain (levators <- IN21A010 <- 07B <- the subnet and DNs) with a
 open it. this is the honest ceiling of the headless preparation as we can run it, and the next question is what the fly does that we
 do not (Sapkal's headless flies step under DNg100; ours holds a posture under it), which is a question about the file's weights on this
 chain, not about anything downstream.
+
+## a real fly's legs on his body (14:32 PDT, 09-23; `experiments/kin_replay.py`, commit c5a9cfc; KINEMATIC REPLAY in every line: flygym 2.1's
+`spotlight_behavior_clip.npz` (trial 20250613-fly1b-012: an untethered, freely walking fly followed by the Spotlight tracker, 3D pose by
+PoseForge, angles by SeqIKPy; Wang-Chen, Stimpfling, Azcorra & Ramdya 2026 bioRxiv 10.64898/2026.03.11.711180), 660 frames at 330 Hz, 42
+joint angles, replayed on OUR body (springs 20, the same limits, actuators, pads, floor and feet-down settle) by position control (kp 150,
+the example's; torque clipped at +-60), the 2 s clip looped with a 30 ms crossfade; the recording's axis order YAW-PITCH-ROLL refit into
+our PITCH-ROLL-YAW within the limits (four legs exact; the middle coxae 11 deg from the order's gimbal lock; a YAW-PITCH-ROLL control arm
+walks the same at 12.1 mm/s); tracking error median 2.3 deg; 10 s; and `tripod2` in `--puppet`, a refined muscle puppet with the replay's
+measured swing fraction 0.32-0.40, lift phases (lm 0.58, lh 0.14, rf 0.51, rm 0.05, rh 0.65 of lf's cycle) and the tibia flexors leading the
+swing; a finer lift rule (5 ms smoothing, off >= 10 ms) beside the standard one because a real swing lasts 36-42 ms)
+
+| read | the real fly's angles on our body | the old puppet (5 Hz, 50 / 25) | tripod2 at 11.1 Hz, 50 / 25 | the connectome (`h_pop_flex`) |
+|---|---|---|---|---|
+| speed along heading | **+10.4 mm/s** (circling right at 73 deg/s) | +1.6 | +1.1 (backward 3 mm) | +0.1 |
+| feet / other / body, uN | 9.98 / 0 / 0 | 7.8 / 1.2 / 0.8 | 9.96 / 0.03 / 0.05 | 9.65 / 0.29 / 0.03 |
+| swings, fine rule (lf lm lh rf rm rh) | 110 114 64 108 111 43 | 92 91 135 87 114 24 | 129 79 94 157 98 11 | 52 176 0 8 143 3 |
+| in-bout gap (fine) | 87-92 ms (hind 101-112) | 200 | 90-118 | 104-155 |
+| lm-rm both-off vs independence; antiphase share | x0.59; 0.80 | x0.38; 0.91 | x0.84; 0.47 | x1.05; 0.42 |
+| lf-rf | x0.23; 0.92 | x0.40; 1.00 | x0.63; 0.77 | - |
+| joint sd, lf coxa pitch / trochanter / knee, deg | 8.9 / 12.0 / **19.5** | 24.8 / 20.8 / 8.0 | 12.8 / 8.9 / 11.3 | 6.3 / 4.7 / 1.4 |
+| swing duration, ms (lf lm lh rf rm rh) | 42 39 18 36 39 15 | 98 97 34 118 100 22 | 32 34 32 58 31 22 | 32 58 - 20 65 24 |
+| foot clearance, um | 719 489 376 388 686 **61** | 1348 1128 242 1839 1120 108 | 259 151 130 736 135 115 | 81 204 - 24 331 35 |
+
+- **the natural yardstick:** a real fly's legs walk this body at 10 mm/s in an 11 Hz tripod with the front feet clearing 0.4-0.7 mm, the
+  knees moving 14-22 deg and the coxae 6-12 plus roll and yaw. the old puppet swung the coxae 22-27 with the knees at 6-11 and the feet
+  at 1.1-1.8 mm: nate's "exaggerated front legs", with numbers. the connectome's arm moves the knees 1-7 deg.
+- **the muscle path cannot carry an 11 Hz step:** the refined puppet at the fly's frequency and phases trails the script by 25 ms, matches
+  the foot 65 % of the time, lifts the feet 130-260 um and does not walk; raising the swing rate to 100 Hz leaves the right front in the air
+  88 % of the time, 200 Hz flips him; tripod2 at 5 Hz flips him too. the 120 ms twitch kernel on these springs has its ceiling near 8 Hz
+  (as the first puppet found), and a real fly steps at 11. so the body's muscle model, not only the cord, is short of a fly's walk, by a
+  factor of two in speed of contraction: a sourced twitch, summed linearly, is not a fused tetanus. ledger row 27.
+- **the right hind barely lifts even with the fly's own angles** (61 um clearance, 9 % off the ground, against 376 um for the left hind): the
+  body's, though this fly was turning right and its own right hind moved least, so the share is not clean.
+- clips: `kin_replay.mp4`, `kin_replay_slow.mp4` (a fifth speed), `puppet2_11_sw50.mp4` and `_slow.mp4`.
