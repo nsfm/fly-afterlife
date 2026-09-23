@@ -84,7 +84,7 @@ has, which is item 7 and needs a source. nothing else on the list has a paper be
 unloaded leg including rest and the old fit; the hooks lead each lift because the leg is already moving, the subnet fires with the
 unloading. **neural** (09-23, `--freeze-mn 15`: muscles frozen, every leg stops; the cord in the loop, the bouts continue). a per-leg reflex
 oscillation at five hertz through the leg's senses, the first rhythm the connectome makes with its body and no fitted term. uncoupled
-across legs; no gait yet. the coupling between legs is now the question.
+across legs (at most four legs lift; the right front and right hind never do); no gait yet.
 **WITHDRAWN (09-23, review R1: the force was not read in the no-load arms; the no-senses arm steps too). the bouts need the cord's motor output (freeze) and no sense (ablations, and the corrected no-senses arm). was:** the load reflex. campaniform rows alone make the bouts; position and movement senses alone make none
 (he holds all six feet up); no single sense is necessary, the load is sufficient. the stick insect's stance-swing transition on the fly's wiring.
 the hinted middle-leg exclusion did not replicate (one seed); he leans right and the left legs co-lift. coupling: central in the fly
@@ -107,6 +107,20 @@ the reads and the record stay mine.
 | 2 | 09-22 | edges under 5 synapses dropped at the build (brain_whole.npz / brain_cord.npz) | a build default of ours; the release has them | removed: `brain_*_all.npz` beside the originals; every run of record is on the floored file, and the cord baseline is the same on both |
 | 4 | 09-22 | the leg's tactile afferents (SNta, 2,573 cells) driven at a rate as a stand-in for ground contact | the file's 13B-side excitors take 27 % of their excitation from them and nothing drives them; a standing fly's tarsi are on the ground | a contact model on the body; as a cord diagnostic it wakes the releaser to 2.5 Hz, not the switch |
 | 5 | 09-22 | tibia flexor thresholds set per type from Azevedo 2020's resting potentials (slow 3 mV, intermediate 15, fast 23 to threshold), the slow / intermediate / fast labelling by size rank within the pool | measured rest per class; the labelling of which cell is which is inferred | a per-cell identity; and it did not wake them (see 2b) |
+| 10 | 09-22 | the load row's rate: 15 Hz x (foot force / standing force), `--leg-load-hz` | no adult campaniform rate exists | a recorded rate |
+| 11 | 09-22 | the claw's rate: `--claw-hz` 100 x |angle - 90| / 60 deg, and which class is which (row 1) | Mamiya's tuning is imaging; the scale is chosen | a recorded rate |
+| 12 | 09-22 | the hooks' rate: `--hook-hz` 100 x velocity / 300 deg/s | chosen | a recorded rate |
+| 13 | 09-23 | the hair plates: 30 Hz toward the coxa's limit (`--hp-hz`) | threshold angle unpublished | a recorded rate |
+| 14 | 09-23 | touch: a quarter of each leg's bristles at 20 Hz on contact with a 5x onset burst; the burst restarts on every chatter of the force (review R5) | no adult bristle recording during contact | a recorded rate; a debounced contact |
+| 15 | 09-22 | the pads: adhesion switched by contact force (`--adhesion contact`, gain 1 uN) | a fly's pads hold several body weights; the switching rule is ours | a pad model |
+| 16 | 09-22 | the per-cell membrane-noise scale following the synaptic scale (`--size-noise`) | an assumption: equal current noise across sizes | a measurement of a slow MN's noise |
+| 17 | 09-22 | the slow / intermediate / fast labelling by input-synapse third, pooled across all six legs (review R3: the left front and left middle get no slow cell) | no per-cell identity in the file | per-leg thirds at least; an identity |
+| 18 | 09-22 | reversal potentials 70 / -5 / -5 mV re rest, held each (`--syn-rev`) | the reversals are larval numbers; the hold is a choice | adult central measurements |
+| 19 | 09-23 | force per spike by class, the thirds as the classes (12 cells "fast" where the pool has one per leg) | Azevedo's numbers are the flexor's only | per-leg classes |
+| 20 | 09-22 | the recorded DN population replayed in 100 ms chunks (`--dn-playback`) from a whole-fly run that was mostly standing | the only recording of his own command | a walking recording |
+| 21 | 09-21 | the body's springs (stiffness 0.14, measured passive) and the joint limits +-45-70 deg with a stiff solref | measured once, on the model | the model's own limits |
+| 22 | 09-22 | the size CSV lives in the session scratchpad (`flex_graded_abs.csv`) | built ad hoc | `world/flex_graded.csv` in the repo (to do) |
+| 23 | 09-23 | the noise scale, the plateau current and the thresholds together make the small flexors fire; an isolated cell at that threshold and noise fires 0.8 Hz alone (review R4) | the rest is a construction | a fly measurement of the slow MN's intrinsic rate |
 | 9 | 09-23 | a persistent inward current on the small tibia flexors (`--pic smallflex:G:3:3:50`), parameters from cockroach / locust motor neurons | Azevedo's slow cells fire ~30 Hz at rest partly on their own; no fly leg cell has the current measured; the file gives them 13-111 synapses | a fly measurement of the current; g is bracketed, not pinned |
 | 7 | 09-22 | in the cord alone, the standing leg's afferents driven at chosen rates: the flexion-tuned claw class (as labelled) at 40 Hz, the six tactile types feeding the flexion side at 20 Hz | a standing fly's tibia is flexed and its feet touch the ground; no adult recording gives the rates | the body loop driving claw by angle (exists) and tactile by contact (to build) |
 | 6a | 09-22 | the floor trimmed to campaniform + hair plates (+ claw) by `--drive TYPE:0` in the arms; the default in the code still drives all 580 | the engine agent holds `world/cord.py` | change the default once the edit lands; re-baseline |

@@ -6760,3 +6760,18 @@ are constructions, not physiology, and the one size CSV also gave the middle and
 resistances give x1.0 and x0.5. **R5:** the touch rows chatter (the net force crosses the contact threshold 20-74 times a second per leg,
 restarting the onset burst), so touch ran at ~100 Hz for 31-93 % of stance instead of 20. **sound:** the three engine terms and their
 tests, the defaults (max difference 0), the claw's 90-deg reference and the knee sign, the tactile seeding, the load-only arm's rows.
+
+**the claims review (12:42 PDT; `docs/REVIEW_CAMPAIGN_DAY_TWO.md`):** verdict: the first night holds because it was withdrawn in place each time;
+"the load reflex is the oscillator" does not hold (R1); the freeze shows only that the lifts need the cord's changing motor output; **the
+likeliest reading is timing set by the body (springs, pads, the 120 ms twitch kernel) under a noisy cord output, and nothing yet rules
+that out.** the test: feed the muscle map Poisson spike trains at each motor neuron's own mean rate and change only the body; if the
+lifts survive, the body sets the rhythm. built (`--mn-poisson RUN` in `body_loop.py`) and running on three seeds. also from the review, in
+place: **the load pathway's sign is opposite to the stick-insect reflex** (new cord arms, three seeds: loading the cord pushes the middle
+legs toward swing, promotors 0.1-0.8 -> 5.6-7.2 Hz, remotors down), so the stick-insect analogy in the withdrawn entries goes with them;
+**"the first rhythm the connectome makes with its body" is withdrawn** wherever it stands; **"Tr extensor MN (the levators)" is wrong:
+the trochanter extensors are depressors** (the levators are the trochanter flexors), so the cell that rises before a lift in the
+lift-triggered read is the depressor, which is consistent with a push-off, not a lift; **"six oscillators" is "at most four legs"**
+(the right front and right hind never lift); the lean has a second candidate cause, a command-side asymmetry the cord shows alone
+(the left middle driven toward remotion, the right toward levation) that persists without the size terms, the current or the shunt;
+"Azevedo's ordering" is put in, not found, and the plateau strength "nearest 30 Hz" is calibration; fourteen ledger rows were missing
+and are added to `CAMPAIGN.md` now; silencing the commissurals at 0.4 Hz tested nothing.

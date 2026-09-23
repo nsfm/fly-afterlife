@@ -29,6 +29,7 @@ ap = argparse.ArgumentParser()
 ap.add_argument("--log-x", default="", help="extra cell types logged at 1 ms into the cells file as x_ms / x_type / x_bodyId (09-23, the movement-senses read); off by default, no effect on the run")
 ap.add_argument("--freeze-mn", type=float, default=0.0, help="hold every muscle activation (torque and grip) at its value at this many seconds, and stop feeding spikes into it (09-23, the control for the per-leg five-hertz bouts: the cord out of the loop); 0 = off")
 ap.add_argument("--silence", default="", help="comma-separated types whose threshold is put out of reach (no effect on driven cells); as in world/cord.py")
+ap.add_argument("--mn-poisson", default="", help="the review's control (09-23): feed the muscle map Poisson spike trains at each leg motor neuron's own mean rate taken from this run's .cells.npz (after its warm-up), instead of the cord's spikes; the cord still runs and is logged, the body never sees it. if the lifts survive, the body sets the rhythm")
 ap.add_argument("--out", required=True); ap.add_argument("--seconds", type=float, default=20.0); ap.add_argument("--seed", type=int, default=11)
 ap.add_argument("--wsyn-m", type=float, default=0.185); ap.add_argument("--noise", type=float, default=0.15)
 ap.add_argument("--walk", type=float, default=100.0); ap.add_argument("--walk-dn", default="DNg100"); ap.add_argument("--std", default="off"); ap.add_argument("--mirror", default="off")
@@ -259,6 +260,10 @@ n_ms = int(args.seconds * 1000); torque = np.zeros((len(dofs), n_ms + KL)); grip
 P = np.zeros((n_ms, 3), np.float32); Q = np.zeros((n_ms, 4), np.float32); FL = np.zeros((n_ms, 6), np.float32); KA = np.zeros((n_ms, 6), np.float32)
 JA = np.zeros((n_ms // 10 + 1, len(all_dofs)), np.float32)
 spk = np.zeros((n_ms // 10 + 1, len(LEGMN)), np.int16); lpos = {int(j): i for i, j in enumerate(LEGMN)}
+MNP = None
+if args.mn_poisson:
+    _R = np.load(args.mn_poisson.replace('.npz', '') + '.cells.npz', allow_pickle=True); _rb = {int(x): i for i, x in enumerate(_R['bodyId'].astype(np.int64))}; _rr = _R['frames'].astype(float)[200:].mean(0) * 100
+    MNP = np.array([_rr[_rb[int(mbid[j])]] / 1000.0 if int(mbid[j]) in _rb else 0.0 for j in LEGMN]); _mnp_rng = np.random.default_rng([args.seed, 77]); print(f"mn-poisson: the muscle map fed by Poisson trains at the rates of {args.mn_poisson} (mean {MNP.mean()*1000:.2f} Hz per cell over {len(LEGMN)} cells); the cord's spikes do not reach the body")
 LOGX = np.flatnonzero(np.isin(mty, [x for x in args.log_x.split(',') if x])) if args.log_x else np.zeros(0, np.int64); XMS = np.zeros((n_ms + 1, len(LOGX)), np.int16) if len(LOGX) else None; xpos = np.full(M.N, -1, np.int64); xpos[LOGX] = np.arange(len(LOGX))
 if len(LOGX): print(f"log-x: {len(LOGX)} cells of {args.log_x}")
 if args.log_v:   # the membrane logger (09-22, campaign item 2b), as in world/cord.py
@@ -305,6 +310,8 @@ for ms in range(n_ms):
         torque[:, ms] = _hold_t
         for l in LEG6: grip[l][ms] = _hold_g[l]
         hit = np.zeros(0, np.int64)
+    elif MNP is not None:
+        hit = LEGMN[_mnp_rng.random(len(LEGMN)) < MNP]
     elif idx.size:
         hit = idx[np.isin(idx, LEGMN)]
         for j in hit:
