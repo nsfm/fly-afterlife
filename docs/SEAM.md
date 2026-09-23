@@ -7257,3 +7257,28 @@ stands as measured (SNpp51 wakes IN13A006 and the flexion side; SNpp50 wakes IN1
 negative feedback in both directions: an extended knee's claw inhibits the extensor and wakes the flexor side; a flexed knee's claw
 inhibits the flexors. the labels in those entries ("flexion claw" for SNpp51) are wrong; the physiology they describe is right and is the
 resistance reflex. the body arms ran `50flex` throughout and are right. ledger row 7's rate stays a choice.
+
+**replicated, and the sign checked (15:33 PDT; the wide listening arm on seed 12 under `50flex`, and on seed 11 under `50ext`, the pinned-wrong
+labelling):** seed 12, `50flex`: 11 of 38 readable types lock, **7 in the imposed swing**: IN03A004 again (1.5 Hz, swing/stance 1.76, VS 0.24 vs
+null 0.21, deaf 0.02), IN21A022 (2.8 Hz, 1.37), IN01A025 (1.39), IN20A.22A044 (0.3 Hz, 2.24); IN03A007 and IN03A024 lock to the stance side
+as on seed 11; IN21A010 is under the 30-spike floor on this seed. seed 11, `50ext`: 9 of 38 lock and **only 1 in the swing**: the locks move to
+late stance (IN21A010 0.4 Hz at phase 0.94, IN01A007 0.92, IN21A017 0.93), which is the sign error doing what a sign error does. so, two of
+two on the right labelling: the flexor excitors of the front leg hear the imposed swing and answer in it, at a hertz or two; and the
+answer's phase follows the claw's sign, so it is the claw's reflex arc and not a coincidence of the command. the lift side's arc: present,
+phase-correct, starved, on two seeds. the interneurons' legs come from the census's `to_legs` (most of these types are front-leg local),
+the null is lenient by a fifth (the deaf twin), the steps repeat every 1.87 s.
+
+## where the night leaves the campaign (15:33 PDT, 09-23)
+
+three reads tonight, none a term: (1) the file's lift side is wired as its cell sizes predict and its hold side six to eleven times beyond,
+so the imbalance is by pool, not by tracing depth; (2) the claw is pinned (SNpp50 flexion-tuned, SNpp51 extension-tuned, 85-90 %), the
+week's standing clips ran the right sign, and the resistance reflex is in the file in both directions; (3) with a real fly's steps
+moving his legs, the hold side's 13A cells lock to stance at 15-50 Hz and the lift side's flexor excitors (IN03A004, IN17A028, IN21A022,
+and IN21A010 on one seed) lock to the swing at a hertz or two, phase-correct, absent when the cord is deaf, flipped by the claw's sign.
+**the step's excitation exists in the file, is timed right by the leg's own senses, and is a hundredth of the rate a step needs; the
+step's inhibition is timed right and strong.** the gap is a gain on a named, phase-correct, starved arc: the flexor excitors and the
+levators' excitor IN21A010, whose inputs are balanced one to one. that is the first form of item 7 with a reason the file itself gives:
+not a synapse the fly lacks, but the weight of ones it has, on cells whose response to a real step is already the right shape. the arm
+that tests it: the inputs onto IN03A004 / IN17A028 / IN21A022 / IN21A010 scaled (2x, 5x, 10x) on the cord and on the honest body, under the
+command, with the listening rig's phase read as the physiological check (does the swing-locked whisper become a swing-locked burst, and
+do the levators follow), the puppet's numbers as the yardstick, and the deaf twin as the control. and the muscle ceiling beside it.

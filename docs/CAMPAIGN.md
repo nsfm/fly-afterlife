@@ -105,6 +105,12 @@ not applied. the read is phase-locking of each motor pool and each cited premoto
 RESULT: the 13A inhibitors phase-lock to the imposed stance (and to the swing when the claw labels flip), vanish when the cord is
 deaf; the levators, the tibia flexors and IN21A010 do not lock. the cord shapes a step's inhibition and not its excitation.
 
+**the night of 09-23 (15:33 PDT):** three reads. the imbalance is by pool, not by size; the claw is pinned (row 1); the lift side's reflex
+arc is present, phase-correct and starved (the flexor excitors and IN21A010 lock to a real step's swing at a hertz or two while the 13A
+hold side locks at 15-50). **next:** item 7 in its defensible form: scale the inputs onto the swing-locked excitors (IN03A004, IN17A028,
+IN21A022, IN21A010) 2x / 5x / 10x, cord then body, the listening rig's phase read as the check, the deaf twin as the control, the puppet
+as the yardstick; and the muscle ceiling (FlyMimic's Hill muscles on six legs) beside it.
+
 ## working habits
 
 one change per run, controls beside every arm, both claw labellings beside every body result, the oracle before any engine commit, agents
