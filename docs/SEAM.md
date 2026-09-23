@@ -7464,3 +7464,22 @@ settled pose moves with the scale (0.63-0.76 mm); and a single scale for all fif
   own senses at x1, and what the step lacks is the lift's amplitude, not its permission. the excitor gain gives the amplitude and costs
   the posture through the torque path's +-60 clip and the springs; the Hill muscles at x10 carry a fused stance without the clip. the
   arm that follows puts the two together: lift x3 through the Hill muscles at x10, free-running, under the command.
+
+**the lift gain through the Hill muscles (16:34 PDT; rows 28-30 through row 29's muscles at x10, free-running under DNg100 100 Hz and
+under the recorded population; seed 11, 30 s):**
+
+| arm | feet / other / body, uN | body on the floor, frames | lifts lf lm lh rf rm rh | thorax z | speed |
+|---|---|---|---|---|---|
+| Hill x10, the file's gains | 8.40 / 0.15 / 0.00 | 0 % | 0 0 0 0 0 0 | 0.70 | 3.3 mm/s (sliding) |
+| + lift x3 | 6.51 / 0.26 / 1.92 | 15 % | 1 1 1 1 2 1 | 0.68 | 5.6 |
+| + lift x5 | 0.78 / 0.13 / 7.80 | 56 % | 1 7 1 2 11 1 | 0.58 | 9.7 |
+| + lift x3 + release x5 | 4.61 / 0.57 / 4.11 | 36 % | 1 3 1 1 4 1 | 0.65 | 3.8 |
+| the recorded population + lift x3 | 3.74 / 0.74 / 4.43 | 30 % | 2 7 1 1 3 1 | 0.66 | 8.5 |
+
+**no lifts and a fall.** through fused muscles with no torque clip, the connectome's drive at the file's gains holds him still on his feet
+(no lift at all: the torque path's middle-leg bouts were the twitch's, and the fused muscles do not bounce), and every gain that woke the
+lift side on the torque path tips him over here instead of lifting a foot: the same excitors drive the extensors and remotors, and
+through real muscle dynamics that push is a shove. the speed is sliding, not stepping (0-11 lifts). so the two half-successes do not add:
+the lift gain needs the clip to survive, and the muscles need the lift to be a lift and not a push. **the week's last arm says what the
+first said: at any gain we have named, the file's drive onto the lift side arrives with more drive onto the push side, and no muscle
+model changes that ratio.** one seed. the solver (row 31) is the tool that can search that ratio honestly, and it is queued next.
