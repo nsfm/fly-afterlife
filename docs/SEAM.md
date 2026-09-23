@@ -6907,3 +6907,30 @@ what he does. the front and hind legs' levators have 6-15 cells each with a few 
 to five to one, which is a planted leg. **the palsy is the middle legs' levators under a noisy drive on springs; the planted legs are
 the file's wiring.** the honest-body arms (both labellings, the recorded population, DNg100 60 / 100, the five-DN population, rest, and
 the Poisson drive at stiffness 20 and 50 as the bounce's characterisation) are running.
+
+## the cord's commands on the honest body (13:24 PDT, 09-23; the new stack: `--load-from tarsi --hind-map v2 --start-pose feet --stiffness
+sourced` on the full stack of record; 30 s, seed 11; the subnet, the pair and the levators logged at 1 ms; a lift from the tarsal force)
+
+| command | feet / other / body, uN | thorax z (sd) | lf lifts | lm | rm | lh, rf, rh | subnet line | Tr flexor Hz |
+|---|---|---|---|---|---|---|---|---|
+| the recorded population, labels swapped | 9.69 / 0.32 / 0.02 | 0.81 (0.108) | 5 | 83 (176 ms) | 74 (174) | 0, 0, 0 | 7.0 Hz x16 | 1.5 |
+| the recorded population, as printed | 9.70 / 0.29 / 0.02 | 0.84 | 4 | 50 (210) | 57 (187) | 0, 5, 0 | 3.2 x17 | 2.1 |
+| DNg100 60 Hz | 10.09 / 0.02 / 0.00 | 0.84 | 4 | 4 | 27 (194) | 1, 0, 1 | 18.8 x32 | 0.8 |
+| DNg100 100 Hz, swapped | 10.01 / 0.02 / 0.00 | 0.85 (0.089) | 0 | 7 | 71 (185) | 13, 1, 1 | 22.9 x47 | 1.3 |
+| DNg100 100 Hz, as printed | 10.02 / 0.01 / 0.00 | 0.87 | 5 | 7 | 47 (194) | 4, 0, 3 | 19.1 x48 | 0.8 |
+| the five-DN population | 10.02 / 0.02 / 0.00 | 0.85 | 0 | 16 (209) | 49 (205) | 3, 1, 0 | 21.6 x30 | 0.9 |
+| rest | 10.05 / 0 / 0 | 0.83 (0.028) | 0 | 0 | 0 | 0, 0, 0 | - | - |
+| Poisson at the cord's rates, springs 20 | 9.89 / 0.11 / 0 | 0.82 (0.083) | 2 | 77 (186, cv 0.31) | 68 (184, 0.35) | 0, 0, 0 | - | - |
+| Poisson, springs 50 | 10.09 / 0 / 0 | 1.08 (0.034) | 2 | 64 (181, 0.33) | 80 (185, 0.32) | 0, 0, 0 | - | - |
+
+- **he stands under every command** on the honest body (feet 9.7-10.1 of 10.05 uN, body 0.00-0.03), at rest without a twitch (thorax sd
+  0.028 mm, no lifts), and the lifts are the middle legs' only (the front and hind 0-13 in 28 s, the levators at 0.8-2.1 Hz); the middle
+  legs bounce under the recorded population (83 / 74 lifts at 175 ms) and under the tonic neuron the right middle mostly (27-71), which is
+  the lean.
+- **the bounce, characterised:** the Poisson drive makes the same middle-leg bouts at the same gap on springs of 20 and 50 (186 / 184 ->
+  181 / 185 ms, cv 0.31-0.35): **the gap is not the springs',** so it is the twitch kernel's (120 ms, K = e^-t/20 - e^-t/7) under a noisy
+  drive; the springs set only the bounce's amplitude (thorax sd 0.083 -> 0.034 mm, the height 0.82 -> 1.08) and the thorax's slow rock
+  is 1.1-1.7 Hz in every arm. the palsy is the muscle model's time course seen through the springs. nate's word for it stands.
+- **the cord on this body:** the 20 Hz subnet line under the tonic neuron and the population (19-23 Hz, x30-48), weak and low under the
+  recorded standing command (3-7 Hz, x16); no alternation between the middle legs at any lag (xcorr <= 0.09); nothing rhythmic that the
+  body did not make. the levators of the front and hind legs at ~1 Hz: the wiring (above) at work.
