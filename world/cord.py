@@ -38,6 +38,7 @@ ap.add_argument("--graded", default="", help="graded (non-spiking) units: TYPE-P
 ap.add_argument("--size-gain", type=float, default=0.0, help="size-scaled excitability, the input-resistance form (the review of 09-22; Pugliese 2026: gain and threshold scaled by cell size were necessary for the rhythm; Azevedo 2020: Rin 150 / 300 / 700 MOhm for fast / intermediate / slow MNs): every synapse onto cell i is scaled by (S_med / S_i)^A, S_i the cell's total input synapses (the size proxy this file has), S_med the median over the cord's neurons; a small cell gets a bigger PSP per synapse. 0 = off (E; sweep A)")
 ap.add_argument("--size-thr", type=float, default=0.0, help="size-scaled excitability, the threshold form: v_th_i = 7 mV x (S_i / S_med)^B; a small cell sits closer to threshold (Azevedo 2020: slow MNs rest 20 mV nearer threshold than fast). 0 = off (E; sweep B)")
 ap.add_argument("--size-clip", type=float, default=4.0, help="clip on both size factors")
+ap.add_argument("--size-from", default="", help="a csv with bodyId and size columns (Pugliese 2026's wTable for the male front-leg network: voxel volume per cell) used as the size measure instead of the input-synapse proxy; cells not in it take the median (their set_sizes does the same for NaN)")
 ap.add_argument("--edge-scale", default="", help="scale the synapses among a named set of types: TYPES:FACTOR (e.g. DNg100,IN17A001,INXXX466,IN16B036:1.49 = the published rhythm loop at Pugliese 2026's LIF weight, 0.275 mV, the rest of the cord at 0.185; the review's item 5; a labelled stand-in with a source)")
 ap.add_argument("--cell-delay", default="", help="per-cell conduction delay, TYPES:MS: the named cells' output reaches their targets after MS instead of the engine's 1.8 (effective 3) ms. axonal delays in the cord are real and unmeasured per cell (E); the ring's period is the loop's delays (3 x 3 ms + rise = 40 ms, 25 Hz), so this asks whether a slower loop rings at the band a leg follows")
 ap.add_argument("--mirror", default="off", help="mirror normalisation of bilateral pairs' input weights (src/fly_afterlife/wiring.py; the labelled tracing correction of 09-19): off | all | vnc (motor, IN, AN, SN types) | a comma-separated type list")
@@ -75,7 +76,16 @@ if args.graded:
     print(f"graded units: {len(gc)} cells ({label}), gain {g_} per ms at v = {v1} mV")
 if args.size_gain > 0 or args.size_thr > 0:
     _S = np.bincount(M._out_tgt, weights=np.abs(M._out_w), minlength=M.N) / M.p.mv_per_synapse; _neur = ~np.isin(M.sc.astype(str), ["vnc_sensory", "sensory_ascending", "sensory_descending", "vnc_sensory_tbc", "sensory_ascending_tbc"]) & (_S > 0)
-    _Smed = float(np.median(_S[_neur])); _ratio = np.where(_S > 0, _S / _Smed, 1.0)
+    if args.size_from:
+        import csv as _csv; _sz = {}
+        with open(args.size_from) as _f:
+            for row in _csv.DictReader(_f):
+                try: _sz[int(row["bodyId"])] = float(row["size"])
+                except Exception: pass
+        _S = np.array([_sz.get(int(b_), np.nan) for b_ in M.bodyId]); _have = np.isfinite(_S); _neur = _have & _neur; print(f"sizes from {args.size_from}: {int(_have.sum())} cells matched of {M.N}; the rest at the median")
+        _Smed = float(np.nanmedian(_S[_have])); _S = np.where(_have, _S, _Smed); _ratio = _S / _Smed
+    else:
+        _Smed = float(np.median(_S[_neur])); _ratio = np.where(_S > 0, _S / _Smed, 1.0)
     if args.size_gain > 0:
         _f = np.clip(_ratio ** (-args.size_gain), 1.0 / args.size_clip, args.size_clip).astype(np.float32); M._out_w *= _f[M._out_tgt]
         print(f"size gain: synapses onto each cell scaled by (S_med / S)^{args.size_gain} (S_med {_Smed:.0f}); factors {np.round(np.quantile(_f[_neur], [0.05, 0.5, 0.95]), 2)}")

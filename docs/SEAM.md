@@ -5891,3 +5891,24 @@ code, github.com/smpuglie/Pugliese_cpg_2025)
 **the surround, one cell at a time (20:02 PDT; the loop at the published x1.49, DNg100 100 Hz, `--silence` on IN19A002 / IN19A005 / IN19A008 / IN26X001 / IN09A002 singly and all five together; 1 ms logs):** no ring in any arm. IN17A001 at 22-23 Hz per cell and IN16B036 at 9-14 with spectral peaks at 19-22 Hz of x38-66 the median and autocorrelations within +-0.05 at 40 and 70 ms (the ring proper had -0.18 / +0.19); silencing all five raises IN16B036 to 13.6 Hz and nothing else. so the five cells the reviewer named are not what holds the loop below threshold at its own weight in this engine; the density of the surround is (their runs: 0-7 motor neurons active; ours: 100+), and that is the next question, with their code on their table beside ours.
 
 **Pugliese's code and data (20:04 PDT; nate: "is this pugliese paper or code something we can/should look at?"):** cloned to `ref/pugliese_cpg` (untracked; github smpuglie/Pugliese_cpg_2025; JAX, tutorials, configs). inside it, the thing this file lacks: `data/imac t1 connectome data/wTable_20260210_vncRoisOnly.csv`, their processed table of the male cord's front-leg network, 4,310 cells with a `size` per cell (voxel volume, median ~1e9) keyed by bodyId, and `W_*.csv`, their weight matrix for the same cells; `src/utils/sim_utils.py: set_sizes` is the scaling exactly (size / median; gain / size; threshold x size); `configs/neuron_params/default.yaml` the parameters (tau 20 ms, gain 1, threshold 7.5, cap 200 Hz, 0.03 per synapse both signs). so the positive control can be run with their sizes on our table and with their table on the same model: the "why is ours dense" question has its instrument. (what they achieved, for the record: a rate model of four cord connectomes driven by DNg100 gives 7-15 Hz rhythmic leg motor output; pruning finds a three-cell loop necessary and sufficient across the four; headless flies confirm DNg100 drives stepping; within-leg only, no interleg coordination, the tibia flexors silent in theirs too; a preprint, "putative" throughout.)
+
+**their sizes in our engine (20:09 PDT; `--size-from` their wTable: 4,242 of the cord's cells matched by bodyId, the rest at the median;
+their scaling exactly, gain / size and threshold x size (`--size-gain 1 --size-thr 1`, clip 10); the cord, DNg100 100 Hz, 30 s, seed 11):**
+
+| arm | leg MN Hz | active | **flexors** | extensors | antag | the loop cells (autocorr 40 / 70 ms) |
+|---|---|---|---|---|---|---|
+| the record (uniform) | 1.96 | 52 | 0.00 | 9.3 | -0.16 | refractory trough only |
+| gain / size | 3.03 | 74 | 0.00 | 5.5 | -0.16 | |
+| threshold x size | 3.01 | 74 | 0.01 | 5.3 | -0.17 | |
+| both (their scaling) | 5.58 | 67 | 0.01 | 20.9 | -0.36 | flat (+0.00 / -0.01) |
+| **both, at their weight 0.275 mV** | 16.4 | 104 | **12.4** | 9.9 | **-0.50** | flat |
+| both, the loop at x1.49 | 5.84 | 67 | 0.00 | 22.1 | -0.40 | flat |
+| both, DNg100 400 Hz | 8.58 | 70 | 0.00 | 28.6 | -0.46 | flat |
+
+- **no ring** (the loop cells' autocorrelations within +-0.04 at 40 and 70 ms in every arm), so true sizes alone do not do in the LIF what
+  they did in their rate model.
+- **but with their scaling at their weight the tibia flexors fire, 12.4 Hz per cell, from 0.00 in every arm for two days,** the extensors
+  at 9.9, the antagonist correlation the most negative on the row (-0.50): the size principle with real volumes (small cells excitable,
+  large cells hard to drive: Azevedo 2020's rest and input resistance by class, Lesser 2024's weights by size) wakes the swing side of the
+  knee, which no dose, population, reflex or engine term managed. the sizes are measured (their table), the scaling is their published
+  form, and 0.275 is Shiu's constant. **the first swing muscles on, from physiology, in the cord.** no rhythm in them yet.
