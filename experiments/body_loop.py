@@ -27,6 +27,7 @@ from flygym import Simulation
 
 ap = argparse.ArgumentParser()
 ap.add_argument("--log-x", default="", help="extra cell types logged at 1 ms into the cells file as x_ms / x_type / x_bodyId (09-23, the movement-senses read); off by default, no effect on the run")
+ap.add_argument("--freeze-mn", type=float, default=0.0, help="hold every muscle activation (torque and grip) at its value at this many seconds, and stop feeding spikes into it (09-23, the control for the per-leg five-hertz bouts: the cord out of the loop); 0 = off")
 ap.add_argument("--out", required=True); ap.add_argument("--seconds", type=float, default=20.0); ap.add_argument("--seed", type=int, default=11)
 ap.add_argument("--wsyn-m", type=float, default=0.185); ap.add_argument("--noise", type=float, default=0.15)
 ap.add_argument("--walk", type=float, default=100.0); ap.add_argument("--walk-dn", default="DNg100"); ap.add_argument("--std", default="off"); ap.add_argument("--mirror", default="off")
@@ -296,7 +297,12 @@ for ms in range(n_ms):
     if XMS is not None and idx.size:
         xh = xpos[idx]; xh = xh[xh >= 0]
         if xh.size: np.add.at(XMS[ms], xh, 1)
-    if idx.size:
+    if args.freeze_mn > 0 and ms >= int(args.freeze_mn * 1000):
+        if ms == int(args.freeze_mn * 1000): _hold_t = torque[:, ms].copy(); _hold_g = {l: float(grip[l][ms]) for l in LEG6}; print(f"muscles frozen at {args.freeze_mn:.1f} s: torque {np.round(np.abs(_hold_t).max(), 3)} max, grip {np.round(list(_hold_g.values()), 2)}")
+        torque[:, ms] = _hold_t
+        for l in LEG6: grip[l][ms] = _hold_g[l]
+        hit = np.zeros(0, np.int64)
+    elif idx.size:
         hit = idx[np.isin(idx, LEGMN)]
         for j in hit:
             j = int(j); spk[ms // 10, lpos[j]] += 1

@@ -82,7 +82,9 @@ has, which is item 7 and needs a source. nothing else on the list has a paper be
 
 **the lift read (09-23 afternoon):** done. lifts come in five-hertz bouts per leg, uncoupled across legs, present in every arm with an
 unloaded leg including rest and the old fit; the hooks lead each lift because the leg is already moving, the subnet fires with the
-unloading. neural or mechanical is undecided until `--freeze-mn` exists. no gait.
+unloading. **neural** (09-23, `--freeze-mn 15`: muscles frozen, every leg stops; the cord in the loop, the bouts continue). a per-leg reflex
+oscillation at five hertz through the leg's senses, the first rhythm the connectome makes with its body and no fitted term. uncoupled
+across legs; no gait yet. the coupling between legs is now the question.
 
 ## working habits
 

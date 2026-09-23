@@ -6620,3 +6620,12 @@ smoothed contact force at or under 0.05 for 50 ms or more)
   the control this read needs and the body script cannot yet run (`--freeze-mn S`: hold every muscle activation at its value at S seconds).
   until that control is run, the bouts are a per-leg oscillation of unknown origin at the frequency of a slow step, uncoupled across legs,
   and the record claims no more.
+
+**the control (11:29 PDT; `--freeze-mn 15` in `experiments/body_loop.py`: every muscle activation and grip held at its value at 15 s and no
+spike fed into it afterwards; the same arm and seed as `lift_s11`):** before the freeze the two runs are the same run (lf 8 lifts, lm 37
+with 184 ms gaps at cv 0.34, rm 20 at 222 ms / 0.22, in both). **after it, nothing: 0 lifts on every leg, 0 % of the time off the ground,
+thorax speed 0.00 mm/s for fifteen seconds,** where the unfrozen run goes on at lf 22 / lm 35 / rm 49 lifts with the same 170-200 ms
+gaps. a frozen muscle set on springs and pads holds a still posture; the bouts need the cord. **so the per-leg five hertz is neural: a
+reflex oscillation through the leg's own senses and the cord, on a body, with no term fitted to it.** what it is not: coupled across
+legs (above), a gait, or a rhythm the cord makes alone (no cord arm has ever shown it; it needs the leg to move). what it is: the first
+rhythm in this project that the connectome makes with its body and nothing else. one seed; the second and the subnet's part are running.
