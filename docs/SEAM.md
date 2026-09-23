@@ -6568,3 +6568,24 @@ neuron class, from Azevedo's measurements, in the muscle map. until then the sma
 current on the body is running for completeness; `body_loop.py` takes `--std TYPES` without u / tau overrides.)
 
 **the pair's current on the body (10:55 PDT; plateaus + depression on the winners and the releasers, the full stack, DNg100 100 Hz, labels swapped):** he stands (0 % on the floor, the feet carrying 10.7 uN), leg MNs 1.13 Hz, extensors 1.41, flexors 0.36 (no small-flexor current in this arm); 8 lifts of the left front foot in 18 s, the coxa forward on all of them (-10 deg). the pair's cells are not in the body's default log; on the cord they co-fire (above). for completeness: a standing fly with a few forward lifts, as before.
+
+**withdrawn in place (11:02 PDT): "the tone is right and the force is wrong."** `experiments/body_loop.py` already weights each motor
+neuron's force by its size (`f_w`, from its input synapses): the small tibia flexors pulled at 0.003-0.06 of a fast cell before any change,
+0.13-0.37 nN.m of flexion torque per leg at 35 Hz; the 42 nN.m is the gain, not what a slow spike delivers. **and no knee sits flexed in
+any arm:** the left front foot's time in the air comes from another joint, the left middle knee's 43 deg was EXTENSION by its extensor (a
+-60 deg swing in the as-printed arm), and by the pooled thirds the left front and left middle legs have no slow flexor at all. the 55 %
+on the floor is one seed. the explanation was mine and it was wrong; the agent checked the torque and the knees before building.
+
+**force per spike, sourced (agent; `docs/physiology/force_per_spike.md`; `--mn-force uniform|azevedo` in `experiments/body_loop.py`,
+default bit for bit; commit bb5ce64):** Azevedo et al. 2020 is **eLife** 9:e56754 (not Nature, as `knobs.md` and the 09-22 entries have it;
+corrected here) and measured the **tibia flexor only**, female front leg, force on a probe at the tibia tip: fast (1 cell) ~10 uN and ~50 um
+per spike; intermediate (2-5 cells) ~1 uN, ~5 um; slow (8-9 cells) under 0.1 uN (fitted slope 0.013 uN), ~1 um, no twitch at all, force still
+rising at 500 ms, and blocking their input drops the resting force by ~1.5 uN. ratios 1 : 0.1 : 0.0013. two spikes give 1.6x one; force
+stops growing at ~10 spikes; no fusion series, no tetanic force, no extensor ever measured, no other pool, nothing in NeuroMechFly or
+FlyMimic at the spike-to-force step. with `azevedo` the measured factor replaces the size weight on the 37 tibia flexors by third (the
+thirds label 12 cells fast where the pool has one per leg, a known mismatch), the other 222 mapped cells keep their size weight.
+**the arms (the full stack with the small flexors' current, 20 s, seed 11):** the small third at 34-36 Hz in all four; walk, swapped: 8 %
+on the floor (uniform 55 %), the foot in the air 66 % (uniform 87 %), 11 lifts; walk, as printed: 26 % (30 %); rest: 0 % in both, no lifts,
+the knees at 1-3 deg sd. one seed each; the 55 -> 8 could be chaos on a 0.2 nN.m change. the slow factor may be ten times too low (the
+1.5 uN resting-force drop implies ~10x the fitted slope; bracketed in the doc). so the slow flexors' tone on the body, at either force
+scale, neither holds him nor folds him: the standing is the springs' and the tone is a few hundredths of a nanonewton-metre.
