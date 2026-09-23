@@ -6554,3 +6554,15 @@ missing synapses, with no source yet), or a phasic input that neither side share
 senses (hook / club / campaniform in swing), silent in every cord arm because nothing moves, and driven on the body only by a leg that
 already moves. the campaign's line for today: the switch is not in the premotor pair's intrinsic properties. next: the body with the
 full stack, both labellings, clips; and the movement senses read on the body's own lifts.
+
+**the small flexors' current on the body (10:54 PDT; the full stack: the standing senses, the graded tone, the shunt, `--pic smallflex:0.58:3:3:50`,
+DNg100 100 Hz ramped, 20 s, seed 11, both labellings):** the small third fires **35.3 / 36.3 Hz per cell on the body** (the middle 2.2, the
+large 0.0): Azevedo's slow-flexor rate, on him, in his ordering, in both labellings. and it costs him the stance: 55 % of his weight on the
+floor (swapped) / 30 % (as printed), the left front foot in the air 87 % of the time (swapped; its height's tenth percentile 0.25 mm
+against 0.03 standing), the left middle knee pulled to 43 deg (as printed) from 87-93 in the other arms. **the tone is right and the force
+is wrong:** every motor neuron spike moves the joint by the same 42 nN.m in `body_loop.py` (the gain from Azevedo's FAST tibia extensor
+spike), so thirteen slow cells at 35 Hz pull like thirteen fast ones. in the fly the slow motor neurons' force per spike is a small fraction
+of the fast ones' (Azevedo 2020 measured the tibia's force per spike by type; the size principle is a force principle), and thirty hertz of
+slow tone holds a posture, it does not fold the leg. so the next body change is sourced and on the muscle side: force per spike by motor
+neuron class, from Azevedo's measurements, in the muscle map. until then the small flexors' current stays a cord result. (the pair's
+current on the body is running for completeness; `body_loop.py` takes `--std TYPES` without u / tau overrides.)
