@@ -7405,3 +7405,41 @@ the flexors and extensors do not alternate (xcorr min -0.02 to -0.04). **which i
 a constant sense it holds a posture.** in the fly the claw changes through the step (flexion in stance, extension in late stance and
 swing), which is exactly the phase the listening rig showed the 13A cells following; on the body the claw is the body's. the compound
 arm on the free body and on the listening rig is the test that can close the loop, and it runs next. one seed.
+
+## the muscle scale (16:18 PDT, 09-23; ledger 29; `--hill-force-scale F` in `body_loop.py` / `hill_legs.py`, commit 1bff4fc, the default bit for bit;
+the arithmetic checked first)
+
+**Azevedo's number, reconciled.** one fast spike: 10 uN at the tibia tip x 417 um lever = **4.2 nN.m per spike** at the twitch's peak; the whole
+joint with every unit: 90-100 uN x 417 um = **38-42 nN.m**, the joint's maximum (no frequency series was run, so not a measured tetanus
+either). the torque path's `--gain 42` x f_w x K / 10 gives 4.2 per fast spike at the kernel's peak and 42 for ten summed: the "42" is the
+gain and equals the whole-joint maximum. FlyMimic's tibia flexor: F_max 68.1 uN x 15.24 um moment arm = **1.04 nN.m** at full activation.
+so the ratio is **4x per fast spike and 36-40x maximum to maximum** (full activation IS FlyMimic's maximum, so the like-for-like figure is
+the 40); the option spans 1 to ~40 with 4 marking one fast spike. one caveat kept: the passive force scales with F_max in MuJoCo, so the
+settled pose moves with the scale (0.63-0.76 mm); and a single scale for all fifteen muscles rests on the flexor alone.
+
+| arm (seed 11, the refined puppet at 11.1 Hz, 50 / 25, unless noted) | feet / other / body, uN | z mm (sd) | fwd mm/s | fine swings lf lm lh rf rm rh | clearance um | tripod r within / between | lag |
+|---|---|---|---|---|---|---|---|
+| the kinematic replay | 9.98 / 0 / 0 | 1.34 (0.08) | +10.4 | 110 114 64 108 111 43 | 376-719 (rh 61) | +.17 / -.19 | - |
+| the torque-path puppet | 9.96 / .03 / .05 | 1.18 (0.21) | +1.1 | 129 79 94 157 98 11 | 115-736 | +.01 / -.01 | 25 ms |
+| Hill x1, sourced springs | 10.22 / 0 / 0 | 0.82 (0.01) | +0.1 | 0 everywhere | - | - | - |
+| Hill x4 | 9.11 / .10 / 0 | 0.78 | +0.4 | 11 1 0 24 1 0 | 48-400 | - | - |
+| Hill x6 / x7 | 8.2 / .3 / 0; 7.8 / .3 / 0 | 0.79-0.80 | +1.2; +2.2 | front legs 81-168, middles 18-43, hinds 0-3 | 54-252 | ~0 | 0 ms |
+| **Hill x10, to 18.5 s** | **6.77 / .42 / .01** | 0.84 (0.17) | **+4.4** | **209 110 36 242 105 19** | 158-251 | +.06 / +.08 | **0 ms** |
+| Hill x10, whole run | flips at 19.1 s | | | | | | |
+| Hill x8 | flips at 10.8 s | | | | | | |
+| Hill x20 / x40 | on his back at once / tumbling | | | | | | |
+| stiffness 5, x1 / x4 / x10 | 2.4 / 7.3 / 0; 2.1 / 6.1 / 0; 2.3 / 5.0 / .4 | 0.76-0.85 | +1.5; +9.9; +19.6 | up to 300-400 per leg | 17-630 | ~0 | 5-10 ms | (on his coxae, rowing; not a gait) |
+| Hill x1, the recorded population | 10.04 / 0 / 0 | 0.81 (0.01) | +0.1 | 0 | - | - | - |
+| **Hill x10, the recorded population, 30 s** | **7.34 / .76 / 0** | 0.73 (0.07) | +1.8 | 29 110 0 25 162 0 | 222-476 | +.35 / +.40 | - |
+
+- **the Hill muscles at ten times FlyMimic's forces carry an 11 Hz step on the sourced springs:** all six legs swing near the script's
+  frequency (the front legs ~12 per second), the foot follows the script with no lag (the torque path's 25 ms), and he stands on his feet
+  for 17 s, then flips. x6-x7 stand the whole run and step the front legs. so the muscle ceiling of the afternoon (a fused contraction at 11
+  Hz) is lifted by a scale that sits inside the two sources' span, and ledger 29 has its number: **x10, with x8 falling at 11 s and x20 at
+  once.** the connectome's recorded population through the same muscles at x10: stands 30 s, the middle legs step (110 / 162), the
+  torque path's pattern back through real muscle dynamics.
+- **and no Hill arm walks like the fly:** no tripod in any (r within ~ r between), a crouch at 0.73-0.85 mm against the replay's 1.34,
+  swings of 12-19 ms against 36-42, clearance 150-250 um against 400-700, and the speed at x4-x7 is mostly the feet slipping. stiffness 5
+  never stands him; he rows on his coxae at 10-20 mm/s, which is not a gait.
+- clips: `hill_best.mp4`, `hill_best_slow.mp4` (x10, sourced springs: upright at 10 s, on his back at 19.6). one seed; the Hill muscles
+  carry no +-60 limit and pass it from x7; the passive scaling caveat above.
