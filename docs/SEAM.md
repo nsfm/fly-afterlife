@@ -6589,3 +6589,4 @@ on the floor (uniform 55 %), the foot in the air 66 % (uniform 87 %), 11 lifts; 
 the knees at 1-3 deg sd. one seed each; the 55 -> 8 could be chaos on a 0.2 nN.m change. the slow factor may be ten times too low (the
 1.5 uN resting-force drop implies ~10x the fitted slope; bracketed in the doc). so the slow flexors' tone on the body, at either force
 scale, neither holds him nor folds him: the standing is the springs' and the tone is a few hundredths of a nanonewton-metre.
+  (correction to the correction: `knobs.md` already cites eLife 9:e56754; the 'Nature' was in my brief to the agent, not in the doc.)
