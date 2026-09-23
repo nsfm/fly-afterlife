@@ -7325,3 +7325,25 @@ fly's steps moving the legs, and (ii) the free-running body; seed 11, 30 s):**
 - what this is: a labelled gain on four cells the file times correctly, and under it the lift side moves, the phase holds, and the
   hold side does not yield: the flexors and IN13A002 sit where they were, the extensors rise, and the body sinks. a step needs the hold
   side to let go in the swing, which is the 13A cells' inhibition released, and the gain on the excitors does not touch that.
+
+**the gain's seeds (15:52 PDT; x5 on seeds 12 / 13 and x3 on seed 11, the free-running body):**
+
+| arm | feet / other / body, uN | lifts lf lm lh rf rm rh | lf-rf both-off vs independence | lm-rm |
+|---|---|---|---|---|
+| x5, seed 11 | 7.6 / 1.8 / 0.3 | 32 26 1 30 52 42 | 0.8 vs 2.9 % (x0.27) | 11.4 vs 11.4 |
+| x5, seed 12 | 5.5 / 2.2 / 2.1 | 17 44 1 37 21 50 | 17.7 vs 9.2 % (x1.9) | 39.3 vs 39.3 |
+| x5, seed 13 | 0.6 / 0.2 / **9.3 (he falls)** | 2 8 1 4 6 4 | - | - |
+| x3, seed 11 | 9.7 / 0.3 / 0.0 | 3 14 11 9 110 3 | 0.5 vs 0.2 | 7.5 vs 7.2 |
+
+- **the right hind's lifts replicate** (42 and 50 on the two seeds that stay up), and the front and both middles lift on both. the lift side
+  wakes on both sides of the body under x5, which no arm before it did.
+- **the front-pair exclusion does not replicate** (x0.27, then x1.9, then a fall): withdrawn before it was claimed, like the middle pair's.
+- **x5 costs the posture and on one seed of three it costs the fly:** feet 7.6 -> 5.5 -> 0.6 uN, seed 13 on his body at 9.3 uN. x3 keeps
+  him up (9.7 on the feet) and lifts only the right middle leg (110 lifts), which is the lean's leg. so the gain that wakes the lift side
+  is the gain that drops him, because the same excitors drive the extensors and remotors, and nothing releases the hold side in a
+  swing. a step is a release as much as a lift; the file times the release (the 13A lock) and never makes it.
+- **row 28's honest summary:** a x5 gain on four phase-correct excitors makes the lift side fire in phase on a moving leg and lift five legs
+  on a free one, and cannot be stood on: the hold side does not yield, the posture goes with the lift, and the legs do not coordinate.
+  the next named thing is on the hold side: what turns the 13A cells' stance lock into a swing silence (a swing-phase inhibition of the
+  13A inhibitors: the 13B cells, which Syed 2026 and the file both put as the 13A cells' opponents, and which the listening arm found
+  unlocked). that is a read first, on the listening rig: do any 13B cells lock to the imposed swing, and what drives them.
