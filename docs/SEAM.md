@@ -5778,3 +5778,26 @@ IN16B036, with the loop at x3 and DNg100 at 400 Hz; the cord, 30 s, seed 11, log
 - the delay is a stand-in with a source and no measurement: axonal conduction in the cord is real, intersegmental premotor cells are
   long, and no per-cell delay is published (E); the loop's 12 ms is chosen for the band, which is a fit to physiology (the step frequency of
   a headless fly), not to the gait. the ring's own weight (x3 on 44 synapses) is the other stand-in, labelled since 18:40.
+
+- **seeds (19:09 PDT):** the alternation replicates: left front promotor vs remotor -0.38 / -0.39 / -0.37 at zero lag and +0.34 / +0.34 / +0.31 at half a period, 8.8 Hz on seeds 10, 12 and 11; the right front -0.29 / -0.29 / -0.24. the promotor autocorrelation at 70 ms -0.51 / -0.50 / -0.49. three of three.
+
+## a leg steps (19:20 PDT; the slowed ring on the body: flygym's springs, the pads, the loop closed, 20 s, seed 11)
+
+| arm | body on the floor (% of his weight) | lf coxa pitch (sd, peak, autocorr 60 / 110 ms) | lf tibia pitch | rf coxa pitch | foot lifts > 50 ms (lf lm lh rf rm rh) |
+|---|---|---|---|---|---|
+| the ring at 12 ms (10 Hz), claw labels as the table has them | 57 | 16.9 deg, 2.1 Hz x230, -0.10 / +0.29 | 2.5 Hz | 2.8 Hz | 4 69 29 46 6 68 |
+| the ring at 8 ms (14 Hz) | 53 | 16.2, 11.1 Hz x101 | 2.6 Hz | 2.9 Hz | 3 50 27 44 10 58 |
+| **the ring at 12 ms, the claw labels swapped** (SNpp51 extension-tuned: the review's reading) | 94 | **18.6, 8.8 Hz x558, -0.36 / +0.49** | **8.8 Hz x1246** | 8.8 Hz x174 | **102** 67 3 1 78 4 |
+| the ring at 12 ms, measured springs, the tonus current | 96 | 38.6, 2.6 Hz | | | 89 107 119 67 53 87 |
+
+- **with the claw labels swapped, the left front leg steps.** its coxa pitch swings 18.6 deg (sd) at 8.8 Hz with an autocorrelation trough
+  at 60 ms and peak at 110 (a clean cycle), its tibia at the same 8.8 Hz (x1246 the median), and its foot leaves the ground 102 times in
+  18 s. the right front coxa carries the same 8.8 Hz weaker. the rest of him lies on his belly (94 % of his weight on the floor; the
+  400 Hz dose that lights the ring also drives the extensors to 21-40 Hz and folds him), and the mid legs tap as before. so: **one leg
+  stepping at the frequency a headless fly steps, on a fly who is lying down.** `world/body/loop/dly12_springs_flex.mp4`.
+- the swap matters, and it is the review's F1 in action: with SNpp51 taken as the extension-tuned claw, an extended knee feeds the
+  flexors' premotor cell (IN21A004, the 577 synapses) and the position loop is negative feedback at the knee; with the table's labels
+  it is positive and the ring is filtered out (2.1 Hz wander). the labels are unsourced either way; the swapped assignment is the one
+  under which the wiring's own reflex sign comes out as life has it, which is a reason but not a measurement.
+- the tibia flexors themselves still fire at 0.28 Hz; the knee's rhythm at 8.8 Hz is the extensors modulated by the ring against the
+  springs. the stance-side rhythm with a swing-side reflex, not yet a swing muscle.
