@@ -6231,3 +6231,13 @@ flexors 1.01, extensors 0.0. seeds and the swapped labelling are running. what t
 (flexed tibia -> claw_51; feet on the ground -> bristles) driven at rates nobody has recorded in an adult leg (ledger row 7), instead of a
 floor that drove the vibration cells. what it is not: Azevedo's 30 Hz, or a step. and the reading of "which claw class is extension-tuned"
 (ledger row 1) now has a physiological handle: under the labels as printed, the flexed standing leg wakes the flexion side.
+
+**replicated (23:20 PDT):** the flexion claw at 40 + the six tactile types at 20 under the command, seeds 11 / 12 / 13: tibia flexors 2.30 /
+2.26 / 2.37 Hz per cell, extensors 2.8 / 2.8 / 2.8, IN13A006 21.4 / 21.1 / 20.8, IN03A004 12.7 / 12.8 / 13.0, IN13A002 0 on all three. **three
+of three.** the same senses at rest (no command): flexors 4.59 Hz, extensors 0.0, IN13A006 25.1, IN03A004 17.8, IN21A004 2.1: **the flexion
+side is livelier without the walking neuron than with it,** because DNg100 drives IN12B003 / IN19A004 (the command's own inhibitors of the
+flexion side, unchanged by the floor). the claw classes swapped (claw_50 at 40 + tactile): IN13A002 85.5 Hz, extensors 13.8, flexors 0.00,
+IN13A006 0.0. the labelling picks the side, wholesale. the antagonist column reads -0.27 on this arm (0.00 to -0.19 on every earlier arm);
+the flexor-extensor lag structure is read above. Azevedo's 30 Hz at rest for the slow flexors is still six times away, and the 95 % of the
+flexors' central excitation is still silent; what has changed is that the flexion side of the file is now awake enough to be studied.
+  (the lag read: flexor-extensor cross-correlation min -0.15 at +10 ms, max +0.08 at -60, no lobe in the flexors' autocorrelation (-0.04 / 0.00 / -0.04 at 30 / 70 / 140 ms); the flexors carry the subnet's line at 19.9 Hz x11. no alternation: the -0.27 is the flexors and extensors sharing the line out of phase at one lag, not a rhythm of their own.)
