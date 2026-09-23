@@ -6507,3 +6507,26 @@ IN13A006 / 015, IN13B019, AN06B002; seed 11, 30 s)
 - the `--pic` parser takes one group (TYPES:G:VHALF:K:TAU) and `smallflex` does not combine with named types, so the plateau arms on the
   pair run without the small flexors' current (their tone is the graded rest + noise, 1.2 Hz); the switch question does not need it.
   plateau on the releasers, on the winners, on both, both + fatigue on both (u 0.3 / 300 and u 0.5 / 500), fatigue on both alone: running.
+
+**plateaus on the pair (10:49 PDT; `--pic` at the medium borrowed size (g 0.58, v_half +3, k 3, tau 50) on the releasers, the winners, both;
+both + fatigue on both (u 0.3 / 300 ms; u 0.5 / 500); fatigue on both alone; with the shunt; seed 11):**
+
+| arm | IN13A002 | IN13A003 | IN13B019 | IN13A006 | IN03A004 | extensors | r(13A002, 13B019) |
+|---|---|---|---|---|---|---|---|
+| control | 0.0 | 7.1 | 0.1 | 10.1 | 7.4 | 1.8 | - |
+| plateau on the releasers | 0.0 | 7.4 | **23.3** | 27.9 | 9.5 | 0.4 | - |
+| plateau on the winners | **12.3** | 20.1 | 0.0 | 6.9 | 5.7 | 2.2 | -0.01 |
+| plateau on both | 5.9 | 20.0 | 21.7 | 21.1 | 8.0 | 0.5 | -0.06 |
+| fatigue on both alone | 0.0 | 11.9 | 0.2 | 12.7 | 9.5 | 1.6 | - |
+| plateau + fatigue on both (u 0.3 / 300) | 8.2 | 32.1 | 23.7 | 32.5 | 10.3 | 1.0 | -0.10 |
+| plateau + fatigue on both (u 0.5 / 500) | 10.3 | 35.0 | 23.8 | 35.8 | 10.4 | 1.5 | -0.05 |
+
+a plateau on one side wakes that side and quiets the other (the releasers up: IN13A002 stays 0, the extensors 1.8 -> 0.4; the winners up:
+IN13B019 0, IN13A006 halves); **a plateau on both sides wakes both, and they fire together** (IN13A002 6-10 Hz beside IN13B019 22-24), with
+fatigue on both making them fire more, not alternate: r -0.05 to -0.10 at zero lag, no lobe in the promotors (autocorrelation -0.05 / 0 / 0
+and -0.09 / 0 / 0.02 at 30 / 70 / 140 ms; lf promotor and remotor 3.9 / 3.6 and 4.6 / 4.6 Hz, xcorr min -0.04 / -0.09). the mutual inhibition
+is reciprocal in the file (2,279 onto IN13B019 from IN13A002; 1,500-1,900 back onto the winners from each releaser type), but under the
+shunt a cell held up by its own current is shunted, not silenced, so both sides sit near their plateaus and neither wins. **the classic
+recipe (plateaus + fatigue on a reciprocally inhibiting pair) does not alternate here under shunting inhibition.** the same arms with
+current-based inhibition, and with slow fatigue (tau 2 s), and the lag structure out to +-2 s, are running: if there is a slow
+alternation the 10 ms zero-lag read would miss it.
