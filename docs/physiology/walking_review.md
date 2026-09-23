@@ -324,3 +324,133 @@ Sapkal et al. 2026 bioRxiv 10.64898/2026.04.29.721658 (v1 full text, by fetch to
 Babski et al. 2024 *Heliyon* (PMC11064449); Howard et al. 2019 *Curr Biol* 29:4218; Matsunaga et al. 2017 *J Neurosci* 37:2045;
 Ammer et al. 2022 *Curr Biol* (abstract level); Pugliese et al. 2026 (re-read for the model equations and the LIF). DOIs of the stick
 insect papers checked on Crossref. numbers marked as from the fetch tool were not checked against figures.
+
+## second pass (2026-09-22 evening; against `SEAM.md` "the literature review" to the end and `rate_model_control.md`)
+
+new source read tonight: **Pugliese et al.'s code and data** (github.com/smpuglie/Pugliese_cpg_2025; simulation data on Zenodo 22260924).
+their LIF (`src/lif_model/lif_dynamics.py`) and its input (`notebooks/Extended Data Figure 4.ipynb`) were run here, unmodified and in
+variants (scratchpad, not in the project).
+
+### A. what their spiking version of the circuit actually is, and what frequency it gives
+
+- **the circuit simulated:** five cells from one hemisegment (MANC T1L, their 2024-11 table): BDN2 (DNg100), IN17A001 (E1), IN15A001
+  (E2; INXXX466 in current naming), IN16B007 (I1; IN16B036 now), one tergopleural promotor MN. per-cell synapse counts, unnormalised:
+  DN -> E1 187, E1 -> E2 539, **E2 -> I1 71** (the weak edge, as in ours), I1 -| E1 531. nothing else: no surround.
+- **their constants:** rest and reset -52 mV, threshold -45 (7 mV), tau_m 20 ms, tau_syn 5 ms, **0.275 mV per synapse (x1.49 ours)**,
+  delay 1.8 ms, refractory 2.2 ms, dt 10 us. the DN is driven by a constant 0.15 nA into 10 nS (15 mV above rest); it fires 68 Hz.
+- **one non-standard line:** a cell's accumulated synaptic current is zeroed at each of its own spikes (`synaptic_input[current_spikes]
+  = 0`). our engine does not do this. it matters at 0.275 (without it E1 goes tonic and only E2 bursts, at 19 Hz); at 0.185 without it
+  the loop rings at 13.5 Hz again.
+- **measured here (I1 fires one spike per cycle, so its interval is the period):**
+
+  | their LIF, isolated loop | cycle |
+  |---|---|
+  | as published | **13.5 Hz** (cv 0.00); E1 41 Hz in bursts of 3, I1 13 Hz |
+  | I1 -| E1 x0.5 / x1.5 / x2 | 16.9 / 11.3 / 11.3 Hz |
+  | DN -> E1 x2 / x3; DN current x2 | 16.9 / 16.9; 12.7 Hz |
+  | tau_syn 10 / 20 ms | 16.9 / 18.8 Hz |
+  | delay 0.8 ms (for 1.8) | 13.5 Hz; delay 4 ms breaks the burst structure (tonic) |
+  | **every loop synapse x3** | **26.1 Hz** (cv 0.51) |
+  | loop x3, DN current x2.7 | 45 Hz, irregular |
+
+- so **(question 2): their spiking circuit rings at ~13.5 Hz with the standard 1.8 ms delay**, in the band with no delay stand-in. its
+  period is set by I1's single-spike IPSP (531 synapses x 0.275 mV, a ~146 mV-equivalent kick filtered by tau_syn and tau_m) and E1's
+  recovery from it, not by conduction. **at x3 their own LIF rings at 26 Hz, the row's 25.0 Hz.** the row's fast ring is what this
+  circuit does at triple gain, and the 12 ms delay is compensating for the gain, not for anything missing from the loop's timing.
+  frequency falls with the inhibitory edge's strength and rises with total loop gain and drive. (their figure's frequency is not
+  stated in the text; these numbers are from running their code.)
+- **their full network is sparse.** in their published DNg100 run (MANC, 1,024 replicates; ED Fig. 5 notebook output) the number of
+  active motor neurons per replicate is 0-7, mode 3 (438 of 1,024 replicates). "the full network oscillates" means a handful of
+  MNs carrying the loop while the rest of the front-leg network sits near silent. our cord at 0.185 mV has 52+ leg MNs active and the
+  rate-model control on our file runs away with half the cells pinned. **the regimes differ before any delay or gain is added**; the
+  question for the row is why ours is dense where theirs is sparse (the cut, the size proxy, the DN inputs), not how to force the
+  loop over the surround.
+
+### B. question 1: are the two stand-ins physiology fits?
+
+**the loop weight (x3-x8).** their LIF weight is x1.49; their rate model's b = 0.03 with "b_ACh 0.045 still viable, larger
+deviations runaway or insufficient recruitment". nothing published supports x3, and x8 is five times the published LIF weight on 44
+synapses chosen because they are the loop. it is a gain fit to make one named circuit win over its surround. defensible only as a
+labelled diagnostic ("the loop rings if it dominates"), which §A shows is also true of their LIF; not as physiology.
+
+**the 12 ms per-cell delay.** no conduction delay or axon length is published for any fly VNC premotor type. what exists:
+- giant fibre, ~7 um axon: **1.15 m/s at 1 h post-eclosion, 2.07 m/s at 24 h** (Kadas, Duch & Consoulas 2019, *eNeuro*
+  6:ENEURO.0181-19.2019, DOI 10.1523/ENEURO.0181-19.2019) (M).
+- a femur bristle afferent: 3 ms over ~850 um, 0.28 m/s (Agrawal 2020) (M).
+- unmyelinated velocity scales ~ sqrt(diameter): a 0.2-0.5 um premotor axon at ~0.3-0.5 m/s (E). the adult VNC is under 1 mm long
+  and the three loop cells are, by their MANC names, leg-neuropil interneurons (IN17A001, IN16B036; INXXX466's hemilineage is
+  unassigned); their axon path lengths are not tabulated here, and 0.1-0.6 mm (E) gives **0.2-2 ms per cell**. the engine already has 1.8 ms.
+- **a 12 ms conduction delay is 5-50x anything axonal (E) and has no source.** it is a stand-in for slowness the LIF lacks at high
+  drive: Pugliese's rate model has tau 20 ms per cell (three cells ~60 ms of integration round the loop); graded or slow synapses
+  would do the same. the honest label: "a lumped per-cell latency standing in for integration time, chosen to put the ring in the
+  band". SEAM's "a fit to physiology (the step frequency of a headless fly), not to the gait" is half right: it is a fit to a target
+  frequency, which is a behavioural number.
+- **the better-sourced route (E, ranked):** (1) run the loop at x1.0-1.5 and find what in the surround stops it (the rate-model
+  control names IN19A002 / IN19A005 / IN19A008 / IN26X001 inhibiting the loop's inhibitors); their LIF at x1.49 rings at 13.5 Hz with
+  no delay. (2) if a slowing term is needed, a longer tau_syn on the loop's inhibitory synapse is at least a synaptic parameter (fly
+  GluCl / GABA-A IPSC decay is not tabulated for these cells, (E)) and in their LIF tau_syn 10-20 ms moves the ring only to 17-19 Hz,
+  so it is not a frequency knob either. (3) keep the delay as a labelled diagnostic, not a default.
+
+### C. question 3: the claw labels
+
+nothing new settles SNpp50 / SNpp51 tuning. no paper maps MANC / MaleCNS claw types to extension / flexion; Lee 2025 identify claw
+subtypes morphologically in FANC only. tonight's check in MaleCNS (>= 5 synapses): **direct** input to tibia MNs, SNpp50 ext 408 /
+flex 49, SNpp51 flex 329 / ext 0, as in §6; a crude **disynaptic** sum (signed, each intermediate normalised by its output) is mixed
+(SNpp50 net toward the flexors, SNpp51 toward both), so the argument rests on the monosynaptic sign plus Marin 2024's effective
+connectivity (SNpp50 "activates tibia extensor directly and via two cholinergic serial types"). with the Lee 2025 rule that still
+reads SNpp50 = flexion-sensing, and 13B targeting still reads the other way. **the stepping arm exists only under the swapped labels**
+(unswapped: 2.1 Hz wander), so an unsourced label choice is now load-bearing for the headline. both labellings should be reported
+beside every body result until a FANC-MaleCNS match (the claw axons' projection pattern; Mamiya 2023's position map) decides it.
+
+### D. question 4: frequency and the other legs
+
+- **frequency:** Sapkal 2026's ~11 Hz is DNg100 **air-stepping** in headless flies (the fetch-tool extraction; figure not checked);
+  on the ball stepping is slower, with long stance. free walking spans ~5-12.5 Hz (DeAngelis et al. 2019), ~16 Hz at top speed
+  (Mendes et al. 2013). 9 Hz is in the range. but **the match is not independent evidence**: the delay was chosen to put the ring in
+  the band, so 9 Hz agreeing with 11 is the fit returning its target. the independent test is the frequency's dependence on the
+  command: Pugliese (rate) and the animal both speed up with DNg100 drive; in their LIF the cycle barely moves with drive (12.7-16.9
+  Hz for 1-3x). does the row's ring speed up with the dose at fixed delay and gain?
+- **the other legs.** what the literature says interleg alternation needs: in the animal, nothing from the legs (Sapkal 2026:
+  left-right antiphase on every pair under DNg100 in air and in stumps; candidate paths **19B commissural -> 19A local** for left-right
+  and **19A intersegmental -> 19A local** for ipsilateral neighbours). in Pugliese's model, disynaptic left-right links were
+  "insufficient to couple the phase". nobody has shown a model that couples them. **the honest next target is not a better front
+  leg; it is six loops.** there is one loop per hemineuromere (6 cells per type, §8 D-check). first: does each of the six ring under
+  the same arm, at what frequency each, and what are their pairwise phases, before any body? if all six ring, their phase relations
+  (in-phase, antiphase, drifting) are the first test of the 19A / 19B coupling, a prediction Sapkal's data can falsify. if only the
+  front loop rings, the reason (per-segment loop weights, surround, DN reach: DNg100 -> IN17A001 per segment) is the next table
+  query.
+- **the swing side is still empty.** a step needs trochanter levation and tibia flexion in swing; the tibia flexors and trochanter
+  levators are 0.0 Hz in every leg under the ring. the "step" is coxa promotor / remotor alternation plus the springs and the pads.
+  in Pugliese's model the tibia flexors were silent too, so this is a shared gap, not a regression, but it bounds what "steps" means.
+
+### E. question 5: claims in the record that go past the sources
+
+1. "**from the published loop at the published weight** with a conduction delay" (SEAM 19:07): the published LIF weight is x1.49; the
+   arm is x3 (x8 in the standing arm). drop "at the published weight".
+2. "Pugliese 2026's result ... **reproduced in the spiking engine**": theirs is 13.5 Hz at x1.49 with no added delay, isolated; ours
+   needs x3, 400 Hz drive and a 12 ms delay, embedded. say "a coxa alternation at the band frequency with two labelled stand-ins".
+3. "**at the frequency a headless fly steps**" (19:20, 19:39): circular while the delay is fitted to that band (§D).
+4. "the rhythm generator **the field found**": two preprints, both calling the circuit putative; neither shows necessity in the animal.
+5. "'the slow units are not in the file' **was the engine, not the map**. withdrawn": the review said "at least partly", and the
+   size-scaled excitability arm then failed at 0.185 mV. the accurate form: "the resting-potential data say small MNs need little input;
+   whether this file's small MNs are the slow units is unresolved."
+6. "a leg steps ... **protraction in the air, three seeds of three**": true of the left front coxa on a body held by stiff springs and
+   pads; the foot touches the ground 12 % of the time in the 400 Hz arm (the ground fraction of the x8 arm is not given); swing muscles
+   silent. "the left front coxa alternates at 9 Hz and the foot lifts in phase with protraction, on springs" is what the data carry.
+7. "the swapped claw labels, **the review's reading**": the review said the labels are uncertain and the indicators disagree (§6, §C).
+8. "Sapkal 2026: ~11 Hz" everywhere: air-stepping, extracted by a fetch tool, figure not checked. quote it with the condition.
+9. "the two engines agree on where the problem is: not the loop, the balance around it": fair, and it is the most useful sentence of
+   the evening; add that Pugliese's own network is sparse (2-4 MNs active) where ours is dense, which the rate control did not
+   reproduce.
+
+### F. revised ranking (replaces §8's items 3-5 for tonight's state)
+
+1. **six loops, logged together** under the stepping arm and under x1.49: per-segment ring frequency and pairwise phase. no engine change.
+2. **why our cord is dense where theirs is sparse:** run their rate code (the repo is public; `vnc_sim.py`) on their own MANC T1 table
+   (in `data/manc t1 connectome data/`) and on ours through the same code. that separates our cut / size proxy / signs from their
+   pipeline, which `rate_model_control.md` could not.
+3. **the loop at x1.49 with its surround trimmed by named cells** (IN19A002, IN19A005, IN19A008, IN26X001, IN09A002) one at a time, as
+   diagnostics: which single surround cell, removed, lets the loop ring at the published weight. that names the balance.
+4. **the frequency-vs-dose curve** at fixed gain and delay (a rhythm generator the animal uses speeds up with DNg100; Sapkal: DNg97
+   co-activation speeds it further).
+5. the claw labels reported both ways beside every body result.

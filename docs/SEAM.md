@@ -5857,3 +5857,33 @@ loop closed, 20 s, seed 11):**
   synapse delivered 7.57 instead of 15.15. **every `--std` arm in this record ran that way**, including the run of record's `--std pair`
   (u 0.08: the pair's synapses at 0.92 of nominal). tonight's stepping arm has depression off and stands. fixed below with its oracle; the
   run of record's pair to be re-measured.
+
+## the literature reviewer's second pass (19:58 PDT; `docs/physiology/walking_review.md` "## second pass"; the reviewer ran Pugliese's own
+code, github.com/smpuglie/Pugliese_cpg_2025)
+
+- **their spiking loop rings at ~13.5 Hz with no added delay:** five isolated cells at their weight 0.275 mV (x1.49 ours) and the usual
+  1.8 ms delay; the period is set by I1's single large inhibitory kick onto E1 and E1's recovery, not by conduction time. **at x3 their own
+  model rings at 26 Hz**, the row's 25.0. so the fast ring is what this circuit does at triple gain, and **the 12 ms delay made up for the
+  gain, not for something missing from the loop.**
+- **neither stand-in is a physiology fit, and the record called them that (18:40, 19:07): corrected in place.** nothing published supports
+  x3 or x8 (x8 is five times their spiking weight); no conduction delay is published for any fly premotor cell (the giant fibre conducts at
+  1.15-2.07 m/s, Kadas 2019; scaled to thin premotor axons, 0.2-2 ms (E)). **the 12 ms delay is a frequency fit with no source; the loop
+  weight is a gain fit beyond the published value.** both stay in the record as the labelled fits they are.
+- **their full network is quiet, ours is busy:** 0-7 motor neurons active per replicate in their DNg100 runs (most often 3); ours 52 and
+  up, and the rate model runs away on our file. **why ours is dense is the question**, not how to push the loop past its surround.
+- **the claw labels:** nothing new settles them; the direct wiring supports the swap, the two-synapse effects are mixed; every body result
+  is to be reported under both labellings (the second-pass code review found the labels immaterial to the record arm, which helps).
+- **"9 Hz, the frequency a headless fly steps" is circular:** the delay was chosen to land there, and Sapkal's ~11 Hz is air-stepping. the
+  independent test: does the ring speed up with the DNg100 dose, as the fly's stepping does and Pugliese's rate model does. (in this record,
+  the x3 loop at 100 / 200 / 400 Hz rang at 22 / 24 / 25 Hz: barely.)
+- **the other legs:** Sapkal names 19B commissural -> 19A for left-right alternation and 19A intersegmental -> 19A for neighbouring legs on
+  one side; no model has coupled the legs yet. the next target: all six loops (one per hemineuromere) logged together, their phases.
+- **claims in this record that overreach their sources, corrected here** (the reviewer's softer wording adopted): "at the published weight"
+  -> at three to eight times it; "Pugliese's result reproduced in the spiking engine" -> a ring of the same cells in this engine at a gain
+  their model also rings at; "the frequency a headless fly steps" -> a chosen frequency; "the field found" the generator -> two preprints
+  calling the circuit putative; "the slow units were the engine, not the map" -> at least partly, and size scaling then failed; **"a leg
+  steps" -> a front coxa alternating on stiff springs with the swing muscles silent**; "the review's reading" for the label swap -> the
+  labels are uncertain.
+- **the revised order:** log all six loops; run their rate code on their table and on ours to find why ours is dense; hold the loop at
+  x1.49 and remove named surround cells one at a time (IN19A002 / 005 / 008, IN26X001, IN09A002) to see which lets it ring; measure the
+  ring against the dose; both claw labellings beside every body result.
