@@ -7373,3 +7373,16 @@ tibia flexion 1.0, extension 10.1** on the front leg (the middle and hind legs' 
   are too stiff for muscles that size, and this arm cannot say which. what would: a fly leg's force-frequency curve, or FlyMimic's
   own standing test (its thorax is fixed; it never stood). the torque path stays the path of record; the Hill option stays as built.
 - clips: `hill_puppet_11.mp4` and `_slow.mp4` (a fly standing still while the script runs). one seed.
+
+## the release side, listening (16:09 PDT, 09-23; the 13A and 13B lineages and every inhibitor of the hold side's winners (185 types) logged
+on the listening rig under DNg100 100 Hz with a deaf twin; the same rank read; 31 types readable)
+
+- **the release side has swing-locked, starved cells too:** IN14A008 (0.3 Hz, swing/stance **2.43**, VS 0.35 vs null 0.21, deaf 0.00; 1,754
+  synapses onto the hold side's winners, the second-largest inhibitory input they have), IN13B013 (0.6 Hz, 1.57, VS 0.25 vs 0.21), IN13B006
+  (2.0 Hz, 1.57), IN13B009 (8.3 Hz, 1.29), IN13B004 (12 Hz, 1.24, weak); IN13B010 locks to stance (2.9 Hz, 0.95, VS 0.33). the 13A winners
+  themselves: IN13A002 at 44.7 Hz, IN13A005 22.7, IN13A003 24.1, IN13A004 40.9, IN13A007 47.4, weakly or not locked at this leg
+  assignment. IN13B019, last night's "releaser", 0.6 Hz and unlocked; IN13A006 0.8 Hz, unlocked here.
+- so the hold side's opponents hear the imposed swing the way the flexor excitors do: at a few tenths of a hertz to a few hertz, in the
+  right phase, gone when the cord is deaf. **the release exists in the file, phase-correct, and starved.** the compound arm follows: the
+  four swing-locked releasers' inputs scaled x3 / x5 / x10 beside the lift side's excitors at x3 (the gain that kept him standing), cord
+  first (IN13A002's rate and the levators' and flexors' bursting as the read), then the free body and the listening rig. one seed.
