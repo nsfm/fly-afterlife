@@ -278,6 +278,18 @@ wheels = [
 ]
 
 [[package]]
+name = "cma"
+version = "4.5.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numpy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/86/d7/c92532c0a2922aacb3b7e0cf0fde5d2ba3f67c30692c8f9c4c35b9b42b68/cma-4.5.0.tar.gz", hash = "sha256:5e6774388d4a3798116bf9aff7684cf44d59f966d868f375e61811f74e132934", size = 335637, upload-time = "2026-09-13T21:49:14.757Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/7a/c2/859dcb6fc39476c78fde66005883edaab09f3fc561fa52a3b9d4cc036937/cma-4.5.0-py3-none-any.whl", hash = "sha256:9b37fa8bd541f1f4cf8e2cc4f98e6f02ec89d6d39ded8ec8a90d4f44c88c62c8", size = 347222, upload-time = "2026-09-13T21:49:13.51Z" },
+]
+
+[[package]]
 name = "colorama"
 version = "0.4.6"
 source = { registry = "https://pypi.org/simple" }
@@ -568,6 +580,7 @@ name = "fly-afterlife"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "cma" },
     { name = "flygym" },
     { name = "flyvis" },
     { name = "matplotlib" },
@@ -581,6 +594,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "cma", specifier = ">=4.5.0" },
     { name = "flygym", specifier = ">=2.1.0" },
     { name = "flyvis", specifier = ">=1.2.0" },
     { name = "matplotlib", specifier = ">=3.11.2" },
