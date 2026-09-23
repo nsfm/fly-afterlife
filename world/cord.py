@@ -10,7 +10,7 @@ to sweep the variables of the leg row (depression, the constant, the dose) befor
 import os, sys, argparse, time, numpy as np
 sys.path.insert(0, "ref/flybrain/scripts"); sys.path.insert(0, "world"); sys.path.insert(0, "src")
 from flysim import Params
-from fastlif import FastFlyBrain
+from fastlif import FastFlyBrain, SYN_TAU_HELP
 from fly_afterlife.receptors import Registry, ReceptorClass, Scaled, tonic_floor, select
 
 ap = argparse.ArgumentParser()
@@ -46,6 +46,7 @@ ap.add_argument("--treadmill", type=float, default=0.0, help="the headless tread
 ap.add_argument("--treadmill-duty", type=float, default=0.5)
 ap.add_argument("--adapt", default="", help="spike-frequency adaptation on every cell, B:TAU (mV per spike, ms), e.g. 1:200; off by default. an intrinsic current the LIF lacks (docs/SEAM.md \"the switch\"), constants (E) swept, labelled")
 ap.add_argument("--rebound", default="", help="post-inhibitory rebound on every cell, G:TAU (mV of push per mV of hyperpolarisation, ms), e.g. 1:100; off by default; labelled")
+ap.add_argument("--syn-tau", default="", help=SYN_TAU_HELP)
 ap.add_argument("--drive", default="", help="drive named sensory / descending types at a rate: TYPE:HZ,TYPE:HZ (e.g. SNpp50:50, the extension-tuned FeCO claw cells); rows after the floor and the treadmill, so they override on those cells; a labelled diagnostic")
 args = ap.parse_args()
 fps, CH = 100, 10; SPF = int(round(1000 / fps / args.dt)); t0 = time.time()
@@ -65,6 +66,7 @@ if args.adapt:
     b_, tau_ = (float(x) for x in args.adapt.split(":")); M.adapt_on = True; M.adapt_b = b_; M.adapt_tau = tau_; M._adapt_a = np.zeros(M.N, np.float32); print(f"adaptation: b {b_} mV per spike, tau {tau_} ms")
 if args.rebound:
     g_, tau_ = (float(x) for x in args.rebound.split(":")); M.rebound_on = True; M.rebound_g = g_; M.rebound_tau = tau_; M._reb_r = np.zeros(M.N, np.float32); print(f"rebound: g {g_}, tau {tau_} ms")
+if args.syn_tau: print(M.set_syn_tau(args.syn_tau))   # (09-22, campaign item 2)
 if args.mirror != "off":
     from fly_afterlife.wiring import mirror_normalise; print("mirror normalisation:", mirror_normalise(M, scope=(args.mirror.split(",") if "," in args.mirror else args.mirror)))
 if args.graded:

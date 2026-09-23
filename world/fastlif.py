@@ -93,6 +93,85 @@ def _membrane_exact(v, g, refrac, ext, noise, v_th, free, e_m, e_s, k_g, one_m_e
         g[i] = gi * e_s
 
 
+# ---- per-transmitter synaptic decay (09-22, campaign item 2; off by default, and when off none of this runs: the kernels above are the record) ----
+# the file's one tau_syn (Shiu 2024's 5 ms) is an ACh number put on every synapse; GABA and glutamate (inhibitory at the fly's central
+# synapses, GluCl) decay slower. the class is the PRESYNAPTIC cell's transmitter, so the propagation picks the class's conductance row once
+# per spiking source and walks its out-edges as before (no per-synapse cost, and later edits to _out_w, size gain, edge scale, the mirror,
+# still apply); the membrane sums the rows. class 0 is everything else (histamine, the modulators, 'unclear') at the engine's tau_syn.
+NT_CLASS = {"acetylcholine": 1, "gaba": 2, "glutamate": 3}
+SYN_TAU_HELP = ("per-transmitter synaptic decay, ACH:GABA:GLU in ms (e.g. 5:20:20), by the presynaptic cell's nt: acetylcholine, gaba, "
+                "glutamate each decay with their own tau; every other cell (histamine, the modulators, unclear) keeps the engine's tau_syn "
+                "(5 ms). a labelled engine term (campaign item 2), off by default ('' or off = the record, bit for bit)")
+
+
+@njit(cache=True, fastmath=False, nogil=True)
+def _propagate_into_nt(src, scale, has_scale, out_ptr, out_tgt, out_w, pre_cls, gc):
+    """the arrivals straight into their class's conductance row gc[pre_cls[s]] (the on path only; no shared accumulator, so the float32
+    order within a step is g + a + b rather than flysim's g + (a + b): same up to rounding, never compared bit for bit)."""
+    for k in range(src.shape[0]):
+        s = src[k]; sc = scale[k] if has_scale else np.float32(1.0); c = pre_cls[s]
+        for e in range(out_ptr[s], out_ptr[s + 1]):
+            gc[c, out_tgt[e]] += out_w[e] * sc
+
+
+@njit(cache=True, fastmath=False, parallel=True, nogil=True)
+def _membrane_nt(v, gc, kdec, refrac, ext, noise, v_th, free, dt, tau_m, v_floor, spk):
+    """_membrane with one decaying g per transmitter class: each row decays by its own dt / tau, the rows sum into syn. with one class
+    live on a cell the sum is 0 + g (exact) and the step is _membrane's, bit for bit (experiments/syn_tau_test.py checks it)."""
+    n = v.shape[0]
+    for i in prange(n):
+        gs = np.float32(0.0)
+        for c in range(gc.shape[0]):
+            gc[c, i] -= gc[c, i] * kdec[c]
+            if gc[c, i] < 1e-20 and gc[c, i] > -1e-20: gc[c, i] = 0.0
+            gs += gc[c, i]
+        syn = gs * (dt / tau_m)
+        dv = (-v[i] / tau_m) * dt + syn + ext[i] * (dt / tau_m) + noise[i]
+        if refrac[i] <= 0.0:
+            free[i] = True
+            v[i] += dv
+            if v[i] < -v_floor: v[i] = -v_floor
+            spk[i] = v[i] >= v_th[i]
+        else:
+            free[i] = False
+            refrac[i] -= dt
+            if v[i] < -v_floor: v[i] = -v_floor
+            spk[i] = False
+
+
+@njit(cache=True, fastmath=False, parallel=True, nogil=True)
+def _membrane_exact_nt(v, gc, e_s, k_g, refrac, ext, noise, v_th, free, e_m, one_m_em, dt, v_floor, spk, freeze_g):
+    """_membrane_exact with one g per class: the linear system is a sum, so each row contributes g_c k_g,c to v and decays by its own e_s,c."""
+    n = v.shape[0]
+    for i in prange(n):
+        gk = np.float32(0.0)
+        for c in range(gc.shape[0]):
+            gi = gc[c, i]
+            if gi < 1e-20 and gi > -1e-20: gi = 0.0
+            gc[c, i] = gi; gk += gi * k_g[c]
+        if refrac[i] <= 0.0:
+            free[i] = True
+            v[i] = v[i] * e_m + ext[i] * one_m_em + gk + noise[i]
+            if v[i] < -v_floor: v[i] = -v_floor
+            spk[i] = v[i] >= v_th[i]
+        else:
+            free[i] = False
+            refrac[i] -= dt
+            if v[i] < -v_floor: v[i] = -v_floor
+            spk[i] = False
+            if freeze_g: continue
+        for c in range(gc.shape[0]):
+            gc[c, i] = gc[c, i] * e_s[c]
+
+
+def exact_kg(tau_s, tau_m, dt):
+    """(e_s, k_g) of the exact step for one synaptic tau, in float64 as step() computes them. k_g = A (e_s - e_m), A = tau_s / (tau_s - tau_m),
+    is 0/0 at tau_s = tau_m (GABA at 20 ms against the 20 ms membrane); its limit there is (dt / tau_m) e_m, the alpha function t/tau e^(-t/tau)."""
+    e_m = np.exp(-dt / tau_m); e_s = np.exp(-dt / tau_s)
+    if abs(tau_s - tau_m) < 1e-6 * tau_m: return e_s, (dt / tau_m) * e_m
+    return e_s, (tau_s / (tau_s - tau_m)) * (e_s - e_m)
+
+
 @njit(cache=True, nogil=True)
 def _count_live(di, drive_hz):
     c = 0
@@ -125,6 +204,25 @@ class FastFlyBrain(FlyBrain):
         self._empty_f64 = np.zeros(0, np.float64)
         self.integrate = "euler"   # "exact": the linear system stepped exactly (Shiu 2024, Brian2 method=linear); "euler": the reference engine (flysim), the record
 
+    def set_syn_tau(self, spec):
+        """per-transmitter synaptic decay (09-22, campaign item 2): spec 'ACH:GABA:GLU' in ms (SYN_TAU_HELP), or None / '' / 'off' to leave it off.
+        the one parser for world/cord.py and experiments/body_loop.py. returns a line for the log."""
+        if spec is None or str(spec).strip() in ("", "off"): self.syn_tau_on = False; return "per-transmitter synaptic decay: off"
+        if self.engine == "dense": raise ValueError("--syn-tau runs on the event engine only")
+        taus = [float(x) for x in str(spec).split(":")]
+        if len(taus) != 3 or min(taus) <= 0: raise ValueError(f"--syn-tau wants ACH:GABA:GLU, three positive ms; got {spec!r}")
+        self._pre_cls = np.array([NT_CLASS.get(str(x).lower(), 0) for x in self.nt], np.int64)
+        self._syn_taus = np.array([self.p.tau_syn] + taus, np.float64)   # class 0 (other) keeps the engine's tau_syn
+        self._gc = np.zeros((4, self.N), np.float32); self._gc[0] = self.g   # whatever conductance is live now carries on at the default decay
+        self.g = np.zeros(self.N, np.float32); self.syn_tau_on = True   # self.g stays zero while on; the conductance lives in _gc (class x cell)
+        n = np.bincount(self._pre_cls, minlength=4)
+        return (f"per-transmitter synaptic decay: ACh {taus[0]:g} ms ({n[1]} cells), GABA {taus[1]:g} ms ({n[2]}), glutamate {taus[2]:g} ms ({n[3]}), "
+                f"other {self.p.tau_syn:g} ms ({n[0]}); signs as the file has them")
+
+    def reset(self):
+        super().reset()
+        if getattr(self, "syn_tau_on", False): self._gc[:] = 0.0
+
     def _propagate(self, spikes, scale=None):
         if self.engine == "dense": return super()._propagate(spikes, scale)
         has = scale is not None
@@ -152,7 +250,11 @@ class FastFlyBrain(FlyBrain):
                     prev = self._dly_scale[k]; self._dly_scale[k] = np.concatenate([prev if prev is not None else np.ones(self._dly[k].size - int(m_.sum()), np.float32), sc_all[m_]]).astype(np.float32)
         else:
             self._dly.append(self.last_idx)
-        if arrived.size:
+        nt_on = getattr(self, "syn_tau_on", False)
+        if arrived.size and nt_on:   # per-transmitter decay (09-22, campaign item 2): each arrival into its presynaptic class's row
+            has = arrived_scale is not None
+            _propagate_into_nt(arrived.astype(np.int64), (arrived_scale.astype(np.float32) if has else np.zeros(1, np.float32)), has, self._out_ptr, self._out_tgt, self._out_w, self._pre_cls, self._gc)
+        elif arrived.size:
             if self.engine == "dense": self.g += self._propagate(arrived, arrived_scale)
             else:
                 has = arrived_scale is not None
@@ -171,7 +273,14 @@ class FastFlyBrain(FlyBrain):
         free = self._free_buf   # refrac <= 0 before the update, as in flysim: gates the Poisson receptors below
         if getattr(self, "adapt_on", False) or getattr(self, "rebound_on", False):   # 09-21 night: two labelled intrinsic currents, off by default (docs/SEAM.md "the switch"); as a current on the ext path so the compiled membrane kernels are untouched
             ext = ext - (self._adapt_a if getattr(self, "adapt_on", False) else 0.0) + (self._reb_r if getattr(self, "rebound_on", False) else 0.0); ext = np.ascontiguousarray(ext, dtype=np.float32)
-        if getattr(self, "integrate", "euler") == "exact":
+        if nt_on and getattr(self, "integrate", "euler") == "exact":
+            e_m = np.exp(-dt / p.tau_m); ek = [exact_kg(t_, p.tau_m, dt) for t_ in self._syn_taus]
+            _membrane_exact_nt(self.v, self._gc, np.array([e for e, _ in ek], np.float32), np.array([k for _, k in ek], np.float32), self.refrac, ext, np.ascontiguousarray(noise, dtype=np.float32), self.v_th, free,
+                               np.float32(e_m), np.float32(1.0 - e_m), np.float32(dt), np.float32(p.v_thresh), spk, bool(getattr(self, "refrac_freeze", False)))
+        elif nt_on:
+            _membrane_nt(self.v, self._gc, np.float32(dt) / self._syn_taus.astype(np.float32), self.refrac, ext, np.ascontiguousarray(noise, dtype=np.float32), self.v_th, free,
+                         np.float32(dt), np.float32(p.tau_m), np.float32(p.v_thresh), spk)
+        elif getattr(self, "integrate", "euler") == "exact":
             e_m = np.exp(-dt / p.tau_m); e_s = np.exp(-dt / p.tau_syn); A = p.tau_syn / (p.tau_syn - p.tau_m)
             _membrane_exact(self.v, self.g, self.refrac, ext, np.ascontiguousarray(noise, dtype=np.float32), self.v_th, free,
                             np.float32(e_m), np.float32(e_s), np.float32(A * (e_s - e_m)), np.float32(1.0 - e_m), np.float32(dt), np.float32(p.v_thresh), spk, bool(getattr(self, "refrac_freeze", False)))
