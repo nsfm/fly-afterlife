@@ -7,7 +7,12 @@ source: Pugliese SM, Chou GM, Abe ETT, Turcu D, Lancaster JK, Tuthill JC, Brunto
 generator circuit for fly walking", bioRxiv 10.1101/2025.09.12.675944 v2 (2026-04-30), PMC13142387, Methods (read 2026-09-22). our notes:
 docs/research/sources/pugliese_2026_connectome_cpg.md, docs/physiology/walking_review.md §0 and §7. results: docs/physiology/rate_model_control.md.
 
-the equation (Methods, verbatim form):
+UPDATE 2026-09-22: their code (ref/pugliese_cpg, github smpuglie/Pugliese_cpg_2025, src/simulation/vnc_sim.py) runs a different
+activation from the printed one: r_max tanh((a / r_max)(I + b W r - theta)), input NOT scaled by r_max. --form code (default) is theirs;
+--form paper is the printed equation below, kept because the first results used it. --wiring theirs / --subnet theirs / --size theirs
+read their MaleCNS front-leg table (voxel volumes). see docs/physiology/rate_model_control.md "with their sizes and their table".
+
+the equation (Methods, verbatim form, = --form paper):
 
     tau_i dr_i/dt = max( r_max,i tanh( a_i ( r_max,i I_i(t) + b sum_j w_ij r_j(t) - theta_i ) ), 0 ) - r_i(t)
 
@@ -61,28 +66,66 @@ REM = ("Pleural remotor/abductor MN", "Sternal posterior rotator MN")
 NAMED = ("DNg100", "IN17A001", "INXXX466", "IN16B036", "IN19A007", "IN09A002")
 
 
-def load(subnet, size_mode, size_power=1.0):
-    C = np.load("brain_cord.npz", allow_pickle=True)
+PUG = "ref/pugliese_cpg/data/imac t1 connectome data/"   # github smpuglie/Pugliese_cpg_2025, their MaleCNS front-leg (T1) table
+PUG_TABLE, PUG_W = PUG + "wTable_20260210_vncRoisOnly.csv", PUG + "W_20260210_vncRoisOnly.csv"
+
+
+def their_table():
+    import pandas as pd
+    T = pd.read_csv(PUG_TABLE, index_col=0)
+    return T
+
+
+def their_W():
+    """their signed weight matrix (rows = presynaptic, as their load_W / reweight_connectivity read it), returned post x pre."""
+    import pandas as pd
+    D = pd.read_csv(PUG_W); pre = D["bodyId_pre"].to_numpy(); D = D.drop(columns="bodyId_pre")
+    assert (D.columns.astype(np.int64).to_numpy() == pre).all()
+    return pre, sp.csr_matrix(D.to_numpy(dtype=np.float64).T)
+
+
+def load(subnet, size_mode, size_power=1.0, wiring="ours"):
     B = np.load("brain_whole.npz", allow_pickle=True)
     lm = np.load("world/legmn.npz")
+    legmap = {}
+    for g, L in (("fl", "f"), ("ml", "m"), ("hl", "h")):
+        for s in "LR":
+            for b in B["bodyId"][lm[f"{g}_{s}"]]: legmap[int(b)] = s.lower() + L
+    theirs = None
+    if wiring == "theirs" or subnet == "theirs" or size_mode == "theirs":
+        theirs = their_table(); tsize = dict(zip(theirs["bodyId"].astype(np.int64), theirs["size"].astype(float)))
+    if wiring == "theirs":
+        # their table and their matrix, as is: 4,310 cells, their signs, their (VNC-ROI-only) synapse counts
+        bidk, W = their_W()
+        ty = theirs["type"].fillna("").astype(str).to_numpy(); side = theirs["somaSide"].fillna("").astype(str).to_numpy()
+        sc = theirs["superclass"].astype(str).to_numpy(); isdn_k = np.char.startswith(sc.astype(str), "descending")
+        legk = np.array([legmap.get(int(b), "") for b in bidk], dtype=object)
+        # their MNs that our legmn.npz does not place: front leg by soma side
+        mnk = sc == "vnc_motor"
+        for i in np.flatnonzero(mnk & (legk == "")): legk[i] = side[i].lower() + "f" if side[i] in ("L", "R") else ""
+        info = dict(n=len(bidk), nnz=W.nnz, n_mn=int((legk != "").sum()), n_dn=int(isdn_k.sum()), n_prem=int((~isdn_k & (legk == "")).sum()))
+        if size_mode == "none": size = np.ones(len(bidk))
+        elif size_mode == "theirs": size = np.array([tsize[int(b)] for b in bidk])
+        else: raise SystemExit("--wiring theirs takes --size theirs or none (their table has no synapse-count proxy)")
+        size = _norm_size(size, size_power)
+        return W, size, ty, side, legk, info
+    C = np.load("brain_cord.npz", allow_pickle=True)
     bid, ty, sc, side = C["bodyId"], C["type"].astype(str), C["sc"].astype(str), C["side"].astype(str)
     sign = C["sign"].astype(np.float64)
     pre, post, w = C["pre"], C["post"], C["w"].astype(np.float64)
     n = len(bid)
-    legof = np.array([""] * n, dtype=object)
-    pos = {int(b): i for i, b in enumerate(bid)}
-    for g, L in (("fl", "f"), ("ml", "m"), ("hl", "h")):
-        for s in "LR":
-            for b in B["bodyId"][lm[f"{g}_{s}"]]:
-                if int(b) in pos: legof[pos[int(b)]] = s.lower() + L
+    legof = np.array([legmap.get(int(b), "") for b in bid], dtype=object)
     isdn = np.char.startswith(sc, "descending")
+    mn = np.isin(legof, ["lf", "rf"]); prem = np.zeros(n, bool); dn = isdn.copy()
     if subnet == "front":
-        mn = np.isin(legof, ["lf", "rf"])
         into_mn = mn[post]
-        prem = np.zeros(n, bool); prem[pre[into_mn]] = True; prem &= ~isdn & ~mn
+        prem[pre[into_mn]] = True; prem &= ~isdn & ~mn
         tgt = prem | mn
         dn = np.zeros(n, bool); dn[pre[tgt[post]]] = True; dn &= isdn
         keep = mn | prem | dn
+    elif subnet == "theirs":
+        # our cord table restricted to the bodyIds of their 4,310-cell MaleCNS front-leg network
+        keep = np.isin(bid, theirs["bodyId"].to_numpy()); dn = isdn & keep; prem = keep & ~isdn & ~mn
     else:
         keep = np.ones(n, bool)
     idx = np.flatnonzero(keep); new = -np.ones(n, np.int64); new[idx] = np.arange(len(idx))
@@ -95,15 +138,23 @@ def load(subnet, size_mode, size_power=1.0):
     bpos = {int(b): i for i, b in enumerate(B["bodyId"])}
     bi = np.array([bpos[int(b)] for b in bid[idx]])
     if size_mode == "none": size = np.ones(len(idx))
-    elif size_mode == "insyn": size = insyn[bi]
-    else: size = insyn[bi] + outsyn[bi]
-    size = np.maximum(size, 1.0) ** size_power; size = size / np.median(size)
-    info = dict(n=len(idx), nnz=W.nnz, n_mn=int(keep[np.isin(legof, ["lf", "rf"])].sum()) if subnet == "front" else int((legof != "").sum()),
-                n_dn=int(dn.sum()) if subnet == "front" else int(isdn.sum()), n_prem=int(prem.sum()) if subnet == "front" else -1)
+    elif size_mode == "insyn": size = np.maximum(insyn[bi], 1.0)
+    elif size_mode == "total": size = np.maximum(insyn[bi] + outsyn[bi], 1.0)
+    else: size = np.array([tsize.get(int(b), np.nan) for b in bid[idx]])   # their voxel volume, bodyId-matched (NaN -> median, as theirs)
+    size = _norm_size(size, size_power)
+    info = dict(n=len(idx), nnz=W.nnz, n_mn=int((legof[idx] != "").sum()) if subnet == "all" else int(mn[idx].sum()),
+                n_dn=int(dn[idx].sum()), n_prem=int(prem[idx].sum()) if subnet != "all" else -1)
     return W, size, ty[idx], side[idx], legof[idx], info
 
 
-def simulate(W, size, ty, side, T, dt, I, dn_side, seed, b=0.03, rec_idx=None, b_inh=None):
+def _norm_size(size, p):
+    """their set_sizes: size / nanmedian, NaN and 0 -> the median (sim_utils.py). a synapse-count proxy is floored at 1 first."""
+    size = np.asarray(size, float).copy(); med = np.nanmedian(size)
+    size[np.isnan(size) | (size == 0)] = med
+    size = size ** p; return size / np.median(size)
+
+
+def simulate(W, size, ty, side, T, dt, I, dn_side, seed, b=0.03, rec_idx=None, b_inh=None, form="code"):
     rng = np.random.default_rng(seed); n = W.shape[0]
     tn = lambda m, s: np.maximum(rng.normal(m, s, n), 1e-3 * m)
     tau, rmax, th0, a0 = tn(0.020, 0.002), tn(200, 10), tn(7.5, 0.6), tn(1, 0.1)
@@ -114,8 +165,12 @@ def simulate(W, size, ty, side, T, dt, I, dn_side, seed, b=0.03, rec_idx=None, b
     nstep = int(round(T / dt)); on = int(round(0.020 / dt)); every = max(1, int(round(0.001 / dt)))
     rec = np.zeros((nstep // every + 1, len(rec_idx)), np.float32)
     r = np.zeros(n); act_max = np.zeros(n)
-    def f(r, drive):
-        return (np.maximum(rmax * np.tanh(a * (rmax * drive + Wb @ r - th)), 0) - r) / tau
+    if form == "paper":      # the equation as printed in the preprint's Methods
+        def f(r, drive):
+            return (np.maximum(rmax * np.tanh(a * (rmax * drive + Wb @ r - th)), 0) - r) / tau
+    else:                    # the equation as their code runs it (vnc_sim.py rate_equation_half_tanh)
+        def f(r, drive):
+            return (np.maximum(rmax * np.tanh((a / rmax) * (drive + Wb @ r - th)), 0) - r) / tau
     k = 0
     for s in range(nstep):
         drive = inp if s >= on else 0 * inp
@@ -160,10 +215,12 @@ def ac_score(x):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--size", choices=["none", "insyn", "total"], default="insyn")
+    ap.add_argument("--size", choices=["none", "insyn", "total", "theirs"], default="insyn")
+    ap.add_argument("--form", choices=["code", "paper"], default="code", help="activation as their code runs it (default) or as the preprint prints it")
+    ap.add_argument("--wiring", choices=["ours", "theirs"], default="ours", help="our brain_cord.npz, or their W_20260210_vncRoisOnly.csv")
     ap.add_argument("--dn-input", type=float, default=400.0)
     ap.add_argument("--dn-side", choices=["L", "R", "both"], default="both")
-    ap.add_argument("--subnet", choices=["front", "all"], default="front")
+    ap.add_argument("--subnet", choices=["front", "all", "theirs"], default="front", help="theirs = our table on their 4,310 bodyIds")
     ap.add_argument("--seconds", type=float, default=5.0)
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--reps", type=int, default=1, help="replicates (seed, seed+1, ...)")
@@ -175,8 +232,8 @@ def main():
     ap.add_argument("--save", default="", help="optional .npz for the recorded traces")
     A = ap.parse_args()
     t0 = time.time()
-    W, size, ty, side, leg, info = load(A.subnet, A.size, A.size_power)
-    print(f"# subnet={A.subnet} size={A.size}^{A.size_power} I={A.dn_input} side={A.dn_side} b={A.b} b_inh={A.b_inh} T={A.seconds}s: {info['n']} cells "
+    W, size, ty, side, leg, info = load(A.subnet, A.size, A.size_power, A.wiring)
+    print(f"# wiring={A.wiring} form={A.form} subnet={A.subnet} size={A.size}^{A.size_power} I={A.dn_input} side={A.dn_side} b={A.b} b_inh={A.b_inh} T={A.seconds}s: {info['n']} cells "
           f"(DN {info['n_dn']}, MN {info['n_mn']}, premotor {info['n_prem']}), {info['nnz']} edges; built {time.time() - t0:.1f}s")
     named = {nm: np.flatnonzero(ty == nm) for nm in NAMED}
     legs = [l for l in ("lf", "rf", "lm", "rm", "lh", "rh") if (leg == l).any()]
@@ -186,7 +243,7 @@ def main():
     allres = []
     for rep in range(A.reps):
         seed = A.seed + rep; t1 = time.time()
-        R, act = simulate(W, size, ty, side, A.seconds, A.dt, A.dn_input, A.dn_side, seed, A.b, rec_idx, A.b_inh)
+        R, act = simulate(W, size, ty, side, A.seconds, A.dt, A.dn_input, A.dn_side, seed, A.b, rec_idx, A.b_inh, A.form)
         X = R[int(A.skip * 1000):].astype(np.float64)
         nact = int((act > 0.01).sum()); sat = int((act > 150).sum())
         print(f"seed {seed}: {time.time() - t1:.0f}s; cells active (>0.01 Hz after 250 ms) {nact}/{info['n']}, near r_max (>150 Hz) {sat}")

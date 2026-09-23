@@ -102,3 +102,95 @@ synapse counts); (b) their subnetwork being larger (MANC 4,604 cells / 3.8 M syn
 MaleCNS replication would also have faced; (c) an implementation detail their text does not give (the input scaling r_max * I, which
 saturates DNg100 at any I they list). Pugliese report a MaleCNS replication with I = 400, so on the same dataset their pipeline found a
 rhythm where ours finds a runaway; until their code or the volumes are in hand, the difference is (a), (b) or (c), not our signs.
+
+## with their sizes and their table
+
+Added 2026-09-22, after their code and data landed at `ref/pugliese_cpg` (github smpuglie/Pugliese_cpg_2025). Everything above this
+section was run with the equation **as the preprint prints it**; this section supersedes its verdict.
+
+### what their code does that the preprint's equation does not say
+
+`src/simulation/vnc_sim.py: rate_equation_half_tanh`:
+
+    activation = max(fr_cap * tanh((a / fr_cap) * (I + W_weighted @ R - threshold)), 0);  dR/dt = (activation - R) / tau
+
+- the gain inside the tanh is **a / r_max**, not a: the slope at threshold is a Hz per unit input (about 1), where the printed form
+  gives a * r_max (about 200). the printed form is a 200x higher-gain network, and that is the runaway reported above.
+- the input is **I, not r_max * I**: DNg100 at I = 400 is not saturated (15-20 Hz with their sizes).
+- W is their signed synapse-count matrix, rows presynaptic; `reweight_connectivity` transposes it and multiplies positive entries by
+  `excitatoryMultiplier` 0.03 and negative by `inhibitoryMultiplier` 0.03 (`configs/neuron_params/default.yaml`; tau 0.02 +- 0.002 s,
+  a 1 +- 0.1, threshold 7.5 +- 0.6, frcap 200 +- 10). the optional glutamate multiplier is not set in the default config.
+- `sim_utils.py: set_sizes`: size / nanmedian(size), NaN and 0 -> the median; a = a / size, threshold = threshold * size (as the text says).
+- sim config: T 2 s, stimulus from 20 ms, Dopri5 rtol 2e-6; the MANC DNg100 config stimulates **one** DNg100 (`stimNeurons: [31]`, I 250).
+
+`experiments/rate_model.py` now takes `--form code` (default: their code's activation) or `--form paper` (the printed one), `--wiring
+ours|theirs` (their `W_20260210_vncRoisOnly.csv` + `wTable_...csv`, 4,310 MaleCNS front-leg cells), `--subnet theirs` (our cord table
+on their bodyIds) and `--size theirs` (their `size` column, voxel volume, median ~1.0e9, bodyId-matched).
+
+### (a) and (b): their equation, their sizes, I = 400, 3 s, seeds 0-2
+
+| wiring | DNg100 driven | cells active / pinned | front MNs active | rhythm (loop cells and coxa pools) | promotor-remotor xcorr |
+|---|---|---|---|---|---|
+| **theirs** (4,310 cells) | L | 74-83 / 0 | **3-5**, all right leg (2 promotors, Tr flexor, +remotor / Fe reductor) | **11.6-14.8 Hz**: IN17A001 R 2.0-2.3 +- 1.4, INXXX466 R 5.1-5.5 +- 3.7, IN16B036 R 1.0-1.7, IN19A007 R 3.3-5.2 +- 3, IN09A002 R 4.2-5.0 +- 2; rf promotor pool 6-11 Hz summed, modulated at the same frequency | remotor mostly silent; where active (s1) -0.84 @ 18 ms / +0.95 @ 63 ms |
+| theirs | R | 99-129 / 0 | **7-9**, left leg (2 promotors, remotor, 4 Tr flexors, +Sternal anterior rotator) | **10.8-11.2 Hz**, left loop (mirror of the above) | **-0.73..-0.86 at 65-118 ms, +0.97 at 75-109 ms**: antiphase-offset promotor / remotor |
+| theirs | both | 183-197 / 0 | 10-12 | lf 10.8-11.2 Hz, rf 11.6-15.2 Hz | lf -0.73..-0.87 / +0.97 |
+| **ours on their 4,242 bodyIds** | L | 111-138 / 0 | 4-5 (rf 2 promotors, remotor, Tr flexor; s0 two lf Tergotr.) | **14.0-14.4 Hz**: IN17A001 R 2.1-2.3 +- 1.4, INXXX466 R 5.0-5.8 +- 3, IN16B036 R 0.9-1.7, IN19A007 R 6.2-6.7 +- 2.5, IN09A002 R 6.4-9.3 +- 3; rf promotor pool 11-14 Hz summed | -0.77..-0.80 / +0.87..+0.90 where the remotor is on |
+| ours on their bodyIds | R | 102-125 / 0 | 7-8, left leg (same types as theirs) | **12.0-13.2 Hz**, left loop | **-0.76..-0.88 at 53-65 ms, +0.97..+0.98 at 60-104 ms** |
+| ours on their bodyIds | **both** | **2,063-2,128 / 604-619** | 61-69 | **none**: 1.2-2 Hz switching; IN16B036 pinned 160-196, both DNg100 driven to 0 | - |
+
+**(b): their model on their table oscillates in our numpy port**: 11-15 Hz, 74-197 cells active of 4,310, none pinned, 3-12 front MNs
+active (the paper's 0-7 is per single-DNg100 run: ours 3-5 driving L, 7-9 driving R), coxa promotors and one remotor rhythmic with an
+antiphase-offset cross-correlation, Tr flexors among the recruited, tibia flexors silent (as the paper says).
+
+**(a): our wiring oscillates too, once the equation is their code's and the sizes are theirs**: with one DNg100 driven, our cord table on
+their cells gives the same loop, the same frequencies (12-14.4 Hz, a touch faster than theirs), the same recruited MN types and the same
+promotor / remotor offset. the difference: **with both DNg100s driven, our table runs away** (half the network active, 600 pinned) where
+theirs stays sparse and rhythmic.
+
+### controls (their code's equation, I = 400, one DNg100 (L), seeds 0-1)
+
+- **size off**, their table: 1,093-1,370 active, 266-383 pinned, 71-84 MNs, 1-8 Hz switching. our table on their cells: 2,077-2,080
+  active, 786-794 pinned. **their own negative control reproduces on both tables**: without size scaling, no robust rhythm.
+- **the printed equation on their table** (`--form paper`, their sizes): 1,618-1,771 active, 1,351-1,576 pinned, 90-100 MNs, 1-6 Hz.
+  **this is the whole of the failure reported in the sections above**: it was the equation as printed, not our wiring.
+- **our synapse-count proxy** (`--size insyn`) under their equation, on their cells or our front subnetwork: near silent (8-9 cells;
+  DNg100 4-7 Hz, the loop off). the proxy correlates with their volume (log r = 0.87) but overstates big cells 2-3x (DNg100 34.7 vs 16.4;
+  IN17A001 15.1 / 10.3 vs 4.7; IN19A007 10.4 / 7.1 vs 4.6; IN09A002 11.6 / 8.7 vs 4.4; IN16B036 1.4 / 0.9 vs 1.3), so the loop's
+  excitors are too unexcitable to start. synapse count is not a usable stand-in for volume here.
+
+### (c) the two tables, diffed on the same cells
+
+- **cell set**: their 4,310 cells; 4,242 are in our cord table. the 68 missing are all untyped in their table (35 vnc_sensory, 29
+  vnc_intrinsic, 3 DNs, 1 MN): fragments our `brain_whole` build does not carry. our own front construction (3,109 cells) is smaller
+  because our file has no untyped / sub-threshold bodies and our 5-synapse floor is on whole-body counts.
+- **edges** (on the 4,242 common cells): ours 142,504 edges / 2.76 M synapses; theirs 117,583 / 2.17 M. **117,347 edges are shared, with
+  the same weights (median ratio 1.00; 1.8 % of them larger in ours, all DN / AN edges) and identical signs (0 sign disagreements)**; 236 edges are theirs only
+  (3,342 synapses, mostly interneuron -> interneuron fragments' partners). **25,157 edges are ours only, and they are almost all onto
+  descending neurons: DN -> DN 18,329 edges / 411,969 synapses, AN -> DN 5,156 / 121,686**, plus DN -> AN 396 / 2,560; on shared edges ours
+  also carries 37,349 more DN -> DN and 12,197 more AN -> DN synapses. in all, 623 k synapses onto DNs from DNs and ANs.
+- **why**: their W counts only synapses inside the VNC ROIs (`W_20260210_vncRoisOnly`); `scripts/build_cord.py` keeps every edge whose
+  two cells are both kept, **wherever the synapses are**, so the DN-DN and AN-DN synapses that lie in the brain (GNG and above) came
+  along. in a decapitated fly those synapses are gone with the head. **this is a bug in our headless cut**, and it is the only systematic
+  difference between the tables.
+- **the loop cells and IN09A002**: input synapses identical in both tables (IN17A001 L +4,710 / -3,487, R +2,973 / -2,663; INXXX466 L
+  +1,627 / -1,389, R +1,022 / -1,047; IN16B036 L +477 / -295, R +309 / -205; IN19A007 L +2,882 vs 2,875 / -2,699, R +1,821 / -2,020 vs
+  -2,021; IN09A002 L +4,334 / -1,999, R +3,184 / -1,583). **DNg100 differs**: ours +2,302 / -3,865 (L, 109 partners) and +2,093 / -3,948
+  (R, 102), theirs +0 / -84 (8) and +12 / -32 (5): the brain-side inputs.
+- **sign convention**: the same (ACh +, GABA / Glu -), and no cell has opposite output sign between the tables. their table signs 18 +
+  6 'unclear' cells ours leaves at 0 (as their consensus transmitter); 32 of our signed cells have no outputs inside their W.
+- **the fix, tested**: our table on their cells with the 25,829 DN <- DN / AN edges dropped (623 k synapses), **both DNg100s driven**:
+  177-202 active, 0 pinned, 10 MNs, both loops at 12.0-14.4 Hz, lf promotor / remotor -0.76..-0.89 / +0.97. one side driven: 87-118
+  active, 4-8 MNs, 12.0-14.0 Hz. the runaway under bilateral drive is exactly those synapses.
+
+## verdict (supersedes the one above)
+
+**Our wiring oscillates under Pugliese's model.** The earlier negative was the preprint's printed equation, which puts r_max inside the
+tanh gain and multiplies the input by r_max; their code does neither, and with the printed form their own table runs away the same way
+ours did. With their code's equation and their volumes, our cord table on their 4,242 cells gives the DNg100 -> IN17A001 -> INXXX466 ->
+IN16B036 / IN19A007 rhythm at 12-14.4 Hz, 4-8 coxa and trochanter MNs active per driven DNg100, promotor-remotor in antiphase offset,
+tibia flexors silent: the same as their table in the same code (11-15 Hz, 3-9 MNs). Two things in our pipeline were wrong, neither of
+them the signs: (1) **the headless cut keeps 623 k brain-side synapses onto DNs** (DN -> DN, AN -> DN), which makes bilateral DNg100
+drive run away; drop edges onto DNs whose synapses are outside the VNC (or all DN <- DN / AN edges, as tested) and it stops; (2)
+**synapse count is not a volume proxy** for this model (it overstates the big premotor cells 2-3x and silences the loop); the real
+volumes are in their table for their 4,310 cells only. So the wiring is cleared (after the cut is fixed), and the spiking engine is the
+variable, with the caveat that the spiking engine also runs on the cut that has the brain-side DN synapses in it.

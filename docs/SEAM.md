@@ -5938,3 +5938,71 @@ from physiology; two cells pinned by the scaling.** the antagonist column's -0.5
   4,242 cells they cover.
 
 **the depression fix, oracle (20:19 PDT):** `scripts/oracle_check.sh` v1 + v2, all eight configs bit for bit (`--std off` in every oracle config; the fix touches only the depressed path). the scale a spike delivers is now the resource before its own decrement; a fresh synapse delivers 1, not 1 - u. the `--std pair` run of record is re-measured under it before the 09-21 depression numbers are cited again (TODO 4i).
+
+## the cord on the corrected cut (20:24 PDT; `scripts/build_cord.py` v2: no edges onto a descending neuron from a descending or ascending cell, 1.01 M synapses across the 1,310 DNs; v1 kept beside it as `brain_cord_v1.npz`; 30 s, seed 11, DNg100 100 Hz, 0.185, the 423 leg motor neurons and Pugliese's cited cells logged at 1 ms)
+
+- **the baseline moves.** the control's leg motor neurons 1.99 -> 4.33 Hz per cell, 54 -> 95 active, the cord itself unchanged (1.13 -> 1.10 Hz per
+  cell); the DNs had been held down by their own brain-side inhibition. the flexors stay silent (0.00 Hz) and the extensors hold (9.3 -> 8.0 Hz);
+  no inter-leg phase (legs +0.00), no promotor-remotor antiphase (xcorr min -0.05 to -0.15, no lobe), same as v1.
+- **a line at 20 Hz, at the published weight, in the loop cells.** IN17A001 / INXXX466 / IN16B036 / IN09A002 at 17 / 19 / 5 / 38 Hz per cell,
+  each pool with a spectral line at 19.7 Hz, 45 / 51 / 21 / 46 times the 2-60 Hz band median; the autocorrelation alternates sign at 25 / 50 / 75 /
+  100 ms (-0.07 / +0.05 / -0.03 / +0.02: a damped 20 Hz). **checks:** the chunk is 10 ms (a seam would sit at 100 Hz); the DNg100 drive is
+  flat (top peaks x10 at 90-110 Hz); the cells are irregular (ISI cv 0.68-1.13, no cell regular at 20 Hz), the pooled line beats a rolled null
+  (each cell's train rolled by a random offset) 45 vs 14, 51 vs 13, 46 vs 8, and pairs of cells correlate +0.12 to +0.17 at 5 ms: **shared,
+  not one regular cell.** three seeds: 19.7 / 16.4 / 17.8 Hz (x45 / x29 / x38). dose: the loop's edges x0.5 -> 18.1 Hz x20, x1.49 -> 21.6 x43,
+  x2 -> 20.8 x61-71; DNg100 at 50 Hz -> 17.6 x36; at rest (no command) the same cells carry a weak 10-12 Hz (x12-21).
+- **it is not the three-cell loop.** silence IN16B036 (the inhibitory arm): the line stays, 19.1 Hz x30-38 in the other three. silence
+  INXXX466: 21.6 Hz x31 in IN17A001. silence IN17A001: the line drops to 13.6 Hz (x18-28) in INXXX466 / IN16B036 / IN19A007 / the trochanter
+  flexors, x20 at 18.1 in IN09A002. a rhythm that survives the loss of any one arm of a loop is not that loop's. **where it lives:** across
+  the 423 logged cells the strongest lines at 19.7-20.0 Hz are IN19A007 (x53), INXXX466 (x39), the Tr flexor MNs (x38, 35 cells at 3 Hz),
+  IN09A002 (x37), IN17A001 (x36), INXXX464 (x30), the Sternotrochanter MNs (x28), IN16B036 (x21): **Pugliese's wider subnet and the
+  trochanter motor neurons, with their frequency set in part by IN17A001** (13.6 Hz without it). the front promotor pool carries it weakly
+  (left front 20.0 Hz x18, r +0.09 with IN17A001 at +10 ms), the tibia extensors of the left front and right hind at 19.7 (x10-12).
+  **and v1 had it:** the same logged cells on the old cut at 10 ms, 20.1 Hz x23 (the "beat" column at R2 / 18 Hz in the 09-21 gait tables
+  was this). so the corrected cut did not create the 20 Hz; it lifted the DNs, the loop cells fire more (v1: IN17A001 under 5 Hz), and the
+  line got loud enough to read. the whole cord's population count keeps its 9.5 Hz line on both cuts (x165 v1, x222 v2; x328 with
+  IN17A001 silenced), the one the second pass already put on record as the cord's own.
+- **standing claims, unchanged:** no step, no flexor, no inter-leg phase. what changed is the count of active motor neurons and a rhythm
+  at twice Pugliese's frequency in his cells that his loop does not own. the subnet silencings (each cited cell alone, all eight together,
+  the three-loop cells together) and the v1 cut read at 1 ms are running.
+
+**the body on the corrected cut, the published wiring alone (20:26 PDT; `experiments/body_loop.py`, DNg100 100 Hz ramped over 1 s, the loop
+closed (position + load), springs, pads, NO edge scale, NO cell delay, 20 s, seed 11; both claw labellings):**
+- **claw labels swapped (50flex):** he stands. the body rests 2 % of his weight on the floor, the feet carry 10.3 uN; leg motor neurons 2.16 Hz
+  per cell, flexors 0.13 (v1's 0.00), extensors 5.31; thorax height 0.69 mm (min 0.50); speed 2.8 mm/s. the left front foot leaves the ground
+  14 times in 18 s (lifts over 50 ms, by height; 24 by zero net force; the two masks agree 90 %), the coxa pitch changing -8.5 deg during a
+  lift, forward on 0.86 of them. **no rhythm in any coxa:** every coxa's spectrum peaks at 1.1-2.0 Hz (drift), the front coxa's autocorrelation
+  at half and one period of that +0.08 / +0.04. so on the published wiring: standing, an occasional forward lift, no stepping.
+- **claw labels as printed (50ext):** he collapses, 64 % of his weight on the floor, extensors 16 Hz, one lift in 18 s.
+- **against the record's arm** (`ld_100_x8_ramp1`: loop x8, 12 ms delay, the v1 cut): 116 lifts, the front coxa at 10.1 Hz (x621). **the nine
+  steps a second were the fit's** (x8 on the loop's edges, an unsourced 12 ms delay); the corrected cut at x1 does not step. the 20 Hz of the
+  cord is in the body arm's own cells (the trochanter flexor motor neurons 22.4 Hz x38 at 10 ms with the labels as printed, 18.0 x14 swapped)
+  and does not appear in the joints (every coxa's 12-30 Hz band is the 1/f tail at 12 Hz, on the record's arm too): the body low-passes it.
+- **what stands on the corrected cut, then:** posture from the cord's tonic output on springs and pads; a front foot that lifts forward about
+  once a second; the cord's 9.5 Hz population line and a 16-22 Hz line across Pugliese's subnet, neither of which reaches a joint. the
+  same arm with x8 and the delay on the corrected cut is running for the comparison; it is a fit either way and is reported as one.
+
+- **the fit on the corrected cut (20:28 PDT; loop x8, 12 ms delay, labels swapped, otherwise as above):** the same as on v1. 3 % of his weight
+  on the floor, 124 lifts in 18 s (both masks, 88 % agreement), the left front coxa at 9.5 Hz (x708; autocorrelation -0.16 / +0.39 at half and
+  one period), the coxa forward on 0.77 of the lifts; flexors 0.22 Hz. the stepping leg is robust to the cut and belongs to the fit.
+- **subnet silencings (each of Pugliese's cited cells alone; the 20 Hz line read as before):** IN19A007 out -> 21.9 Hz x40; IN09A002 out
+  -> 19.3 x35; INXXX464 out -> 21.2 x23; IN03A006 out -> 16.0 x41; IN12B003 out -> 20.0 x54. **no single cited cell owns it.** the three loop
+  cells out together: 13.6 Hz x24 across the logged cells (INXXX464 / IN19A007 / the Tr flexors at 20.5, x15-19), the same 13.6 the loss of
+  IN17A001 alone gave. **all eight cited cells out together: the 20 Hz is gone** (the logged cells' strongest line is the cord's 9.6 Hz at x18;
+  the leg motor neurons fall to 1.84 Hz per cell, 44 active). so the rhythm needs the subnet as a whole and none of its cells singly; IN17A001
+  sets its frequency (20 -> 13.6 without it). a distributed oscillation among Pugliese's eight, not his three-cell loop.
+
+**withdrawn in place (20:30 PDT): "the baseline moves."** the 1.99 -> 4.33 Hz and 54 -> 95 active above compared the 373 leg motor neurons of
+09-21 with tonight's logged set of 423, which adds Pugliese's fifty cited interneurons and the driven DNg100 pair at 100 Hz; averaged
+together they read 4.5. the old cut re-run tonight is bit for bit the 09-21 control on the 373 common cells (max difference 0.000 Hz), and
+the four-way cross of the 09-21 cord script and engine against tonight's gives 1.96 / 52 in every combination: **no dynamics changed since
+09-21.** on the matched 373: v1 1.96 Hz per cell, 52 active, tibia extensors 9.25; v2 1.84, 52, 7.96; the loop cells 17.8 / 20.3 / 5.2 ->
+16.9 / 19.3 / 4.6 Hz. **the corrected cut changes almost nothing in the LIF,** and the reason is the engine's drive gate: a driven cell's
+membrane does not integrate its synapses (`_drive_gate`), so the 1.01 M synapses onto the DNs never reached the one DN that fires (DNg100 is
+driven); they reached the 1,308 undriven DNs, which are nearly silent without a brain. the same synapses run the RATE model away because
+there DNg100 integrates its inputs. the cut was wrong in the file and right in effect for the LIF; the v2 file is kept because it is the
+decapitated fly's wiring and the rate model needs it. **"v1 had it at x23" corrects to: v1 has it at the same strength,** 19.2 Hz x29 at
+1 ms with IN17A001 at 17.8 Hz per cell (not "under 5"). so the 20 Hz was always there; **the 18:40 read ("no ring at x1") was a 10 ms lobe
+read** (autocorrelation at 30 / 70 / 140 ms, coxa lags) that cannot see a 20 Hz line, and tonight's 1 ms spectral read can. a new read, not a
+new cut. and the twelve percent: with all eight cited cells silent the leg motor neurons fall 1.84 -> 1.67 Hz per cell (52 -> 42 active), so
+the subnet carries about a tenth of the motor output at this dose and the tonic posture is not its.
