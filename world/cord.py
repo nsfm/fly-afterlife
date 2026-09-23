@@ -10,7 +10,7 @@ to sweep the variables of the leg row (depression, the constant, the dose) befor
 import os, sys, argparse, time, numpy as np
 sys.path.insert(0, "ref/flybrain/scripts"); sys.path.insert(0, "world"); sys.path.insert(0, "src")
 from flysim import Params
-from fastlif import FastFlyBrain, SYN_TAU_HELP, SYN_REV_HELP, SYN_REV_HOLD_HELP
+from fastlif import FastFlyBrain, SYN_TAU_HELP, SYN_REV_HELP, SYN_REV_HOLD_HELP, PIC_HELP
 from fly_afterlife.receptors import Registry, ReceptorClass, Scaled, tonic_floor, select
 from fly_afterlife.size import add_size_args, apply_size
 
@@ -49,6 +49,7 @@ ap.add_argument("--rebound", default="", help="post-inhibitory rebound on every 
 ap.add_argument("--syn-tau", default="", help=SYN_TAU_HELP)
 ap.add_argument("--syn-rev", default="", help=SYN_REV_HELP)
 ap.add_argument("--syn-rev-hold", default="ach", help=SYN_REV_HOLD_HELP)
+ap.add_argument("--pic", default="", help=PIC_HELP)
 ap.add_argument("--log-v", default="", help="comma-separated types whose mean membrane (mV re rest, after the step's reset: a spiking cell counts at 0) is logged per engine step as v_ms (steps x types) and v_types in <out>.cells.npz; off by default (09-22, campaign item 2b: read the flexors' resting membrane directly)")
 ap.add_argument("--drive", default="", help="drive named sensory / descending types at a rate: TYPE:HZ,TYPE:HZ (e.g. SNpp50:50, the extension-tuned FeCO claw cells); rows after the floor and the treadmill, so they override on those cells; a labelled diagnostic")
 args = ap.parse_args()
@@ -71,6 +72,7 @@ if args.rebound:
     g_, tau_ = (float(x) for x in args.rebound.split(":")); M.rebound_on = True; M.rebound_g = g_; M.rebound_tau = tau_; M._reb_r = np.zeros(M.N, np.float32); print(f"rebound: g {g_}, tau {tau_} ms")
 if args.syn_tau: print(M.set_syn_tau(args.syn_tau))   # (09-22, campaign item 2)
 if args.syn_rev: print(M.set_syn_rev(args.syn_rev, args.syn_rev_hold))   # (09-22, campaign item 2b; after --syn-tau, whose rows it puts on conductances)
+if args.pic: print(M.set_pic(args.pic))   # (09-23, campaign item 4) the persistent inward current on named cells; the set is read from the brain file
 if args.mirror != "off":
     from fly_afterlife.wiring import mirror_normalise; print("mirror normalisation:", mirror_normalise(M, scope=(args.mirror.split(",") if "," in args.mirror else args.mirror)))
 if args.graded:

@@ -201,6 +201,27 @@ SYN_REV_HOLD_HELP = ("which PSP the reversal term holds at today's size at rest 
                      "|E_GABA| of the leak's (0.185 / 5 = 0.037, 14x the excitatory one). only read with --syn-rev")
 
 
+# ---- a persistent inward current on named cells (09-23, campaign item 4; off by default, and when off none of this runs) ----
+# the LIF has no voltage-gated conductance of its own. insect leg motor neurons carry plateaus (cockroach Df: L-type Ca, nifedipine-blocked;
+# locust: conditional on octopamine); no fly leg cell has one measured (knobs.md 3a: not found). this term is the borrowed shape on a named set:
+# I = g m (E_PIC - v) / E_PIC with dm/dt = (m_inf(v) - m) / tau, m_inf(v) = 1 / (1 + exp(-(v - v_half) / k)), v in mV re rest (the engine's
+# convention: rest 0, threshold 7, reset 0), E_PIC = +70 mV re rest (depolarising, the ACh reversal of --syn-rev). the scale: g = 1 is
+# 1 mV per ms of drive at full activation from rest (dv/dt += g m (E - v) / E; on the ext path as tau_m x that, so to first order in dt / tau_m
+# under the exact integrator). m and the driving force are read at the step's start (the current is frozen over dt), and m is not reset
+# by a spike unless asked (a persistent current).
+PIC_E = 70.0
+PIC_HELP = ("a persistent inward current on named cells, TYPES:G:VHALF:K:TAU[:reset] (09-23, campaign item 4): I = G m (70 - v) / 70 mV per ms, "
+            "m relaxing with TAU ms to 1 / (1 + exp(-(v - VHALF) / K)), v and VHALF in mV re rest (threshold 7 unless the size path moved it); "
+            "G = 1 gives 1 mV per ms of drive at full activation from rest (the leg alone would hold a fully open cell at G x tau_m x 70 / (70 + G x tau_m) mV, "
+            "tau_m 20 ms: G 0.27 / 0.58 / 0.95 -> 5 / 10 / 15 mV). TYPES is a comma list of cell types, or smallflex = the small third of 'Ti flexor MN' "
+            "by input synapse count (the 13 cells of src/fly_afterlife/size.py's graded labelling and docs/SEAM.md 'the flexors by size third'). "
+            "':reset' zeroes m on a spike (default: persistent). BORROWED, NOT MEASURED IN THE FLY: no plateau or persistent inward current has been "
+            "recorded in any adult fly leg cell (knobs.md 3a); the shape and the envelope are the cockroach fast coxal depressor's L-type Ca plateau "
+            "(Hancox & Pitman 1991, 1993; Mills & Pitman 1997, 1999; threshold ~-51 mV, plateau ~-37 mV, i.e. ~14 mV above threshold, UNVERIFIED "
+            "numbers) and locust flight / leg MN plateaus under octopamine (Ramirez & Pearson 1991; bursts 50-75 ms, a TAU scale). a labelled engine "
+            "term, off by default ('' or off = the record, bit for bit)")
+
+
 @njit(cache=True, fastmath=False, nogil=True)
 def _phi(x):
     """(1 - e^-x) / x, the fraction of the frozen-force step a conductance x (in units of the step) delivers; the series near 0."""
@@ -335,9 +356,44 @@ class FastFlyBrain(FlyBrain):
                 f"synapse (of the leak's) ACh {self.p.mv_per_synapse / e_scale[1]:.4g}, GABA {self.p.mv_per_synapse / e_scale[2]:.4g}, glu {self.p.mv_per_synapse / e_scale[3]:.4g}; "
                 f"an inhibitory synapse at rest drives {(abs(e[1]) / e_scale[2]) if e[1] is not None else float('nan'):.3g} of today's" + (f"; WARNING cells whose sign is not their class's: ACh {odd[0]}, GABA {odd[1]}, glu {odd[2]} (their conductance is negative)" if any(odd) else ""))
 
+
+    def set_pic(self, spec):
+        """a persistent inward current on named cells (09-23, campaign item 4): spec 'TYPES:G:VHALF:K:TAU[:reset]' (PIC_HELP), or None / '' / 'off'.
+        the one parser for world/cord.py and experiments/body_loop.py. smallflex ranks 'Ti flexor MN' by input synapses as the brain FILE has them
+        (so mirror / size gain / edge scales applied before or after do not move the set). returns a line for the log."""
+        if spec is None or str(spec).strip() in ("", "off"): self.pic_on = False; return "persistent inward current: off"
+        f = [x.strip() for x in str(spec).split(":")]
+        reset = len(f) == 6 and f[5].lower() == "reset"
+        if len(f) not in (5, 6) or (len(f) == 6 and not reset): raise ValueError(f"--pic wants TYPES:G:VHALF:K:TAU[:reset]; got {spec!r}")
+        g, vh, k, tau = (float(x) for x in f[1:5])
+        if g < 0 or k <= 0 or tau <= 0: raise ValueError(f"--pic: G >= 0, K > 0, TAU > 0; got {spec!r}")
+        mty = self.type.astype(str)
+        if f[0].lower() == "smallflex":
+            d = np.load(self._path, allow_pickle=True); S = np.bincount(d["post"], weights=np.abs(d["w"]), minlength=self.N)
+            pool = np.flatnonzero(mty == "Ti flexor MN"); pool = pool[np.argsort(S[pool], kind="stable")]
+            idx = np.sort(np.array_split(pool, 3)[0]); lab = f"smallflex (the small third of {len(pool)} 'Ti flexor MN' by input synapses, {S[idx].min():.0f}-{S[idx].max():.0f})"
+        else:
+            tys = [x for x in f[0].split(",") if x]; idx = np.flatnonzero(np.isin(mty, tys)); lab = ",".join(tys)
+        if not idx.size: raise ValueError(f"--pic: no cells of {f[0]!r}")
+        self._pic_idx = idx.astype(np.int64); self._pic_m = np.zeros(idx.size, np.float64)
+        self.pic_g, self.pic_vh, self.pic_k, self.pic_tau, self.pic_reset = g, vh, k, tau, reset; self.pic_on = True
+        vss = g * self.p.tau_m * PIC_E / (PIC_E + g * self.p.tau_m)
+        return (f"persistent inward current: {idx.size} cells of {lab}; g {g:g} mV/ms at full activation from rest (alone it would hold an open cell at "
+                f"{vss:.2f} mV re rest), v_half {vh:+g} mV re rest, k {k:g} mV, tau {tau:g} ms, E {PIC_E:+g}, m {'reset' if reset else 'kept'} on a spike; BORROWED (cockroach / locust MN plateaus), no fly leg cell has it measured")
+
+    def _pic_step(self, ext):
+        """advance m on the set from the step-start v and add the current to ext (a copy; the kernels see it as a tonic current over dt)."""
+        v = self.v[self._pic_idx].astype(np.float64); dt = float(self.p.dt)
+        minf = 1.0 / (1.0 + np.exp(np.clip(-(v - self.pic_vh) / self.pic_k, -60.0, 60.0)))
+        self._pic_m += (minf - self._pic_m) * (dt / self.pic_tau)
+        ext = np.array(ext, dtype=np.float32, copy=True)
+        ext[self._pic_idx] += (self.p.tau_m * self.pic_g * self._pic_m * (PIC_E - v) / PIC_E).astype(np.float32)
+        return ext
+
     def reset(self):
         super().reset()
         if getattr(self, "syn_tau_on", False): self._gc[:] = 0.0
+        if getattr(self, "pic_on", False): self._pic_m[:] = 0.0
 
     def _propagate(self, spikes, scale=None):
         if self.engine == "dense": return super()._propagate(spikes, scale)
@@ -390,6 +446,7 @@ class FastFlyBrain(FlyBrain):
         free = self._free_buf   # refrac <= 0 before the update, as in flysim: gates the Poisson receptors below
         if getattr(self, "adapt_on", False) or getattr(self, "rebound_on", False):   # 09-21 night: two labelled intrinsic currents, off by default (docs/SEAM.md "the switch"); as a current on the ext path so the compiled membrane kernels are untouched
             ext = ext - (self._adapt_a if getattr(self, "adapt_on", False) else 0.0) + (self._reb_r if getattr(self, "rebound_on", False) else 0.0); ext = np.ascontiguousarray(ext, dtype=np.float32)
+        if getattr(self, "pic_on", False): ext = self._pic_step(ext)   # (09-23, campaign item 4) the persistent inward current on its named cells, on the ext path; off = not run
         rev_on = nt_on and getattr(self, "syn_rev_on", False)   # reversal potentials (09-22, campaign item 2b): the per-class rows on conductances
         if rev_on and getattr(self, "integrate", "euler") == "exact":
             e_m = np.exp(-dt / p.tau_m); ek = [exact_kg(t_, p.tau_m, dt) for t_ in self._syn_taus]
@@ -422,6 +479,7 @@ class FastFlyBrain(FlyBrain):
             gv = self.v[self._graded_cells]; gs = np.clip((gv - np.float32(self.graded_v0)) / np.float32(self.graded_v1 - self.graded_v0), 0.0, 1.0) * np.float32(self.graded_gain)
             on = gs > 0; self._graded_idx = self._graded_cells[on]; self._graded_scale = gs[on].astype(np.float32)
         self.last_spikes = spk.astype(np.float32)
+        if getattr(self, "pic_on", False) and self.pic_reset and self.last_idx.size: self._pic_m[spk[self._pic_idx]] = 0.0   # --pic ...:reset only
         if getattr(self, "adapt_on", False):   # spike-frequency adaptation: a (mV) decays with tau_a, jumps by b per spike, subtracted from the drive (an AdEx-style w in voltage units)
             self._adapt_a *= np.float32(1.0 - dt / self.adapt_tau)
             if self.last_idx.size: self._adapt_a[self.last_idx] += np.float32(self.adapt_b)
