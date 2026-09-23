@@ -7306,3 +7306,22 @@ graded tone with the small flexors' current, the shunt; seed 11, 30 s)
 - this is what a gain fit looks like when it is honest: it moves the cells it is aimed at, by the amount asked, and shows what they do
   not do on their own. the body arms (the listening rig with the gain, and the free-running body) say whether the phase the leg's own
   senses give these excitors survives the gain, which is the actual question; they follow. one seed.
+
+**item 7, defensible form, on the body (15:44 PDT; the same four excitors' inputs x5 and x10; the honest stack; (i) the listening rig, a real
+fly's steps moving the legs, and (ii) the free-running body; seed 11, 30 s):**
+- **the phase survives the gain, and spreads.** listening at x5: 36 of 52 readable excitatory premotor types lock to the imposed step and
+  22 fire more in the swing (x1: 8 of 37 and 7); at x10: 26 of 53 and 18. the swing-locked whisper of the flexor excitors becomes a
+  swing-locked chorus across the 03A, 20A/22A, 18B and 21A lineages (e.g. IN03A032 swing/stance 2.2, VS 0.52 vs null 0.30; IN03A058 2.2;
+  IN18B011 1.9; IN19B012, Pugliese's E3, 20.7 Hz at 1.3, locked). the leg's own senses time the gained cells the way they timed the
+  ungained ones: the gain does not invent the phase, it amplifies it.
+- **the free-running body lifts five legs.** x5: lf 32 lifts, lm 26, rf 30, rm 52, **rh 42, the right hind's first lifts in any arm this week**
+  (the left hind 1); gaps 185-240 ms; x10: lm 96, rf 78, rh 90, the right middle held in the air. and he sinks: the feet carry 7.6 uN at x5
+  (the coxae 1.8) and 4.8 at x10 (the coxae 4.2): the gained excitors drive more than the levators (the extensors 4.5 -> 10.5 Hz, the
+  remotors 10-24), and the posture goes with the lift.
+- **coupling:** the middle pair sits at independence (both off 11.4 vs 11.4 %); **the front pair is off the ground together at a quarter to
+  a third of independence at both gains (0.8 vs 2.9 %, 1.4 vs 4.5 %)** with 26-32 and 30-78 lifts each, the promotor pools uncorrelated left
+  and right (r 0.01-0.06), no phase preference readable. one seed; the middle-leg version of this statistic failed its seeds on 09-23
+  morning, so this one is hedged the same way until 12 and 13 run (running).
+- what this is: a labelled gain on four cells the file times correctly, and under it the lift side moves, the phase holds, and the
+  hold side does not yield: the flexors and IN13A002 sit where they were, the extensors rise, and the body sinks. a step needs the hold
+  side to let go in the swing, which is the 13A cells' inhibition released, and the gain on the excitors does not touch that.
