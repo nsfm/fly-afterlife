@@ -151,6 +151,7 @@ LC = np.flatnonzero(np.isin(mty, _lt)); print(f"logging {len(LC)} cells of {len(
 
 n_frames = int(round(args.seconds * fps)); FR = np.zeros((n_frames, len(LC)), np.int16); ALL = np.zeros(n_frames, np.int32)
 MSC = np.zeros((n_frames * SPF, len(LC)), np.int8) if args.log_ms else None
+LCPOS = np.full(M.N, -1, np.int64); LCPOS[LC] = np.arange(len(LC))
 if args.log_v:   # the membrane logger (09-22, campaign item 2b): one masked mean per type per step
     _vt = [x for x in args.log_v.split(",") if x]; _vc = [np.flatnonzero(mty == t_) for t_ in _vt]; _vi = np.concatenate(_vc).astype(np.int64); _vg = np.repeat(np.arange(len(_vt)), [len(c_) for c_ in _vc]); _vn = np.maximum(np.bincount(_vg, minlength=len(_vt)), 1)
     VMS = np.zeros((n_frames * SPF, len(_vt)), np.float32); _vsp = np.zeros(len(_vt)); print(f"logging the membrane of {len(_vi)} cells of {len(_vt)} types: " + ", ".join(f"{t_} {len(c_)}" for t_, c_ in zip(_vt, _vc)))
@@ -166,7 +167,8 @@ for f in range(n_frames):
     for k_ in range(SPF):
         M.step(); acc[M.last_idx] += 1
         if VMS is not None: VMS[f * SPF + k_] = np.bincount(_vg, weights=M.v[_vi], minlength=len(_vt)) / _vn
-        if MSC is not None and M.last_idx.size: MSC[f * SPF + k_, np.searchsorted(LC, M.last_idx[np.isin(M.last_idx, LC)])] += 1
+        if MSC is not None and M.last_idx.size:   # (09-23, perf) np.isin + searchsorted as one table lookup: the same columns (LC is sorted), no repeats in a step
+            _h = LCPOS[M.last_idx]; MSC[f * SPF + k_, _h[_h >= 0]] += 1
     FR[f] = acc[LC]; ALL[f] = acc.sum()
     if VMS is not None and t >= args.warmup: _vsp += np.bincount(_vg, weights=acc[_vi], minlength=len(_vt))
     if f % (10 * fps) == 0 and f: print(f"t={t:5.1f}s  cord {ALL[f - 10 * fps:f].mean() * fps / M.N:.2f} Hz/cell  leg MN {FR[f - 10 * fps:f].mean() * fps:.2f} Hz/cell  ({time.time() - t0:.0f}s)")

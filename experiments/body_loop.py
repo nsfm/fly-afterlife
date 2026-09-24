@@ -385,6 +385,36 @@ def leg_forces():
     """ground contact force magnitude per leg (model force units = uN), legs ordered lf lm lh rf rm rh (fly.get_legs_order())."""
     if args.tethered: return np.zeros(6)
     found, forces, *_ = sim.get_ground_contact_info("nmf"); return np.linalg.norm(np.asarray(forces), axis=1)
+from flygym.anatomy import BodySegment
+_SEG_G2O = {sim._internal_geomid_by_bodyseg_by_fly["nmf"][BodySegment(s_)]: i_ for i_, s_ in enumerate(segs)}   # geom id -> row, as flygym builds it on every call
+_SEG_REQ = np.zeros(m.ngeom, bool); _SEG_REQ[np.array(list(_SEG_G2O.keys()), np.int64)] = True
+_SEG_GND = np.zeros(m.ngeom, bool); _SEG_GND[np.asarray(sim._internal_ground_geom_ids, np.int64)] = True
+_seg_wrench = np.zeros(6, dtype=float)
+def seg_forces():
+    """sim.get_bodysegment_contact_forces("nmf", segs) (ground contacts only) with its lookups built once (09-23, docs/PERFORMANCE_BODY.md):
+    flygym rebuilds a BodySegment per segment and a geom dict, and runs four np.isin, on every call (0.6 ms per ms of the loop). the same
+    contacts are selected (np.isin -> a boolean table over geom ids), and the same mj_contactForce, frame.T @ f and -= / += run in the same
+    order on the same float64 rows, so the result is flygym's bit for bit."""
+    forces = np.zeros((len(segs), 3), dtype=float)
+    ncon = d.ncon
+    if ncon == 0: return forces
+    contacts = d.contact; g1 = contacts.geom1[:ncon]; g2 = contacts.geom2[:ncon]; ex = contacts.exclude[:ncon].astype(bool)
+    r1 = _SEG_REQ[g1]; r2 = _SEG_REQ[g2]
+    active = ((r1 | r2) & ~ex) & ((r1 & _SEG_GND[g2]) | (r2 & _SEG_GND[g1]))
+    for cid in np.where(active)[0]:
+        mj.mj_contactForce(m, d, int(cid), _seg_wrench)
+        world_force = contacts.frame[cid].reshape(3, 3).T @ _seg_wrench[:3]
+        a_, b_ = int(g1[cid]), int(g2[cid])
+        if a_ in _SEG_G2O: forces[_SEG_G2O[a_]] -= world_force
+        if b_ in _SEG_G2O: forces[_SEG_G2O[b_]] += world_force
+    return forces
+def clip01(x, hi=1.0):
+    """float(np.clip(x, 0, hi)) for one float, without numpy's per-call cost (39 calls per ms): numpy's rule for floats kept exactly
+    (a nan passes through; max against 0 first, so a -0.0 comes out +0.0; then min against hi)."""
+    x = float(x)
+    if x != x: return x
+    x = x if x > 0.0 else 0.0
+    return x if x < hi else float(hi)
 
 # ---- the loop
 n_ms = int(args.seconds * 1000); torque = np.zeros((len(dofs), n_ms + KL)); grip = {l: np.zeros(n_ms + KL) for l in LEG6}
@@ -393,6 +423,7 @@ P = np.zeros((n_ms, 3), np.float32); Q = np.zeros((n_ms, 4), np.float32); FL = n
 JA = np.zeros((n_ms // 10 + 1, len(all_dofs)), np.float32)
 FT = np.zeros((n_ms, 6)); FO = np.zeros((n_ms, 6)); FB = np.zeros(n_ms); FTN = np.zeros((n_ms, 6), np.float32)   # (09-23, P1) tarsal / other-leg vertical reaction per leg, body; FTN = tarsal net of the pads
 spk = np.zeros((n_ms // 10 + 1, len(LEGMN)), np.int16); lpos = {int(j): i for i, j in enumerate(LEGMN)}
+ISLEG = np.zeros(M.N, bool); ISLEG[LEGMN] = True; LPOS = np.full(M.N, -1, np.int64); LPOS[LEGMN] = np.arange(len(LEGMN))   # (09-23, perf) np.isin(idx, LEGMN) and lpos[] as tables
 MNP = None
 if args.mn_poisson:
     _R = np.load(args.mn_poisson.replace('.npz', '') + '.cells.npz', allow_pickle=True); _rb = {int(x): i for i, x in enumerate(_R['bodyId'].astype(np.int64))}; _rr = _R['frames'].astype(float)[200:].mean(0) * 100
@@ -443,7 +474,7 @@ for ms in range(n_ms):
     FLEG = F   # the leg sensor's reading, net of the pads: leg_force and ground keep this meaning whatever --load-from says
     if not args.tethered:   # (09-23, P1) the vertical ground reaction on the feet (tarsus1-5) and on the rest of each leg, per ms
         try:
-            _cf = np.asarray(sim.get_bodysegment_contact_forces("nmf", segs)); FT[ms] = [_cf[TARS[i], 2].sum() for i in range(6)]; FO[ms] = [_cf[OTHL[i], 2].sum() for i in range(6)]; FB[ms] = np.abs(_cf[NONLEG, 2]).sum()
+            _cf = seg_forces(); FT[ms] = [_cf[TARS[i], 2].sum() for i in range(6)]; FO[ms] = [_cf[OTHL[i], 2].sum() for i in range(6)]; FB[ms] = np.abs(_cf[NONLEG, 2]).sum()
         except Exception: FT[ms] = FO[ms] = FB[ms] = np.nan
     Ftar = np.maximum(FT[ms] - args.adhesion_gain * pad_on, 0.0) if (adh and args.adhesion == "contact") else np.maximum(FT[ms], 0.0)
     FTN[ms] = Ftar
@@ -451,15 +482,15 @@ for ms in range(n_ms):
     Fsm = F if ms == 0 else 0.8 * Fsm + 0.2 * F; dF = (Fsm - prevF) * 1000.0 if ms else np.zeros(6); prevF = Fsm.copy()
     for i, leg in enumerate(LEG6):
         k = knee[i] if args.senses == "v1" else knee[i] + knee90[leg]   # v2: flexion past the claw's null at 90 deg femur-tibia (Mamiya 2018), not past the model's neutral
-        ext_rate = args.claw_hz * float(np.clip((-k) / 60.0, 0, 1)); flex_rate = args.claw_hz * float(np.clip(k / 60.0, 0, 1))   # + = flexion by the measured sign
+        ext_rate = args.claw_hz * clip01((-k) / 60.0); flex_rate = args.claw_hz * clip01(k / 60.0)   # + = flexion by the measured sign
         state[f"claw_e_{leg}"], state[f"claw_f_{leg}"] = (ext_rate, flex_rate) if args.claw_labels == "50ext" else (flex_rate, ext_rate)   # the rows are named by TYPE (claw_e = SNpp50); the labels say which rate each type gets
-        state[f"hook_f_{leg}"] = args.hook_hz * float(np.clip(om[i] / args.hook_vel, 0, 1)); state[f"hook_e_{leg}"] = args.hook_hz * float(np.clip(-om[i] / args.hook_vel, 0, 1))
-        ld = float(np.clip(F[i] / F_stand + args.load_deriv * dF[i] * 0.05 / F_stand, 0, 2))
+        state[f"hook_f_{leg}"] = args.hook_hz * clip01(om[i] / args.hook_vel); state[f"hook_e_{leg}"] = args.hook_hz * clip01(-om[i] / args.hook_vel)
+        ld = clip01(F[i] / F_stand + args.load_deriv * dF[i] * 0.05 / F_stand, 2.0)
         if args.slow_init > 0 and t < args.warmup + args.slow_init: ld = max(ld, 1.0)
         state[f"load_{leg}"] = args.leg_load_hz * ld; state[f"slow_{leg}"] = args.slow_hz * ld; state[f"cocon_{leg}"] = args.cocon * args.slow_hz * ld
         if args.senses == "v2":   # (campaign item 6, 09-22) hair plates from the coxa's pitch; touch while the foot is on the ground (pad_on's threshold)
             a_ = float(ang[cx_idx[leg]]); n_ = cx_n[leg]; lo_, hi_ = cx_rng[leg]
-            state[f"hp_{leg}"] = args.hp_hz * float(np.clip((a_ - n_) / max(hi_ - n_, 1e-9) if a_ >= n_ else (n_ - a_) / max(n_ - lo_, 1e-9), 0, 1))
+            state[f"hp_{leg}"] = args.hp_hz * clip01((a_ - n_) / max(hi_ - n_, 1e-9) if a_ >= n_ else (n_ - a_) / max(n_ - lo_, 1e-9))
             on_ = bool(F[i] > 0.05)
             if on_ and not was_on[i]: t_touch[i] = t
             was_on[i] = on_; state[f"tact_{leg}"] = (args.tactile_hz * (5.0 if (t - t_touch[i]) < 0.030 - 1e-9 else 1.0)) if on_ else 0.0
@@ -472,7 +503,7 @@ for ms in range(n_ms):
     if VMS is not None: VMS[ms] = np.bincount(_vg, weights=M.v[_vi], minlength=len(_vt)) / _vn
     if XMS is not None and idx.size:
         xh = xpos[idx]; xh = xh[xh >= 0]
-        if xh.size: np.add.at(XMS[ms], xh, 1)
+        if xh.size: XMS[ms, xh] += 1   # xh has no repeats (the step's spikes are unique), so this is np.add.at's sum
     if TW is not None: TW["s"] *= TW["D"]; torque[:, ms] += TW["s"]   # (--twitch azevedo) the slow cells' low-pass, from the spikes before this ms
     if args.freeze_mn > 0 and ms >= int(args.freeze_mn * 1000):
         if ms == int(args.freeze_mn * 1000) and MUS is not None: _hold_e = EXC[:, ms].copy()
@@ -493,18 +524,18 @@ for ms in range(n_ms):
             hit = PUP["cells"][PUP["rng"].random(len(PUP["cells"])) < rate_]
         else: hit = np.zeros(0, np.int64)
         if idx.size:
-            for j in idx[np.isin(idx, LEGMN)]: spk[ms // 10, lpos[int(j)]] += 1
+            spk[ms // 10, LPOS[idx[ISLEG[idx]]]] += 1
     elif KD is not None:   # KIN-DRIVE: the cord's motor spikes logged, never felt
         hit = np.zeros(0, np.int64)
         if idx.size:
-            for j in idx[np.isin(idx, LEGMN)]: spk[ms // 10, lpos[int(j)]] += 1
+            spk[ms // 10, LPOS[idx[ISLEG[idx]]]] += 1
     elif MNP is not None:
         hit = LEGMN[_mnp_rng.random(len(LEGMN)) < MNP]
         if idx.size:
-            for j in idx[np.isin(idx, LEGMN)]: spk[ms // 10, lpos[int(j)]] += 1   # the cord's own motor spikes are still logged
+            spk[ms // 10, LPOS[idx[ISLEG[idx]]]] += 1   # the cord's own motor spikes are still logged
     elif idx.size:
-        hit = idx[np.isin(idx, LEGMN)]
-        for j in hit: spk[ms // 10, lpos[int(j)]] += 1
+        hit = idx[ISLEG[idx]]   # np.isin(idx, LEGMN) as a table lookup (the same cells, in idx order)
+        spk[ms // 10, LPOS[hit]] += 1   # hit has no repeats, so one fancy add is the per-spike loop
     else: hit = np.zeros(0, np.int64)
     for j in hit:   # what the body sees: the cord's spikes, or the Poisson trains, or nothing after a freeze
         j = int(j)
@@ -536,7 +567,7 @@ for ms in range(n_ms):
         _Rt = np.array([[1 - 2 * (_y * _y + _z * _z), 2 * (_x * _y - _w * _z), 2 * (_x * _z + _w * _y)], [2 * (_x * _y + _w * _z), 1 - 2 * (_x * _x + _z * _z), 2 * (_y * _z - _w * _x)], [2 * (_x * _z - _w * _y), 2 * (_y * _z + _w * _x), 1 - 2 * (_x * _x + _y * _y)]])
         KD["FOOT"][ms] = (_bp[KD["TAR5"]] - P[ms]) @ _Rt
     if ms % 10 == 0:
-        try: _cf = np.asarray(sim.get_bodysegment_contact_forces("nmf", segs)); BODYF[ms // 10] = (float(FLEG.sum()), float(np.abs(_cf[NONLEG, 2]).sum()))   # the feet's load, and the vertical ground reaction on the NON-leg segments (thorax, abdomen, head): a standing fly has none of the second (the review's F2)
+        try: _cf = seg_forces(); BODYF[ms // 10] = (float(FLEG.sum()), float(np.abs(_cf[NONLEG, 2]).sum()))   # the feet's load, and the vertical ground reaction on the NON-leg segments (thorax, abdomen, head): a standing fly has none of the second (the review's F2)
         except Exception: BODYF[ms // 10] = (float(FLEG.sum()), np.nan)
     if not args.no_video: sim.render_as_needed()
     if ms % 5000 == 0 and ms: print(f"t={t:5.1f}s thorax z {P[ms, 2]:.2f}  legs F {np.round(FLEG, 1)}  knees {np.round(knee, 0)}  ({time.time() - t0:.0f}s)")
