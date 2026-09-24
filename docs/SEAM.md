@@ -7501,3 +7501,14 @@ levator MNs x4.3, subnet x0.28, the command's inhibitors x0.41: every leg lifts 
 the floor at 1 uN); one candidate falls. every line it writes is marked SOLVER; nothing it produces is a result; what it is for is the
 best vector as a map of where the file's weights are farthest from a walk, and, if it finds nothing in a thousand evaluations on
 these nine, the sharpest wall the week can name. the base CSV moved into the repo (`world/flex_graded.csv`, ledger 22 closed).
+
+**the wings' senses and the walking system (18:38 PDT, 09-23; nate: "we've ignored his wings completely. should anything in that circuitry
+be introducing feedback to the walking system?"; a file census, `brain_cord.npz` with `world/leg_senses.csv`'s entry nerves):** the
+wing-nerve afferents (ADMN + PDMN, 1,282 cells, 758 k output synapses) put **229 synapses directly onto leg motor neurons and 9.6 % of their
+output onto leg premotor cells, 132 onto the named walking chain**; their targets are the wing neuropil's own (IN23B005 38.6 k, INXXX044,
+the WG cells, AN17A003), none of which reaches a leg motor neuron. the haltere afferents (DMetaN, 435 cells, 127 k synapses) put 726 onto
+leg motor neurons and **a fifth of their output onto leg premotor cells** (IN01A031 with 877 synapses of its own onto leg MNs, AN08B010,
+IN03B079, the tactile SNta03) and **none onto the named chain**. so: the wings' senses do not feed the walking generator in this file;
+the halteres reach the leg's premotor layer, which fits what they do in a fly (flight posture, the landing response, the flight-walking
+switch), and in a standing fly they are still. nothing here is a lever for the step; it is a note for the day the tracks meet, when a
+flying fly lands.
