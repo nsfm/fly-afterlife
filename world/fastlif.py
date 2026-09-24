@@ -283,6 +283,46 @@ def _membrane_exact_nt_rev(v, gc, e_s, k_g, has_rev, e_rev, kap, refrac, ext, no
             gc[c, i] = gc[c, i] * e_s[c]
 
 
+@njit(cache=True, fastmath=False, parallel=True, nogil=True)
+def _membrane_exact_nt_rev4(v, gc, e_s, k_g, e_rev, kap, refrac, ext, noise, v_th, free, e_m, one_m_em, dt, v_floor, spk, freeze_g):
+    """_membrane_exact_nt_rev unrolled for the one layout the stack runs (09-23, docs/PERFORMANCE_BODY.md): four rows, class 0 a current,
+    classes 1-3 on reversals (has_rev = F T T T, e.g. --syn-rev 70:-5:-5). the same float ops in the same order and at the same types:
+    the flush's literal 0.0 makes each g a float64 exactly as numba unifies gi in the loop form, v is stored and re-read as float32 before
+    the floor and the threshold, and the decayed rows are g (a float32 value) x e_s, one rounding either way. ~1.5x on the kernel;
+    identical bytes to the loop form (checked on the cord and the body arrays)."""
+    n = v.shape[0]
+    k0 = k_g[0]; k1 = k_g[1]; k2 = k_g[2]; k3 = k_g[3]; a1 = kap[1]; a2 = kap[2]; a3 = kap[3]; E1 = e_rev[1]; E2 = e_rev[2]; E3 = e_rev[3]
+    s0 = e_s[0]; s1 = e_s[1]; s2 = e_s[2]; s3 = e_s[3]
+    for i in prange(n):
+        vi = v[i]; gk = np.float32(0.0); gr = np.float32(0.0); x = np.float32(0.0)
+        g0 = gc[0, i]
+        if g0 < 1e-20 and g0 > -1e-20: g0 = 0.0
+        gk += g0 * k0
+        g1 = gc[1, i]
+        if g1 < 1e-20 and g1 > -1e-20: g1 = 0.0
+        gg = g1 * k1 * a1; gr += gg * (E1 - vi); x += gg
+        g2 = gc[2, i]
+        if g2 < 1e-20 and g2 > -1e-20: g2 = 0.0
+        gg = g2 * k2 * a2; gr += gg * (E2 - vi); x += gg
+        g3 = gc[3, i]
+        if g3 < 1e-20 and g3 > -1e-20: g3 = 0.0
+        gg = g3 * k3 * a3; gr += gg * (E3 - vi); x += gg
+        if refrac[i] <= 0.0:
+            free[i] = True
+            v[i] = vi * e_m + ext[i] * one_m_em + gk + gr * _phi(x) + noise[i]
+            if v[i] < -v_floor: v[i] = -v_floor
+            spk[i] = v[i] >= v_th[i]
+        else:
+            free[i] = False
+            refrac[i] -= dt
+            if v[i] < -v_floor: v[i] = -v_floor
+            spk[i] = False
+            if freeze_g:
+                gc[0, i] = g0; gc[1, i] = g1; gc[2, i] = g2; gc[3, i] = g3
+                continue
+        gc[0, i] = g0 * s0; gc[1, i] = g1 * s1; gc[2, i] = g2 * s2; gc[3, i] = g3 * s3
+
+
 @njit(cache=True, nogil=True)
 def _count_live(di, drive_hz):
     c = 0
@@ -450,8 +490,12 @@ class FastFlyBrain(FlyBrain):
         rev_on = nt_on and getattr(self, "syn_rev_on", False)   # reversal potentials (09-22, campaign item 2b): the per-class rows on conductances
         if rev_on and getattr(self, "integrate", "euler") == "exact":
             e_m = np.exp(-dt / p.tau_m); ek = [exact_kg(t_, p.tau_m, dt) for t_ in self._syn_taus]
-            _membrane_exact_nt_rev(self.v, self._gc, np.array([e for e, _ in ek], np.float32), np.array([k for _, k in ek], np.float32), self._has_rev, self._e_rev, self._kap, self.refrac, ext,
-                                   np.ascontiguousarray(noise, dtype=np.float32), self.v_th, free, np.float32(e_m), np.float32(1.0 - e_m), np.float32(dt), np.float32(p.v_thresh), spk, bool(getattr(self, "refrac_freeze", False)))
+            if self._gc.shape[0] == 4 and not self._has_rev[0] and self._has_rev[1] and self._has_rev[2] and self._has_rev[3]:   # the stack's layout: the unrolled kernel, the same bytes (09-23)
+                _membrane_exact_nt_rev4(self.v, self._gc, np.array([e for e, _ in ek], np.float32), np.array([k for _, k in ek], np.float32), self._e_rev, self._kap, self.refrac, ext,
+                                        np.ascontiguousarray(noise, dtype=np.float32), self.v_th, free, np.float32(e_m), np.float32(1.0 - e_m), np.float32(dt), np.float32(p.v_thresh), spk, bool(getattr(self, "refrac_freeze", False)))
+            else:
+                _membrane_exact_nt_rev(self.v, self._gc, np.array([e for e, _ in ek], np.float32), np.array([k for _, k in ek], np.float32), self._has_rev, self._e_rev, self._kap, self.refrac, ext,
+                                       np.ascontiguousarray(noise, dtype=np.float32), self.v_th, free, np.float32(e_m), np.float32(1.0 - e_m), np.float32(dt), np.float32(p.v_thresh), spk, bool(getattr(self, "refrac_freeze", False)))
         elif rev_on:
             _membrane_nt_rev(self.v, self._gc, np.float32(dt) / self._syn_taus.astype(np.float32), self._has_rev, self._e_rev, self._kap, self.refrac, ext, np.ascontiguousarray(noise, dtype=np.float32), self.v_th, free,
                              np.float32(dt), np.float32(p.tau_m), np.float32(p.v_thresh), spk)
