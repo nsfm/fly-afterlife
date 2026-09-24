@@ -1,10 +1,19 @@
 # fly-afterlife
 
-a fruit fly's whole nervous system, run as a spiking network and given a body, senses and a world.
+**we took the complete wiring diagram of a fruit fly's nervous system, every neuron and every
+connection, and switched it on inside a simulated fly, to find out how much of a fly is in the
+wiring.**
+
+he has an eye that sees the way a fly's eye does, a body that feels the ground, antennae that smell
+and feel wind, feet that taste. we give him a room, a garden, sometimes a second fly, and we watch
+what his own neurons do with it, one sense at a time. when the wiring alone is not enough to make him
+do something a real fly does, we fill the gap with what biology says should be there, and we write
+down every such choice, why we made it, and what would let us take it back. the record keeps its
+wrong turns.
 
 the wiring is the male fly's connectome (MaleCNS v1.0, 2026: brain and ventral nerve cord, 162,517
-neurons, six million synapses), run as a leaky integrate-and-fire model with the constants of Shiu et
-al. 2024. two tracks of work run on it, and this file introduces both.
+neurons, six million synapses), run as a leaky integrate-and-fire spiking model with the constants of
+Shiu et al. 2024. two tracks of work run on it.
 
 **the brain track** gives the spiking fly senses he can act on, one at a time, and writes down what
 the wiring does with them. in front of it sits a real eye: a compound eye raytraced on the measured
