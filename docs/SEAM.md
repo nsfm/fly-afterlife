@@ -7526,3 +7526,4 @@ count. the solver now runs sixteen single-thread processes (about 12 GB), one wa
 top of the 1.27x. s1 resumed from its checkpoint at generation 48 with the new concurrency; s2 (a restart from another corner: a fresh
 CMA seed, a wider initial step) is queued behind it the same way. what remains on the list is small: the engine's per-step Python (3-4 %),
 caching the start settle (1.2 %), skipping empty registry rows (2 %).
+  (measured: generation 49, the first at sixteen single-thread processes on the merged code, 135 s against 365 before and 713 with the profiler beside it; 22 GB of memory free; the 2.7x estimate held.)
