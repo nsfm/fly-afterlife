@@ -8,6 +8,15 @@ lm = np.load("world/legmn.npz"); wb = np.load("brain_whole.npz", allow_pickle=Tr
 LEGS = ["lf", "lm", "lh", "rf", "rm", "rh"]; KEY = {"fl_L": 0, "ml_L": 1, "hl_L": 2, "fl_R": 3, "ml_R": 4, "hl_R": 5}
 for k, li in KEY.items():
     for i in lm[k]: legof[int(wb[i])] = li
+# interneurons: the leg from world/interleg.csv (the census's per-cell 'to_legs', the legs its output reaches, first listed; soma side breaks ties)
+try:
+    import csv
+    for row in csv.DictReader(open("world/interleg.csv")):
+        tl = row.get("to_legs", "") or row.get("from_legs", "")
+        if tl:
+            first = tl.split(";")[0].split(",")[0].strip()
+            if first in LEGS: legof.setdefault(int(row["bodyId"]), LEGS.index(first))
+except Exception as e: print("interleg.csv not used:", e)
 rng = np.random.default_rng(0)
 def cycles(sw):
     on = np.flatnonzero(np.diff(sw.astype(int)) == 1) + 1; return on
