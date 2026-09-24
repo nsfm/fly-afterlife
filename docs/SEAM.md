@@ -7512,3 +7512,17 @@ IN03B079, the tactile SNta03) and **none onto the named chain**. so: the wings' 
 the halteres reach the leg's premotor layer, which fits what they do in a fly (flight posture, the landing response, the flight-walking
 switch), and in a standing fly they are still. nothing here is a lever for the step; it is a note for the day the tracks meet, when a
 flying fly lands.
+
+**the performance review, merged (22:16 PDT, 09-23; `docs/PERFORMANCE_BODY.md`, the `perf-review` branch, merge 5f163d7; every saved array
+byte-identical on four configurations and on the solver's own g029_c03 arrays, the oracle passing on all eight configs):** a third of the
+body loop's wall time was plain Python and most of it is gone bit for bit: flygym's contact read (613 -> 231 us per ms; it built seventy
+segment objects a call), thirty-nine scalar clips in the senses (391 -> 99), the spike log's isin (255 -> 20); the reversal kernel unrolled
+for the stack's layout (1.5x on the kernel, 1.18x in the loop; a float32 flush there changes the spikes and was declined). a 20 s body run
+130.7 -> 102.7 s at one thread. MuJoCo is now half the loop (224 us per substep, the solver and collision half each) and every saving in
+it changes the result: a 2e-4 timestep drops seed 11 on the floor, no-slip off moves the scores by 0.02-0.03; declined. the per-spike
+torque kernel is 0.9 % and not worth touching. **the threads were the waste:** only the membrane kernel runs in parallel, four threads buy
+11 % for 40 % more CPU, and two single-thread runs on one core give 1.5x that core's throughput; results are identical at any thread
+count. the solver now runs sixteen single-thread processes (about 12 GB), one wave per generation instead of four: an estimated 2.7x on
+top of the 1.27x. s1 resumed from its checkpoint at generation 48 with the new concurrency; s2 (a restart from another corner: a fresh
+CMA seed, a wider initial step) is queued behind it the same way. what remains on the list is small: the engine's per-step Python (3-4 %),
+caching the start settle (1.2 %), skipping empty registry rows (2 %).
