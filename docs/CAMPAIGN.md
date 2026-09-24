@@ -116,6 +116,10 @@ as the yardstick; and the muscle ceiling (FlyMimic's Hill muscles on six legs) b
 twin: which lock to a real step's swing, and are they, like the excitors, phase-correct and starved. if so, row 28's form on them, with
 the lift side at x3 (the gain that kept him up), is the compound arm that could turn a lift into a step. running.
 
+**the solver's first hour (17:57 PDT, 09-23):** by generation five the best vector scores 0.46 (the file's own 0.21, the replay 0.98): lift
+x3.4, levator motor neurons x3, the release x0.45, the command at 135 Hz; he sits low (feet 5.5 of 10 uN) and lifts. nate, from the clip:
+"front legs way too high, but the back legs are pushing and there are signs of a gait." let it burn; the watcher renders the next best.
+
 ## working habits
 
 one change per run, controls beside every arm, both claw labellings beside every body result, the oracle before any engine commit, agents
