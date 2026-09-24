@@ -74,8 +74,8 @@ on the body track (`docs/CAMPAIGN.md`; the record from "the headless preparation
   two legs, or moves him forward past a millimetre a second. a real fly's legs walk the same body at
   10 mm/s, so the body is a fly's body and the gap is the cord's.
 - **the solver** (`experiments/solver/`, `docs/SOLVER.md`) searches nine labelled gains on the named
-  cell sets against the real fly's numbers. everything it writes is marked SOLVER; its use is the
-  best vector as a map of where the file's weights are farthest from a walk, never a result.
+  cell sets against the real fly's numbers. everything it writes is marked SOLVER; what it finds is
+  the fly's own circuitry with nine gains set, a result under a ledger row, reported with its vector.
 
 what he cannot do yet is written down too: `docs/TODO.md` is the list, `docs/WALKING.md` is the
 plain-language page on the walking question, and `docs/SCENARIOS.md` is his own version of the brain
@@ -224,8 +224,8 @@ seeds where it says three. on the body track: the pace readout of the brain trac
 the body and the two do not yet meet (the whole fly does not drive the physics body in the garden);
 the standing is the sourced springs' as much as the cord's; the muscle model is a sourced twitch summed
 linearly, and FlyMimic's Hill muscles disagree with Azevedo's force measurement by a factor of 4-40;
-the claw's two classes are pinned by wiring at 85-90 %, not by a recording; the solver's output is a
-puppet by construction.
+the claw's two classes are pinned by wiring at 85-90 %, not by a recording; the solver's output is a fit on
+nine named gains, reported with its vector.
 
 ## credits and licence
 
