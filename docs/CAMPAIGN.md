@@ -118,7 +118,7 @@ the lift side at x3 (the gain that kept him up), is the compound arm that could 
 
 **the solver's first hour (17:57 PDT, 09-23):** by generation five the best vector scores 0.46 (the file's own 0.21, the replay 0.98): lift
 x3.4, levator motor neurons x3, the release x0.45, the command at 135 Hz; he sits low (feet 5.5 of 10 uN) and lifts. nate, from the clip:
-"front legs way too high, but the back legs are pushing and there are signs of a gait." let it burn; the watcher renders the next best.
+"front legs way too high, but the back legs are pushing and there are signs of a gait." let it burn; the watcher renders the next best. **generation 13, 0.50 (18:32):** nate: "great progress in the back legs. middle legs are mostly lifted too high and aren't giving a pushing force. front legs fairly idle."
 
 ## working habits
 

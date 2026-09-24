@@ -4,18 +4,33 @@ a fruit fly's whole nervous system, run as a spiking network and given a body, s
 
 the wiring is the male fly's connectome (MaleCNS v1.0, 2026: brain and ventral nerve cord, 162,517
 neurons, six million synapses), run as a leaky integrate-and-fire model with the constants of Shiu et
-al. 2024. in front of it sits a real eye: a compound eye raytraced on the measured geometry of the
-same fly, seen through flyvis (Lappalainen et al. 2024), a graded, connectome-constrained optic lobe,
-whose motion cells drive the spiking brain's own T4 and T5. behind it sits a body: his leg motor
-neurons set his pace, his descending neurons and his horizontal-system cells steer him, his bristles
-feel walls, his antennae smell, sense warmth, humidity and wind, his feet taste sugar. the world is a
-room, a striped drum, a round dish, or a garden with a fruit in it. a second fly (FlyWire, female)
-can share the room.
+al. 2024. two tracks of work run on it, and this file introduces both.
 
-the point is to give the spiking fly senses it can act on, one at a time, and write down what the
-wiring does with them: what works, what does not, and what had to be assumed to make it work at all.
+**the brain track** gives the spiking fly senses he can act on, one at a time, and writes down what
+the wiring does with them. in front of it sits a real eye: a compound eye raytraced on the measured
+geometry of the same fly, seen through flyvis (Lappalainen et al. 2024), a graded, connectome-
+constrained optic lobe, whose motion cells drive the spiking brain's own T4 and T5. his bristles feel
+walls, his antennae smell, sense warmth, humidity and wind, his feet taste sugar. the world is a room,
+a striped drum, a round dish, or a garden with a fruit in it. a second fly (FlyWire, female) can share
+the room. on this track his locomotion is a *readout*: his leg motor neurons set a pace and his
+descending and horizontal-system cells steer a point on a floor. that readout is a labelled stand-in
+for a body, and it is what every result in `docs/SEAM.md` before 2026-09-21 rides on.
 
-## what he can do today (2026-09-18)
+**the body track** replaces the readout with a body. the ventral nerve cord alone (the headless
+preparation, `world/cord.py`) or the whole fly drives a NeuroMechFly v2 physics body (flygym 2.1,
+MuJoCo) through its 373 leg motor neurons, on sourced springs, with the leg's own senses (claw, hooks,
+hair plates, load, touch) computed from the moving body and fed back to the cord. the question is
+whether the connectome's own cord makes a step. the honest answer as of 2026-09-23 is: he stands on his
+feet, his legs lift, and the file at its weights does not make stance and swing. `docs/CAMPAIGN.md` is
+that track's plan, its line (physics sourced; biology filled in where the connectome has gaps; every
+compromise in a ledger with its source and its removal), and its ledger of thirty-one rows.
+
+the point of both is the same: what works, what does not, and what had to be assumed to make it work
+at all.
+
+## what he can do today (2026-09-23)
+
+on the brain track (unchanged since 09-18; all on the pace readout):
 
 - stand, and walk in bouts of several seconds, on a walking command (DNg100) that moves his cord
   as a dose; his speed is read from his 373 leg motor neurons against the standing tonus of a
@@ -32,8 +47,30 @@ wiring does with them: what works, what does not, and what had to be assumed to 
 - in a lit room with a second fly he finds her five times in five minutes; his P1 cells fire to
   touch; song is out of reach.
 
-what he cannot do yet is written down too: `docs/TODO.md` is the list, and `docs/SCENARIOS.md`
-is his own version of it, a day in the life of the fly as twenty test cases, written from his side.
+on the body track (`docs/CAMPAIGN.md`; the record from "the headless preparation" onward in `docs/SEAM.md`):
+
+- **stand.** on sourced springs, with the load read from his tarsi and a feet-down start, six feet
+  carry 9.7-10.1 of his 10.05 uN under every command we give the cord (his own recorded descending
+  output, one tonic walking neuron, a five-neuron population). before 09-23 he sat on his hind
+  coxae and the standing statistic could not see it (the physics review, `docs/REVIEW_PHYSICS.md`).
+- **hear his legs.** with a living fly's recorded kinematics moving his legs by position control and
+  the cord only listening (`--kin-drive`), the 13A premotor inhibitors phase-lock to the imposed
+  stance and flip with the claw's sign; the flexor excitors and the hold side's own releasers lock to
+  the swing at a hertz. both halves of a step's timing are in the file; the lift side fires at a
+  hundredth of a step's rate.
+- **lift, not step.** his middle legs twitch in bouts that random spike trains at the same rates
+  reproduce (the body's, not the cord's); at a labelled gain on four swing-locked excitors five legs
+  lift and he sinks; through Hill muscles at ten times FlyMimic's forces a scripted tripod steps at
+  11 Hz with no lag and he hops. no arm of the connectome's own makes stance and swing, alternates
+  two legs, or moves him forward past a millimetre a second. a real fly's legs walk the same body at
+  10 mm/s, so the body is a fly's body and the gap is the cord's.
+- **the solver** (`experiments/solver/`, `docs/SOLVER.md`) searches nine labelled gains on the named
+  cell sets against the real fly's numbers. everything it writes is marked SOLVER; its use is the
+  best vector as a map of where the file's weights are farthest from a walk, never a result.
+
+what he cannot do yet is written down too: `docs/TODO.md` is the list, `docs/WALKING.md` is the
+plain-language page on the walking question, and `docs/SCENARIOS.md` is his own version of the brain
+track, a day in the life of the fly as twenty test cases, written from his side.
 
 ## what senses are on, and how to turn them on
 
@@ -79,6 +116,33 @@ panorama), a map with his trail, and the neurons that matter, scrubbing at any s
 inside it. the same viewer plays the room, the drum and the dish. a run takes about four times its
 own length on a laptop; `docs/PERFORMANCE.md` says where the time goes and how to shorten it.
 
+## the body track: run him on a body
+
+```
+uv sync
+# the cord alone, thirty seconds, DNg100 at 100 Hz, the standing floor on the cells that fire standing still:
+uv run python world/cord.py --seconds 30 --seed 11 --walk 100 --floor standing --log-ms --out world/cord/run.npz
+# the honest body stack (every flag a ledger row; the defaults reproduce the runs of record bit for bit):
+uv run python experiments/body_loop.py --seconds 30 --seed 11 --walk 0 --dn-playback world/record/dn_census_0922 \
+    --loop position+load --adhesion contact --senses v2 --size-from world/flex_graded.csv --size-thr 1 --size-gain 1 \
+    --size-noise 1 --size-clip 10 --syn-rev 70:-5:-5 --syn-rev-hold each --pic smallflex:0.58:3:3:50 --mn-force azevedo \
+    --load-from tarsi --hind-map v2 --start-pose feet --stiffness sourced --claw-labels 50flex --fps 30 --out world/body/loop/run
+# the yardsticks: a real fly's kinematics on this body, and a scripted tripod through the same muscles (both labelled):
+uv run python experiments/kin_replay.py --out world/body/loop/replay
+uv run python experiments/body_loop.py ... --puppet tripod:5:0.6 --puppet-swing-hz 50 --puppet-stance-hz 25 --out world/body/loop/puppet
+```
+
+the body script writes a clip (`--fps`, `--playback-speed 0.2` for native slow motion) and the arrays
+the readers use: `experiments/leg_pairs.py` (per-leg lifts, gaps, pair coupling), `experiments/lift_read.py`
+(lift-triggered cell rates), `experiments/kin_drive_read.py` and `kin_lock_rank.py` (phase-locking to an
+imposed step). the engine terms the track added, all off by default and each with its oracle pass:
+per-transmitter synaptic decay (`--syn-tau`), reversal potentials (`--syn-rev`), a persistent inward
+current on named cells (`--pic`), a per-cell noise scale, per-type thresholds and gains through a size
+file. the reviews of the track are `docs/REVIEW_BODY_LOOP.md`, `docs/REVIEW_DAY_TWO.md`,
+`docs/REVIEW_CAMPAIGN_DAY_TWO.md` and `docs/REVIEW_PHYSICS.md`; the sourced numbers are in
+`docs/physiology/` (`knobs.md`, `force_per_spike.md`, `parameter_provenance.md`, `walking_command.md`,
+`interleg.md`, `claw_and_13A.md`, `leg_senses_map.md`).
+
 ## how it is built
 
 `src/fly_afterlife/` is the stack, one layer per file: `receptors.py` (a registry of receptor
@@ -106,6 +170,8 @@ benchmark scorer. `docs/ARCHITECTURE.md` explains the layering.
 - **the oracle.** the loop is ported and changed against a frozen script; `scripts/oracle_check.sh`
   must reproduce four reference runs bit for bit after any change to the engine, the drive path
   or the defaults, and the record says when it did.
+- **the ledger.** on the body track every compromise is a numbered row in `docs/CAMPAIGN.md` with what it
+  was, why, and what would remove it; the readme's flags above are its rows.
 - **stand-ins are labelled.** where the physiology is a slow state this engine cannot hold (hunger,
   satiety, the walking state), it is modelled as what it does, with a flag, a source, and a
   sentence saying so. the same for corrections to the wiring.
@@ -145,11 +211,18 @@ him persists but feeding. the engine has no synaptic depression or adaptation, s
 descending neurons (DNg33) locked itself at 250 Hz and ran his flight motor while he stood; since 09-21 depression is on that
 pair's synapses alone (`--std pair`, the engine's Tsodyks-Markram rule, a labelled two-cell correction in `docs/TODO.md` §P),
 and depression on every synapse is the next refreeze. and every number in the record was measured on one laptop, with three
-seeds where it says three.
+seeds where it says three. on the body track: the pace readout of the brain track is a stand-in for
+the body and the two do not yet meet (the whole fly does not drive the physics body in the garden);
+the standing is the sourced springs' as much as the cord's; the muscle model is a sourced twitch summed
+linearly, and FlyMimic's Hill muscles disagree with Azevedo's force measurement by a factor of 4-40;
+the claw's two classes are pinned by wiring at 85-90 %, not by a recording; the solver's output is a
+puppet by construction.
 
 ## credits and licence
 
 MIT (see `LICENSE`). built on: the MaleCNS v1.0 connectome (Janelia FlyEM / Google, 2026),
 FlyWire v783 (Dorkenwald et al. 2024; Schlegel et al. 2024), flyvis (Lappalainen et al. 2024,
 Nature), the LIF engine from TheMrRaGe/flybrain with the constants of Shiu et al. 2024, and the
-physiology of a few hundred papers cited where they are used. written by nyx, with nate.
+physiology of a few hundred papers cited where they are used; on the body track, NeuroMechFly v2 /
+flygym 2.1 (Wang-Chen et al.) with FlyMimic's muscles (Ozdil et al. 2026) and its recorded fly kinematics
+(Wang-Chen, Stimpfling, Azcorra & Ramdya 2026). written by nyx, with nate.
