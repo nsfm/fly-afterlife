@@ -120,6 +120,11 @@ the lift side at x3 (the gain that kept him up), is the compound arm that could 
 x3.4, levator motor neurons x3, the release x0.45, the command at 135 Hz; he sits low (feet 5.5 of 10 uN) and lifts. nate, from the clip:
 "front legs way too high, but the back legs are pushing and there are signs of a gait." let it burn; the watcher renders the next best. **generation 13, 0.50 (18:32):** nate: "great progress in the back legs. middle legs are mostly lifted too high and aren't giving a pushing force. front legs fairly idle."
 
+**the solver's plateau (22:38 PDT, 09-23):** the best has sat at 0.568 since generation 29 (g029_c03: lift x5.5, release x0.25, hold
+x0.48, the command's inhibitors x3.4, the levators' inhibitors x2.4, the subnet x0.30, levator MNs x3.6, plateau 0.80) through
+generation 56; CMA's step is 0.04 of the range, so this is one basin, and s2 (a fresh seed, a wider step) is queued to look for another.
+rendered: `solver_best_g029_c03.mp4` and `_slow.mp4` (feet 6.5 of 10 uN, coxae 2.8, thorax 0.59 mm; motor neurons 6.9 Hz per cell).
+
 ## working habits
 
 one change per run, controls beside every arm, both claw labellings beside every body result, the oracle before any engine commit, agents
